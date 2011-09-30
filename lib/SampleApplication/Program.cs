@@ -14,10 +14,11 @@ namespace SampleApplication
         {
             Options options = new Options();
             CommandLineParser parser = new CommandLineParser();
+            SwitchAttribute.SwitchDelimiter = '-';
 
             try
             {
-                parser.Parse(Environment.CommandLine, options);
+                parser.Parse(Environment.CommandLine, options, ParsingOptions.ShortNameOnly);
 
                 foreach (PropertyDescriptor item in TypeDescriptor.GetProperties(options))
                 {
@@ -57,6 +58,7 @@ namespace SampleApplication
             [Description("백업 여부를 설정합니다.")]
             public bool NoBackup { get; set; }
 
+            [Switch("-Text")]
             public string Text { get; set; }
 
             public int Number { get; set; }

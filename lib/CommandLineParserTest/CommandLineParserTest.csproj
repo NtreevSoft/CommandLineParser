@@ -50,9 +50,6 @@
     <Compile Include="TestOptions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AuthoringTests.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CommandLineParser\CommandLineParser.csproj">
       <Project>{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}</Project>
       <Name>CommandLineParser</Name>

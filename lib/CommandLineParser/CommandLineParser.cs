@@ -6,8 +6,13 @@ using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 
+using Trace = System.Diagnostics.Trace;
+
 namespace Ntreev.Library
 {
+    /// <summary>
+    /// 커맨드 라인을 파싱할 수 있는 방법을 제공합니다.
+    /// </summary>
     public partial class CommandLineParser
     {
         #region private variables
@@ -27,7 +32,7 @@ namespace Ntreev.Library
         #region public methods
 
         /// <summary>
-        /// 문자열 파싱기의 생성자입니다.
+        /// <seealso cref="CommandLineParser"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
         public CommandLineParser()
         {
@@ -43,7 +48,7 @@ namespace Ntreev.Library
         /// 모든 과정이 성공하면 true를, 그렇지 않다면 false를 반환합니다.
         /// </returns>
         /// <param name="commandLine">
-        /// 파싱할 문자열입니다.
+        /// 파싱할 문자열입니다. 
         /// </param>
         /// <param name="options">
         /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
@@ -87,6 +92,7 @@ namespace Ntreev.Library
         {
             using (Tracer tracer = new Tracer("Parsing"))
             {
+                Trace.WriteLine(string.Format("parsing options : {0}", parsingOptions));
                 object instance = options;
                 SwitchAttributeCollection switches = null;
 
@@ -110,7 +116,7 @@ namespace Ntreev.Library
                 this.arguments = this.arguments.Trim();
 
                 if (arguments.Length == 0)
-                    throw new ArgumentException("전달인자가 한개도 포함되어 있지 않습니다.", commandLine);
+                    throw new ArgumentException(Resource.NoArguments, commandLine);
 
                 string[] switchLines, unusedArgs;
                 SplitSwitches(this.arguments, out switchLines);
@@ -121,6 +127,7 @@ namespace Ntreev.Library
 
                 switchCollection.Parse(switchLines, instance, parsingOptions, out unusedArgs);
                 this.unusedArguments.AddRange(unusedArgs);
+
 
                 foreach (string item in this.unusedArguments)
                 {
@@ -188,7 +195,7 @@ namespace Ntreev.Library
                 while (match.Success == true)
                 {
                     string matchedString = match.ToString().Trim();
-                    tracer.WriteLine(matchedString);
+                    Trace.WriteLine(matchedString);
                     usedList.Add(matchedString);
                     match = match.NextMatch();
                 }
@@ -237,7 +244,7 @@ namespace Ntreev.Library
 
         #region private classes
 
-        class Tracer : IDisposable
+        internal class Tracer : IDisposable
         {
             string message = null;
 
@@ -249,22 +256,17 @@ namespace Ntreev.Library
             public Tracer(string message)
             {
                 this.message = message;
-                System.Diagnostics.Trace.Indent();
                 System.Diagnostics.Trace.WriteLine("begin: " + message);
-            }
-
-            public void WriteLine(string message)
-            {
-                System.Diagnostics.Trace.WriteLine(message);
+                System.Diagnostics.Trace.Indent();
             }
 
             #region IDisposable 멤버
 
             public void Dispose()
             {
+                System.Diagnostics.Trace.Unindent();
                 if (message != null)
                     System.Diagnostics.Trace.WriteLine("end  : " + message);
-                System.Diagnostics.Trace.Unindent();
             }
 
             #endregion

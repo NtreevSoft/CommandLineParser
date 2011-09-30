@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Collections;
 using System.Text.RegularExpressions;
 
+using Trace = System.Diagnostics.Trace;
+
 namespace Ntreev.Library
 {
     class SwitchDescriptorCollection : ICollection
@@ -79,6 +81,7 @@ namespace Ntreev.Library
             {
                 string matchedString = match.Groups[groupName].ToString();
                 unusedList.Add(matchedString);
+                Trace.WriteLine("unused arg : " + matchedString);
                 match = match.NextMatch();
             }
         }
@@ -107,7 +110,7 @@ namespace Ntreev.Library
             foreach (SwitchDescriptor item in this.internalDescriptors)
             {
                 if (item.Required == true && item.Parsed == false)
-                    throw new MissingSwitchException("필요한 스위치가 빠져있습니다.", item.Name);
+                    throw new MissingSwitchException(Resource.SwitchIsMissing, item.Name);
             }
         }
 
@@ -127,7 +130,7 @@ namespace Ntreev.Library
                     continue;
 
                 if (hashSet.Contains(shortName) == true)
-                    throw new SwitchException("스위치가 이미 등록되어 있습니다. 중복여부를 확인하세요.", shortName);
+                    throw new SwitchException(Resource.SwitchWasAlreadyRegistered, shortName);
                 hashSet.Add(shortName);
             }
         }
@@ -168,70 +171,79 @@ namespace Ntreev.Library
 
         public void Parse(string[] switchLines, object instance, ParsingOptions parsingOptions, out string[] unused)
         {
-            const string switchGroupName = "switch";
-            const string argGourpName = "arg";
-            HashSet<string> mutuallyExclusive = new HashSet<string>();
-            List<string> unusedList = new List<string>();
-
-            RegexOptions regexOptions = RegexOptions.ExplicitCapture;
-            if ((parsingOptions & ParsingOptions.CaseSensitive) != ParsingOptions.CaseSensitive)
-                regexOptions |= RegexOptions.IgnoreCase;
-
-            foreach (string switchLine in switchLines)
+            using (new CommandLineParser.Tracer("Parsing switches"))
             {
-                SwitchDescriptor matchedSwitch = null;
-                
-                foreach (SwitchDescriptor switchDescriptor in this.internalDescriptors)
+                const string switchGroupName = "switch";
+                const string argGourpName = "arg";
+                HashSet<string> mutuallyExclusive = new HashSet<string>();
+                List<string> unusedList = new List<string>();
+
+                RegexOptions regexOptions = RegexOptions.ExplicitCapture;
+                if ((parsingOptions & ParsingOptions.CaseSensitive) != ParsingOptions.CaseSensitive)
                 {
-                    if (switchDescriptor.Parsed == true)
-                        continue;
+                    regexOptions |= RegexOptions.IgnoreCase;
+                }
 
-                    string pattern = switchDescriptor.GetPattern(switchGroupName, argGourpName);
-                    Regex regex = new Regex(pattern, regexOptions);
-                    Match match = regex.Match(switchLine);
+                foreach (string switchLine in switchLines)
+                {
+                    SwitchDescriptor matchedSwitch = null;
 
-                    string s = match.Groups[switchGroupName].ToString();
-                    string a = match.Groups[argGourpName].ToString();
+                    Trace.WriteLine("finding switch : " + switchLine);
 
-                    if (match.Success == true)
+                    foreach (SwitchDescriptor switchDescriptor in this.internalDescriptors)
                     {
-                        if (switchDescriptor.MutuallyExclusive != string.Empty &&
-                            mutuallyExclusive.Contains(switchDescriptor.MutuallyExclusive) == true)
-                        {
-                            throw new SwitchException("같은 값의 상호배타적 스위치가 이미 설정되었습니다.", switchDescriptor.ShortName);
-                        }
+                        if (switchDescriptor.Parsed == true)
+                            continue;
 
-                        switchDescriptor.Parse(a, instance);
-                        matchedSwitch = switchDescriptor;
-                        mutuallyExclusive.Add(switchDescriptor.MutuallyExclusive);
+                        string pattern = switchDescriptor.GetPattern(switchGroupName, argGourpName);
+                        Regex regex = new Regex(pattern, regexOptions);
+                        Match match = regex.Match(switchLine);
 
-                        if (switchLine.Length != match.Length)
+                        string s = match.Groups[switchGroupName].ToString();
+                        string a = match.Groups[argGourpName].ToString();
+
+                        if (match.Success == true)
                         {
-                            string sub = switchLine.Substring(match.Length).Trim();
-                            SplitUnusedArgs(sub, unusedList);
+                            Trace.WriteLine("found matched switch : " + s + ", " + a );
+                            if (switchDescriptor.MutuallyExclusive != string.Empty &&
+                                mutuallyExclusive.Contains(switchDescriptor.MutuallyExclusive) == true)
+                            {
+                                throw new SwitchException("같은 값의 상호배타적 스위치가 이미 설정되었습니다.", switchDescriptor.ShortName);
+                            }
+
+                            switchDescriptor.Parse(a, instance);
+                            matchedSwitch = switchDescriptor;
+                            mutuallyExclusive.Add(switchDescriptor.MutuallyExclusive);
+
+                            if (switchLine.Length != match.Length)
+                            {
+                                string sub = switchLine.Substring(match.Length).Trim();
+                                SplitUnusedArgs(sub, unusedList);
+                            }
+                            break;
                         }
-                        break;
+                    }
+
+                    if (matchedSwitch == null)
+                    {
+                        Trace.WriteLine("no switch matched");
+                        string pattern = string.Format(@"(?<switchName>{0}\S+)", SwitchAttribute.SwitchDelimiter);
+                        Regex regex = new Regex(pattern, RegexOptions.ExplicitCapture);
+                        Match match = regex.Match(switchLine);
+                        if (match.Success == true)
+                        {
+                            string matchedString = match.Groups["switchName"].ToString();
+                            throw new SwitchException(Resource.InvalidSwitchWasIncluded +"\r\n  - " + switchLine, matchedString);
+                        }
+                        else
+                        {
+                            throw new SwitchException(Resource.InvalidSwitchWasIncluded +"\r\n  - " + switchLine);
+                        }
                     }
                 }
 
-                if (matchedSwitch == null)
-                {
-                    string pattern = string.Format(@"(?<switchName>{0}\S+)", SwitchAttribute.SwitchDelimiter);
-                    Regex regex = new Regex(pattern, RegexOptions.ExplicitCapture);
-                    Match match = regex.Match(switchLine);
-                    if(match.Success == true)
-                    {
-                        string matchedString = match.Groups["switchName"].ToString();
-                        throw new SwitchException(string.Format("유효하지 않은 스위치가 포함되어 있습니다.\r\n  - {0}", switchLine), matchedString);
-                    }
-                    else
-                    {
-                        throw new SwitchException(string.Format("유효하지 않은 스위치가 포함되어 있습니다.\r\n  - {0}", switchLine));
-                    }
-                }
+                unused = unusedList.ToArray();
             }
-
-            unused = unusedList.ToArray();
         }
 
         public int Count

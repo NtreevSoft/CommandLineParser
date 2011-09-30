@@ -7,12 +7,21 @@ using System.Text.RegularExpressions;
 
 namespace Ntreev.Library
 {
+    /// <summary>
+    /// 스위치의 정보를 담고 있는 클래스입니다.
+    /// </summary>
     public class SwitchDescriptor
     {
+        #region private variables
+
         readonly PropertyDescriptor propertyDescriptor;
         readonly SwitchAttribute switchAttribute;
         bool parsed = false;
         UsageProvider usageProvider;
+
+        #endregion
+
+        #region internal methods
 
         internal void Parse(string arg, object instance)
         {
@@ -97,16 +106,34 @@ namespace Ntreev.Library
 
         }
 
+        #endregion
+
+        #region public properties
+
+        /// <summary>
+        /// 인자와 스위치가 한 문자열내에 포함되어 있을때 이를 구분하는 문자를 가져옵니다.
+        /// </summary>
+        /// <remarks>
+        /// 이 속성의 값이 null이면 인자와 스위치는 공백으로 구분되어져 있습니다.
+        /// <seealso cref="Char.MinValue"/>일 경우에는 스위치와 인자가 하나의 단어로 이루어져 있는 상태입니다.
+        /// 그외에는 <see cref="Char.IsPunctuation"/>의 값이 true인 문자로 구분되어집니다.
+        /// </remarks>
         public char? ArgSeperator
         {
             get { return this.switchAttribute.GetArgSeperator(); }
         }
 
+        /// <summary>
+        /// 스위치의 사용 방법을 제공하는 제공자의 인스턴스를 간져옵니다.
+        /// </summary>
         public UsageProvider UsageProvider
         {
             get { return this.usageProvider; }
         }
 
+        /// <summary>
+        /// 스위치의 짧은 이름을 가져옵니다.
+        /// </summary>
         public string ShortName
         {
             get
@@ -115,16 +142,25 @@ namespace Ntreev.Library
             }
         }
 
+        /// <summary>
+        /// 스위치의 이름을 가져옵니다.
+        /// </summary>
         public string Name
         {
             get { return this.propertyDescriptor.Name; }
         }
 
+        /// <summary>
+        /// 스위치의 표시 이름을 가져옵니다.
+        /// </summary>
         public string DisplayName
         {
             get { return this.propertyDescriptor.DisplayName; }
         }
 
+        /// <summary>
+        /// 스위치의 부가적인 설명을 가져옵니다.
+        /// </summary>
         public string Description
         {
             get
@@ -133,6 +169,9 @@ namespace Ntreev.Library
             }
         }
 
+        /// <summary>
+        /// 파싱할때 해당 스위치가 꼭 필요한지에 대한 여부를 가져옵니다.
+        /// </summary>
         public bool Required
         {
             get { return this.switchAttribute.Required; }
@@ -143,15 +182,23 @@ namespace Ntreev.Library
             get { return this.switchAttribute.MutuallyExclusive; }
         }
 
+        /// <summary>
+        /// 파싱후 해당 스위치가 파싱에 성공했는지에 대한 여부를 가져옵니다.
+        /// </summary>
         public bool Parsed
         {
             get { return this.parsed; }
         }
 
+        /// <summary>
+        /// 해당 스위치가 가지고 있는 인자의 타입을 가져옵니다.
+        /// </summary>
         public Type ArgType
         {
             get { return this.propertyDescriptor.PropertyType; }
         }
+
+        #endregion
     }
 }
     

@@ -78,19 +78,9 @@ namespace Ntreev.Library
 
                 this.Version = assembly.GetName().Version.ToString();
 
-                this.License = "the MIT License http://www.opensource.org/licenses/mit-license.php.";
+                this.License = Resource.License;
 
                 this.commandLineParser = commandLineParser;
-
-                //[assembly: AssemblyTitle("Ntreev.LicenseWriter")]
-                //[assembly: AssemblyDescription("")]
-                //[assembly: AssemblyConfiguration("")]
-                //[assembly: AssemblyCompany("NTREEV SOFT")]
-                //[assembly: AssemblyProduct("Ntreev.LicenseWriter")]
-                //[assembly: AssemblyCopyright("Copyright © NtreevSoft 2011")]
-                //[assembly: AssemblyTrademark("")]
-                //[assembly: AssemblyCulture("")]
-
             }
 
             internal void PrintSwitchUsage(string switchName)
