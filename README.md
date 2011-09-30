@@ -1,42 +1,49 @@
+===========================================
+
 Example
 -------
 
-using System;
-using Ntreev.Library;
+SourceCode:
 
-namespace Example
-{
-    class Program
+    using System;
+    using Ntreev.Library;
+
+    namespace Example
     {
-        static void Main()
+        class Program
         {
-            Options options = new Options();
-            CommandLineParser parser = new CommandLineParser();
-
-            if (parser.TryParse(Environment.CommandLine, options) == false)
+            static void Main()
             {
-                Environment.Exit(1);
-            }
-            Environment.Exit(0);
-        }
+                Options options = new Options();
+                CommandLineParser parser = new CommandLineParser();
 
-        class Options
-        {
-            public bool Toggle { get; set; }
-            [Switch("i")]
-            public int Index { get; set; }
-            public string Text { get; set; }
+                if (parser.TryParse(Environment.CommandLine, options) == false)
+                {
+                    parser.PrintUsage();
+                    Environment.Exit(1);
+                }
+                Environment.Exit(0);
+            }
+
+            class Options
+            {
+                public bool Toggle { get; set; }
+                [Switch("i")]
+                public int Index { get; set; }
+                public string Text { get; set; }
+            }
         }
     }
-}
 
-You can call like this
-  C:\> Example.exe /Toggle /Index 3 /Text "this is text"
-or
-  C:\> Example.exe /i 3
+You can call like this:
+
+    C:\> Example.exe /Toggle /Index 3 /Text "this is text"
+    or
+    C:\> Example.exe /i 3
 
 
 License
+-------
 
 Ntreev CommandLineParser for .Net 
 https://github.com/NtreevSoft/CommandLineParser
