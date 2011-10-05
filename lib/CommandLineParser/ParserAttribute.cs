@@ -26,8 +26,24 @@ using System.Text;
 
 namespace Ntreev.Library
 {
-    public class SwitchAttributeCollection : Dictionary<string, SwitchAttribute>
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ParserAttribute : Attribute
     {
+        readonly Type parserType;
 
+        public ParserAttribute()
+        {
+            this.parserType = typeof(Parser);
+        }
+
+        public ParserAttribute(Type parserType)
+        {
+            this.parserType = parserType;
+        }
+
+        public Type ParserType
+        {
+            get { return this.parserType; }
+        }
     }
 }

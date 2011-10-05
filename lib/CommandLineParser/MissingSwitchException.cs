@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.

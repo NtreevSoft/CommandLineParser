@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -26,6 +26,7 @@ using System.Text;
 using Ntreev.Library;
 using System.IO;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace SampleApplication
 {
@@ -35,7 +36,8 @@ namespace SampleApplication
         {
             Options options = new Options();
             CommandLineParser parser = new CommandLineParser();
-            SwitchAttribute.SwitchDelimiter = '-';
+
+            List<int> list = new List<int>();
 
             try
             {
@@ -95,6 +97,29 @@ namespace SampleApplication
             [Description("파일 경로를 나타냅니다.")]
             [DisplayName("File Path")]
             public FileInfo Path { get; set; }
+
+            [Description("list of paths")]
+            public List<int> PathList { get; set; }
+
+            public Options()
+            {
+                
+            }
+
+            class PathListTypeConverter : TypeConverter
+            {
+                public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+                {
+                    if (sourceType == typeof(string))
+                        return true;
+                    return base.CanConvertFrom(context, sourceType);
+                }
+
+                public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+                {
+                    return base.ConvertFrom(context, culture, value);
+                }
+            }
 
             class FileInfoTypeConverter : TypeConverter
             {

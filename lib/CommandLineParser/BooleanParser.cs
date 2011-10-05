@@ -26,8 +26,15 @@ using System.Text;
 
 namespace Ntreev.Library
 {
-    public class SwitchAttributeCollection : Dictionary<string, SwitchAttribute>
+    class BooleanParser : Parser
     {
-
+        public override object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
+        {
+            if (switchDescriptor.ArgType == typeof(bool) && switchDescriptor.ArgSeperator == null)
+            {
+                return true;
+            }
+            return base.Parse(switchDescriptor, arg, value);
+        }
     }
 }

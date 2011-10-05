@@ -7,6 +7,7 @@ SourceCode:
 
     using System;
     using Ntreev.Library;
+	using System.Collections.Generic;
 
     namespace Example
     {
@@ -31,15 +32,16 @@ SourceCode:
                 [Switch("i")]
                 public int Index { get; set; }
                 public string Text { get; set; }
+				public List<int> Numbers { get; set; }
             }
         }
     }
 
 You can call like this:
 
-    C:\> Example.exe /Toggle /Index 3 /Text "this is text"
+    C:\>Example.exe /Toggle /Index 3 /Text "this is text" /Numbers "1,2,3,4,5"
     or
-    C:\> Example.exe /i 3
+    C:\>Example.exe /i 3
 
 
 License

@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -142,7 +142,7 @@ namespace Ntreev.Library
                 string[] switchLines, unusedArgs;
                 SplitSwitches(this.arguments, out switchLines);
 
-                SwitchDescriptorCollection switchCollection = SwitchDescriptorCollection.GetSwitches(instance, switches);
+                SwitchDescriptorCollection switchCollection = SwitchDescriptorContext.GetSwitches(instance, switches);
                 switchCollection.AssertValidation();
                 switchCollection.AssertMutuallyExclusive();
 
@@ -259,6 +259,14 @@ namespace Ntreev.Library
         public string[] UnusedArguments
         {
             get { return this.unusedArguments.ToArray(); }
+        }
+
+        /// <summary>
+        /// 사용방법을 출력하는 방법을 나타내는 인스턴를 가져옵니다.
+        /// </summary>
+        public UsagePrinter Usage
+        {
+            get { return this.usagePrinter; }
         }
 
         #endregion

@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -51,16 +51,18 @@ namespace Ntreev.Library
                 Type argType = this.SwitchDescriptor.ArgType;
                 if (argType != typeof(bool) || argSeperator != null)
                 {
+                    string argTypeName = this.SwitchDescriptor.ArgTypeSummary;
+
                     if (argSeperator == null)
                     {
-                        help += string.Format(" <{0}>", argType.Name);
+                        help += string.Format(" <{0}>", argTypeName);
                     }
                     else
                     {
                         if (argSeperator != char.MinValue)
-                            help += string.Format("<{0}{1}>", argSeperator, argType.Name);
+                            help += string.Format("<{0}{1}>", argSeperator, argTypeName);
                         else
-                            help += string.Format("<{0}>", argType.Name);
+                            help += string.Format("<{0}>", argTypeName);
                     }
                 }
                 return help;

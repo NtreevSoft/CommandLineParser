@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -26,6 +26,7 @@ using System.Text;
 using System.IO;
 using Ntreev.Library;
 using System.ComponentModel;
+using System.Net;
 
 namespace CommandLineParserTest.Options
 {
@@ -75,7 +76,7 @@ namespace CommandLineParserTest.Options
 
     class ArgSeperatorSwitches
     {
-        [Switch(ArgSeperator = char.MinValue)]
+        [Switch(ArgSeperator = '\0')]
         public int Level { get; set; }
 
         [Switch(ArgSeperator = ':')]
@@ -89,5 +90,46 @@ namespace CommandLineParserTest.Options
 
         [Switch("index")]
         public int Index2 { get; set; }
+    }
+
+    class ListSwitches
+    {
+        List<int> numbers = new List<int>();
+
+        public ListSwitches()
+        {
+
+        }
+
+        public List<int> Numbers { get; set; }
+
+        public List<int> InternalNumbers
+        {
+            get { return this.numbers; }
+        }
+
+        public List<string> Texts { get; set; }
+
+        [Parser(typeof(IPAddressListParser))]
+        public List<IPAddress> IPs { get; set; }
+
+        [Parser(typeof(PathListParser))]
+        public List<string> PathList { get; set; }
+
+        class IPAddressListParser : ListParser
+        {
+            protected override object OnItemParse(string arg, Type itemType)
+            {
+                return IPAddress.Parse(arg);
+            }
+        }
+
+        class PathListParser : ListParser
+        {
+            protected override string[] SplitArgument(string arg)
+            {
+                return arg.Split(new char[] { '|', });
+            }
+        }
     }
 }

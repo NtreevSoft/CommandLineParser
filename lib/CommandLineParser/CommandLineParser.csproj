@@ -70,15 +70,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooleanParser.cs" />
+    <Compile Include="ListParser.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="InternalUsageProvider.cs" />
     <Compile Include="IOptions.cs" />
+    <Compile Include="ParserAttribute.cs" />
     <Compile Include="ParsingOptions.cs" />
     <Compile Include="Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="SwitchDescriptorContext.cs" />
     <Compile Include="UsageProvider.cs" />
     <Compile Include="MissingSwitchException.cs" />
     <Compile Include="CommandLineParser.UsagePrinter.cs" />

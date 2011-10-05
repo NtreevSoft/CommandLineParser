@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -34,62 +34,6 @@ namespace Ntreev.Library
     class SwitchDescriptorCollection : ICollection
     {
         List<SwitchDescriptor> internalDescriptors = null;
-
-        delegate bool Filter(SwitchAttribute obj);
-
-        static bool ByRequired(SwitchAttribute obj)
-        {
-            return obj.Required == true;
-        }
-
-        static int NameComparison(SwitchDescriptor x, SwitchDescriptor y)
-        {
-            return x.Name.CompareTo(y.Name);
-        }
-
-        static int ShortNameComparison(SwitchDescriptor x, SwitchDescriptor y)
-        {
-            return x.ShortName.CompareTo(y.ShortName);
-        }
-
-        static SwitchDescriptorCollection GetSwitches(object instance, SwitchAttributeCollection extenedSwitchAttributes, Filter filter)
-        {
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(instance);
-            List<SwitchDescriptor> validProperties = new List<SwitchDescriptor>();
-
-            foreach (PropertyDescriptor item in properties)
-            {
-                if (item.IsBrowsable == false || item.IsReadOnly == true)
-                    continue;
-
-                if (item.Converter.CanConvertFrom(typeof(string)) == false)
-                    continue;
-
-                SwitchAttribute optionAttribute = item.Attributes[typeof(SwitchAttribute)] as SwitchAttribute;
-
-                if (optionAttribute == null)
-                {
-                    if (extenedSwitchAttributes != null && extenedSwitchAttributes.ContainsKey(item.Name) == true)
-                        optionAttribute = extenedSwitchAttributes[item.Name];
-                    else
-                        optionAttribute = SwitchAttribute.DefaultValue;
-                }
-
-                if (filter == null || filter(optionAttribute) == true)
-                    validProperties.Add(new SwitchDescriptor(item, optionAttribute));
-            }
-            return new SwitchDescriptorCollection(validProperties);
-        }
-
-        public static SwitchDescriptorCollection GetSwitches(object instance, SwitchAttributeCollection extenedSwitchAttributes)
-        {
-            return GetSwitches(instance, extenedSwitchAttributes, (Filter)null);
-        }
-
-        public static SwitchDescriptorCollection GetRequiredSwitches(object instance, SwitchAttributeCollection extenedSwitchAttributes)
-        {
-            return GetSwitches(instance, extenedSwitchAttributes, SwitchDescriptorCollection.ByRequired);
-        }
 
         void SplitUnusedArgs(string args, List<string> unusedList)
         {
@@ -213,7 +157,7 @@ namespace Ntreev.Library
 
                     foreach (SwitchDescriptor switchDescriptor in this.internalDescriptors)
                     {
-                        if (switchDescriptor.Parsed == true)
+                        if (switchDescriptor.Parsed == true && switchDescriptor.AllowMultiple == false)
                             continue;
 
                         string pattern = switchDescriptor.GetPattern(switchGroupName, argGourpName);

@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -28,6 +28,8 @@ using Ntreev;
 using System.IO;
 using Ntreev.Library;
 using CommandLineParserTest.Options;
+using CommandLineParserTest.Library;
+using System.Net;
 
 namespace CommandLineParserTest
 {
@@ -75,8 +77,11 @@ namespace CommandLineParserTest
         // public static void MyClassCleanup() { }
         //
         // 테스트를 작성할 때 다음 추가 특성을 사용할 수 있습니다. 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
+         [TestInitialize()]
+         public void MyTestInitialize() 
+         {
+             Assert.AreEqual('/', SwitchAttribute.SwitchDelimiter);
+         }
         //
         // TestInitialize를 사용하여 각 테스트를 실행하기 전에 코드를 실행합니다.
         // [TestCleanup()]
@@ -142,6 +147,8 @@ namespace CommandLineParserTest
             {
 
             }
+
+            SwitchAttribute.SwitchDelimiter = '/';
         }
 
         [TestMethod]
@@ -244,6 +251,47 @@ namespace CommandLineParserTest
         public void SwitchTypeArgTest()
         {
 
+        }
+
+        [TestMethod]
+        public void ListSwitchesTest()
+        {
+            ListSwitches options = new ListSwitches();
+            CommandLineParser parser = new CommandLineParser();
+
+            CommandLineBuilder cmdBuilder = new CommandLineBuilder();
+
+            cmdBuilder.AddSwitch("IPs", "255.255.255.255", "1.1.1.1");
+            cmdBuilder.AddSwitch("InternalNumbers", 1, 2, 3, 4, 5);
+            cmdBuilder.AddSwitch("Numbers", 9, 8, 7, 6, 5, 4);
+            cmdBuilder.AddSwitch("Texts", "command", "line", "parse");
+            cmdBuilder.AddSwitch("PathList", '|', @"d:\license directory\license.txt", @"d:\sourceCode.txt");
+
+            parser.Parse(cmdBuilder.ToString(), options);
+
+            Assert.AreEqual(options.IPs.Count, cmdBuilder.GetArgCount("IPs"));
+            for (int i = 0; i < options.IPs.Count; i++)
+            {
+                Assert.AreEqual(options.IPs[i].ToString(), cmdBuilder["IPs", i].ToString());
+            }
+
+            Assert.AreEqual(options.InternalNumbers.Count, cmdBuilder.GetArgCount("InternalNumbers"));
+            for (int i = 0; i < options.InternalNumbers.Count; i++)
+            {
+                Assert.AreEqual(options.InternalNumbers[i].ToString(), cmdBuilder["InternalNumbers", i].ToString());
+            }
+
+            Assert.AreEqual(options.Numbers.Count, cmdBuilder.GetArgCount("Numbers"));
+            for (int i = 0; i < options.Numbers.Count; i++)
+            {
+                Assert.AreEqual(options.Numbers[i].ToString(), cmdBuilder["Numbers", i].ToString());
+            }
+
+            Assert.AreEqual(options.Texts.Count, cmdBuilder.GetArgCount("Texts"));
+            for (int i = 0; i < options.Texts.Count; i++)
+            {
+                Assert.AreEqual(options.Texts[i].ToString(), cmdBuilder["Texts", i].ToString());
+            }
         }
     }
 }

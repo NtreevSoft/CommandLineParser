@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -65,6 +65,7 @@ namespace Ntreev.Library
         {
             this.Required = false;
             this.MutuallyExclusive = string.Empty;
+            this.ArgTypeSummary = string.Empty;
 
             foreach (char item in this.shortName)
             {
@@ -89,6 +90,11 @@ namespace Ntreev.Library
         {
             get { return this.shortName; }
         }
+
+        /// <summary>
+        /// 인수 형식의 요약을 나타내는 문자열입니다.
+        /// </summary>
+        public string ArgTypeSummary { get; set; }
 
         /// <summary>
         /// 해당 스위치가 꼭 필요한지의 여부를 설정하거나 가져옵니다.
@@ -121,6 +127,8 @@ namespace Ntreev.Library
                 this.argSeperator = (char)value; 
             }
         }
+
+        public bool AllowMultiple { get; set; }
 
         public string MutuallyExclusive { get; set; }
 

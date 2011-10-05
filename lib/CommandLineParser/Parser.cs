@@ -23,11 +23,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 
 namespace Ntreev.Library
 {
-    public class SwitchAttributeCollection : Dictionary<string, SwitchAttribute>
+    public class Parser
     {
+        public Parser()
+        {
 
+        }
+
+        virtual public object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
+        {
+            TypeConverter typeConverter = switchDescriptor.Converter;
+
+            if (typeConverter.CanConvertFrom(typeof(string)) == false)
+                throw new NotSupportedException("타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.");
+
+            try
+            {
+                value = typeConverter.ConvertFrom(arg);
+            }
+            catch (Exception e)
+            {
+                throw new SwitchException("잘못된 인수 형식입니다.", switchDescriptor.Name, e);
+            }
+            return value;
+        }
     }
 }

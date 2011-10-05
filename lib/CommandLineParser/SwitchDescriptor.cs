@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace Ntreev.Library
 {
@@ -42,35 +43,22 @@ namespace Ntreev.Library
 
         #endregion
 
+        #region private methods
+
+        #endregion
+
         #region internal methods
 
         internal void Parse(string arg, object instance)
         {
-            Type type = this.propertyDescriptor.PropertyType;
-            object value = null;
+            object value = this.propertyDescriptor.GetValue(instance);
 
-            if (type == typeof(bool) && this.switchAttribute.GetArgSeperator() == null) /// 한가지 예외. 이것은 도저히 방법이 없다.
-            {
-                value = true;
-            }
-            else
-            {
-                TypeConverter typeConverter = this.propertyDescriptor.Converter;
-                if (typeConverter.CanConvertFrom(typeof(string)) == false)
-                    throw new NotSupportedException("타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.");
+            Parser parser = SwitchDescriptorContext.GetParser(this.propertyDescriptor, instance);
+            object newValue = parser.Parse(this, arg, value);
 
-                try
-                {
-                    value = typeConverter.ConvertFrom(arg);
-                }
-                catch (Exception e)
-                {
-                    throw new SwitchException("잘못된 인수 형식입니다.", this.Name, e);
-                }
-            }
+            if (value != newValue && this.propertyDescriptor.IsReadOnly == false)
+                this.propertyDescriptor.SetValue(instance, newValue);
 
-            if (value != null)
-                this.propertyDescriptor.SetValue(instance, value);
             this.parsed = true;
         }
 
@@ -124,7 +112,6 @@ namespace Ntreev.Library
                     new Type[] { typeof(SwitchDescriptor), },
                     new object[] { this, }) as UsageProvider;
             }
-
         }
 
         #endregion
@@ -190,6 +177,22 @@ namespace Ntreev.Library
             }
         }
 
+        public string ArgTypeSummary
+        {
+            get
+            {
+                if (this.switchAttribute.ArgTypeSummary != string.Empty)
+                    return this.switchAttribute.ArgTypeSummary;
+
+                Type elementType = ListParser.GetElementType(this.propertyDescriptor.PropertyType);
+                if (elementType != null)
+                {
+                    return elementType.Name + ", ...";
+                }
+                return this.ArgType.Name;
+            }
+        }
+
         /// <summary>
         /// 파싱할때 해당 스위치가 꼭 필요한지에 대한 여부를 가져옵니다.
         /// </summary>
@@ -217,6 +220,16 @@ namespace Ntreev.Library
         public Type ArgType
         {
             get { return this.propertyDescriptor.PropertyType; }
+        }
+
+        public bool AllowMultiple
+        {
+            get { return this.switchAttribute.AllowMultiple; }
+        }
+
+        public TypeConverter Converter
+        {
+            get { return this.propertyDescriptor.Converter; }
         }
 
         #endregion

@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 
+//Ntreev CommandLineParser for .Net 1.0.4295.27782
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -111,7 +111,7 @@ namespace Ntreev.Library
                     throw new Exception();
                 SwitchAttributeCollection switchAttributes = this.commandLineParser.SwitchAttributes;
 
-                SwitchDescriptorCollection switchDescriptorCollection = SwitchDescriptorCollection.GetSwitches(instance, switchAttributes);
+                SwitchDescriptorCollection switchDescriptorCollection = SwitchDescriptorContext.GetSwitches(instance, switchAttributes);
                 OnPrintSwitchUsage(switchName, switchDescriptorCollection[switchName], this.commandLineParser.TextWriter);
             }
 
@@ -122,7 +122,7 @@ namespace Ntreev.Library
                     throw new Exception();
                 SwitchAttributeCollection switchAttributes = this.commandLineParser.SwitchAttributes;
 
-                SwitchDescriptorCollection switchDescriptorCollection = SwitchDescriptorCollection.GetSwitches(instance, switchAttributes);
+                SwitchDescriptorCollection switchDescriptorCollection = SwitchDescriptorContext.GetSwitches(instance, switchAttributes);
                 OnPrintUsage(switchDescriptorCollection.ToArray(), this.commandLineParser.TextWriter);
             }
 
