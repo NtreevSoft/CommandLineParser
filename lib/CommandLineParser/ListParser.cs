@@ -28,6 +28,9 @@ using System.ComponentModel;
 
 namespace Ntreev.Library
 {
+    /// <summary>
+    /// 문자열을 리스트 형식으로 변환하는 방법을 제공합니다.
+    /// </summary>
     public class ListParser : Parser
     {
         public override object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
@@ -43,7 +46,7 @@ namespace Ntreev.Library
                 list = value as System.Collections.IList;
             }
 
-            Type type = GetElementType(switchDescriptor.ArgType);
+            Type type = GetItemType(switchDescriptor.ArgType);
             if (type == null)
                 throw new NotSupportedException();
             string[] args = SplitArgument(arg);
@@ -61,24 +64,40 @@ namespace Ntreev.Library
             }
             catch (Exception e)
             {
-                throw new SwitchException("잘못된 인수 형식입니다.", switchDescriptor.Name, e);
+                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
 
             return list;
         }
 
+        /// <summary>
+        /// 문자열에서 항목별 문자열로 분리합니다.
+        /// </summary>
+        /// <param name="arg">항목별 문자열이 담긴 문자열입니다.</param>
+        /// <returns>분리된 항목별 문자열의 배열입니다.</returns>
         virtual protected string[] SplitArgument(string arg)
         {
             return arg.Split(new char[] { ',', });
         }
 
+        /// <summary>
+        /// 항목별 문자열을 데이터로 변환합니다.
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <param name="itemType">항목의 데이터 형식을 나타냅니다.</param>
+        /// <returns>항목을 나타내는 문자열을 데이터로 변환한 값을 나타냅니다.</returns>
         virtual protected object OnItemParse(string arg, Type itemType)
         {
             TypeConverter typeConverter = TypeDescriptor.GetConverter(itemType);
             return typeConverter.ConvertFrom(arg);
         }
 
-        static public Type GetElementType(Type propertyType)
+        /// <summary>
+        /// 속성의 타입이 리스트 형태일때 항목의 타입을 가져옵니다.
+        /// </summary>
+        /// <param name="propertyType">리스트를 나타내는 타입입니다.</param>
+        /// <returns>리스트 형식의 타입이면 항목의 타입을 반환합니다. 그렇지 않다면 null을 반환합니다.</returns>
+        static public Type GetItemType(Type propertyType)
         {
             PropertyInfo[] properties = TypeDescriptor.GetReflectionType(propertyType).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 

@@ -27,19 +27,33 @@ using System.ComponentModel;
 
 namespace Ntreev.Library
 {
+    /// <summary>
+    /// 문자열을 파싱하여 데이터로 변환할 수 있는 방법을 제공합니다.
+    /// </summary>
     public class Parser
     {
+        /// <summary>
+        /// <seealso cref="Parser"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public Parser()
         {
 
         }
 
+        /// <summary>
+        /// 문자열을 파싱하여 데이터로 변환합니다.
+        /// </summary>
+        /// <param name="switchDescriptor">파싱할 스위치의 정보를 담고 있는<seealso cref="SwitchDescriptor"/>의 인스턴스입니다.</param>
+        /// <param name="arg">파싱할 문자열을 나타냅니다.</param>
+        /// <param name="value">파싱할 스위치와 연결되어 있는 데이터의 원본값 입니다.</param>
+        /// <returns>문자열을 데이터로 변환한 값 입니다.</returns>
+        /// <exception cref="NotSupportedException">문자열을 데이터로 변환할 수 없을때</exception>
         virtual public object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
         {
             TypeConverter typeConverter = switchDescriptor.Converter;
 
             if (typeConverter.CanConvertFrom(typeof(string)) == false)
-                throw new NotSupportedException("타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.");
+                throw new NotSupportedException(Properties.Resources.CannotConvertFromString);
 
             try
             {
@@ -47,7 +61,7 @@ namespace Ntreev.Library
             }
             catch (Exception e)
             {
-                throw new SwitchException("잘못된 인수 형식입니다.", switchDescriptor.Name, e);
+                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
             return value;
         }

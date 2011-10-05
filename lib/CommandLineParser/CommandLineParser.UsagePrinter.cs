@@ -99,7 +99,7 @@ namespace Ntreev.Library
 
                 this.Version = assembly.GetName().Version.ToString();
 
-                this.License = Resource.License;
+                this.License = Properties.Resources.License;
 
                 this.commandLineParser = commandLineParser;
             }
@@ -150,9 +150,9 @@ namespace Ntreev.Library
                 textWriter.WriteLine(this.License);
                 textWriter.WriteLine();
                 if (this.Usage == null)
-                    textWriter.WriteLine("Usage: {0}", GetDefaultUsage(switchDescriptors));
+                    textWriter.WriteLine("{0}: {1}", Properties.Resources.Usage, GetDefaultUsage(switchDescriptors));
                 else
-                    textWriter.WriteLine("Usage: {0}", this.Usage);
+                    textWriter.WriteLine("{0}: {1}", Properties.Resources.Usage, this.Usage);
 
                 int len = 0;
 

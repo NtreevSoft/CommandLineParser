@@ -48,7 +48,7 @@ namespace Ntreev.Library
             set
             {
                 if (char.IsPunctuation(value) == false)
-                    throw new Exception("SwitchDelimiter는 문장부호여야만 합니다.");
+                    throw new Exception(Properties.Resources.SwitchDelimiterMustBePunctuation);
                 SwitchAttribute.switchDelimiter = value;
             }
         }
@@ -70,7 +70,7 @@ namespace Ntreev.Library
             foreach (char item in this.shortName)
             {
                 if (char.IsLetterOrDigit(item) == false)
-                    throw new Exception("스위치의 이름은 문자 또는 숫자여야만 합니다.");
+                    throw new Exception(Properties.Resources.InvalidSwitchName);
             }
         }
 

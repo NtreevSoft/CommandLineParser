@@ -46,7 +46,5 @@ namespace Ntreev.Library
         /// 파싱할때 스위치 이름의 대소문자를 구분합니다.
         /// </summary>
         CaseSensitive = 2,
-
-
     }
 }

@@ -137,7 +137,7 @@ namespace Ntreev.Library
                 this.arguments = this.arguments.Trim();
 
                 if (arguments.Length == 0)
-                    throw new ArgumentException(Resource.NoArguments, commandLine);
+                    throw new ArgumentException(Properties.Resources.NoArguments, commandLine);
 
                 string[] switchLines, unusedArgs;
                 SplitSwitches(this.arguments, out switchLines);

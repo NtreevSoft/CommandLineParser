@@ -26,21 +26,33 @@ using System.Text;
 
 namespace Ntreev.Library
 {
+    /// <summary>
+    /// 스위치에 사용할 파서의 타입을 지정합니다.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class ParserAttribute : Attribute
     {
         readonly Type parserType;
 
+        /// <summary>
+        /// <seealso cref="ParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public ParserAttribute()
         {
             this.parserType = typeof(Parser);
         }
 
+        /// <summary>
+        /// 파서의 타입을 가지고 <seealso cref="ParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// </summary>
         public ParserAttribute(Type parserType)
         {
             this.parserType = parserType;
         }
 
+        /// <summary>
+        /// 파서의 타입을 나타냅니다.
+        /// </summary>
         public Type ParserType
         {
             get { return this.parserType; }

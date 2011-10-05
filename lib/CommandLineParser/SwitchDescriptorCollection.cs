@@ -75,7 +75,7 @@ namespace Ntreev.Library
             foreach (SwitchDescriptor item in this.internalDescriptors)
             {
                 if (item.Required == true && item.Parsed == false)
-                    throw new MissingSwitchException(Resource.SwitchIsMissing, item.Name);
+                    throw new MissingSwitchException(Properties.Resources.SwitchIsMissing, item.Name);
             }
         }
 
@@ -95,7 +95,7 @@ namespace Ntreev.Library
                     continue;
 
                 if (hashSet.Contains(shortName) == true)
-                    throw new SwitchException(Resource.SwitchWasAlreadyRegistered, shortName);
+                    throw new SwitchException(Properties.Resources.SwitchWasAlreadyRegistered, shortName);
                 hashSet.Add(shortName);
             }
         }
@@ -119,7 +119,7 @@ namespace Ntreev.Library
                     bool required = keys[key];
 
                     if (required != item.Required)
-                        throw new SwitchException("MutuallyExclusive가 같은 스위치는 Required 속성값이 모두 true거나 false여야 합니다.", item.ShortName);
+                        throw new SwitchException(Properties.Resources.MutuallyExclusiveException, item.ShortName);
                 }
             }
         }
@@ -173,7 +173,7 @@ namespace Ntreev.Library
                             if (switchDescriptor.MutuallyExclusive != string.Empty &&
                                 mutuallyExclusive.Contains(switchDescriptor.MutuallyExclusive) == true)
                             {
-                                throw new SwitchException("같은 값의 상호배타적 스위치가 이미 설정되었습니다.", switchDescriptor.ShortName);
+                                throw new SwitchException(Properties.Resources.MutuallyExclusiveSwitchIsAlreadySet, switchDescriptor.ShortName);
                             }
 
                             switchDescriptor.Parse(a, instance);
@@ -198,11 +198,11 @@ namespace Ntreev.Library
                         if (match.Success == true)
                         {
                             string matchedString = match.Groups["switchName"].ToString();
-                            throw new SwitchException(Resource.InvalidSwitchWasIncluded +"\r\n  - " + switchLine, matchedString);
+                            throw new SwitchException(Properties.Resources.InvalidSwitchWasIncluded +"\r\n  - " + switchLine, matchedString);
                         }
                         else
                         {
-                            throw new SwitchException(Resource.InvalidSwitchWasIncluded +"\r\n  - " + switchLine);
+                            throw new SwitchException(Properties.Resources.InvalidSwitchWasIncluded +"\r\n  - " + switchLine);
                         }
                     }
                 }
