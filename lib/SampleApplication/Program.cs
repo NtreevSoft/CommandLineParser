@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4295.27782
+//Ntreev CommandLineParser for .Net 1.0.4461.33698
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -19,6 +19,8 @@
 //COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
 //OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,19 @@ namespace SampleApplication
             CommandLineParser parser = new CommandLineParser();
 
             List<int> list = new List<int>();
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            Type[] types = Assembly.GetAssembly(typeof(int)).GetExportedTypes();
+
+            List<Type> onlyValues = new List<Type>();
+            foreach (Type item in types)
+            {
+                if (item.IsValueType == true)
+                    onlyValues.Add(item);
+            }
+
+            int qwer = 0;
 
             try
             {
@@ -100,6 +115,8 @@ namespace SampleApplication
 
             [Description("list of paths")]
             public List<int> PathList { get; set; }
+
+            public string[] TextArray { get; set; }
 
             public Options()
             {
