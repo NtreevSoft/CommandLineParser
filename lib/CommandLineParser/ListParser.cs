@@ -39,15 +39,22 @@ namespace Ntreev.Library
 
             if (value == null)
             {
-                list = TypeDescriptor.CreateInstance(null, switchDescriptor.ArgType, null, null) as System.Collections.IList;
+                if (switchDescriptor.ArgType.IsArray == true)
+                {
+                    list = new System.Collections.ArrayList() as System.Collections.IList;
+                }
+                else
+                {
+                    list = TypeDescriptor.CreateInstance(null, switchDescriptor.ArgType, null, null) as System.Collections.IList;
+                }
             }
             else
             {
                 list = value as System.Collections.IList;
             }
 
-            Type type = GetItemType(switchDescriptor.ArgType);
-            if (type == null)
+            Type itemType = GetItemType(switchDescriptor.ArgType);
+            if (itemType == null)
                 throw new NotSupportedException();
             string[] args = SplitArgument(arg);
 
@@ -58,8 +65,15 @@ namespace Ntreev.Library
                     string s = item.Trim();
                     if(s.Length == 0)
                         continue;
-                    object element = OnItemParse(s, type);
+                    object element = OnItemParse(s, itemType);
                     list.Add(element);
+                }
+
+                if (switchDescriptor.ArgType.IsArray == true)
+                {
+                    Array array = Array.CreateInstance(itemType, list.Count);
+                    list.CopyTo(array, 0);
+                    list = array as System.Collections.IList;
                 }
             }
             catch (Exception e)
@@ -99,16 +113,22 @@ namespace Ntreev.Library
         /// <returns>리스트 형식의 타입이면 항목의 타입을 반환합니다. 그렇지 않다면 null을 반환합니다.</returns>
         static public Type GetItemType(Type propertyType)
         {
-            PropertyInfo[] properties = TypeDescriptor.GetReflectionType(propertyType).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            foreach (PropertyInfo item in properties)
+            if (propertyType.IsArray == true)
             {
-                if (item.Name.Equals("Item") || item.Name.Equals("Items"))
+                return propertyType.GetElementType();
+            }
+            else
+            {
+                PropertyInfo[] properties = TypeDescriptor.GetReflectionType(propertyType).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                foreach (PropertyInfo item in properties)
                 {
-                    return item.PropertyType;
+                    if (item.Name.Equals("Item") || item.Name.Equals("Items"))
+                    {
+                        return item.PropertyType;
+                    }
                 }
             }
-
             return null;
         }
     }

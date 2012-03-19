@@ -108,7 +108,7 @@ namespace Ntreev.Library
 
             object value = propertyDescriptor.GetValue(instance);
 
-            if (typeof(System.Collections.IList).IsAssignableFrom(propertyDescriptor.PropertyType) == true)
+            if (propertyDescriptor.PropertyType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(propertyDescriptor.PropertyType) == true)
             {
                 return SwitchDescriptorContext.DefaultListParser;
             }

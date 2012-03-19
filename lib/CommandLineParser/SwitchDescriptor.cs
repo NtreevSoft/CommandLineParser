@@ -184,7 +184,7 @@ namespace Ntreev.Library
                 if (this.switchAttribute.ArgTypeSummary != string.Empty)
                     return this.switchAttribute.ArgTypeSummary;
 
-                Type elementType = ListParser.GetElementType(this.propertyDescriptor.PropertyType);
+                Type elementType = ListParser.GetItemType(this.propertyDescriptor.PropertyType);
                 if (elementType != null)
                 {
                     return elementType.Name + ", ...";

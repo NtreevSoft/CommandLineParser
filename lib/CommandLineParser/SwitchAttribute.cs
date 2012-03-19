@@ -120,9 +120,9 @@ namespace Ntreev.Library
                 if (value != char.MinValue)
                 {
                     if (char.IsPunctuation(value) == false)
-                        throw new Exception("ArgSeperator는 문장부호여야만 합니다.");
+                        throw new Exception(Properties.Resources.ArgSeperatorMustBeAPunctuation);
                     if (value == SwitchAttribute.SwitchDelimiter)
-                        throw new Exception("ArgSeperator는 SwitchDelimiter과 다른 문자여야 합니다.");
+                        throw new Exception(Properties.Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
                 }
                 this.argSeperator = (char)value; 
             }
