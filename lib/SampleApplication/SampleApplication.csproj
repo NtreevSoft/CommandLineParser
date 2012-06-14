@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SampleApplication</RootNamespace>
     <AssemblyName>SampleApplication</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,9 +48,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommandLineParser\CommandLineParser.csproj">
+    <ProjectReference Include="..\Ntreev.Library.CommandLineParser\Ntreev.Library.CommandLineParser.csproj">
       <Project>{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}</Project>
-      <Name>CommandLineParser</Name>
+      <Name>Ntreev.Library.CommandLineParser</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

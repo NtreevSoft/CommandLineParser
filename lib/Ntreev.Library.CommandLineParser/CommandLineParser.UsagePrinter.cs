@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -28,7 +28,7 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     public partial class CommandLineParser
     {
@@ -40,13 +40,13 @@ namespace Ntreev.Library
             CommandLineParser commandLineParser;
             string location;
 
-            string GetDefaultUsage(SwitchDescriptor[] switchDescriptors)
+            string GetDefaultUsage(CommandSwitchDescriptor[] switchDescriptors)
             {
                 FileInfo fileInfo = new FileInfo(this.location);
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.Append(string.Format("{0}", fileInfo.Name));
 
-                foreach (SwitchDescriptor item in switchDescriptors)
+                foreach (CommandSwitchDescriptor item in switchDescriptors)
                 {
                     if (item.Required == false)
                         continue;
@@ -111,9 +111,9 @@ namespace Ntreev.Library
                 object instance = this.commandLineParser.Instance;
                 if (instance == null)
                     throw new Exception();
-                SwitchAttributeCollection switchAttributes = this.commandLineParser.SwitchAttributes;
+                CommandSwitchAttributeCollection switchAttributes = this.commandLineParser.SwitchAttributes;
 
-                SwitchDescriptorCollection switchDescriptorCollection = SwitchDescriptorContext.GetSwitches(instance, switchAttributes);
+                CommandSwitchDescriptorCollection switchDescriptorCollection = CommandSwitchDescriptorContext.GetSwitches(instance, switchAttributes);
                 OnPrintSwitchUsage(switchName, switchDescriptorCollection[switchName], this.commandLineParser.TextWriter);
             }
 
@@ -122,9 +122,9 @@ namespace Ntreev.Library
                 object instance = this.commandLineParser.Instance;
                 if (instance == null)
                     throw new Exception();
-                SwitchAttributeCollection switchAttributes = this.commandLineParser.SwitchAttributes;
+                CommandSwitchAttributeCollection switchAttributes = this.commandLineParser.SwitchAttributes;
 
-                SwitchDescriptorCollection switchDescriptorCollection = SwitchDescriptorContext.GetSwitches(instance, switchAttributes);
+                CommandSwitchDescriptorCollection switchDescriptorCollection = CommandSwitchDescriptorContext.GetSwitches(instance, switchAttributes);
                 OnPrintUsage(switchDescriptorCollection.ToArray(), this.commandLineParser.TextWriter);
             }
 
@@ -144,7 +144,7 @@ namespace Ntreev.Library
 
             public string Usage { get; set; }
 
-            protected virtual void OnPrintUsage(SwitchDescriptor[] switchDescriptors, TextWriter textWriter)
+            protected virtual void OnPrintUsage(CommandSwitchDescriptor[] switchDescriptors, TextWriter textWriter)
             {
                 textWriter.WriteLine("{0} {1}", this.Title, this.Version);
                 textWriter.WriteLine(this.Copyright);
@@ -158,14 +158,14 @@ namespace Ntreev.Library
 
                 int len = 0;
 
-                foreach (SwitchDescriptor item in switchDescriptors)
+                foreach (CommandSwitchDescriptor item in switchDescriptors)
                 {
                     UsageProvider usageProvider = item.UsageProvider;
 
                     len = Math.Max(len, usageProvider.Usage.Length);
                 }
 
-                foreach (SwitchDescriptor item in switchDescriptors)
+                foreach (CommandSwitchDescriptor item in switchDescriptors)
                 {
                     UsageProvider usageProvider = item.UsageProvider;
                     string usage = string.Format("    {0} {1}", usageProvider.Usage, usageProvider.Description);
@@ -179,7 +179,7 @@ namespace Ntreev.Library
                 }
             }
 
-            protected virtual void OnPrintSwitchUsage(string switchName, SwitchDescriptor switchDescriptor, TextWriter textWriter)
+            protected virtual void OnPrintSwitchUsage(string switchName, CommandSwitchDescriptor switchDescriptor, TextWriter textWriter)
             {
                 if (switchDescriptor == null)
                 {

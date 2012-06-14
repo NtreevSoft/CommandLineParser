@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -31,10 +31,10 @@ using System.Text.RegularExpressions;
 
 using Trace = System.Diagnostics.Trace;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     /// <summary>
-    /// 커맨드 라인을 파싱할 수 있는 방법을 제공합니다.
+    /// 커맨드 라인을 분석할 수 있는 방법을 제공합니다.
     /// </summary>
     public partial class CommandLineParser
     {
@@ -47,7 +47,7 @@ namespace Ntreev.Library
         readonly UsagePrinter usagePrinter = null;
 
         object instance;
-        SwitchAttributeCollection switchAttributes;
+        CommandSwitchAttributeCollection switchAttributes;
         ParsingOptions parsingOptions;
 
         #endregion
@@ -65,13 +65,13 @@ namespace Ntreev.Library
         }
 
         /// <summary>
-        /// 문자열을 파싱하여 데이터로 변환합니다.
+        /// 문자열을 분석하여 데이터로 변환합니다.
         /// </summary>
         /// <returns>
         /// 모든 과정이 성공하면 true를, 그렇지 않다면 false를 반환합니다.
         /// </returns>
         /// <param name="commandLine">
-        /// 파싱할 문자열입니다. 
+        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
         /// </param>
         /// <param name="options">
         /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
@@ -81,6 +81,21 @@ namespace Ntreev.Library
             return TryParse(commandLine, options, ParsingOptions.None);
         }
 
+        /// <summary>
+        /// 문자열을 분석하여 데이터로 변환합니다.
+        /// </summary>
+        /// <returns>
+        /// 모든 과정이 성공하면 true를, 그렇지 않다면 false를 반환합니다.
+        /// </returns>
+        /// <param name="commandLine">
+        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
+        /// </param>
+        /// <param name="options">
+        /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
+        /// </param>
+        /// <param name="parsingOptions">
+        /// 문자열을 분석하기 위한 옵션입니다.
+        /// </param>
         public bool TryParse(string commandLine, object options, ParsingOptions parsingOptions)
         {
             try
@@ -95,17 +110,39 @@ namespace Ntreev.Library
             }
         }
 
+        /// <summary>
+        /// 문자열을 분석하여 데이터로 변환합니다.
+        /// </summary>
+        /// <param name="commandLine">
+        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
+        /// </param>
+        /// <param name="options">
+        /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
+        /// </param>
+        /// <exception cref="CommandSwitchException">
+        /// 스위치의 인자가 문자열에 의한 변환을 지원하지 않거나 변환할 수 없는 경우
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// commandLine에 전달 인자가 하나도 포함되어 있지 않은 경우
+        /// </exception>
         public void Parse(string commandLine, object options)
         {
             Parse(commandLine, options, ParsingOptions.None);
         }
 
         /// <summary>
-        /// 
+        /// 문자열을 분석하여 데이터로 변환합니다.
         /// </summary>
-        /// <param name="commandLine"></param>
-        /// <param name="options"></param>
-        /// <exception cref="SwitchException">
+        /// <param name="commandLine">
+        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
+        /// </param>
+        /// <param name="options">
+        /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
+        /// </param>
+        /// <param name="parsingOptions">
+        /// 문자열을 분석하기 위한 옵션입니다.
+        /// </param>
+        /// <exception cref="CommandSwitchException">
         /// 스위치의 인자가 문자열에 의한 변환을 지원하지 않거나 변환할 수 없는 경우
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -117,7 +154,7 @@ namespace Ntreev.Library
             {
                 Trace.WriteLine(string.Format("parsing options : {0}", parsingOptions));
                 object instance = options;
-                SwitchAttributeCollection switches = null;
+                CommandSwitchAttributeCollection switches = null;
 
                 if (options is IOptions)
                 {
@@ -131,12 +168,20 @@ namespace Ntreev.Library
 
                 this.unusedArguments.Clear();
 
-                Regex regex = new Regex(@"^((""(?<exe>[^""]*)"")|(?<exe>\S+))\s+(?<arg>.*)", RegexOptions.ExplicitCapture);
-                Match match = regex.Match(commandLine);
+                if (parsingOptions.HasFlag(ParsingOptions.NoExecutionPath) == false)
+                {
+                    Regex regex = new Regex(@"^((?<exe>""[^""]*"")|(?<exe>\S+))\s+(?<arg>.*)", RegexOptions.ExplicitCapture);
+                    Match match = regex.Match(commandLine);
 
-                this.command = match.Groups["exe"].ToString();
-                this.arguments = match.Groups["arg"].ToString();
-                this.arguments = this.arguments.Trim();
+                    this.command = match.Groups["exe"].Value;
+                    this.arguments = match.Groups["arg"].Value;
+                    this.arguments = this.arguments.Trim();
+                }
+                else
+                {
+                    this.command = string.Empty;
+                    this.arguments = commandLine.Trim();
+                }
 
                 if (arguments.Length == 0)
                     throw new ArgumentException(Properties.Resources.NoArguments, commandLine);
@@ -144,7 +189,7 @@ namespace Ntreev.Library
                 string[] switchLines, unusedArgs;
                 SplitSwitches(this.arguments, out switchLines);
 
-                SwitchDescriptorCollection switchCollection = SwitchDescriptorContext.GetSwitches(instance, switches);
+                CommandSwitchDescriptorCollection switchCollection = CommandSwitchDescriptorContext.GetSwitches(instance, switches);
                 switchCollection.AssertValidation();
                 switchCollection.AssertMutuallyExclusive();
 
@@ -163,11 +208,20 @@ namespace Ntreev.Library
             }
         }
 
+        /// <summary>
+        /// 스위치의 사용법을 출력합니다.
+        /// </summary>
+        /// <param name="switchName">
+        /// 사용법을 출력할 스위치의 문자열입니다.
+        /// </param>
         public void PrintSwitchUsage(string switchName)
         {
             this.usagePrinter.PrintSwitchUsage(switchName);
         }
 
+        /// <summary>
+        /// 모든 스위치의 사용법을 출력합니다.
+        /// </summary>
         public void PrintUsage()
         {
             this.usagePrinter.PrintUsage();
@@ -177,12 +231,23 @@ namespace Ntreev.Library
 
         #region protected methods
 
-        protected void OnParsingUnusedArgument(string arg)
+        /// <summary>
+        /// 사용되지 않은 인자들을 처리 합니다.
+        /// </summary>
+        /// <param name="arg">
+        /// 사용되지 않은 인자의 문자열입니다.
+        /// </param>
+        /// <remarks>
+        /// 일반적으로 명령의 형태는 /cmd arg 처럼 스위치와 인자 하나씩 존재합니다.
+        /// 만약 /cmd arg1 arg2 와 같은 형태로 되 있다면 arg2는 분석에서 제외됩니다.
+        /// 여러개의 인자로 받을 경우에는 /cmd "arg1 arg2" 처럼 따옴표로 인자들을 묶어줄 필요가 있습니다.
+        /// </remarks>
+        protected virtual void OnParsingUnusedArgument(string arg)
         {
 
         }
 
-        virtual protected UsagePrinter CreateUsagePrinterCore(CommandLineParser parser)
+        protected virtual UsagePrinter CreateUsagePrinterCore(CommandLineParser parser)
         {
             return new UsagePrinter(parser);
         }
@@ -191,14 +256,14 @@ namespace Ntreev.Library
         /// 최종적으로 옵션에 유효성을 검사합니다.
         /// </summary>
         /// <param name="options">
-        /// 파싱에 사용된 인스턴스입니다.
+        /// 분석에 사용된 인스턴스입니다.
         /// </param>
-        /// <exception cref="Exception">
-        /// 데이터의 유효성 검사가 실패 했을때
-        /// </exception>
-        virtual protected void AssertValidation(object options)
+        /// <returns>
+        /// 분석후 option에 대한 설정 과정이 정상적으로 끝났으면 true를, 그렇지 않다면 false를 반환합니다.
+        /// </returns>
+        protected virtual bool AssertValidation(object options)
         {
-
+            return true;
         }
 
         #endregion
@@ -211,7 +276,7 @@ namespace Ntreev.Library
             {
                 List<string> usedList = new List<string>();
                 List<string> unusedList = new List<string>();
-                string pattern = string.Format(@"{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))*", SwitchAttribute.SwitchDelimiter);
+                string pattern = string.Format(@"{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))*", CommandSwitchAttribute.SwitchDelimiter);
                 Regex regex = new Regex(pattern);
                 Match match = regex.Match(arg);
 
@@ -236,7 +301,7 @@ namespace Ntreev.Library
             get { return this.instance; }
         }
 
-        internal SwitchAttributeCollection SwitchAttributes
+        internal CommandSwitchAttributeCollection SwitchAttributes
         {
             get { return this.switchAttributes; }
         }
@@ -251,12 +316,12 @@ namespace Ntreev.Library
         #region public properties
 
         /// <summary>
-        /// 파싱과정중 생기는 다양한 정보를 출력할 수 있는 처리기를 지정합니다.
+        /// 분석과정중 생기는 다양한 정보를 출력할 수 있는 처리기를 지정합니다.
         /// </summary>
         public TextWriter TextWriter { get; set; }
 
         /// <summary>
-        /// 파싱중 사용되지 않은 인자들을 가져옵니다.
+        /// 분석중 사용되지 않은 인자들을 가져옵니다.
         /// </summary>
         public string[] UnusedArguments
         {

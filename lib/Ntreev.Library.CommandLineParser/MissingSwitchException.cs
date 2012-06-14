@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -26,12 +26,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     /// <summary>
     /// 필요한 스위치가 없을때 발생하는 예외를 나타냅니다.
     /// </summary>
-    public class MissingSwitchException : SwitchException
+    public class MissingSwitchException : CommandSwitchException
     {
         /// <summary>
         /// <seealso cref="MissingSwitchException"/> 클래스의 새 인스턴스를 초기화합니다.

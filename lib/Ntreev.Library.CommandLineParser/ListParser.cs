@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -28,14 +28,14 @@ using System.Text;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     /// <summary>
     /// 문자열을 리스트 형식으로 변환하는 방법을 제공합니다.
     /// </summary>
     public class ListParser : Parser
     {
-        public override object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
+        public override object Parse(CommandSwitchDescriptor switchDescriptor, string arg, object value)
         {
             System.Collections.IList list;
 
@@ -80,7 +80,7 @@ namespace Ntreev.Library
             }
             catch (Exception e)
             {
-                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new CommandSwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
 
             return list;
@@ -91,7 +91,7 @@ namespace Ntreev.Library
         /// </summary>
         /// <param name="arg">항목별 문자열이 담긴 문자열입니다.</param>
         /// <returns>분리된 항목별 문자열의 배열입니다.</returns>
-        virtual protected string[] SplitArgument(string arg)
+        protected virtual string[] SplitArgument(string arg)
         {
             return arg.Split(new char[] { ',', });
         }
@@ -102,7 +102,7 @@ namespace Ntreev.Library
         /// <param name="arg"></param>
         /// <param name="itemType">항목의 데이터 형식을 나타냅니다.</param>
         /// <returns>항목을 나타내는 문자열을 데이터로 변환한 값을 나타냅니다.</returns>
-        virtual protected object OnItemParse(string arg, Type itemType)
+        protected virtual object OnItemParse(string arg, Type itemType)
         {
             TypeConverter typeConverter = TypeDescriptor.GetConverter(itemType);
             return typeConverter.ConvertFrom(arg);

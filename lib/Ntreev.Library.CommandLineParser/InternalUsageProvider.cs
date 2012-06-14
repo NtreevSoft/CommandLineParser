@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -26,11 +26,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     class InternalUsageProvider : UsageProvider
     {
-        public InternalUsageProvider(SwitchDescriptor switchDescriptor)
+        public InternalUsageProvider(CommandSwitchDescriptor switchDescriptor)
             : base(switchDescriptor)
         {
 
@@ -45,9 +45,9 @@ namespace Ntreev.Library
 
                 string help;
                 if(shortName == string.Empty)
-                    help = string.Format("{0}{1}", SwitchAttribute.SwitchDelimiter, name);
+                    help = string.Format("{0}{1}", CommandSwitchAttribute.SwitchDelimiter, name);
                 else
-                    help = string.Format("{0}{1}", SwitchAttribute.SwitchDelimiter, shortName);
+                    help = string.Format("{0}{1}", CommandSwitchAttribute.SwitchDelimiter, shortName);
 
                 char? argSeperator = this.SwitchDescriptor.ArgSeperator;
                 Type argType = this.SwitchDescriptor.ArgType;

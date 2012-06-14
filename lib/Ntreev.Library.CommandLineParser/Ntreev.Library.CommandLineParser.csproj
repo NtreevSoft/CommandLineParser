@@ -8,9 +8,9 @@
     <ProjectGuid>{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ntreev.Library</RootNamespace>
-    <AssemblyName>CommandLineParser</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>Ntreev.Library.CommandLineParser</RootNamespace>
+    <AssemblyName>Ntreev.Library.CommandLineParser</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -52,14 +52,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>..\..\bin\Release\Ntreev.Library.CommandLineParser.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArgSeperator.cs" />
     <Compile Include="BooleanParser.cs" />
     <Compile Include="ListParser.cs" />
     <Compile Include="Parser.cs" />
@@ -83,16 +84,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SwitchDescriptorContext.cs" />
+    <Compile Include="CommandSwitchDescriptorContext.cs" />
     <Compile Include="UsageProvider.cs" />
     <Compile Include="MissingSwitchException.cs" />
     <Compile Include="CommandLineParser.UsagePrinter.cs" />
-    <Compile Include="SwitchAttribute.cs" />
-    <Compile Include="SwitchAttributeCollection.cs" />
-    <Compile Include="SwitchDescriptor.cs" />
-    <Compile Include="SwitchDescriptorCollection.cs" />
+    <Compile Include="CommandSwitchAttribute.cs" />
+    <Compile Include="CommandSwitchAttributeCollection.cs" />
+    <Compile Include="CommandSwitchDescriptor.cs" />
+    <Compile Include="CommandSwitchDescriptorCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SwitchException.cs" />
+    <Compile Include="CommandSwitchException.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

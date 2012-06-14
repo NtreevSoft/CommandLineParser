@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -27,35 +27,35 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
-    static class SwitchDescriptorContext
+    static class CommandSwitchDescriptorContext
     {
         static readonly public Parser DefaultBooleanParser = new BooleanParser();
         static readonly public Parser DefaultParser = new Parser();
         static readonly public Parser DefaultListParser = new ListParser();
 
-        delegate bool Filter(SwitchAttribute obj);
+        delegate bool Filter(CommandSwitchAttribute obj);
 
-        static bool ByRequired(SwitchAttribute obj)
+        static bool ByRequired(CommandSwitchAttribute obj)
         {
             return obj.Required == true;
         }
 
-        static int NameComparison(SwitchDescriptor x, SwitchDescriptor y)
+        static int NameComparison(CommandSwitchDescriptor x, CommandSwitchDescriptor y)
         {
             return x.Name.CompareTo(y.Name);
         }
 
-        static int ShortNameComparison(SwitchDescriptor x, SwitchDescriptor y)
+        static int ShortNameComparison(CommandSwitchDescriptor x, CommandSwitchDescriptor y)
         {
             return x.ShortName.CompareTo(y.ShortName);
         }
 
-        static SwitchDescriptorCollection GetSwitches(object instance, SwitchAttributeCollection extenedSwitchAttributes, Filter filter)
+        static CommandSwitchDescriptorCollection GetSwitches(object instance, CommandSwitchAttributeCollection extenedSwitchAttributes, Filter filter)
         {
             PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(instance);
-            List<SwitchDescriptor> validProperties = new List<SwitchDescriptor>();
+            List<CommandSwitchDescriptor> validProperties = new List<CommandSwitchDescriptor>();
 
             foreach (PropertyDescriptor item in properties)
             {
@@ -73,30 +73,30 @@ namespace Ntreev.Library
                 if (parser == null)
                     continue;
 
-                SwitchAttribute optionAttribute = item.Attributes[typeof(SwitchAttribute)] as SwitchAttribute;
+                CommandSwitchAttribute optionAttribute = item.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
 
                 if (optionAttribute == null)
                 {
                     if (extenedSwitchAttributes != null && extenedSwitchAttributes.ContainsKey(item.Name) == true)
                         optionAttribute = extenedSwitchAttributes[item.Name];
                     else
-                        optionAttribute = SwitchAttribute.DefaultValue;
+                        optionAttribute = CommandSwitchAttribute.DefaultValue;
                 }
 
                 if (filter == null || filter(optionAttribute) == true)
-                    validProperties.Add(new SwitchDescriptor(item, optionAttribute));
+                    validProperties.Add(new CommandSwitchDescriptor(item, optionAttribute));
             }
-            return new SwitchDescriptorCollection(validProperties);
+            return new CommandSwitchDescriptorCollection(validProperties);
         }
 
-        public static SwitchDescriptorCollection GetSwitches(object instance, SwitchAttributeCollection extenedSwitchAttributes)
+        public static CommandSwitchDescriptorCollection GetSwitches(object instance, CommandSwitchAttributeCollection extenedSwitchAttributes)
         {
             return GetSwitches(instance, extenedSwitchAttributes, (Filter)null);
         }
 
-        public static SwitchDescriptorCollection GetRequiredSwitches(object instance, SwitchAttributeCollection extenedSwitchAttributes)
+        public static CommandSwitchDescriptorCollection GetRequiredSwitches(object instance, CommandSwitchAttributeCollection extenedSwitchAttributes)
         {
-            return GetSwitches(instance, extenedSwitchAttributes, SwitchDescriptorContext.ByRequired);
+            return GetSwitches(instance, extenedSwitchAttributes, CommandSwitchDescriptorContext.ByRequired);
         }
 
         public static Parser GetParser(PropertyDescriptor propertyDescriptor, object instance)
@@ -112,19 +112,19 @@ namespace Ntreev.Library
 
             if (propertyDescriptor.PropertyType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(propertyDescriptor.PropertyType) == true)
             {
-                return SwitchDescriptorContext.DefaultListParser;
+                return CommandSwitchDescriptorContext.DefaultListParser;
             }
             else if (propertyDescriptor.PropertyType == typeof(bool))
             {
-                return SwitchDescriptorContext.DefaultBooleanParser;
+                return CommandSwitchDescriptorContext.DefaultBooleanParser;
             }
             else if (propertyDescriptor.PropertyType.IsValueType == true)
             {
-                return SwitchDescriptorContext.DefaultParser;
+                return CommandSwitchDescriptorContext.DefaultParser;
             }
 
             if(propertyDescriptor.Converter.CanConvertFrom(typeof(string)) == true)
-                return SwitchDescriptorContext.DefaultParser;
+                return CommandSwitchDescriptorContext.DefaultParser;
             return null;
         }
     }

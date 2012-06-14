@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ntreev.Library;
+using Ntreev.Library.CommandLineParser;
 
 namespace CommandLineParserTest.Library
 {
@@ -76,7 +76,7 @@ namespace CommandLineParserTest.Library
 
             foreach(KeyValuePair<string, object> item in this.switches)
             {
-                builder.Append(SwitchAttribute.SwitchDelimiter);
+                builder.Append(CommandSwitchAttribute.SwitchDelimiter);
                 builder.Append(item.Key);
 
                 object value = item.Value;

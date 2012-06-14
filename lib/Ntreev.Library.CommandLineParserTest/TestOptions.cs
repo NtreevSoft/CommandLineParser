@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -26,9 +26,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using Ntreev.Library;
 using System.ComponentModel;
 using System.Net;
+using Ntreev.Library.CommandLineParser;
 
 namespace CommandLineParserTest.Options
 {
@@ -66,31 +66,31 @@ namespace CommandLineParserTest.Options
 
     class RequiredSwitches
     {
-        [Switch(Required=true)]
+        [CommandSwitch(Required=true)]
         public int Index { get; set; }
 
-        [Switch(Required = true)]
+        [CommandSwitch(Required = true)]
         public string Text { get; set; }
 
-        [Switch(Required = true)]
+        [CommandSwitch(Required = true)]
         public int Number { get; set; }
     }
 
     class ArgSeperatorSwitches
     {
-        [Switch(ArgSeperator = '\0')]
+        [CommandSwitch(ArgSeperator = '\0')]
         public int Level { get; set; }
 
-        [Switch(ArgSeperator = ':')]
+        [CommandSwitch(ArgSeperator = ':')]
         public bool IsAlive { get; set; }
     }
 
     class DuplicatedOptions
     {
-        [Switch("index")]
+        [CommandSwitch("index")]
         public int Index { get; set; }
 
-        [Switch("index")]
+        [CommandSwitch("index")]
         public int Index2 { get; set; }
     }
 

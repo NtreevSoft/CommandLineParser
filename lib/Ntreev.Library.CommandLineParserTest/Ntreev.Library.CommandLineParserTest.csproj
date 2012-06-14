@@ -8,7 +8,7 @@
     <ProjectGuid>{8F65558E-04F7-4CDE-AE02-CBE6E3AF9D48}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommandLineParserTest</RootNamespace>
+    <RootNamespace>Ntreev.Library.CommandLineParserTest</RootNamespace>
     <AssemblyName>CommandLineParserTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -51,7 +51,7 @@
     <Compile Include="TestOptions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommandLineParser\CommandLineParser.csproj">
+    <ProjectReference Include="..\Ntreev.Library.CommandLineParser\Ntreev.Library.CommandLineParser.csproj">
       <Project>{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}</Project>
       <Name>CommandLineParser</Name>
     </ProjectReference>

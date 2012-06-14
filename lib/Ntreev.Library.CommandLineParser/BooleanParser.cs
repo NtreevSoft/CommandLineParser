@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -21,21 +21,22 @@
 #endregion
 
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-[assembly: AssemblyTitle("CommandLineParser")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("NtreevSoft")]
-[assembly: AssemblyProduct("CommandLineParser")]
-[assembly: AssemblyCopyright("Copyright © NtreevSoft 2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-
-[assembly: ComVisible(false)]
-
-[assembly: Guid("f5997259-909e-4747-a011-b47c30522bfd")]
-
-[assembly: AssemblyVersion("1.0.4461.33698")]
+namespace Ntreev.Library.CommandLineParser
+{
+    class BooleanParser : Parser
+    {
+        public override object Parse(CommandSwitchDescriptor switchDescriptor, string arg, object value)
+        {
+            if (switchDescriptor.ArgType == typeof(bool) && switchDescriptor.ArgSeperator == null)
+            {
+                return true;
+            }
+            return base.Parse(switchDescriptor, arg, value);
+        }
+    }
+}

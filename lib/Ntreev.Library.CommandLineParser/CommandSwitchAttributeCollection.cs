@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -26,17 +26,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
-    class BooleanParser : Parser
+    public class CommandSwitchAttributeCollection : Dictionary<string, CommandSwitchAttribute>
     {
-        public override object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
-        {
-            if (switchDescriptor.ArgType == typeof(bool) && switchDescriptor.ArgSeperator == null)
-            {
-                return true;
-            }
-            return base.Parse(switchDescriptor, arg, value);
-        }
+
     }
 }

@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -31,11 +31,11 @@ using System.Text.RegularExpressions;
 
 using Trace = System.Diagnostics.Trace;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
-    class SwitchDescriptorCollection : ICollection
+    class CommandSwitchDescriptorCollection : ICollection
     {
-        List<SwitchDescriptor> internalDescriptors = null;
+        List<CommandSwitchDescriptor> internalDescriptors = null;
 
         void SplitUnusedArgs(string args, List<string> unusedList)
         {
@@ -46,18 +46,18 @@ namespace Ntreev.Library
 
             while (match.Success == true)
             {
-                string matchedString = match.Groups[groupName].ToString();
+                string matchedString = match.Groups[groupName].Value;
                 unusedList.Add(matchedString);
                 Trace.WriteLine("unused arg : " + matchedString);
                 match = match.NextMatch();
             }
         }
 
-        Dictionary<string, SwitchDescriptor> DescriptorsForParsing(List<SwitchDescriptor> sourceList)
+        Dictionary<string, CommandSwitchDescriptor> DescriptorsForParsing(List<CommandSwitchDescriptor> sourceList)
         {
-            Dictionary<string, SwitchDescriptor> list = new Dictionary<string, SwitchDescriptor>(sourceList.Count * 2);
+            Dictionary<string, CommandSwitchDescriptor> list = new Dictionary<string, CommandSwitchDescriptor>(sourceList.Count * 2);
             
-            foreach (SwitchDescriptor item in sourceList)
+            foreach (CommandSwitchDescriptor item in sourceList)
             {
                 list.Add(item.Name, item);
                 if(item.ShortName != string.Empty)
@@ -67,14 +67,14 @@ namespace Ntreev.Library
             return list;
         }
 
-        public SwitchDescriptorCollection(List<SwitchDescriptor> descriptors)
+        public CommandSwitchDescriptorCollection(List<CommandSwitchDescriptor> descriptors)
         {
             this.internalDescriptors = descriptors;
         }
 
         public void AssertRequired()
         {
-            foreach (SwitchDescriptor item in this.internalDescriptors)
+            foreach (CommandSwitchDescriptor item in this.internalDescriptors)
             {
                 if (item.Required == true && item.Parsed == false)
                     throw new MissingSwitchException(Properties.Resources.SwitchIsMissing, item.Name);
@@ -85,19 +85,19 @@ namespace Ntreev.Library
         {
             HashSet<string> hashSet = new HashSet<string>();
 
-            foreach (SwitchDescriptor item in this)
+            foreach (CommandSwitchDescriptor item in this)
             {
                 hashSet.Add(item.Name);
             }
 
-            foreach (SwitchDescriptor item in this)
+            foreach (CommandSwitchDescriptor item in this)
             {
                 string shortName = item.ShortName;
                 if (shortName == string.Empty)
                     continue;
 
                 if (hashSet.Contains(shortName) == true)
-                    throw new SwitchException(Properties.Resources.SwitchWasAlreadyRegistered, shortName);
+                    throw new CommandSwitchException(Properties.Resources.SwitchWasAlreadyRegistered, shortName);
                 hashSet.Add(shortName);
             }
         }
@@ -106,7 +106,7 @@ namespace Ntreev.Library
         {
             Dictionary<string, bool> keys = new Dictionary<string, bool>();
 
-            foreach (SwitchDescriptor item in this)
+            foreach (CommandSwitchDescriptor item in this)
             {
                 string key = item.MutuallyExclusive;
                 if (key == string.Empty)
@@ -121,17 +121,17 @@ namespace Ntreev.Library
                     bool required = keys[key];
 
                     if (required != item.Required)
-                        throw new SwitchException(Properties.Resources.MutuallyExclusiveException, item.ShortName);
+                        throw new CommandSwitchException(Properties.Resources.MutuallyExclusiveException, item.ShortName);
                 }
             }
         }
 
-        public void Sort(Comparison<SwitchDescriptor> comparison)
+        public void Sort(Comparison<CommandSwitchDescriptor> comparison)
         {
             this.internalDescriptors.Sort(comparison);
         }
 
-        public SwitchDescriptor[] ToArray()
+        public CommandSwitchDescriptor[] ToArray()
         {
             return this.internalDescriptors.ToArray();
         }
@@ -153,11 +153,11 @@ namespace Ntreev.Library
 
                 foreach (string switchLine in switchLines)
                 {
-                    SwitchDescriptor matchedSwitch = null;
+                    CommandSwitchDescriptor matchedSwitch = null;
 
                     Trace.WriteLine("finding switch : " + switchLine);
 
-                    foreach (SwitchDescriptor switchDescriptor in this.internalDescriptors)
+                    foreach (CommandSwitchDescriptor switchDescriptor in this.internalDescriptors)
                     {
                         if (switchDescriptor.Parsed == true && switchDescriptor.AllowMultiple == false)
                             continue;
@@ -166,8 +166,8 @@ namespace Ntreev.Library
                         Regex regex = new Regex(pattern, regexOptions);
                         Match match = regex.Match(switchLine);
 
-                        string s = match.Groups[switchGroupName].ToString();
-                        string a = match.Groups[argGourpName].ToString();
+                        string s = match.Groups[switchGroupName].Value;
+                        string a = match.Groups[argGourpName].Value;
 
                         if (match.Success == true)
                         {
@@ -175,7 +175,7 @@ namespace Ntreev.Library
                             if (switchDescriptor.MutuallyExclusive != string.Empty &&
                                 mutuallyExclusive.Contains(switchDescriptor.MutuallyExclusive) == true)
                             {
-                                throw new SwitchException(Properties.Resources.MutuallyExclusiveSwitchIsAlreadySet, switchDescriptor.ShortName);
+                                throw new CommandSwitchException(Properties.Resources.MutuallyExclusiveSwitchIsAlreadySet, switchDescriptor.ShortName);
                             }
 
                             switchDescriptor.Parse(a, instance);
@@ -194,17 +194,17 @@ namespace Ntreev.Library
                     if (matchedSwitch == null)
                     {
                         Trace.WriteLine("no switch matched");
-                        string pattern = string.Format(@"(?<switchName>{0}\S+)", SwitchAttribute.SwitchDelimiter);
+                        string pattern = string.Format(@"(?<switchName>{0}\S+)", CommandSwitchAttribute.SwitchDelimiter);
                         Regex regex = new Regex(pattern, RegexOptions.ExplicitCapture);
                         Match match = regex.Match(switchLine);
                         if (match.Success == true)
                         {
-                            string matchedString = match.Groups["switchName"].ToString();
-                            throw new SwitchException(Properties.Resources.InvalidSwitchWasIncluded +"\r\n  - " + switchLine, matchedString);
+                            string matchedString = match.Groups["switchName"].Value;
+                            throw new CommandSwitchException(Properties.Resources.InvalidSwitchWasIncluded +"\r\n  - " + switchLine, matchedString);
                         }
                         else
                         {
-                            throw new SwitchException(Properties.Resources.InvalidSwitchWasIncluded +"\r\n  - " + switchLine);
+                            throw new CommandSwitchException(Properties.Resources.InvalidSwitchWasIncluded +"\r\n  - " + switchLine);
                         }
                     }
                 }
@@ -218,11 +218,11 @@ namespace Ntreev.Library
             get { return (this.internalDescriptors as ICollection).Count; }
         }
 
-        public SwitchDescriptor this[string switchName]
+        public CommandSwitchDescriptor this[string switchName]
         {
             get
             {
-                foreach (SwitchDescriptor item in this.internalDescriptors)
+                foreach (CommandSwitchDescriptor item in this.internalDescriptors)
                 {
                     if (item.Name == switchName)
                         return item;

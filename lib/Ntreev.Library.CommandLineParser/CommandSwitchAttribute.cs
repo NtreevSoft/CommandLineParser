@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -27,31 +27,33 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     /// <summary>
     /// 스위치의 속성을 지정합니다.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SwitchAttribute : Attribute
+    public class CommandSwitchAttribute : Attribute
     {
         static char switchDelimiter = '/';
-        static internal SwitchAttribute DefaultValue = new SwitchAttribute();
+        static internal CommandSwitchAttribute DefaultValue = new CommandSwitchAttribute();
 
         string shortName = string.Empty;
         char? argSeperator = null;
+
+        public System.Drawing.Color Color { get; set; } 
        
         public static char SwitchDelimiter
         {
             get
             {
-                return SwitchAttribute.switchDelimiter;
+                return CommandSwitchAttribute.switchDelimiter;
             }
             set
             {
                 if (char.IsPunctuation(value) == false)
                     throw new Exception(Properties.Resources.SwitchDelimiterMustBePunctuation);
-                SwitchAttribute.switchDelimiter = value;
+                CommandSwitchAttribute.switchDelimiter = value;
             }
         }
 
@@ -61,9 +63,9 @@ namespace Ntreev.Library
         }
 
         /// <summary>
-        /// <seealso cref="SwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// <seealso cref="CommandSwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
-        public SwitchAttribute()
+        public CommandSwitchAttribute()
         {
             this.Required = false;
             this.MutuallyExclusive = string.Empty;
@@ -77,9 +79,9 @@ namespace Ntreev.Library
         }
 
         /// <summary>
-        /// 짧은 이름을 사용하여 <seealso cref="SwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// 짧은 이름을 사용하여 <seealso cref="CommandSwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
-        public SwitchAttribute(string shortName)
+        public CommandSwitchAttribute(string shortName)
             : this()
         {
             this.shortName = shortName == null ? string.Empty : shortName;
@@ -123,7 +125,7 @@ namespace Ntreev.Library
                 {
                     if (char.IsPunctuation(value) == false)
                         throw new Exception(Properties.Resources.ArgSeperatorMustBeAPunctuation);
-                    if (value == SwitchAttribute.SwitchDelimiter)
+                    if (value == CommandSwitchAttribute.SwitchDelimiter)
                         throw new Exception(Properties.Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
                 }
                 this.argSeperator = (char)value; 

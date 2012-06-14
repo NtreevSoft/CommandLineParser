@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -26,18 +26,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
-    public interface IOptions
+    /// <summary>
+    /// 분석 옵션을 설정하는 데 사용하는 열거형 값을 제공합니다.
+    /// </summary>
+    [Flags]
+    public enum ParsingOptions
     {
-        object Instance
-        {
-            get;
-        }
+        /// <summary>
+        /// 옵션이 설정되지 않도록 지정합니다.
+        /// </summary>
+        None = 0,
 
-        SwitchAttributeCollection SwitchAttributes
-        {
-            get;
-        }
+        /// <summary>
+        /// 짧은 이름을 가진 특성의 스위치만 분석합니다.
+        /// </summary>
+        ShortNameOnly = 1,
+
+        /// <summary>
+        /// 분석할때 스위치 이름의 대소문자를 구분합니다.
+        /// </summary>
+        CaseSensitive = 2,
+
+        /// <summary>
+        /// 전달인자 문자열에 실행 경로가 포함되지 않습니다.
+        /// </summary>
+        NoExecutionPath = 4,
     }
 }

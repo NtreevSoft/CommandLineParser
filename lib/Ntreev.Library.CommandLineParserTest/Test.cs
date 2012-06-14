@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -28,10 +28,10 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ntreev;
 using System.IO;
-using Ntreev.Library;
 using CommandLineParserTest.Options;
 using CommandLineParserTest.Library;
 using System.Net;
+using Ntreev.Library.CommandLineParser;
 
 namespace CommandLineParserTest
 {
@@ -82,7 +82,7 @@ namespace CommandLineParserTest
          [TestInitialize()]
          public void MyTestInitialize() 
          {
-             Assert.AreEqual('/', SwitchAttribute.SwitchDelimiter);
+             Assert.AreEqual('/', CommandSwitchAttribute.SwitchDelimiter);
          }
         //
         // TestInitialize를 사용하여 각 테스트를 실행하기 전에 코드를 실행합니다.
@@ -112,7 +112,7 @@ namespace CommandLineParserTest
         {
             try
             {
-                SwitchAttribute.SwitchDelimiter = 'a';
+                CommandSwitchAttribute.SwitchDelimiter = 'a';
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -122,7 +122,7 @@ namespace CommandLineParserTest
 
             try
             {
-                SwitchAttribute.SwitchDelimiter = '1';
+                CommandSwitchAttribute.SwitchDelimiter = '1';
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -132,7 +132,7 @@ namespace CommandLineParserTest
 
             try
             {
-                SwitchAttribute.SwitchDelimiter = ' ';
+                CommandSwitchAttribute.SwitchDelimiter = ' ';
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -142,7 +142,7 @@ namespace CommandLineParserTest
 
             try
             {
-                SwitchAttribute.SwitchDelimiter = '\"';
+                CommandSwitchAttribute.SwitchDelimiter = '\"';
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -150,7 +150,7 @@ namespace CommandLineParserTest
 
             }
 
-            SwitchAttribute.SwitchDelimiter = '/';
+            CommandSwitchAttribute.SwitchDelimiter = '/';
         }
 
         [TestMethod]
@@ -243,7 +243,7 @@ namespace CommandLineParserTest
                 parser.Parse("Test.exe /index 5", options);
                 Assert.Inconclusive("예외가 발생하지 않았습니다.");
             }
-            catch (SwitchException e)
+            catch (CommandSwitchException e)
             {
                 Assert.AreEqual("index", e.SwitchName);
             }

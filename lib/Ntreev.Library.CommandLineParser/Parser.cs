@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -27,10 +27,10 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     /// <summary>
-    /// 문자열을 파싱하여 데이터로 변환할 수 있는 방법을 제공합니다.
+    /// 문자열을 분석하여 데이터로 변환할 수 있는 방법을 제공합니다.
     /// </summary>
     public class Parser
     {
@@ -43,14 +43,14 @@ namespace Ntreev.Library
         }
 
         /// <summary>
-        /// 문자열을 파싱하여 데이터로 변환합니다.
+        /// 문자열을 분석하여 데이터로 변환합니다.
         /// </summary>
-        /// <param name="switchDescriptor">파싱할 스위치의 정보를 담고 있는<seealso cref="SwitchDescriptor"/>의 인스턴스입니다.</param>
-        /// <param name="arg">파싱할 문자열을 나타냅니다.</param>
-        /// <param name="value">파싱할 스위치와 연결되어 있는 데이터의 원본값 입니다.</param>
+        /// <param name="switchDescriptor">분석할 스위치의 정보를 담고 있는<seealso cref="CommandSwitchDescriptor"/>의 인스턴스입니다.</param>
+        /// <param name="arg">분석할 문자열을 나타냅니다.</param>
+        /// <param name="value">분석할 스위치와 연결되어 있는 데이터의 원본값 입니다.</param>
         /// <returns>문자열을 데이터로 변환한 값 입니다.</returns>
         /// <exception cref="NotSupportedException">문자열을 데이터로 변환할 수 없을때</exception>
-        virtual public object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
+        virtual public object Parse(CommandSwitchDescriptor switchDescriptor, string arg, object value)
         {
             TypeConverter typeConverter = switchDescriptor.Converter;
 
@@ -63,7 +63,7 @@ namespace Ntreev.Library
             }
             catch (Exception e)
             {
-                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new CommandSwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
             return value;
         }

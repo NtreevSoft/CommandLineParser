@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -29,17 +29,17 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.CommandLineParser
 {
     /// <summary>
     /// 스위치의 정보를 담고 있는 클래스입니다.
     /// </summary>
-    public class SwitchDescriptor
+    public class CommandSwitchDescriptor
     {
         #region private variables
 
         readonly PropertyDescriptor propertyDescriptor;
-        readonly SwitchAttribute switchAttribute;
+        readonly CommandSwitchAttribute switchAttribute;
         bool parsed = false;
         UsageProvider usageProvider;
 
@@ -55,7 +55,7 @@ namespace Ntreev.Library
         {
             object value = this.propertyDescriptor.GetValue(instance);
 
-            Parser parser = SwitchDescriptorContext.GetParser(this.propertyDescriptor, instance);
+            Parser parser = CommandSwitchDescriptorContext.GetParser(this.propertyDescriptor, instance);
             object newValue = parser.Parse(this, arg, value);
 
             if (value != newValue && this.propertyDescriptor.IsReadOnly == false)
@@ -71,9 +71,9 @@ namespace Ntreev.Library
 
             string pattern;
             if(this.ShortName == string.Empty)
-                pattern = string.Format(@"^{0}(?<{1}>{2})", SwitchAttribute.SwitchDelimiter, switchGroupName, this.Name);
+                pattern = string.Format(@"^{0}(?<{1}>{2})", CommandSwitchAttribute.SwitchDelimiter, switchGroupName, this.Name);
             else
-                pattern = string.Format(@"^{0}(?<{1}>({2}|{3}))", SwitchAttribute.SwitchDelimiter, switchGroupName, this.Name, this.ShortName);
+                pattern = string.Format(@"^{0}(?<{1}>({2}|{3}))", CommandSwitchAttribute.SwitchDelimiter, switchGroupName, this.Name, this.ShortName);
 
             char? argSeperator = this.switchAttribute.GetArgSeperator();
             if (this.ArgType != typeof(bool) || argSeperator != null)
@@ -97,7 +97,7 @@ namespace Ntreev.Library
             return pattern;
         }
 
-        internal SwitchDescriptor(PropertyDescriptor propertyDescriptor, SwitchAttribute optionAttribute)
+        internal CommandSwitchDescriptor(PropertyDescriptor propertyDescriptor, CommandSwitchAttribute optionAttribute)
         {
             this.propertyDescriptor = propertyDescriptor;
             this.switchAttribute = optionAttribute;
@@ -111,7 +111,7 @@ namespace Ntreev.Library
                 this.usageProvider = TypeDescriptor.CreateInstance(
                     null, 
                     optionAttribute.UsageProvider,
-                    new Type[] { typeof(SwitchDescriptor), },
+                    new Type[] { typeof(CommandSwitchDescriptor), },
                     new object[] { this, }) as UsageProvider;
             }
         }
@@ -196,7 +196,7 @@ namespace Ntreev.Library
         }
 
         /// <summary>
-        /// 파싱할때 해당 스위치가 꼭 필요한지에 대한 여부를 가져옵니다.
+        /// 분석할때 해당 스위치가 꼭 필요한지에 대한 여부를 가져옵니다.
         /// </summary>
         public bool Required
         {
@@ -209,7 +209,7 @@ namespace Ntreev.Library
         }
 
         /// <summary>
-        /// 파싱후 해당 스위치가 파싱에 성공했는지에 대한 여부를 가져옵니다.
+        /// 분석후 해당 스위치가 분석에 성공했는지에 대한 여부를 가져옵니다.
         /// </summary>
         public bool Parsed
         {

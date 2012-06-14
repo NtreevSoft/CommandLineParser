@@ -1,5 +1,5 @@
 ﻿#region License
-//Ntreev CommandLineParser for .Net 1.0.4461.33698
+//Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
 //Released under the MIT License.
@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ntreev.Library;
+using Ntreev.Library.CommandLineParser;
 using System.IO;
 using System.ComponentModel;
 using System.Reflection;
@@ -34,29 +34,15 @@ namespace SampleApplication
 {
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
             Options options = new Options();
             CommandLineParser parser = new CommandLineParser();
 
-            List<int> list = new List<int>();
-
-            Assembly assembly = Assembly.GetExecutingAssembly();
-
-            Type[] types = Assembly.GetAssembly(typeof(int)).GetExportedTypes();
-
-            List<Type> onlyValues = new List<Type>();
-            foreach (Type item in types)
-            {
-                if (item.IsValueType == true)
-                    onlyValues.Add(item);
-            }
-
-            int qwer = 0;
-
             try
             {
-                parser.Parse(Environment.CommandLine, options, ParsingOptions.ShortNameOnly);
+                //parser.Parse(Environment.CommandLine, options, ParsingOptions.ShortNameOnly);
+                parser.Parse("/w 2 /t3", options, ParsingOptions.ShortNameOnly | ParsingOptions.NoExecutionPath);
 
                 foreach (PropertyDescriptor item in TypeDescriptor.GetProperties(options))
                 {
@@ -72,7 +58,7 @@ namespace SampleApplication
 
                 Environment.Exit(0);
             }
-            catch (SwitchException e)
+            catch (CommandSwitchException e)
             {
                 parser.PrintSwitchUsage(e.SwitchName);
                 Environment.Exit(1);
@@ -92,11 +78,11 @@ namespace SampleApplication
       
         class Options
         {
-            [Switch("n")]
+            [CommandSwitch("n")]
             [Description("백업 여부를 설정합니다.")]
             public bool NoBackup { get; set; }
 
-            [Switch("-Text")]
+            [CommandSwitch("-Text")]
             public string Text { get; set; }
 
             public int Number { get; set; }
@@ -105,7 +91,7 @@ namespace SampleApplication
 
             public TypeCode TypeCode { get; set; }
 
-            [Switch("a", ArgSeperator=char.MinValue)]
+            [CommandSwitch("a", ArgSeperator='\0')]
             public AttributeTargets AttributeTargets { get; set; }
 
             [TypeConverter(typeof(FileInfoTypeConverter))]

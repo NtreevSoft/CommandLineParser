@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B6DF6E8B-57EE-4CA7-A3D7-D23BB31C9E83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLineParser", "CommandLineParser\CommandLineParser.csproj", "{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntreev.Library.CommandLineParser", "Ntreev.Library.CommandLineParser\Ntreev.Library.CommandLineParser.csproj", "{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLineParserTest", "CommandLineParserTest\CommandLineParserTest.csproj", "{8F65558E-04F7-4CDE-AE02-CBE6E3AF9D48}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntreev.Library.CommandLineParserTest", "Ntreev.Library.CommandLineParserTest\Ntreev.Library.CommandLineParserTest.csproj", "{8F65558E-04F7-4CDE-AE02-CBE6E3AF9D48}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApplication", "SampleApplication\SampleApplication.csproj", "{B28150A9-B0E4-4B84-A6BB-120117C06FA9}"
 EndProject
