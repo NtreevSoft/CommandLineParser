@@ -26,11 +26,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
-    class InternalUsageProvider : UsageProvider
+    class InternalSwitchUsageProvider : SwitchUsageProvider
     {
-        public InternalUsageProvider(CommandSwitchDescriptor switchDescriptor)
+        public InternalSwitchUsageProvider(SwitchDescriptor switchDescriptor)
             : base(switchDescriptor)
         {
 
@@ -62,7 +62,7 @@ namespace Ntreev.Library.CommandLineParser
                     else
                     {
                         if (argSeperator != char.MinValue)
-                            help += string.Format("<{0}{1}>", argSeperator, argTypeName);
+                            help += string.Format("{0}<{1}>", argSeperator, argTypeName);
                         else
                             help += string.Format("<{0}>", argTypeName);
                     }
@@ -106,7 +106,7 @@ namespace Ntreev.Library.CommandLineParser
                     }
                 }
 
-                return string.Format("{0} is {1}", argType.Name, description);
+                return string.Format("{0} is {1}", argType.GetSimpleName(), description);
 
             }
         }

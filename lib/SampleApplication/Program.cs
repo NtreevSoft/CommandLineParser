@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ntreev.Library.CommandLineParser;
+using Ntreev.Library;
 using System.IO;
 using System.ComponentModel;
 using System.Reflection;
@@ -37,12 +37,28 @@ namespace SampleApplication
         static void Main(string[] args)
         {
             Options options = new Options();
-            CommandLineParser parser = new CommandLineParser();
 
+            CommandLineParser parser = new CommandLineParser();
+            CommandLineInvoker invoker = new CommandLineInvoker();
             try
             {
                 //parser.Parse(Environment.CommandLine, options, ParsingOptions.ShortNameOnly);
-                parser.Parse("/w 2 /t3", options, ParsingOptions.ShortNameOnly | ParsingOptions.NoExecutionPath);
+                //parser.Invoke("category create /n", options, ParsingOptions.None);
+                //parser.Parse("category /n", options, ParseOptions.ShortNameOnly);
+                //parser.PrintUsage();
+
+                //try
+                //{
+                //    invoker.Invoke("\"inimaker.exe\" help database", options, InvokeOptions.None);
+                //}
+                invoker.Invoke("\"inimaker.exe\" database /ip \"192.168.15.3\" /path \"g:\\123.sxl\"", options, InvokeOptions.None);
+                invoker.PrintUsage();
+                //invoker.Invoke("\"inimaker.exe\" show", options, InvokeOptions.None);
+                //parser.Invoke("", options, ParsingOptions.None);
+                //catch (Exception e)
+                //{
+                //    invoker.PrintMethodUsage("database");
+                //}
 
                 foreach (PropertyDescriptor item in TypeDescriptor.GetProperties(options))
                 {
@@ -58,9 +74,8 @@ namespace SampleApplication
 
                 Environment.Exit(0);
             }
-            catch (CommandSwitchException e)
+            catch (SwitchException e)
             {
-                parser.PrintSwitchUsage(e.SwitchName);
                 Environment.Exit(1);
             }
             catch (ArgumentException)
@@ -71,6 +86,7 @@ namespace SampleApplication
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                parser.PrintUsage();
                 Environment.Exit(1);
             }
         }
@@ -82,7 +98,6 @@ namespace SampleApplication
             [Description("백업 여부를 설정합니다.")]
             public bool NoBackup { get; set; }
 
-            [CommandSwitch("-Text")]
             public string Text { get; set; }
 
             public int Number { get; set; }
@@ -107,6 +122,32 @@ namespace SampleApplication
             public Options()
             {
                 
+            }
+
+            [CommandMethod]
+            public void Show()
+            {
+                int qwer = 0;
+            }
+
+            [CommandMethod]
+            public void TestMethod(int wow)
+            {
+                int qwer = 0;
+            }
+
+            [CommandMethod]
+            public void TestMethod1(int wow, [DefaultValue(false)]bool test)
+            {
+                int qwer = 0;
+            }
+
+            [CommandMethod("database")]
+            [CommandMethodSwitch("Path")]
+            [Description("데이터 베이스에 직접 연결합니다.")]
+            public void SetDataBase(string ip, [DefaultValue("4004")]string port)
+            {
+                int qwer = 0;
             }
 
             class PathListTypeConverter : TypeConverter

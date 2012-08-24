@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     public struct ArgSeperator
     {

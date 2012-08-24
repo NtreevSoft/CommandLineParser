@@ -28,14 +28,14 @@ using System.Text;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     /// <summary>
     /// 문자열을 리스트 형식으로 변환하는 방법을 제공합니다.
     /// </summary>
     public class ListParser : Parser
     {
-        public override object Parse(CommandSwitchDescriptor switchDescriptor, string arg, object value)
+        public override object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
         {
             System.Collections.IList list;
 
@@ -80,7 +80,7 @@ namespace Ntreev.Library.CommandLineParser
             }
             catch (Exception e)
             {
-                throw new CommandSwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
 
             return list;

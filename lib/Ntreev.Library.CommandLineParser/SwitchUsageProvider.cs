@@ -26,32 +26,56 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     /// <summary>
-    /// 분석 옵션을 설정하는 데 사용하는 열거형 값을 제공합니다.
+    /// 스위치 사용법을 제공하는 방법을 나타냅니다.
     /// </summary>
-    [Flags]
-    public enum ParsingOptions
+    public abstract class SwitchUsageProvider
     {
-        /// <summary>
-        /// 옵션이 설정되지 않도록 지정합니다.
-        /// </summary>
-        None = 0,
+        readonly SwitchDescriptor switchDescriptor;
 
         /// <summary>
-        /// 짧은 이름을 가진 특성의 스위치만 분석합니다.
+        /// <seealso cref="SwitchDescriptor"/>를 사용하여 <seealso cref="SwitchUsageProvider"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
-        ShortNameOnly = 1,
+        /// <param name="switchDescriptor">
+        /// 스위치의 정보를 담고 있는 <seealso cref="SwitchDescriptor"/>의 인스턴스입니다.
+        /// </param>
+        public SwitchUsageProvider(SwitchDescriptor switchDescriptor)
+        {
+            this.switchDescriptor = switchDescriptor;
+        }
 
         /// <summary>
-        /// 분석할때 스위치 이름의 대소문자를 구분합니다.
+        /// 스위치의 정보를 담고 있는 <seealso cref="SwitchDescriptor"/>의 인스턴스를 가져옵니다.
         /// </summary>
-        CaseSensitive = 2,
+        protected SwitchDescriptor SwitchDescriptor
+        {
+            get { return this.switchDescriptor; }
+        }
 
         /// <summary>
-        /// 전달인자 문자열에 실행 경로가 포함되지 않습니다.
+        /// 기본적인 사용방법을 가져옵니다.
         /// </summary>
-        NoExecutionPath = 4,
+        public abstract string Usage
+        {
+            get;
+        }
+
+        /// <summary>
+        /// 기본적인 사용방법 외에 부가적인 설명을 가져옵니다.
+        /// </summary>
+        public abstract string Description
+        {
+            get;
+        }
+
+        /// <summary>
+        /// 스위치에서 사용하는 인자형식에 대한 설명을 가져옵니다.
+        /// </summary>
+        public virtual string ArgumentTypeDescription
+        {
+            get { return string.Empty; }
+        }
     }
 }

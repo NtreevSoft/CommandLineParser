@@ -27,12 +27,12 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     /// <summary>
     /// 스위치의 속성을 지정합니다.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
     public class CommandSwitchAttribute : Attribute
     {
         static char switchDelimiter = '/';
@@ -69,7 +69,6 @@ namespace Ntreev.Library.CommandLineParser
         {
             this.Required = false;
             this.MutuallyExclusive = string.Empty;
-            this.ArgTypeSummary = string.Empty;
 
             foreach (char item in this.shortName)
             {
@@ -94,11 +93,6 @@ namespace Ntreev.Library.CommandLineParser
         {
             get { return this.shortName; }
         }
-
-        /// <summary>
-        /// 인수 형식의 요약을 나타내는 문자열입니다.
-        /// </summary>
-        public string ArgTypeSummary { get; set; }
 
         /// <summary>
         /// 해당 스위치가 꼭 필요한지의 여부를 설정하거나 가져옵니다.
@@ -131,8 +125,6 @@ namespace Ntreev.Library.CommandLineParser
                 this.argSeperator = (char)value; 
             }
         }
-
-        public bool AllowMultiple { get; set; }
 
         public string MutuallyExclusive { get; set; }
 

@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ntreev.Library.CommandLineParser;
+using Ntreev.Library;
 
 namespace CommandLineParserTest.Library
 {

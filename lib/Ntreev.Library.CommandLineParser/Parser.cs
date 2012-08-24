@@ -26,14 +26,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Reflection;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     /// <summary>
     /// 문자열을 분석하여 데이터로 변환할 수 있는 방법을 제공합니다.
     /// </summary>
     public class Parser
     {
+        static readonly internal Parser DefaultBooleanParser = new BooleanParser();
+        static readonly internal Parser DefaultParser = new Parser();
+        static readonly internal Parser DefaultListParser = new ListParser();
+
         /// <summary>
         /// <seealso cref="Parser"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
@@ -45,12 +50,12 @@ namespace Ntreev.Library.CommandLineParser
         /// <summary>
         /// 문자열을 분석하여 데이터로 변환합니다.
         /// </summary>
-        /// <param name="switchDescriptor">분석할 스위치의 정보를 담고 있는<seealso cref="CommandSwitchDescriptor"/>의 인스턴스입니다.</param>
+        /// <param name="switchDescriptor">분석할 스위치의 정보를 담고 있는<seealso cref="SwitchDescriptor"/>의 인스턴스입니다.</param>
         /// <param name="arg">분석할 문자열을 나타냅니다.</param>
         /// <param name="value">분석할 스위치와 연결되어 있는 데이터의 원본값 입니다.</param>
         /// <returns>문자열을 데이터로 변환한 값 입니다.</returns>
         /// <exception cref="NotSupportedException">문자열을 데이터로 변환할 수 없을때</exception>
-        virtual public object Parse(CommandSwitchDescriptor switchDescriptor, string arg, object value)
+        virtual public object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
         {
             TypeConverter typeConverter = switchDescriptor.Converter;
 
@@ -63,9 +68,69 @@ namespace Ntreev.Library.CommandLineParser
             }
             catch (Exception e)
             {
-                throw new CommandSwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
             return value;
+        }
+
+        internal static Parser GetParser(PropertyDescriptor propertyDescriptor)
+        {
+            CommandParserAttribute parserAttribute = propertyDescriptor.Attributes[typeof(CommandParserAttribute)] as CommandParserAttribute;
+
+            if (parserAttribute != null)
+            {
+                return TypeDescriptor.CreateInstance(null, parserAttribute.ParserType, null, null) as Parser;
+            }
+
+            //object value = propertyDescriptor.GetValue(instance);
+
+            if (propertyDescriptor.PropertyType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(propertyDescriptor.PropertyType) == true)
+            {
+                return Parser.DefaultListParser;
+            }
+            else if (propertyDescriptor.PropertyType == typeof(bool))
+            {
+                return Parser.DefaultBooleanParser;
+            }
+            else if (propertyDescriptor.PropertyType.IsValueType == true)
+            {
+                return Parser.DefaultParser;
+            }
+
+            if (propertyDescriptor.Converter.CanConvertFrom(typeof(string)) == true)
+                return Parser.DefaultParser;
+            return null;
+        }
+
+        internal static Parser GetParser(ParameterInfo parameterInfo)
+        {
+            object[] attrs = parameterInfo.GetCustomAttributes(typeof(CommandParserAttribute), true);
+
+            if(attrs.Length > 0)
+            {
+                CommandParserAttribute parserAttribute = attrs[0] as CommandParserAttribute;
+                return TypeDescriptor.CreateInstance(null, parserAttribute.ParserType, null, null) as Parser;
+            }
+
+            //object value = propertyDescriptor.GetValue(instance);
+            Type type = parameterInfo.ParameterType;
+            TypeConverter converter = parameterInfo.GetConverter();
+            if (type.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(type) == true)
+            {
+                return Parser.DefaultListParser;
+            }
+            else if (type == typeof(bool))
+            {
+                return Parser.DefaultBooleanParser;
+            }
+            else if (type.IsValueType == true)
+            {
+                return Parser.DefaultParser;
+            }
+
+            if (converter.CanConvertFrom(typeof(string)) == true)
+                return Parser.DefaultParser;
+            return null;
         }
     }
 }

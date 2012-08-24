@@ -28,7 +28,7 @@ using System.Text;
 using System.IO;
 using System.ComponentModel;
 using System.Net;
-using Ntreev.Library.CommandLineParser;
+using Ntreev.Library;
 
 namespace CommandLineParserTest.Options
 {
@@ -112,10 +112,10 @@ namespace CommandLineParserTest.Options
 
         public List<string> Texts { get; set; }
 
-        [Parser(typeof(IPAddressListParser))]
+        [CommandParser(typeof(IPAddressListParser))]
         public List<IPAddress> IPs { get; set; }
 
-        [Parser(typeof(PathListParser))]
+        [CommandParser(typeof(PathListParser))]
         public List<string> PathList { get; set; }
 
         class IPAddressListParser : ListParser

@@ -26,11 +26,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     class BooleanParser : Parser
     {
-        public override object Parse(CommandSwitchDescriptor switchDescriptor, string arg, object value)
+        public override object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
         {
             if (switchDescriptor.ArgType == typeof(bool) && switchDescriptor.ArgSeperator == null)
             {

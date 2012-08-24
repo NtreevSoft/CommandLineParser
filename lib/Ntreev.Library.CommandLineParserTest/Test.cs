@@ -31,7 +31,7 @@ using System.IO;
 using CommandLineParserTest.Options;
 using CommandLineParserTest.Library;
 using System.Net;
-using Ntreev.Library.CommandLineParser;
+using Ntreev.Library;
 
 namespace CommandLineParserTest
 {
@@ -243,7 +243,7 @@ namespace CommandLineParserTest
                 parser.Parse("Test.exe /index 5", options);
                 Assert.Inconclusive("예외가 발생하지 않았습니다.");
             }
-            catch (CommandSwitchException e)
+            catch (SwitchException e)
             {
                 Assert.AreEqual("index", e.SwitchName);
             }

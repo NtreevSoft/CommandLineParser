@@ -26,12 +26,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     /// <summary>
     /// 필요한 스위치가 없을때 발생하는 예외를 나타냅니다.
     /// </summary>
-    public class MissingSwitchException : CommandSwitchException
+    public class MissingSwitchException : SwitchException
     {
         /// <summary>
         /// <seealso cref="MissingSwitchException"/> 클래스의 새 인스턴스를 초기화합니다.

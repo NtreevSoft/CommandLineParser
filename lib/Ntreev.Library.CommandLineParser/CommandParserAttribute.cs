@@ -26,28 +26,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library.CommandLineParser
+namespace Ntreev.Library
 {
     /// <summary>
     /// 스위치에 사용할 파서의 타입을 지정합니다.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class ParserAttribute : Attribute
+    public class CommandParserAttribute : Attribute
     {
         readonly Type parserType;
 
         /// <summary>
-        /// <seealso cref="ParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// <seealso cref="CommandParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
-        public ParserAttribute()
+        public CommandParserAttribute()
         {
             this.parserType = typeof(Parser);
         }
 
         /// <summary>
-        /// 파서의 타입을 가지고 <seealso cref="ParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
+        /// 파서의 타입을 가지고 <seealso cref="CommandParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
-        public ParserAttribute(Type parserType)
+        public CommandParserAttribute(Type parserType)
         {
             this.parserType = parserType;
         }
