@@ -12,19 +12,11 @@ namespace Ntreev.Library
     {
         private readonly object instance;
         private readonly string command;
-        private readonly string subcommand;
 
         public MethodUsagePrinter(object instance, string command)
         {
             this.instance = instance;
             this.command = command;
-        }
-
-        public MethodUsagePrinter(object instance, string command, string subcommand)
-        {
-            this.instance = instance;
-            this.command = command;
-            this.subcommand = subcommand;
         }
 
         public void PrintUsage(TextWriter textWriter)
@@ -75,13 +67,25 @@ namespace Ntreev.Library
                 tw.Indent = indentLevel;
                 MethodDescriptor methodDescriptor = CommandDescriptor.GetMethodDescriptors(instance)[memberName];
 
-                tw.WriteLine("{0}: {1} subcommand [args | ...]", Resources.Usage, this.command);
+                if (methodDescriptor == null)
+                {
+                    tw.WriteLine("not found method : {0}", memberName);
+                    return;
+                }
+
+                tw.WriteLine("{0}: {1} {2} [args | ...]", Resources.Usage, this.command, memberName);
+                tw.WriteLine("subcommand: {0}", methodDescriptor.UsageProvider.Usage);
 
                 tw.Indent++;
-                tw.WriteLine("subcommand: {0}", methodDescriptor.Name);
+                tw.WriteLine("args : ");
 
                 tw.Indent++;
-                tw.WriteLine(methodDescriptor.UsageProvider.Usage);
+                foreach (SwitchDescriptor item in methodDescriptor.Switches)
+                {
+                    tw.WriteLine(item.UsageProvider.Usage);
+                }
+                tw.Indent--;
+
                 tw.Indent--;
             }
         }

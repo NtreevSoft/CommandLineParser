@@ -51,8 +51,18 @@ namespace SampleApplication
                 //{
                 //    invoker.Invoke("\"inimaker.exe\" help database", options, InvokeOptions.None);
                 //}
-                invoker.Invoke("\"inimaker.exe\" database /ip \"192.168.15.3\" /path \"g:\\123.sxl\"", options, InvokeOptions.None);
-                invoker.PrintUsage();
+                //invoker.Invoke("\"inimaker.exe\" database /ip \"192.168.15.3\" /path \"g:\\123.sxl\"", options, InvokeOptions.None);
+                //invoker.Invoke("\"inimaker.exe\" help database", options, InvokeOptions.None);
+                invoker.Invoke(" table", options, InvokeOptions.None);
+
+                if (invoker.Method == invoker.HelpMethod)
+                {
+                    invoker.PrintUsage(invoker.Arguments);
+                }
+                else
+                {
+                    invoker.PrintUsage();
+                }
                 //invoker.Invoke("\"inimaker.exe\" show", options, InvokeOptions.None);
                 //parser.Invoke("", options, ParsingOptions.None);
                 //catch (Exception e)

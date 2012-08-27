@@ -68,7 +68,6 @@ namespace Ntreev.Library
         public CommandSwitchAttribute()
         {
             this.Required = false;
-            this.MutuallyExclusive = string.Empty;
 
             foreach (char item in this.shortName)
             {
@@ -125,8 +124,6 @@ namespace Ntreev.Library
                 this.argSeperator = (char)value; 
             }
         }
-
-        public string MutuallyExclusive { get; set; }
 
         /// <summary>
         /// 해당 스위치의 사용법 출력 제공자의 타입을 설정하거나 가져옵니다.

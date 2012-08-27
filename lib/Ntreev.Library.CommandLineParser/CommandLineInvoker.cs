@@ -39,10 +39,13 @@ namespace Ntreev.Library
     /// </summary>
     public partial class CommandLineInvoker
     {
+        public const string DefaultHelpMethod = "help";
+
         private object instance;
         private string command;
         private string arguments;
         private string method;
+        private string helpMethod;
         //private InvokeOptions invokeOptions;
         private IUsagePrinter usagePrinter;
 
@@ -89,20 +92,29 @@ namespace Ntreev.Library
         {
             using (Tracer tracer = new Tracer("Inovking"))
             {
-                try
+                this.usagePrinter = null;
+                Trace.WriteLine(string.Format("parsing options : {0}", invokeOptions));
+
+                this.instance = instance;
+
+                Match match = Regex.Match(commandLine, @"^((?<cmd>""[^""]*"")|(?<cmd>\S+))\s+((?<sub>""[^""]*"")|(?<sub>\S+))\s*(?<arg>.*)");
+
+                this.command = match.Groups["cmd"].Value.Trim('\"');
+                this.method = match.Groups["sub"].Value.Trim('\"');
+                this.arguments = match.Groups["arg"].Value;
+                this.arguments = this.arguments.Trim();
+
+                if (this.command == string.Empty)
+                    this.command = commandLine.Trim();
+
+                this.usagePrinter = new MethodUsagePrinter(instance, this.command);
+
+                if (this.method == CommandLineInvoker.DefaultHelpMethod)
                 {
-                    this.usagePrinter = null;
-                    Trace.WriteLine(string.Format("parsing options : {0}", invokeOptions));
-
-                    this.instance = instance;
-
-                    Match match = Regex.Match(commandLine, @"^((?<cmd>""[^""]*"")|(?<cmd>\S+))\s+((?<sub>""[^""]*"")|(?<sub>\S+))\s*(?<arg>.*)");
-
-                    this.command = match.Groups["cmd"].Value.Trim('\"');
-                    this.method = match.Groups["sub"].Value.Trim('\"');
-                    this.arguments = match.Groups["arg"].Value;
-                    this.arguments = this.arguments.Trim();
-
+                    this.PrintUsage(this.arguments);
+                }
+                else
+                {
                     string[] parameters = this.SplitSwitches(this.arguments);
 
                     MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, this.method);
@@ -112,10 +124,6 @@ namespace Ntreev.Library
                     }
 
                     descriptor.Invoke(this.instance, parameters);
-                }
-                finally
-                {
-                    this.usagePrinter = new MethodUsagePrinter(instance, this.command);
                 }
             }
         }
@@ -159,6 +167,20 @@ namespace Ntreev.Library
         public string Arguments
         {
             get { return this.arguments; }
+        }
+
+        public string HelpMethod
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(helpMethod) == true)
+                    return CommandLineInvoker.DefaultHelpMethod;
+                return this.helpMethod;
+            }
+            set
+            {
+                this.helpMethod = value;
+            }
         }
 
         protected virtual IUsagePrinter CreateUsagePrinterCore(object instance)
