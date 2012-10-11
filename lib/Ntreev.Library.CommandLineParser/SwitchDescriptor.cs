@@ -141,6 +141,32 @@ namespace Ntreev.Library
             get { return this.converter; }
         }
 
+        internal SwitchDescriptor(PropertyInfo propertyInfo)
+        {
+            this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
+
+            if (this.switchAttribute.UsageProvider == null)
+            {
+                this.usageProvider = new InternalSwitchUsageProvider(this);
+            }
+            else
+            {
+                this.usageProvider = TypeDescriptor.CreateInstance(
+                    null,
+                    this.switchAttribute.UsageProvider,
+                    new Type[] { typeof(SwitchDescriptor), },
+                    new object[] { this, }) as SwitchUsageProvider;
+            }
+
+            this.name = propertyInfo.Name;
+            this.displayName = propertyInfo.GetDisplayName();
+            this.type = propertyInfo.PropertyType;
+            this.converter = propertyInfo.GetConverter();
+            this.description = propertyInfo.GetDescription();;
+            this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
+
+        }
+
         internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
         {
             this.switchAttribute = propertyDescriptor.GetCommandSwitchAttribute();
@@ -198,7 +224,7 @@ namespace Ntreev.Library
 
         internal object GetVaue(object instance)
         {
-            return this.valueSetter.Value;
+            return this.valueSetter.GetValue(instance);
         }
 
         internal string TryMatch(string switchLine, bool ignoreCase)
@@ -259,7 +285,7 @@ namespace Ntreev.Library
         interface IValueSetter
         {
             void SetValue(object instance, string arg);
-            object Value { get; }
+            object GetValue(object instance);
         }
 
         class PropertyValueSetter : IValueSetter
@@ -284,9 +310,37 @@ namespace Ntreev.Library
                     this.propertyDescriptor.SetValue(instance, newValue);
             }
 
-            public object Value
+            public object GetValue(object instance)
             {
-                get { throw new NotImplementedException(); }
+                return this.propertyDescriptor.GetValue(instance);
+            }
+        }
+
+        class PropertyInfoValueSetter : IValueSetter
+        {
+            private readonly PropertyInfo propertyInfo;
+            private readonly SwitchDescriptor switchDescriptor;
+
+            public PropertyInfoValueSetter(SwitchDescriptor switchDescriptor, PropertyInfo propertyInfo)
+            {
+                this.switchDescriptor = switchDescriptor;
+                this.propertyInfo = propertyInfo;
+            }
+
+            public void SetValue(object instance, string arg)
+            {
+                object value = this.propertyInfo.GetValue(instance, null);
+
+                Parser parser = Parser.GetParser(this.propertyInfo);
+                object newValue = parser.Parse(this.switchDescriptor, arg, value);
+
+                if (value != newValue && this.propertyInfo.CanWrite == true)
+                    this.propertyInfo.SetValue(instance, newValue, null);
+            }
+
+            public object GetValue(object instance)
+            {
+                return this.propertyInfo.GetValue(instance, null);
             }
         }
 
@@ -311,21 +365,16 @@ namespace Ntreev.Library
                 this.parsed = true;
             }
 
-            public object Value
+            public object GetValue(object instance)
             {
-                get
+                if (this.parsed == false)
                 {
-                    if (this.parsed == false)
-                    {
-                        object defaultValue;
-                        if (this.parameterInfo.TryGetDefaultValue(out defaultValue) == true)
-                            return defaultValue;
-                    }
-                    return this.value; 
+                    object defaultValue;
+                    if (this.parameterInfo.TryGetDefaultValue(out defaultValue) == true)
+                        return defaultValue;
                 }
+                return this.value; 
             }
         }
     }
-
-    
 }

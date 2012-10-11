@@ -166,7 +166,65 @@ namespace Ntreev.Library
                 }
                 finally
                 {
-                    this.usagePrinter = this.CreateUsagePrinterCore(instance);
+                    this.usagePrinter = this.CreateUsagePrinterCore(instance.GetType());
+                }
+            }
+        }
+
+        public bool TryParse(string commandLine, Type type)
+        {
+            return TryParse(commandLine, type, ParseOptions.None);
+        }
+
+        public bool TryParse(string commandLine, Type type, ParseOptions parsingOptions)
+        {
+            try
+            {
+                Parse(commandLine, type, parsingOptions);
+                return true;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Trace.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+        public void Parse(string commandLine, Type type)
+        {
+            this.Parse(commandLine, type, ParseOptions.None);
+        }
+
+        public void Parse(string commandLine, Type type, ParseOptions parsingOptions)
+        {
+            using (Tracer tracer = new Tracer("Parsing"))
+            {
+                try
+                {
+                    this.usagePrinter = null;
+                    Trace.WriteLine(string.Format("parsing options : {0}", parsingOptions));
+
+                    this.instance = null;
+                    this.parsingOptions = parsingOptions;
+
+                    Regex regex = new Regex(@"^((?<exe>""[^""]*"")|(?<exe>\S+))\s+(?<arg>.*)", RegexOptions.ExplicitCapture);
+                    Match match = regex.Match(commandLine);
+
+                    this.command = match.Groups["exe"].Value;
+                    this.arguments = match.Groups["arg"].Value;
+                    this.arguments = this.arguments.Trim();
+
+                    if (arguments.Length == 0)
+                        throw new ArgumentException(Resources.NoArguments, commandLine);
+
+                    string[] switchLines = this.SplitSwitches(this.arguments);
+
+                    SwitchHelper helper = new SwitchHelper(type);
+                    helper.Parse(instance, switchLines, parsingOptions);
+                }
+                finally
+                {
+                    this.usagePrinter = this.CreateUsagePrinterCore(type);
                 }
             }
         }
@@ -192,9 +250,9 @@ namespace Ntreev.Library
             get { return this.usagePrinter; }
         }
 
-        protected virtual IUsagePrinter CreateUsagePrinterCore(object instance)
+        protected virtual IUsagePrinter CreateUsagePrinterCore(Type type)
         {
-            return new SwitchUsagePrinter(instance.GetType());
+            return new SwitchUsagePrinter(type);
         }
 
         private string[] SplitSwitches(string arg)

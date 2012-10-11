@@ -10,12 +10,12 @@ namespace Ntreev.Library
 {
     class MethodUsagePrinter : IUsagePrinter
     {
-        private readonly object instance;
+        private readonly Type type;
         private readonly string command;
 
-        public MethodUsagePrinter(object instance, string command)
+        public MethodUsagePrinter(Type type, string command)
         {
-            this.instance = instance;
+            this.type = type;
             this.command = command;
         }
 
@@ -29,7 +29,7 @@ namespace Ntreev.Library
             using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
             {
                 tw.Indent = indentLevel;
-                MethodDescriptorCollection descriptors = CommandDescriptor.GetMethodDescriptors(instance);
+                MethodDescriptorCollection descriptors = CommandDescriptor.GetMethodDescriptors(this.type);
 
                 tw.WriteLine("{0}: {1} subcommand [args | ...]", Resources.Usage, this.command);
                 tw.WriteLine();
@@ -65,7 +65,7 @@ namespace Ntreev.Library
             using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
             {
                 tw.Indent = indentLevel;
-                MethodDescriptor methodDescriptor = CommandDescriptor.GetMethodDescriptors(instance)[memberName];
+                MethodDescriptor methodDescriptor = CommandDescriptor.GetMethodDescriptors(this.type)[memberName];
 
                 if (methodDescriptor == null)
                 {
@@ -82,7 +82,7 @@ namespace Ntreev.Library
                 tw.Indent++;
                 foreach (SwitchDescriptor item in methodDescriptor.Switches)
                 {
-                    tw.WriteLine(item.UsageProvider.Usage);
+                    tw.WriteLine("{0} {1}", item.UsageProvider.Usage, item.UsageProvider.Description);
                 }
                 tw.Indent--;
 
@@ -91,9 +91,9 @@ namespace Ntreev.Library
         }
 
 
-        protected object Instance
+        protected Type Type
         {
-            get { return this.instance; }
+            get { return this.type; }
         }
     }
 }

@@ -32,6 +32,8 @@ namespace Ntreev.Library
     {
         char character;
 
+        static public ArgSeperator Empty = new ArgSeperator(char.MinValue);
+
         public ArgSeperator(char character)
         {
             this.character = character;
@@ -46,9 +48,5 @@ namespace Ntreev.Library
         {
             return new ArgSeperator(argSeperator);
         }
-
-
-        
-        static public ArgSeperator Empty = new ArgSeperator(char.MinValue);
-    }
+     }
 }

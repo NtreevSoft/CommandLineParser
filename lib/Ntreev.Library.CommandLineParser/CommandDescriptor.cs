@@ -46,6 +46,10 @@ namespace Ntreev.Library
 
         public static SwitchDescriptorCollection GetSwitchDescriptors(object instance)
         {
+            if (CommandDescriptor.typeToSwitchDescriptors.ContainsKey(instance.GetType()) == false)
+            {
+                CommandDescriptor.CreateSwitches(instance);
+            }
             return CommandDescriptor.GetSwitchDescriptors(instance.GetType());
         }
 
@@ -62,18 +66,11 @@ namespace Ntreev.Library
         private static void CreateSwitches(Type type)
         {
             SwitchDescriptorCollection switches = new SwitchDescriptorCollection();
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(type);
 
-            foreach (PropertyDescriptor item in properties)
+            foreach (PropertyInfo item in type.GetProperties())
             {
-                if (item.IsBrowsable == false || item.IsReadOnly == true)
+                if(item.GetBrowsable() == false || item.CanRead == false || item.CanWrite == false)
                     continue;
-
-                if (item.IsReadOnly == true)
-                {
-                    if (item.PropertyType.IsValueType == true)
-                        continue;
-                }
 
                 Parser parser = Parser.GetParser(item);
 
@@ -84,6 +81,27 @@ namespace Ntreev.Library
             }
 
             CommandDescriptor.typeToSwitchDescriptors.Add(type, switches);
+        }
+
+        private static void CreateSwitches(object instance)
+        {
+            SwitchDescriptorCollection switches = new SwitchDescriptorCollection();
+            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(instance);
+
+            foreach (PropertyDescriptor item in properties)
+            {
+                if (item.IsBrowsable == false || item.IsReadOnly == true)
+                    continue;
+
+                Parser parser = Parser.GetParser(item);
+
+                if (parser == null)
+                    continue;
+
+                switches.Add(new SwitchDescriptor(item));
+            }
+
+            CommandDescriptor.typeToSwitchDescriptors.Add(instance.GetType(), switches);
         }
     }
 }

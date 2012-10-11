@@ -102,19 +102,16 @@ namespace Ntreev.Library
             return null;
         }
 
-        internal static Parser GetParser(ParameterInfo parameterInfo)
+        internal static Parser GetParser(ICustomAttributeProvider customAttributeProvider, Type type)
         {
-            object[] attrs = parameterInfo.GetCustomAttributes(typeof(CommandParserAttribute), true);
+            CommandParserAttribute attribute = customAttributeProvider.GetCustomAttribute<CommandParserAttribute>();
 
-            if(attrs.Length > 0)
+            if (attribute != null)
             {
-                CommandParserAttribute parserAttribute = attrs[0] as CommandParserAttribute;
-                return TypeDescriptor.CreateInstance(null, parserAttribute.ParserType, null, null) as Parser;
+                return TypeDescriptor.CreateInstance(null, attribute.ParserType, null, null) as Parser;
             }
 
-            //object value = propertyDescriptor.GetValue(instance);
-            Type type = parameterInfo.ParameterType;
-            TypeConverter converter = parameterInfo.GetConverter();
+            TypeConverter converter = customAttributeProvider.GetConverter(type);
             if (type.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(type) == true)
             {
                 return Parser.DefaultListParser;
@@ -131,6 +128,16 @@ namespace Ntreev.Library
             if (converter.CanConvertFrom(typeof(string)) == true)
                 return Parser.DefaultParser;
             return null;
+        }
+
+        internal static Parser GetParser(ParameterInfo parameterInfo)
+        {
+            return Parser.GetParser(parameterInfo, parameterInfo.ParameterType);
+        }
+
+        internal static Parser GetParser(PropertyInfo propertyInfo)
+        {
+            return Parser.GetParser(propertyInfo, propertyInfo.PropertyType);
         }
     }
 }

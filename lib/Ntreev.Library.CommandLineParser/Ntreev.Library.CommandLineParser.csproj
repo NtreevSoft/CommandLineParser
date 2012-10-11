@@ -81,6 +81,7 @@
     <Compile Include="InvokeOptions.cs" />
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="MethodDescriptorCollection.cs" />
+    <Compile Include="MethodInvokeException.cs" />
     <Compile Include="MethodUsagePrinter.cs" />
     <Compile Include="MethodUsageProvider.cs" />
     <Compile Include="InvalidSwitchStringException.cs" />

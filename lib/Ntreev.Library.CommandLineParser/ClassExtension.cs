@@ -21,61 +21,96 @@ namespace Ntreev.Library
             return attribute;
         }
 
-        public static CommandSwitchAttribute GetCommandSwitchAttribute(this ParameterInfo parameterInfo)
+        public static CommandSwitchAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
         {
-            object[] attrs = parameterInfo.GetCustomAttributes(typeof(CommandSwitchAttribute), true);
-            if(attrs.Length == 0)
+            CommandSwitchAttribute attribute = customAttributeProvider.GetCustomAttribute<CommandSwitchAttribute>();
+            if (attribute == null)
                 return CommandSwitchAttribute.DefaultValue;
 
-            return attrs[0] as CommandSwitchAttribute;
+            return attribute;
         }
 
-        public static string GetDescription(this ParameterInfo parameterInfo)
-        {
-            object[] attrs = parameterInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
-            if (attrs.Length == 0)
-                return string.Empty;
+        //public static string GetDescription(this ParameterInfo parameterInfo)
+        //{
+        //    object[] attrs = parameterInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
+        //    if (attrs.Length == 0)
+        //        return string.Empty;
 
-            DescriptionAttribute descriptionAttribute = attrs[0] as DescriptionAttribute;
-            return descriptionAttribute.Description;
+        //    DescriptionAttribute descriptionAttribute = attrs[0] as DescriptionAttribute;
+        //    return descriptionAttribute.Description;
+        //}
+
+        //public static string GetDescription(this MethodInfo methodInfo)
+        //{
+        //    object[] attrs = methodInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
+        //    if (attrs.Length == 0)
+        //        return string.Empty;
+
+        //    DescriptionAttribute descriptionAttribute = attrs[0] as DescriptionAttribute;
+        //    return descriptionAttribute.Description;
+        //}
+
+        public static T GetCustomAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
+            where T : Attribute
+        {
+            object[] attrs = customAttributeProvider.GetCustomAttributes(typeof(T), true);
+            if (attrs.Length == 0)
+                return null;
+
+            return attrs[0] as T;
         }
 
-        public static string GetDescription(this MethodInfo methodInfo)
+        public static string GetDisplayName(this ICustomAttributeProvider customAttributeProvider)
         {
-            object[] attrs = methodInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
-            if (attrs.Length == 0)
+            DisplayNameAttribute attribute = customAttributeProvider.GetCustomAttribute<DisplayNameAttribute>();
+            if (attribute == null)
                 return string.Empty;
 
-            DescriptionAttribute descriptionAttribute = attrs[0] as DescriptionAttribute;
-            return descriptionAttribute.Description;
+            return attribute.DisplayName;
         }
 
-        public static string GetDisplayName(this ParameterInfo parameterInfo)
+        public static string GetDescription(this ICustomAttributeProvider customAttributeProvider)
         {
-            object[] attrs = parameterInfo.GetCustomAttributes(typeof(DisplayNameAttribute), true);
-            if (attrs.Length == 0)
+            DescriptionAttribute attribute = customAttributeProvider.GetCustomAttribute<DescriptionAttribute>();
+            if (attribute == null)
                 return string.Empty;
 
-            DisplayNameAttribute displayNameAttribute = attrs[0] as DisplayNameAttribute;
-            return displayNameAttribute.DisplayName;
+            return attribute.Description;
+        }
+
+        public static bool GetBrowsable(this ICustomAttributeProvider customAttributeProvider)
+        {
+            BrowsableAttribute attribute = customAttributeProvider.GetCustomAttribute<BrowsableAttribute>();
+            if (attribute == null)
+                return true;
+
+            return attribute.Browsable;
+        }
+
+        public static TypeConverter GetConverter(this PropertyInfo propertyInfo)
+        {
+            return (propertyInfo as ICustomAttributeProvider).GetConverter(propertyInfo.PropertyType);
         }
 
         public static TypeConverter GetConverter(this ParameterInfo parameterInfo)
         {
-            object[] attrs = parameterInfo.GetCustomAttributes(typeof(TypeConverterAttribute), true);
-            if (attrs.Length == 0)
-                return TypeDescriptor.GetConverter(parameterInfo.ParameterType);
+            return (parameterInfo as ICustomAttributeProvider).GetConverter(parameterInfo.ParameterType);
+        }
 
-            //TypeConverter converter = Activator.CreateInstance(
-            TypeConverterAttribute typeConverterAttribute = attrs[0] as TypeConverterAttribute;
+        public static TypeConverter GetConverter(this ICustomAttributeProvider customAttributeProvider, Type type)
+        {
+            TypeConverterAttribute attribute = customAttributeProvider.GetCustomAttribute<TypeConverterAttribute>();
+            if(attribute == null)
+                return TypeDescriptor.GetConverter(type);
+
             try
             {
-                Type converterType = Type.GetType(typeConverterAttribute.ConverterTypeName);
+                Type converterType = Type.GetType(attribute.ConverterTypeName);
                 return Activator.CreateInstance(converterType) as TypeConverter;
             }
             catch (Exception)
             {
-                return TypeDescriptor.GetConverter(parameterInfo.ParameterType);
+                return TypeDescriptor.GetConverter(type);
             }
         }
 

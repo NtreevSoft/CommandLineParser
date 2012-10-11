@@ -78,6 +78,32 @@ namespace Ntreev.Library
             get { return this.methodInfo.GetDescription(); }
         }
 
+        internal void Invoke(Type type, string[] parameters)
+        {
+            SwitchHelper helper = new SwitchHelper(this.nameToStwich.Values);
+            helper.Parse(null, parameters, ParseOptions.None);
+
+            ArrayList values = new ArrayList();
+            foreach (ParameterInfo item in methodInfo.GetParameters())
+            {
+                SwitchDescriptor switchDescriptor = this.nameToStwich[item.Name];
+
+                object value;
+                if (switchDescriptor == null)
+                {
+                    if (item.TryGetDefaultValue(out value) == false)
+                        throw new Exception("매개 변수의 갯수가 적습니다");
+                }
+                else
+                {
+                    value = switchDescriptor.GetVaue(null);
+                }
+                values.Add(value);
+            }
+
+            this.methodInfo.Invoke(null, values.ToArray());
+        }
+
         internal void Invoke(object instance, string[] parameters)
         {
             SwitchHelper helper = new SwitchHelper(this.nameToStwich.Values);
@@ -110,7 +136,6 @@ namespace Ntreev.Library
             ParameterInfo[] infoes = methodInfo.GetParameters();
             if (parameters.Length > infoes.Length)
                 throw new Exception("매개 변수의 갯수가 많습니다.");
-
 
             for (int i = 0; i < infoes.Length; i++)
             {

@@ -40,8 +40,11 @@ namespace SampleApplication
 
             CommandLineParser parser = new CommandLineParser();
             CommandLineInvoker invoker = new CommandLineInvoker();
+            //typeof(wow).Attributes = TypeAttributes
             try
             {
+                //parser.Parse("wow.exe /eData 10", typeof(wow), ParseOptions.None);
+                //invoker.Invoke("wow.exe getdata", typeof(wow), InvokeOptions.None);
                 //parser.Parse(Environment.CommandLine, options, ParsingOptions.ShortNameOnly);
                 //parser.Invoke("category create /n", options, ParsingOptions.None);
                 //parser.Parse("category /n", options, ParseOptions.ShortNameOnly);
@@ -53,16 +56,8 @@ namespace SampleApplication
                 //}
                 //invoker.Invoke("\"inimaker.exe\" database /ip \"192.168.15.3\" /path \"g:\\123.sxl\"", options, InvokeOptions.None);
                 //invoker.Invoke("\"inimaker.exe\" help database", options, InvokeOptions.None);
-                invoker.Invoke(" table", options, InvokeOptions.None);
+                invoker.Invoke("cmd help database", options, InvokeOptions.None);
 
-                if (invoker.Method == invoker.HelpMethod)
-                {
-                    invoker.PrintUsage(invoker.Arguments);
-                }
-                else
-                {
-                    invoker.PrintUsage();
-                }
                 //invoker.Invoke("\"inimaker.exe\" show", options, InvokeOptions.None);
                 //parser.Invoke("", options, ParsingOptions.None);
                 //catch (Exception e)
@@ -96,11 +91,10 @@ namespace SampleApplication
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                parser.PrintUsage();
+                invoker.PrintUsage();
                 Environment.Exit(1);
             }
         }
-
       
         class Options
         {
@@ -155,7 +149,7 @@ namespace SampleApplication
             [CommandMethod("database")]
             [CommandMethodSwitch("Path")]
             [Description("데이터 베이스에 직접 연결합니다.")]
-            public void SetDataBase(string ip, [DefaultValue("4004")]string port)
+            public void SetDataBase([Description("주소입니다.")]string ip, [DefaultValue("4004")]string port)
             {
                 int qwer = 0;
             }
@@ -191,6 +185,18 @@ namespace SampleApplication
                         return null;
                     return fileInfo;
                 }
+            }
+        }
+
+        static class wow
+        {
+            public static int Data { get; set; }
+
+            [CommandMethod]
+            public static int GetData()
+            {
+                throw new Exception();
+                return wow.Data;
             }
         }
     }

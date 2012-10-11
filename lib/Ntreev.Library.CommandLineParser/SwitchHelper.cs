@@ -43,6 +43,11 @@ namespace Ntreev.Library
             this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType());
         }
 
+        public SwitchHelper(Type type)
+        {
+            this.switches = CommandDescriptor.GetSwitchDescriptors(type);
+        }
+
         public SwitchHelper(IEnumerable<SwitchDescriptor> switches)
         {
             this.switches = switches;

@@ -92,6 +92,7 @@ namespace Ntreev.Library
         {
             using (Tracer tracer = new Tracer("Inovking"))
             {
+
                 this.usagePrinter = null;
                 Trace.WriteLine(string.Format("parsing options : {0}", invokeOptions));
 
@@ -107,8 +108,7 @@ namespace Ntreev.Library
                 if (this.command == string.Empty)
                     this.command = commandLine.Trim();
 
-                this.usagePrinter = new MethodUsagePrinter(instance, this.command);
-
+                this.usagePrinter = this.CreateUsagePrinterCore(instance.GetType());
                 if (this.method == CommandLineInvoker.DefaultHelpMethod)
                 {
                     this.PrintUsage(this.arguments);
@@ -120,11 +120,67 @@ namespace Ntreev.Library
                     MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, this.method);
                     if (descriptor == null)
                     {
-                        throw new NotFoundMethodException();
+                        throw new NotFoundMethodException(this.method);
                     }
 
-                    descriptor.Invoke(this.instance, parameters);
+                    try
+                    {
+                        descriptor.Invoke(this.instance, parameters);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new MethodInvokeException(this.method, e);
+                    }
                 }
+            }
+        }
+
+        public void Invoke(string commandLine, Type type, InvokeOptions invokeOptions)
+        {
+            using (Tracer tracer = new Tracer("Inovking"))
+            {
+
+                this.usagePrinter = null;
+                Trace.WriteLine(string.Format("parsing options : {0}", invokeOptions));
+
+                this.instance = null;
+
+                Match match = Regex.Match(commandLine, @"^((?<cmd>""[^""]*"")|(?<cmd>\S+))\s+((?<sub>""[^""]*"")|(?<sub>\S+))\s*(?<arg>.*)");
+
+                this.command = match.Groups["cmd"].Value.Trim('\"');
+                this.method = match.Groups["sub"].Value.Trim('\"');
+                this.arguments = match.Groups["arg"].Value;
+                this.arguments = this.arguments.Trim();
+
+                if (this.command == string.Empty)
+                    this.command = commandLine.Trim();
+
+                this.usagePrinter = this.CreateUsagePrinterCore(type);
+
+                if (this.method == CommandLineInvoker.DefaultHelpMethod)
+                {
+                    this.PrintUsage(this.arguments);
+                }
+                else
+                {
+                    string[] parameters = this.SplitSwitches(this.arguments);
+
+                    MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(type, this.method);
+                    if (descriptor == null)
+                    {
+                        throw new NotFoundMethodException(this.method);
+                    }
+
+                    try
+                    {
+                        descriptor.Invoke(type, parameters);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new MethodInvokeException(this.method, e);
+                    }
+                }
+
             }
         }
 
@@ -183,9 +239,9 @@ namespace Ntreev.Library
             }
         }
 
-        protected virtual IUsagePrinter CreateUsagePrinterCore(object instance)
+        protected virtual IUsagePrinter CreateUsagePrinterCore(Type type)
         {
-            return new SwitchUsagePrinter(instance.GetType());
+            return new MethodUsagePrinter(type, this.command);
         }
 
         private string[] SplitArguments(string arg)
