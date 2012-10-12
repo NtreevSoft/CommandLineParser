@@ -46,8 +46,8 @@ namespace Ntreev.Library
         private string arguments;
         private string method;
         private string helpMethod;
-        //private InvokeOptions invokeOptions;
-        private IUsagePrinter usagePrinter;
+        private InvokeOptions invokeOptions;
+        private UsagePrinter usagePrinter;
 
         /// <summary>
         /// <seealso cref="CommandLineParser"/> 클래스의 새 인스턴스를 초기화합니다.
@@ -92,11 +92,11 @@ namespace Ntreev.Library
         {
             using (Tracer tracer = new Tracer("Inovking"))
             {
-
                 this.usagePrinter = null;
                 Trace.WriteLine(string.Format("parsing options : {0}", invokeOptions));
 
                 this.instance = instance;
+                this.invokeOptions = invokeOptions;
 
                 Match match = Regex.Match(commandLine, @"^((?<cmd>""[^""]*"")|(?<cmd>\S+))\s+((?<sub>""[^""]*"")|(?<sub>\S+))\s*(?<arg>.*)");
 
@@ -111,13 +111,17 @@ namespace Ntreev.Library
                 this.usagePrinter = this.CreateUsagePrinterCore(instance.GetType());
                 if (this.method == CommandLineInvoker.DefaultHelpMethod)
                 {
-                    this.PrintUsage(this.arguments);
+                    string[] splits = this.arguments.Split(new char[] { ' ', }, StringSplitOptions.RemoveEmptyEntries);
+                    if (splits.Length == 0)
+                        throw new NotFoundMethodException();
+                    else
+                        this.PrintUsage(splits[0]);
                 }
                 else
                 {
                     string[] parameters = this.SplitSwitches(this.arguments);
 
-                    MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, this.method);
+                    MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, this.method, this.CaseSensitive);
                     if (descriptor == null)
                     {
                         throw new NotFoundMethodException(this.method);
@@ -125,7 +129,11 @@ namespace Ntreev.Library
 
                     try
                     {
-                        descriptor.Invoke(this.instance, parameters);
+                        descriptor.Invoke(this.instance, parameters, this.CaseSensitive);
+                    }
+                    catch (SwitchException e)
+                    {
+                        throw e;
                     }
                     catch (Exception e)
                     {
@@ -135,15 +143,23 @@ namespace Ntreev.Library
             }
         }
 
+        public void Invoke(string commandLine, Type type)
+        {
+            this.Invoke(commandLine, type, InvokeOptions.None);
+        }
+
         public void Invoke(string commandLine, Type type, InvokeOptions invokeOptions)
         {
             using (Tracer tracer = new Tracer("Inovking"))
             {
+                if (type.IsSealed == false || type.IsAbstract == false)
+                    throw new ArgumentException(Resources.MustBeStaticClass);
 
                 this.usagePrinter = null;
                 Trace.WriteLine(string.Format("parsing options : {0}", invokeOptions));
 
                 this.instance = null;
+                this.invokeOptions = invokeOptions;
 
                 Match match = Regex.Match(commandLine, @"^((?<cmd>""[^""]*"")|(?<cmd>\S+))\s+((?<sub>""[^""]*"")|(?<sub>\S+))\s*(?<arg>.*)");
 
@@ -156,16 +172,19 @@ namespace Ntreev.Library
                     this.command = commandLine.Trim();
 
                 this.usagePrinter = this.CreateUsagePrinterCore(type);
-
                 if (this.method == CommandLineInvoker.DefaultHelpMethod)
                 {
-                    this.PrintUsage(this.arguments);
+                    string[] splits = this.arguments.Split(new char[] { ' ', }, StringSplitOptions.RemoveEmptyEntries);
+                    if (splits.Length == 0)
+                        throw new NotFoundMethodException();
+                    else
+                        this.PrintUsage(splits[0]);
                 }
                 else
                 {
                     string[] parameters = this.SplitSwitches(this.arguments);
 
-                    MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(type, this.method);
+                    MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(type, this.method, this.CaseSensitive);
                     if (descriptor == null)
                     {
                         throw new NotFoundMethodException(this.method);
@@ -173,14 +192,17 @@ namespace Ntreev.Library
 
                     try
                     {
-                        descriptor.Invoke(type, parameters);
+                        descriptor.Invoke(parameters, this.CaseSensitive);
+                    }
+                    catch (SwitchException e)
+                    {
+                        throw e;
                     }
                     catch (Exception e)
                     {
                         throw new MethodInvokeException(this.method, e);
                     }
                 }
-
             }
         }
 
@@ -205,7 +227,7 @@ namespace Ntreev.Library
         /// <summary>
         /// 사용방법을 출력하는 방법을 나타내는 인스턴를 가져옵니다.
         /// </summary>
-        public IUsagePrinter Usage
+        public UsagePrinter Usage
         {
             get { return this.usagePrinter; }
         }
@@ -239,7 +261,7 @@ namespace Ntreev.Library
             }
         }
 
-        protected virtual IUsagePrinter CreateUsagePrinterCore(Type type)
+        protected virtual UsagePrinter CreateUsagePrinterCore(Type type)
         {
             return new MethodUsagePrinter(type, this.command);
         }
@@ -283,6 +305,14 @@ namespace Ntreev.Library
                 }
 
                 return switches.ToArray();
+            }
+        }
+
+        private bool CaseSensitive
+        {
+            get
+            {
+                return this.invokeOptions.HasFlag(InvokeOptions.CaseSensitive);
             }
         }
     }

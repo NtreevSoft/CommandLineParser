@@ -39,12 +39,14 @@ namespace Ntreev.Library
                 nameToStwich.Add(switchDescriptor.Name, switchDescriptor);
             }
 
-            List<SwitchDescriptor> switches = new List<SwitchDescriptor>(this.nameToStwich.Values);
-
-            foreach (CommandMethodSwitchAttribute item in this.methodInfo.GetCustomAttributes(typeof(CommandMethodSwitchAttribute), true))
+            CommandMethodSwitchAttribute attr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
+            if(attr != null)
             {
-                SwitchDescriptor switchDescriptor = CommandDescriptor.GetSwitchDescriptors(methodInfo.DeclaringType)[item.PropertyName];
-                nameToStwich.Add(switchDescriptor.Name, switchDescriptor);
+                foreach(string item in attr.PropertyNames)
+                {
+                    SwitchDescriptor switchDescriptor = CommandDescriptor.GetSwitchDescriptors(methodInfo.DeclaringType)[item];
+                    nameToStwich.Add(switchDescriptor.Name, switchDescriptor);
+                }
             }
         }
 
@@ -78,79 +80,23 @@ namespace Ntreev.Library
             get { return this.methodInfo.GetDescription(); }
         }
 
-        internal void Invoke(Type type, string[] parameters)
+        internal void Invoke(string[] parameters, bool caseSensitive)
+        {
+            this.Invoke(null, parameters, caseSensitive);
+        }
+
+        internal void Invoke(object instance, string[] parameters, bool caseSensitive)
         {
             SwitchHelper helper = new SwitchHelper(this.nameToStwich.Values);
-            helper.Parse(null, parameters, ParseOptions.None);
+            helper.Parse(instance, parameters, caseSensitive);
 
             ArrayList values = new ArrayList();
+
             foreach (ParameterInfo item in methodInfo.GetParameters())
             {
                 SwitchDescriptor switchDescriptor = this.nameToStwich[item.Name];
 
-                object value;
-                if (switchDescriptor == null)
-                {
-                    if (item.TryGetDefaultValue(out value) == false)
-                        throw new Exception("매개 변수의 갯수가 적습니다");
-                }
-                else
-                {
-                    value = switchDescriptor.GetVaue(null);
-                }
-                values.Add(value);
-            }
-
-            this.methodInfo.Invoke(null, values.ToArray());
-        }
-
-        internal void Invoke(object instance, string[] parameters)
-        {
-            SwitchHelper helper = new SwitchHelper(this.nameToStwich.Values);
-            helper.Parse(instance, parameters, ParseOptions.None);
-
-            ArrayList values = new ArrayList();
-            foreach (ParameterInfo item in methodInfo.GetParameters())
-            {
-                SwitchDescriptor switchDescriptor = this.nameToStwich[item.Name];
-
-                object value;
-                if (switchDescriptor == null)
-                {
-                    if (item.TryGetDefaultValue(out value) == false)
-                        throw new Exception("매개 변수의 갯수가 적습니다");
-                }
-                else
-                {
-                    value = switchDescriptor.GetVaue(instance);
-                }
-                values.Add(value);
-            }
-
-            this.methodInfo.Invoke(instance, values.ToArray());
-        }
-
-        internal void Invoke2(object instance, string[] parameters)
-        {
-            ArrayList values = new ArrayList();
-            ParameterInfo[] infoes = methodInfo.GetParameters();
-            if (parameters.Length > infoes.Length)
-                throw new Exception("매개 변수의 갯수가 많습니다.");
-
-            for (int i = 0; i < infoes.Length; i++)
-            {
-                ParameterInfo parameterInfo = infoes[i];
-                object value;
-                if (i >= parameters.Length)
-                {
-                    if (parameterInfo.TryGetDefaultValue(out value) == false)
-                        throw new Exception("매개 변수의 갯수가 적습니다");
-                }
-                else
-                {
-                    value = parameterInfo.GetValue(parameters[i]);
-                }
-
+                object value = switchDescriptor.GetVaue(instance);;
                 values.Add(value);
             }
 

@@ -7,29 +7,40 @@ using System.Reflection;
 
 namespace Ntreev.Library
 {
+    using static_this = CommandDescriptor;
     static class CommandDescriptor
     {
         private static Dictionary<Type, SwitchDescriptorCollection> typeToSwitchDescriptors = new Dictionary<Type, SwitchDescriptorCollection>();
         private static Dictionary<Type, MethodDescriptorCollection> typeToMethodDescriptors = new Dictionary<Type, MethodDescriptorCollection>();
+
+        public static MethodDescriptor GetMethodDescriptor(Type type, string methodName, bool caseSensitive)
+        {
+            return static_this.GetMethodDescriptors(type)[methodName, caseSensitive];
+        }
         
         public static MethodDescriptor GetMethodDescriptor(Type type, string methodName)
         {
-            return CommandDescriptor.GetMethodDescriptors(type)[methodName];
+            return static_this.GetMethodDescriptors(type)[methodName];
+        }
+
+        public static MethodDescriptor GetMethodDescriptor(object instance, string methodName, bool caseSensitive)
+        {
+            return static_this.GetMethodDescriptors(instance)[methodName, caseSensitive];
         }
 
         public static MethodDescriptor GetMethodDescriptor(object instance, string methodName)
         {
-            return CommandDescriptor.GetMethodDescriptors(instance)[methodName];
+            return static_this.GetMethodDescriptors(instance)[methodName];
         }
 
         public static MethodDescriptorCollection GetMethodDescriptors(object instance)
         {
-            return CommandDescriptor.GetMethodDescriptors(instance.GetType());
+            return static_this.GetMethodDescriptors(instance.GetType());
         }
 
         public static MethodDescriptorCollection GetMethodDescriptors(Type type)
         {
-            if (CommandDescriptor.typeToMethodDescriptors.ContainsKey(type) == false)
+            if (static_this.typeToMethodDescriptors.ContainsKey(type) == false)
             {
                 MethodDescriptorCollection descriptors = new MethodDescriptorCollection();
 
@@ -39,28 +50,28 @@ namespace Ntreev.Library
                         continue;
                     descriptors.Add(new MethodDescriptor(item));
                 }
-                CommandDescriptor.typeToMethodDescriptors.Add(type, descriptors);
+                static_this.typeToMethodDescriptors.Add(type, descriptors);
             }
-            return CommandDescriptor.typeToMethodDescriptors[type];
+            return static_this.typeToMethodDescriptors[type];
         }
 
         public static SwitchDescriptorCollection GetSwitchDescriptors(object instance)
         {
-            if (CommandDescriptor.typeToSwitchDescriptors.ContainsKey(instance.GetType()) == false)
+            if (static_this.typeToSwitchDescriptors.ContainsKey(instance.GetType()) == false)
             {
-                CommandDescriptor.CreateSwitches(instance);
+                static_this.CreateSwitches(instance);
             }
-            return CommandDescriptor.GetSwitchDescriptors(instance.GetType());
+            return static_this.GetSwitchDescriptors(instance.GetType());
         }
 
         public static SwitchDescriptorCollection GetSwitchDescriptors(Type type)
         {
-            if (CommandDescriptor.typeToSwitchDescriptors.ContainsKey(type) == false)
+            if (static_this.typeToSwitchDescriptors.ContainsKey(type) == false)
             {
-                CommandDescriptor.CreateSwitches(type);
+                static_this.CreateSwitches(type);
             }
 
-            return CommandDescriptor.typeToSwitchDescriptors[type];
+            return static_this.typeToSwitchDescriptors[type];
         }
 
         private static void CreateSwitches(Type type)
@@ -80,7 +91,7 @@ namespace Ntreev.Library
                 switches.Add(new SwitchDescriptor(item));
             }
 
-            CommandDescriptor.typeToSwitchDescriptors.Add(type, switches);
+            static_this.typeToSwitchDescriptors.Add(type, switches);
         }
 
         private static void CreateSwitches(object instance)
@@ -101,7 +112,7 @@ namespace Ntreev.Library
                 switches.Add(new SwitchDescriptor(item));
             }
 
-            CommandDescriptor.typeToSwitchDescriptors.Add(instance.GetType(), switches);
+            static_this.typeToSwitchDescriptors.Add(instance.GetType(), switches);
         }
     }
 }

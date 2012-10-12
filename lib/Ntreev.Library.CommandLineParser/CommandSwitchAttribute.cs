@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using Ntreev.Library.Properties;
 
 namespace Ntreev.Library
 {
@@ -52,7 +53,7 @@ namespace Ntreev.Library
             set
             {
                 if (char.IsPunctuation(value) == false)
-                    throw new Exception(Properties.Resources.SwitchDelimiterMustBePunctuation);
+                    throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
                 CommandSwitchAttribute.switchDelimiter = value;
             }
         }
@@ -72,7 +73,7 @@ namespace Ntreev.Library
             foreach (char item in this.shortName)
             {
                 if (char.IsLetterOrDigit(item) == false)
-                    throw new Exception(Properties.Resources.InvalidSwitchName);
+                    throw new Exception(Resources.InvalidSwitchName);
             }
         }
 
@@ -117,9 +118,9 @@ namespace Ntreev.Library
                 if (value != char.MinValue)
                 {
                     if (char.IsPunctuation(value) == false)
-                        throw new Exception(Properties.Resources.ArgSeperatorMustBeAPunctuation);
+                        throw new Exception(Resources.ArgSeperatorMustBeAPunctuation);
                     if (value == CommandSwitchAttribute.SwitchDelimiter)
-                        throw new Exception(Properties.Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
+                        throw new Exception(Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
                 }
                 this.argSeperator = (char)value; 
             }

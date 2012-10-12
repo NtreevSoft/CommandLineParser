@@ -43,7 +43,7 @@ namespace Ntreev.Library
         private string command;
         private string arguments;
         private ParseOptions parsingOptions;
-        private IUsagePrinter usagePrinter;
+        private UsagePrinter usagePrinter;
 
         /// <summary>
         /// <seealso cref="CommandLineParser"/> 클래스의 새 인스턴스를 초기화합니다.
@@ -162,7 +162,7 @@ namespace Ntreev.Library
                     string[] switchLines = this.SplitSwitches(this.arguments);
 
                     SwitchHelper helper = new SwitchHelper(instance);
-                    helper.Parse(instance, switchLines, parsingOptions);
+                    helper.Parse(instance, switchLines, this.CaseSensitive);
                 }
                 finally
                 {
@@ -220,7 +220,7 @@ namespace Ntreev.Library
                     string[] switchLines = this.SplitSwitches(this.arguments);
 
                     SwitchHelper helper = new SwitchHelper(type);
-                    helper.Parse(instance, switchLines, parsingOptions);
+                    helper.Parse(instance, switchLines, this.CaseSensitive);
                 }
                 finally
                 {
@@ -245,14 +245,14 @@ namespace Ntreev.Library
         /// <summary>
         /// 사용방법을 출력하는 방법을 나타내는 인스턴를 가져옵니다.
         /// </summary>
-        public IUsagePrinter Usage
+        public UsagePrinter Usage
         {
             get { return this.usagePrinter; }
         }
 
-        protected virtual IUsagePrinter CreateUsagePrinterCore(Type type)
+        protected virtual UsagePrinter CreateUsagePrinterCore(Type type)
         {
-            return new SwitchUsagePrinter(type);
+            return new SwitchUsagePrinter(type, this.command);
         }
 
         private string[] SplitSwitches(string arg)
@@ -273,6 +273,14 @@ namespace Ntreev.Library
                 }
 
                 return switches.ToArray();
+            }
+        }
+
+        private bool CaseSensitive
+        {
+            get
+            {
+                return this.parsingOptions.HasFlag(ParseOptions.CaseSensitive);
             }
         }
     }

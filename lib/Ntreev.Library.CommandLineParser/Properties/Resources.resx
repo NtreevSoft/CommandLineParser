@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgSeperatorAndSwitchDelimiterCannotBeTheSame" xml:space="preserve">
     <value>ArgSeperator는 SwitchDelimiter과 다른 문자여야 합니다.</value>
@@ -138,6 +138,9 @@
   <data name="License" xml:space="preserve">
     <value>the MIT License http://www.opensource.org/licenses/mit-license.php.</value>
   </data>
+  <data name="MustBeStaticClass" xml:space="preserve">
+    <value>타입이 정적 클래스이여야만 합니다.</value>
+  </data>
   <data name="MutuallyExclusiveException" xml:space="preserve">
     <value>MutuallyExclusive가 같은 스위치는 Required 속성값이 모두 true거나 false여야 합니다.</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="NoArguments" xml:space="preserve">
     <value>전달인자가 한개도 포함되어 있지 않습니다.</value>
+  </data>
+  <data name="NotFoundMatchedSwitch" xml:space="preserve">
+    <value>해당 스위치를 찾을 수가 없거나 잘못된 인자 형식입니다.</value>
   </data>
   <data name="SwitchDelimiterMustBePunctuation" xml:space="preserve">
     <value>SwitchDelimiter 는 문장부호여야만 합니다.</value>

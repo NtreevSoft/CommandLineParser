@@ -5,19 +5,27 @@ using System.Text;
 
 namespace Ntreev.Library
 {
+    /// <summary>
+    /// 메소드 호출시 명령문에 속성 스위치를 추가하는 특성을 나타냅니다.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class CommandMethodSwitchAttribute : Attribute
     {
-        private readonly string propertyName;
+        private readonly string[] propertyNames;
 
         public CommandMethodSwitchAttribute(string propertyName)
         {
-            this.propertyName = propertyName;
+            this.propertyNames = new string[] { propertyName, };
         }
 
-        public string PropertyName
+        public CommandMethodSwitchAttribute(params string[] propertyNames)
         {
-            get { return this.propertyName; }
+            this.propertyNames = propertyNames;
+        }
+
+        public string[] PropertyNames
+        {
+            get { return this.propertyNames; }
         }
     }
 }

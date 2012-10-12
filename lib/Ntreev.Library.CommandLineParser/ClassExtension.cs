@@ -30,26 +30,6 @@ namespace Ntreev.Library
             return attribute;
         }
 
-        //public static string GetDescription(this ParameterInfo parameterInfo)
-        //{
-        //    object[] attrs = parameterInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
-        //    if (attrs.Length == 0)
-        //        return string.Empty;
-
-        //    DescriptionAttribute descriptionAttribute = attrs[0] as DescriptionAttribute;
-        //    return descriptionAttribute.Description;
-        //}
-
-        //public static string GetDescription(this MethodInfo methodInfo)
-        //{
-        //    object[] attrs = methodInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
-        //    if (attrs.Length == 0)
-        //        return string.Empty;
-
-        //    DescriptionAttribute descriptionAttribute = attrs[0] as DescriptionAttribute;
-        //    return descriptionAttribute.Description;
-        //}
-
         public static T GetCustomAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
             where T : Attribute
         {
@@ -100,7 +80,7 @@ namespace Ntreev.Library
         public static TypeConverter GetConverter(this ICustomAttributeProvider customAttributeProvider, Type type)
         {
             TypeConverterAttribute attribute = customAttributeProvider.GetCustomAttribute<TypeConverterAttribute>();
-            if(attribute == null)
+            if (attribute == null)
                 return TypeDescriptor.GetConverter(type);
 
             try
@@ -153,14 +133,31 @@ namespace Ntreev.Library
         {
             if (type == typeof(int))
                 return "int";
-            if (type == typeof(uint))
-                return "uint";
             else if (type == typeof(string))
                 return "string";
             else if (type == typeof(bool))
                 return "bool";
             else if (type == typeof(float))
                 return "float";
+            else if (type == typeof(uint))
+                return "uint";
+            else if (type == typeof(char))
+                return "char";
+            else if (type == typeof(byte))
+                return "byte";
+            else if (type == typeof(short))
+                return "short";
+            else if (type == typeof(ushort))
+                return "ushort";
+            else if (type == typeof(double))
+                return "double";
+            else if (type == typeof(decimal))
+                return "decimal";
+            else if (type == typeof(long))
+                return "long";
+            else if (type == typeof(ulong))
+                return "ulong";
+
             return type.Name;
         }
     }

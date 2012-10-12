@@ -164,7 +164,6 @@ namespace Ntreev.Library
             this.converter = propertyInfo.GetConverter();
             this.description = propertyInfo.GetDescription();;
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
-
         }
 
         internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
@@ -227,10 +226,10 @@ namespace Ntreev.Library
             return this.valueSetter.GetValue(instance);
         }
 
-        internal string TryMatch(string switchLine, bool ignoreCase)
+        internal string TryMatch(string switchLine, bool caseSensitive)
         {
             RegexOptions regexOptions = RegexOptions.ExplicitCapture;
-            if (ignoreCase == true)
+            if (caseSensitive == false)
                 regexOptions |= RegexOptions.IgnoreCase;
 
             Match match = Regex.Match(switchLine, this.Pattern, regexOptions);

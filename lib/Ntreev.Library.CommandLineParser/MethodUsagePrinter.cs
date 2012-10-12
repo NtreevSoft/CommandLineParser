@@ -8,37 +8,39 @@ using Ntreev.Library.Properties;
 
 namespace Ntreev.Library
 {
-    class MethodUsagePrinter : IUsagePrinter
+    public class MethodUsagePrinter : UsagePrinter
     {
-        private readonly Type type;
-        private readonly string command;
-
         public MethodUsagePrinter(Type type, string command)
+            : base(type, command)
         {
-            this.type = type;
-            this.command = command;
+
         }
 
-        public void PrintUsage(TextWriter textWriter)
-        {
-            this.PrintUsage(textWriter, 0);
-        }
+        //public void PrintUsage(TextWriter textWriter)
+        //{
+        //    this.PrintUsage(textWriter, 0);
+        //}
 
-        public void PrintUsage(TextWriter textWriter, int indentLevel)
+        public override void PrintUsage(TextWriter textWriter, int indentLevel)
         {
             using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
             {
                 tw.Indent = indentLevel;
-                MethodDescriptorCollection descriptors = CommandDescriptor.GetMethodDescriptors(this.type);
-
-                tw.WriteLine("{0}: {1} subcommand [args | ...]", Resources.Usage, this.command);
+                tw.WriteLine("{0} {1}", this.Title, this.Version);
+                tw.WriteLine(this.Copyright);
+                tw.WriteLine(this.Description);
+                tw.WriteLine(this.License);
                 tw.WriteLine();
 
-                tw.WriteLine("sub commands:");
+                tw.WriteLine("{0}: {1} subcommand [args | ...]", Resources.Usage, this.Command);
+                tw.WriteLine();
+
+                tw.WriteLine("subcommands:");
 
                 tw.Indent++;
 
                 int maxLength = 0;
+                MethodDescriptorCollection descriptors = CommandDescriptor.GetMethodDescriptors(this.Type);
                 foreach (MethodDescriptor item in descriptors)
                 {
                     maxLength = Math.Max(item.Name.Length, maxLength);
@@ -55,17 +57,17 @@ namespace Ntreev.Library
             }
         }
 
-        public void PrintUsage(TextWriter textWriter, string memberName)
-        {
-            this.PrintUsage(textWriter, memberName, 0);
-        }
+        //public void PrintUsage(TextWriter textWriter, string memberName)
+        //{
+        //    this.PrintUsage(textWriter, memberName, 0);
+        //}
 
-        public void PrintUsage(TextWriter textWriter, string memberName, int indentLevel)
+        public override void PrintUsage(TextWriter textWriter, string memberName, int indentLevel)
         {
             using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
             {
                 tw.Indent = indentLevel;
-                MethodDescriptor methodDescriptor = CommandDescriptor.GetMethodDescriptors(this.type)[memberName];
+                MethodDescriptor methodDescriptor = CommandDescriptor.GetMethodDescriptors(this.Type)[memberName];
 
                 if (methodDescriptor == null)
                 {
@@ -73,7 +75,7 @@ namespace Ntreev.Library
                     return;
                 }
 
-                tw.WriteLine("{0}: {1} {2} [args | ...]", Resources.Usage, this.command, memberName);
+                tw.WriteLine("{0}: {1} {2} [args | ...]", Resources.Usage, this.Command, memberName);
                 tw.WriteLine("subcommand: {0}", methodDescriptor.UsageProvider.Usage);
 
                 tw.Indent++;
@@ -88,12 +90,6 @@ namespace Ntreev.Library
 
                 tw.Indent--;
             }
-        }
-
-
-        protected Type Type
-        {
-            get { return this.type; }
         }
     }
 }

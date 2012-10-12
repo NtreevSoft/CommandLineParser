@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.ComponentModel;
+using Ntreev.Library.Properties;
 
 namespace Ntreev.Library
 {
@@ -80,7 +81,7 @@ namespace Ntreev.Library
             }
             catch (Exception e)
             {
-                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new SwitchException(Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
 
             return list;

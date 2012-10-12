@@ -40,43 +40,11 @@ namespace SampleApplication
 
             CommandLineParser parser = new CommandLineParser();
             CommandLineInvoker invoker = new CommandLineInvoker();
-            //typeof(wow).Attributes = TypeAttributes
             try
             {
-                //parser.Parse("wow.exe /eData 10", typeof(wow), ParseOptions.None);
-                //invoker.Invoke("wow.exe getdata", typeof(wow), InvokeOptions.None);
-                //parser.Parse(Environment.CommandLine, options, ParsingOptions.ShortNameOnly);
-                //parser.Invoke("category create /n", options, ParsingOptions.None);
-                //parser.Parse("category /n", options, ParseOptions.ShortNameOnly);
-                //parser.PrintUsage();
-
-                //try
-                //{
-                //    invoker.Invoke("\"inimaker.exe\" help database", options, InvokeOptions.None);
-                //}
-                //invoker.Invoke("\"inimaker.exe\" database /ip \"192.168.15.3\" /path \"g:\\123.sxl\"", options, InvokeOptions.None);
-                //invoker.Invoke("\"inimaker.exe\" help database", options, InvokeOptions.None);
-                invoker.Invoke("cmd help database", options, InvokeOptions.None);
-
-                //invoker.Invoke("\"inimaker.exe\" show", options, InvokeOptions.None);
-                //parser.Invoke("", options, ParsingOptions.None);
-                //catch (Exception e)
-                //{
-                //    invoker.PrintMethodUsage("database");
-                //}
-
-                foreach (PropertyDescriptor item in TypeDescriptor.GetProperties(options))
-                {
-                    if (item.IsBrowsable == false || item.IsReadOnly == true)
-                        continue;
-
-                    if (item.Converter.CanConvertFrom(typeof(string)) == false)
-                        continue;
-
-                    object value = item.GetValue(options);
-                    Console.WriteLine("{0} = {1}", item.Name, value);
-                }
-
+                invoker.Invoke(Environment.CommandLine, options);
+                //invoker.Invoke("wow database /Path e /ip e /port e /number 2", options);
+                invoker.PrintUsage();
                 Environment.Exit(0);
             }
             catch (SwitchException e)
@@ -90,7 +58,7 @@ namespace SampleApplication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                //Console.WriteLine(e);
                 invoker.PrintUsage();
                 Environment.Exit(1);
             }
@@ -98,13 +66,19 @@ namespace SampleApplication
       
         class Options
         {
+            private int number;
+
             [CommandSwitch("n")]
             [Description("백업 여부를 설정합니다.")]
             public bool NoBackup { get; set; }
 
             public string Text { get; set; }
 
-            public int Number { get; set; }
+            public int Number 
+            {
+                get { return this.number; }
+                set { this.number = value; }
+            }
 
             public int Number2 { get; set; }
 
@@ -147,7 +121,7 @@ namespace SampleApplication
             }
 
             [CommandMethod("database")]
-            [CommandMethodSwitch("Path")]
+            [CommandMethodSwitch("Path", "Number")]
             [Description("데이터 베이스에 직접 연결합니다.")]
             public void SetDataBase([Description("주소입니다.")]string ip, [DefaultValue("4004")]string port)
             {
@@ -193,7 +167,7 @@ namespace SampleApplication
             public static int Data { get; set; }
 
             [CommandMethod]
-            public static int GetData()
+            public static int GetData(int n, float f)
             {
                 throw new Exception();
                 return wow.Data;

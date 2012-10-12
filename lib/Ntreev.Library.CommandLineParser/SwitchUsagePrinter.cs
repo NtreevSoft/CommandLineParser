@@ -32,76 +32,18 @@ using System.CodeDom.Compiler;
 
 namespace Ntreev.Library
 {
-    public class SwitchUsagePrinter : IUsagePrinter
+    public class SwitchUsagePrinter : UsagePrinter
     {
         private string location;
         private readonly Type type;
 
-        public SwitchUsagePrinter(Type type)
+        public SwitchUsagePrinter(Type type, string command)
+            : base(type, command)
         {
-            this.type = type;
-
-            Assembly assembly = type.Assembly;
-
-            if (assembly == null)
-                assembly = Assembly.GetCallingAssembly();
-
-            this.location = assembly.Location;
-
-            object[] attributes = null;
-            attributes = assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-            if (attributes.Length == 1)
-            {
-                this.Title = ((AssemblyTitleAttribute)attributes[0]).Title;
-            }
-
-            attributes = assembly.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-            if (attributes.Length == 1)
-            {
-                this.Description = ((AssemblyDescriptionAttribute)attributes[0]).Description;
-            }
-
-            attributes = assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-            if (attributes.Length == 1)
-            {
-                this.Company = ((AssemblyCompanyAttribute)attributes[0]).Company;
-            }
-
-            attributes = assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-            if (attributes.Length == 1)
-            {
-                this.Copyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-            }
-
-            attributes = assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), false);
-            if (attributes.Length == 1)
-            {
-                this.Product = ((AssemblyProductAttribute)attributes[0]).Product;
-            }
-
-
-            this.Version = assembly.GetName().Version.ToString();
-
-            this.License = Properties.Resources.License;
-
-            //this.commandLineParser = commandLineParser;
+             
         }
 
-        public string Title { get; set; }
-
-        public string Description { get; set; }
-
-        public string Company { get; set; }
-
-        public string Copyright { get; set; }
-
-        public string Product { get; set; }
-
-        public string Version { get; set; }
-
-        public string License { get; set; }
-
-        public string Usage { get; set; }
+         public string Usage { get; set; }
 
         public void PrintSwitchUsage(TextWriter textWriter, string switchName)
         {
@@ -114,12 +56,12 @@ namespace Ntreev.Library
             this.OnPrintSwitchUsage(switchDescriptor, textWriter, indentLevel);
         }
 
-        public void PrintUsage(TextWriter textWriter)
-        {
-            this.PrintUsage(textWriter, 0);
-        }
+        //public void PrintUsage(TextWriter textWriter)
+        //{
+        //    this.PrintUsage(textWriter, 0);
+        //}
 
-        public void PrintUsage(TextWriter textWriter, int indentLevel)
+        public override void PrintUsage(TextWriter textWriter, int indentLevel)
         {
             SwitchDescriptor[] switches = CommandDescriptor.GetSwitchDescriptors(this.type).ToArray();
             OnPrintUsage(switches, textWriter, indentLevel);
@@ -198,12 +140,12 @@ namespace Ntreev.Library
             return stringBuilder.ToString();
         }
 
-        void IUsagePrinter.PrintUsage(TextWriter textWriter, string memberName)
-        {
-            this.PrintSwitchUsage(textWriter, memberName);
-        }
+        //public void PrintUsage(TextWriter textWriter, string memberName)
+        //{
+        //    this.PrintSwitchUsage(textWriter, memberName);
+        //}
 
-        void IUsagePrinter.PrintUsage(TextWriter textWriter, string memberName, int indentLevel)
+        public override void PrintUsage(TextWriter textWriter, string memberName, int indentLevel)
         {
             this.PrintSwitchUsage(textWriter, memberName, indentLevel);
         }

@@ -30,6 +30,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 
 using Trace = System.Diagnostics.Trace;
+using Ntreev.Library.Properties;
 
 namespace Ntreev.Library
 {
@@ -53,20 +54,19 @@ namespace Ntreev.Library
             this.switches = switches;
         }
 
-        public void Parse(object instance, string[] switchLines, ParseOptions parsingOptions)
+        public void Parse(object instance, string[] switchLines, bool caseSensitive)
         {
             using (new Tracer("Parsing switches"))
             {
                 this.args.Clear();
                 this.AssertValidation();
-                bool ignoreCase = (parsingOptions & ParseOptions.CaseSensitive) != ParseOptions.CaseSensitive;
 
                 foreach (string switchLine in switchLines)
                 {
                     Trace.WriteLine("finding switch : " + switchLine);
 
-                    if (this.DoMatch(switchLine, ignoreCase) == false)
-                        throw new InvalidSwitchStringException(switchLine);
+                    if (this.DoMatch(switchLine, caseSensitive) == false)
+                        throw new SwitchException(Resources.NotFoundMatchedSwitch, switchLine);
                 }
 
                 this.AssertRequired();
@@ -84,14 +84,14 @@ namespace Ntreev.Library
             }
         }
 
-        private bool DoMatch(string switchLine, bool ignoreCase)
+        private bool DoMatch(string switchLine, bool caseSensitive)
         {
             SwitchDescriptor matchedSwitch = null;
             foreach (SwitchDescriptor item in this.switches)
             {
                 if (this.args.ContainsKey(item.Name) == true)
                     continue;
-                string arg = item.TryMatch(switchLine, ignoreCase);
+                string arg = item.TryMatch(switchLine, caseSensitive);
                 if (arg != null)
                 {
                     this.args.Add(item.Name, arg);
@@ -107,7 +107,7 @@ namespace Ntreev.Library
             foreach (SwitchDescriptor item in this.switches)
             {
                 if (item.Required == true && this.args.ContainsKey(item.Name) == false)
-                    throw new MissingSwitchException(Properties.Resources.SwitchIsMissing, item.Name);
+                    throw new MissingSwitchException(Resources.SwitchIsMissing, item.Name);
             }
         }
 
@@ -127,7 +127,7 @@ namespace Ntreev.Library
                     continue;
 
                 if (hashSet.Contains(shortName) == true)
-                    throw new SwitchException(Properties.Resources.SwitchWasAlreadyRegistered, shortName);
+                    throw new SwitchException(Resources.SwitchWasAlreadyRegistered, shortName);
                 hashSet.Add(shortName);
             }
         }

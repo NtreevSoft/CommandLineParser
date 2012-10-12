@@ -12,5 +12,11 @@ namespace Ntreev.Library
         {
 
         }
+
+        public NotFoundMethodException()
+            : base("대상 메소드를 찾을 수가 없습니다.")
+        {
+
+        }
     }
 }

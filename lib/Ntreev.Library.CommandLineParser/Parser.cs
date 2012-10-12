@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Reflection;
+using Ntreev.Library.Properties;
 
 namespace Ntreev.Library
 {
@@ -60,7 +61,7 @@ namespace Ntreev.Library
             TypeConverter typeConverter = switchDescriptor.Converter;
 
             if (typeConverter.CanConvertFrom(typeof(string)) == false)
-                throw new NotSupportedException(Properties.Resources.CannotConvertFromString);
+                throw new NotSupportedException(Resources.CannotConvertFromString);
 
             try
             {
@@ -68,7 +69,7 @@ namespace Ntreev.Library
             }
             catch (Exception e)
             {
-                throw new SwitchException(Properties.Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new SwitchException(Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
             return value;
         }
