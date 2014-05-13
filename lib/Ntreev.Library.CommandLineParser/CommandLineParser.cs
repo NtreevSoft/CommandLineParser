@@ -39,11 +39,10 @@ namespace Ntreev.Library
     /// </summary>
     public partial class CommandLineParser
     {
-        private object instance;
         private string command;
         private string arguments;
         private ParseOptions parsingOptions;
-        private UsagePrinter usagePrinter;
+        private SwitchUsagePrinter usagePrinter;
 
         /// <summary>
         /// <seealso cref="CommandLineParser"/> 클래스의 새 인스턴스를 초기화합니다.
@@ -53,53 +52,7 @@ namespace Ntreev.Library
             this.TextWriter = Console.Out;
         }
 
-        /// <summary>
-        /// 문자열을 분석하여 데이터로 변환합니다.
-        /// </summary>
-        /// <returns>
-        /// 모든 과정이 성공하면 true를, 그렇지 않다면 false를 반환합니다.
-        /// </returns>
-        /// <param name="commandLine">
-        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
-        /// </param>
-        /// <param name="instance">
-        /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
-        /// </param>
-        public bool TryParse(string commandLine, object instance)
-        {
-            return TryParse(commandLine, instance, ParseOptions.None);
-        }
-
-        /// <summary>
-        /// 문자열을 분석하여 데이터로 변환합니다.
-        /// </summary>
-        /// <returns>
-        /// 모든 과정이 성공하면 true를, 그렇지 않다면 false를 반환합니다.
-        /// </returns>
-        /// <param name="commandLine">
-        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
-        /// </param>
-        /// <param name="instance">
-        /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
-        /// </param>
-        /// <param name="parsingOptions">
-        /// 문자열을 분석하기 위한 옵션입니다.
-        /// </param>
-        public bool TryParse(string commandLine, object instance, ParseOptions parsingOptions)
-        {
-            try
-            {
-                Parse(commandLine, instance, parsingOptions);
-                return true;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Trace.WriteLine(e.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
+         /// <summary>
         /// 문자열을 분석하여 데이터로 변환합니다.
         /// </summary>
         /// <param name="commandLine">
@@ -114,9 +67,9 @@ namespace Ntreev.Library
         /// <exception cref="ArgumentException">
         /// commandLine에 전달 인자가 하나도 포함되어 있지 않은 경우
         /// </exception>
-        public void Parse(string commandLine, object instance)
+        public bool Parse(object instance, string commandLine)
         {
-            Parse(commandLine, instance, ParseOptions.None);
+            return this.Parse(instance, commandLine, ParseOptions.None);
         }
 
         /// <summary>
@@ -137,96 +90,71 @@ namespace Ntreev.Library
         /// <exception cref="ArgumentException">
         /// commandLine에 전달 인자가 하나도 포함되어 있지 않은 경우
         /// </exception>
-        public void Parse(string commandLine, object instance, ParseOptions parsingOptions)
+        public bool Parse(object instance, string commandLine, ParseOptions parsingOptions)
+        {
+            return this.ParseCore(instance, commandLine);
+        }
+
+        private bool ParseCore(object target, string commandLine)
         {
             using (Tracer tracer = new Tracer("Parsing"))
             {
-                try
+                this.usagePrinter = null;
+                Trace.WriteLine(string.Format("parsing options : {0}", parsingOptions));
+
+                string cmdLine = commandLine;
+
+                Match match = Regex.Match(cmdLine, @"^((""[^""]*"")|(\S+))");
+                this.command = match.Value.Trim(new char[] { '\"', });
+
+                if (File.Exists(this.command) == true)
+                    this.command = Path.GetFileNameWithoutExtension(this.command).ToLower();
+
+                this.arguments = cmdLine.Substring(match.Length).Trim();
+                this.arguments = this.arguments.Trim();
+
+                this.usagePrinter = this.CreateUsagePrinterCore(target);
+
+                if (string.IsNullOrEmpty(this.arguments) == true)
                 {
-                    this.usagePrinter = null;
-                    Trace.WriteLine(string.Format("parsing options : {0}", parsingOptions));
-
-                    this.instance = instance;
-                    this.parsingOptions = parsingOptions;
-
-                    Regex regex = new Regex(@"^((?<exe>""[^""]*"")|(?<exe>\S+))\s+(?<arg>.*)", RegexOptions.ExplicitCapture);
-                    Match match = regex.Match(commandLine);
-
-                    this.command = match.Groups["exe"].Value;
-                    this.arguments = match.Groups["arg"].Value;
-                    this.arguments = this.arguments.Trim();
-
+                    this.PrintSummary(target);
+                    return false;
+                }
+                else if (this.arguments == "help")
+                {
+                    this.PrintHelp(target, this.command);
+                    return false;
+                }
+                else
+                {
                     if (arguments.Length == 0)
                         throw new ArgumentException(Resources.NoArguments, commandLine);
 
-                    string[] switchLines = this.SplitSwitches(this.arguments);
-
-                    SwitchHelper helper = new SwitchHelper(instance);
-                    helper.Parse(instance, switchLines, this.CaseSensitive);
-                }
-                finally
-                {
-                    this.usagePrinter = this.CreateUsagePrinterCore(instance.GetType());
+                    SwitchHelper helper = new SwitchHelper(target);
+                    helper.Parse(target, this.arguments);
+                    return true;
                 }
             }
         }
 
-        public bool TryParse(string commandLine, Type type)
+        protected virtual void PrintHelp(object target, string commandName)
         {
-            return TryParse(commandLine, type, ParseOptions.None);
+            this.PrintUsage();
         }
 
-        public bool TryParse(string commandLine, Type type, ParseOptions parsingOptions)
+        protected virtual void PrintSummary(object target)
         {
-            try
-            {
-                Parse(commandLine, type, parsingOptions);
-                return true;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Trace.WriteLine(e.Message);
-                return false;
-            }
+            this.TextWriter.WriteLine("Type '{0} help' for usage.", this.command);
         }
 
-        public void Parse(string commandLine, Type type)
+        public bool Parse(Type type, string commandLine)
         {
-            this.Parse(commandLine, type, ParseOptions.None);
+            return this.Parse(type, commandLine, ParseOptions.None);
         }
 
-        public void Parse(string commandLine, Type type, ParseOptions parsingOptions)
+        public bool Parse(Type type, string commandLine, ParseOptions parsingOptions)
         {
-            using (Tracer tracer = new Tracer("Parsing"))
-            {
-                try
-                {
-                    this.usagePrinter = null;
-                    Trace.WriteLine(string.Format("parsing options : {0}", parsingOptions));
-
-                    this.instance = null;
-                    this.parsingOptions = parsingOptions;
-
-                    Regex regex = new Regex(@"^((?<exe>""[^""]*"")|(?<exe>\S+))\s+(?<arg>.*)", RegexOptions.ExplicitCapture);
-                    Match match = regex.Match(commandLine);
-
-                    this.command = match.Groups["exe"].Value;
-                    this.arguments = match.Groups["arg"].Value;
-                    this.arguments = this.arguments.Trim();
-
-                    if (arguments.Length == 0)
-                        throw new ArgumentException(Resources.NoArguments, commandLine);
-
-                    string[] switchLines = this.SplitSwitches(this.arguments);
-
-                    SwitchHelper helper = new SwitchHelper(type);
-                    helper.Parse(instance, switchLines, this.CaseSensitive);
-                }
-                finally
-                {
-                    this.usagePrinter = this.CreateUsagePrinterCore(type);
-                }
-            }
+            return this.ParseCore(type, commandLine);
         }
 
         /// <summary>
@@ -245,14 +173,14 @@ namespace Ntreev.Library
         /// <summary>
         /// 사용방법을 출력하는 방법을 나타내는 인스턴를 가져옵니다.
         /// </summary>
-        public UsagePrinter Usage
+        public SwitchUsagePrinter Usage
         {
             get { return this.usagePrinter; }
         }
 
-        protected virtual UsagePrinter CreateUsagePrinterCore(Type type)
+        protected virtual SwitchUsagePrinter CreateUsagePrinterCore(object target)
         {
-            return new SwitchUsagePrinter(type, this.command);
+            return new SwitchUsagePrinter(target, this.command);
         }
 
         private string[] SplitSwitches(string arg)
@@ -273,14 +201,6 @@ namespace Ntreev.Library
                 }
 
                 return switches.ToArray();
-            }
-        }
-
-        private bool CaseSensitive
-        {
-            get
-            {
-                return this.parsingOptions.HasFlag(ParseOptions.CaseSensitive);
             }
         }
     }

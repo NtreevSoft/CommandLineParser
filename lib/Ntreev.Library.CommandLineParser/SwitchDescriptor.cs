@@ -193,7 +193,7 @@ namespace Ntreev.Library
 
         internal SwitchDescriptor(ParameterInfo parameterInfo)
         {
-            this.switchAttribute = parameterInfo.GetCommandSwitchAttribute();
+            this.switchAttribute = new CommandSwitchAttribute() { Required = true, };
 
             if (this.switchAttribute.UsageProvider == null)
             {
@@ -226,11 +226,9 @@ namespace Ntreev.Library
             return this.valueSetter.GetValue(instance);
         }
 
-        internal string TryMatch(string switchLine, bool caseSensitive)
+        internal string TryMatch(string switchLine)
         {
             RegexOptions regexOptions = RegexOptions.ExplicitCapture;
-            if (caseSensitive == false)
-                regexOptions |= RegexOptions.IgnoreCase;
 
             Match match = Regex.Match(switchLine, this.Pattern, regexOptions);
             if (match.Success == false)
@@ -350,7 +348,6 @@ namespace Ntreev.Library
             private object value;
             private bool parsed = false;
             
-
             public ParameterValueSetter(SwitchDescriptor switchDescriptor, ParameterInfo parameterInfo)
             {
                 this.switchDescriptor = switchDescriptor;

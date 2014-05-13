@@ -8,24 +8,15 @@ using System.Reflection;
 namespace Ntreev.Library
 {
     using static_this = CommandDescriptor;
-    static class CommandDescriptor
+
+    public static class CommandDescriptor
     {
         private static Dictionary<Type, SwitchDescriptorCollection> typeToSwitchDescriptors = new Dictionary<Type, SwitchDescriptorCollection>();
         private static Dictionary<Type, MethodDescriptorCollection> typeToMethodDescriptors = new Dictionary<Type, MethodDescriptorCollection>();
 
-        public static MethodDescriptor GetMethodDescriptor(Type type, string methodName, bool caseSensitive)
-        {
-            return static_this.GetMethodDescriptors(type)[methodName, caseSensitive];
-        }
-        
         public static MethodDescriptor GetMethodDescriptor(Type type, string methodName)
         {
             return static_this.GetMethodDescriptors(type)[methodName];
-        }
-
-        public static MethodDescriptor GetMethodDescriptor(object instance, string methodName, bool caseSensitive)
-        {
-            return static_this.GetMethodDescriptors(instance)[methodName, caseSensitive];
         }
 
         public static MethodDescriptor GetMethodDescriptor(object instance, string methodName)
@@ -35,6 +26,8 @@ namespace Ntreev.Library
 
         public static MethodDescriptorCollection GetMethodDescriptors(object instance)
         {
+            if(instance is Type)
+                return static_this.GetMethodDescriptors(instance as Type);
             return static_this.GetMethodDescriptors(instance.GetType());
         }
 
@@ -48,7 +41,7 @@ namespace Ntreev.Library
                 {
                     if (item.IsCommandMethod() == false)
                         continue;
-                    descriptors.Add(new MethodDescriptor(item));
+                    descriptors.List.Add(new MethodDescriptor(item));
                 }
                 static_this.typeToMethodDescriptors.Add(type, descriptors);
             }
@@ -88,7 +81,7 @@ namespace Ntreev.Library
                 if (parser == null)
                     continue;
 
-                switches.Add(new SwitchDescriptor(item));
+                switches.List.Add(new SwitchDescriptor(item));
             }
 
             static_this.typeToSwitchDescriptors.Add(type, switches);
@@ -109,7 +102,7 @@ namespace Ntreev.Library
                 if (parser == null)
                     continue;
 
-                switches.Add(new SwitchDescriptor(item));
+                switches.List.Add(new SwitchDescriptor(item));
             }
 
             static_this.typeToSwitchDescriptors.Add(instance.GetType(), switches);

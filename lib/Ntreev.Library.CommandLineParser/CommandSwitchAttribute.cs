@@ -33,7 +33,7 @@ namespace Ntreev.Library
     /// <summary>
     /// 스위치의 속성을 지정합니다.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class CommandSwitchAttribute : Attribute
     {
         static char switchDelimiter = '/';

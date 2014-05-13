@@ -5,9 +5,11 @@ using System.Text;
 
 namespace Ntreev.Library
 {
-    class MethodDescriptorCollection : List<MethodDescriptor>
+    public class MethodDescriptorCollection : IReadOnlyList<MethodDescriptor>
     {
-        public MethodDescriptorCollection()
+        private readonly List<MethodDescriptor> descriptors = new List<MethodDescriptor>();
+
+        internal MethodDescriptorCollection()
         {
 
         }
@@ -16,25 +18,41 @@ namespace Ntreev.Library
         {
             get
             {
-                return this[name, false];
-            }
-        }
-
-        public MethodDescriptor this[string name, bool caseSensitive]
-        {
-            get
-            {
-                StringComparison comparison = caseSensitive == true ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
-                var query = from item in this
-                            where item.Name.Equals(name, comparison)
+                var query = from item in descriptors
+                            where string.Compare(item.Name, name, true) == 0
                             select item;
 
                 if (query.Count() == 0)
                     return null;
 
-                return query.ToArray()[0];
+                return query.First();
             }
         }
 
+        internal IList<MethodDescriptor> List
+        {
+            get { return this.descriptors; }
+        }
+
+
+        public MethodDescriptor this[int index]
+        {
+            get { return this.descriptors[index]; }
+        }
+
+        public int Count
+        {
+            get { return this.descriptors.Count; }
+        }
+
+        IEnumerator<MethodDescriptor> IEnumerable<MethodDescriptor>.GetEnumerator()
+        {
+            return this.descriptors.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.descriptors.GetEnumerator();
+        }
     }
 }

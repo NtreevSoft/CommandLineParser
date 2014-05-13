@@ -43,10 +43,5 @@ namespace Ntreev.Library
         /// 짧은 이름을 가진 특성의 스위치만 분석합니다.
         /// </summary>
         ShortNameOnly = 1,
-
-        /// <summary>
-        /// 분석할때 스위치 이름의 대소문자를 구분합니다.
-        /// </summary>
-        CaseSensitive = 2,
     }
 }

@@ -44,10 +44,13 @@ namespace Ntreev.Library
                 string name = this.SwitchDescriptor.Name;
 
                 string help;
+                char delim = CommandSwitchAttribute.SwitchDelimiter;
+                if (this.SwitchDescriptor.Required == true)
+                    delim = char.MinValue;
                 if(shortName == string.Empty)
-                    help = string.Format("{0}{1}", CommandSwitchAttribute.SwitchDelimiter, name);
+                    help = string.Format("{0}{1}", delim, name);
                 else
-                    help = string.Format("{0}{1}", CommandSwitchAttribute.SwitchDelimiter, shortName);
+                    help = string.Format("{0}{1}", delim, shortName);
 
                 char? argSeperator = this.SwitchDescriptor.ArgSeperator;
                 Type argType = this.SwitchDescriptor.ArgType;

@@ -126,6 +126,9 @@
   <data name="CannotConvertFromString" xml:space="preserve">
     <value>타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>설명</value>
+  </data>
   <data name="InvalidArgumentType" xml:space="preserve">
     <value>잘못된 인수 형식입니다.</value>
   </data>
@@ -163,6 +166,6 @@
     <value>스위치가 이미 등록되어 있습니다. 중복여부를 확인하세요.</value>
   </data>
   <data name="Usage" xml:space="preserve">
-    <value>Usage</value>
+    <value>방법</value>
   </data>
 </root>

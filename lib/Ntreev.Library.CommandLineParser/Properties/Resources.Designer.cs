@@ -88,6 +88,15 @@ namespace Ntreev.Library.Properties {
         }
         
         /// <summary>
+        ///   설명과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   잘못된 인수 형식입니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string InvalidArgumentType {
@@ -196,7 +205,7 @@ namespace Ntreev.Library.Properties {
         }
         
         /// <summary>
-        ///   Usage과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   방법과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Usage {
             get {

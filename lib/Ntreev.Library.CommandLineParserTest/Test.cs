@@ -98,7 +98,7 @@ namespace CommandLineParserTest
             CommandLineParser parser = new CommandLineParser();
 
             string path = Path.GetTempFileName();
-            parser.Parse(@"Test.exe /Text ""this is a string"" /Number 5 /Boolean /Path """ + path + @""" /AttributeTargets ""Assembly,Constructor""" , options);
+            parser.Parse(options, @"Test.exe /Text ""this is a string"" /Number 5 /Boolean /Path """ + path + @""" /AttributeTargets ""Assembly,Constructor""");
 
             Assert.AreEqual("this is a string", options.Text);
             Assert.AreEqual(5, options.Number);
@@ -165,7 +165,7 @@ namespace CommandLineParserTest
             // 인자가 하나도 없을때의 예외 테스트
             try
             {
-                parser.Parse(arg.ToString(), options);
+                parser.Parse(options, arg.ToString());
                 Assert.Inconclusive("예외가 발생하지 않았습니다.");
             }
             catch (ArgumentException)
@@ -177,7 +177,7 @@ namespace CommandLineParserTest
             // text 인자 테스트
             try
             {
-                parser.Parse(arg.ToString(), options);
+                parser.Parse(options, arg.ToString());
                 Assert.Inconclusive("예외가 발생하지 않았습니다.");
             }
             catch (MissingSwitchException e)
@@ -189,7 +189,7 @@ namespace CommandLineParserTest
             // number 인자 테스트
             try
             {
-                parser.Parse(arg.ToString(), options);
+                parser.Parse(options, arg.ToString());
                 Assert.Inconclusive("예외가 발생하지 않았습니다.");
             }
             catch (MissingSwitchException e)
@@ -201,7 +201,7 @@ namespace CommandLineParserTest
             arg.Append(" /Number 4");
             try
             {
-                parser.Parse(arg.ToString(), options);
+                parser.Parse(options, arg.ToString());
             }
             catch (Exception)
             {
@@ -221,12 +221,12 @@ namespace CommandLineParserTest
 
             CommandLineParser parser = new CommandLineParser();
 
-            parser.Parse("Test.exe /Level5 /IsAlive:true", options);
+            parser.Parse(options, "Test.exe /Level5 /IsAlive:true");
 
             Assert.AreEqual(5, options.Level);
             Assert.AreEqual(true, options.IsAlive);
 
-            parser.Parse("Test.exe /Level-1 /IsAlive:false", options);
+            parser.Parse(options, "Test.exe /Level-1 /IsAlive:false");
 
             Assert.AreEqual(-1, options.Level);
             Assert.AreEqual(false, options.IsAlive);
@@ -240,7 +240,7 @@ namespace CommandLineParserTest
 
             try
             {
-                parser.Parse("Test.exe /index 5", options);
+                parser.Parse(options, "Test.exe /index 5");
                 Assert.Inconclusive("예외가 발생하지 않았습니다.");
             }
             catch (SwitchException e)
@@ -269,7 +269,7 @@ namespace CommandLineParserTest
             cmdBuilder.AddSwitch("Texts", "command", "line", "parse");
             cmdBuilder.AddSwitch("PathList", '|', @"d:\license directory\license.txt", @"d:\sourceCode.txt");
 
-            parser.Parse(cmdBuilder.ToString(), options);
+            parser.Parse(options, cmdBuilder.ToString());
 
             Assert.AreEqual(options.IPs.Count, cmdBuilder.GetArgCount("IPs"));
             for (int i = 0; i < options.IPs.Count; i++)

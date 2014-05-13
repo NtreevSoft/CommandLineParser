@@ -32,99 +32,96 @@ using System.CodeDom.Compiler;
 
 namespace Ntreev.Library
 {
-    public class SwitchUsagePrinter : UsagePrinter
+    public class SwitchUsagePrinter
     {
-        private string location;
-        private readonly Type type;
+        private readonly IEnumerable<SwitchDescriptor> switches;
+        private readonly IEnumerable<SwitchDescriptor> options;
+        private string command;
 
-        public SwitchUsagePrinter(Type type, string command)
-            : base(type, command)
+        public SwitchUsagePrinter(object target, string command)
         {
-             
+            SwitchDescriptorCollection switchDescriptors;
+            if (target is Type)
+                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target as Type);
+            else
+                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target);
+            this.switches = switchDescriptors.Where(item => item.Required == true);
+            this.options = switchDescriptors.Where(item => item.Required == false);
+
+            this.command = command;
         }
 
          public string Usage { get; set; }
 
-        public void PrintSwitchUsage(TextWriter textWriter, string switchName)
-        {
-            this.PrintSwitchUsage(textWriter, switchName, 0);
-        }
+         public void PrintUsage(TextWriter textWriter)
+         {
+             this.PrintUsage(textWriter, 0);
+         }
 
-        public void PrintSwitchUsage(TextWriter textWriter, string switchName, int indentLevel)
-        {
-            SwitchDescriptor switchDescriptor = CommandDescriptor.GetSwitchDescriptors(this.type)[switchName];
-            this.OnPrintSwitchUsage(switchDescriptor, textWriter, indentLevel);
-        }
-
-        //public void PrintUsage(TextWriter textWriter)
-        //{
-        //    this.PrintUsage(textWriter, 0);
-        //}
-
-        public override void PrintUsage(TextWriter textWriter, int indentLevel)
-        {
-            SwitchDescriptor[] switches = CommandDescriptor.GetSwitchDescriptors(this.type).ToArray();
-            OnPrintUsage(switches, textWriter, indentLevel);
-        }
-
-        protected virtual void OnPrintUsage(SwitchDescriptor[] switchDescriptors, TextWriter textWriter, int indentLevel)
+        public virtual void PrintUsage(TextWriter textWriter, int indentLevel)
         {
             using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
             {
                 tw.Indent = indentLevel;
-                tw.WriteLine("{0} {1}", this.Title, this.Version);
-                tw.WriteLine(this.Copyright);
-                tw.WriteLine(this.Description);
-                tw.WriteLine(this.License);
+
+
+                string args = this.switches.Aggregate("", (l, n) => l += "[" + n.Name + "] ", item => item);
+
+                //tw.WriteLine(methodDescriptor.UsageProvider.Usage);
+                tw.WriteLine("{0}: {1} {2}", Resources.Usage, this.command, args);
                 tw.WriteLine();
-                if (this.Usage == null)
-                    tw.WriteLine("{0}: {1}", Resources.Usage, this.GetDefaultUsage(switchDescriptors));
-                else
-                    tw.WriteLine("{0}: {1}", Resources.Usage, this.Usage);
 
-                foreach (SwitchDescriptor item in switchDescriptors)
+                //tw.WriteLine();
+                //if (this.Usage == null)
+                //    tw.WriteLine("{0}: {1}", Resources.Usage, this.GetDefaultUsage(this.switchDescriptors));
+                //else
+                //    tw.WriteLine("{0}: {1}", Resources.Usage, this.Usage);
+
+                if (this.switches.Count() > 0)
                 {
-                    SwitchUsageProvider usageProvider = item.UsageProvider;
-                    tw.Indent++;
-                    tw.WriteLine("{0} {1}", usageProvider.Usage, usageProvider.Description);
+                    tw.WriteLine("required : ");
 
-                    if (usageProvider.ArgumentTypeDescription != string.Empty)
+                    foreach (SwitchDescriptor item in this.switches)
                     {
+                        SwitchUsageProvider usageProvider = item.UsageProvider;
                         tw.Indent++;
-                        tw.WriteLine("{0}", usageProvider.ArgumentTypeDescription);
+                        tw.WriteLine("{0} {1}", usageProvider.Usage, usageProvider.Description);
+
+                        if (usageProvider.ArgumentTypeDescription != string.Empty)
+                        {
+                            tw.Indent++;
+                            tw.WriteLine("{0}", usageProvider.ArgumentTypeDescription);
+                            tw.Indent--;
+                        }
                         tw.Indent--;
                     }
-                    tw.Indent--;
+                }
+
+                if (this.options.Count() > 0)
+                {
+                    tw.WriteLine("options : ");
+                    foreach (SwitchDescriptor item in this.options)
+                    {
+                        SwitchUsageProvider usageProvider = item.UsageProvider;
+                        tw.Indent++;
+                        tw.WriteLine("{0} {1}", usageProvider.Usage, usageProvider.Description);
+
+                        if (usageProvider.ArgumentTypeDescription != string.Empty)
+                        {
+                            tw.Indent++;
+                            tw.WriteLine("{0}", usageProvider.ArgumentTypeDescription);
+                            tw.Indent--;
+                        }
+                        tw.Indent--;
+                    }
                 }
             }
         }
 
-        protected virtual void OnPrintSwitchUsage(SwitchDescriptor switchDescriptor, TextWriter textWriter, int indentLevel)
-        {
-            using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
-            {
-                tw.Indent = indentLevel;
-                if (switchDescriptor == null)
-                {
-                    tw.WriteLine("{0} is invalid switch", switchDescriptor.Name);
-                }
-                else
-                {
-                    SwitchUsageProvider usageProvider = switchDescriptor.UsageProvider;
-                    tw.WriteLine("Invalid usage");
-                    tw.WriteLine("{0} {1}", usageProvider.Usage, usageProvider.Description);
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
 
         string GetDefaultUsage(SwitchDescriptor[] switchDescriptors)
         {
-            FileInfo fileInfo = new FileInfo(this.location);
+            FileInfo fileInfo = new FileInfo(this.command);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(string.Format("{0}", fileInfo.Name));
 
@@ -144,10 +141,5 @@ namespace Ntreev.Library
         //{
         //    this.PrintSwitchUsage(textWriter, memberName);
         //}
-
-        public override void PrintUsage(TextWriter textWriter, string memberName, int indentLevel)
-        {
-            this.PrintSwitchUsage(textWriter, memberName, indentLevel);
-        }
-    }
+             }
 }

@@ -42,24 +42,29 @@ namespace SampleApplication
             CommandLineInvoker invoker = new CommandLineInvoker();
             try
             {
-                invoker.Invoke(Environment.CommandLine, options);
-                //invoker.Invoke("wow database /Path e /ip e /port e /number 2", options);
-                invoker.PrintUsage();
+                //CommandLineInvoker.PrintUsage(options, "wow", "database");
+                //invoker.Invoke(Environment.CommandLine, typeof(wow));
+                invoker.Invoke(options, "ss.exe TestMethod1 \"wow werwer\" true");
+                //invoker.Invoke(options, Environment.CommandLine);
+                //invoker.Invoke(options, "wow");
+                //invoker.PrintUsage();
+
+                parser.Parse(options, Environment.CommandLine);
                 Environment.Exit(0);
             }
-            catch (SwitchException e)
-            {
-                Environment.Exit(1);
-            }
-            catch (ArgumentException)
-            {
-                parser.PrintUsage();
-                Environment.Exit(1);
-            }
+            //catch (SwitchException e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //    Environment.Exit(1);
+            //}
+            //catch (MethodInvokeException e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //    Environment.Exit(1);
+            //}
             catch (Exception e)
             {
-                //Console.WriteLine(e);
-                invoker.PrintUsage();
+                Console.WriteLine(e.Message);
                 Environment.Exit(1);
             }
         }
@@ -68,7 +73,7 @@ namespace SampleApplication
         {
             private int number;
 
-            [CommandSwitch("n")]
+            [CommandSwitch("n", Required = true)]
             [Description("백업 여부를 설정합니다.")]
             public bool NoBackup { get; set; }
 
@@ -103,6 +108,7 @@ namespace SampleApplication
             }
 
             [CommandMethod]
+            [CommandMethodSwitch("Path", "Number")]
             public void Show()
             {
                 int qwer = 0;
@@ -115,10 +121,11 @@ namespace SampleApplication
             }
 
             [CommandMethod]
-            public void TestMethod1(int wow, [DefaultValue(false)]bool test)
+            public void TestMethod1(string wow, bool test)
             {
                 int qwer = 0;
             }
+
 
             [CommandMethod("database")]
             [CommandMethodSwitch("Path", "Number")]
@@ -126,6 +133,7 @@ namespace SampleApplication
             public void SetDataBase([Description("주소입니다.")]string ip, [DefaultValue("4004")]string port)
             {
                 int qwer = 0;
+                throw new Exception();
             }
 
             class PathListTypeConverter : TypeConverter
@@ -162,11 +170,12 @@ namespace SampleApplication
             }
         }
 
-        static class wow
+        class wow
         {
             public static int Data { get; set; }
 
             [CommandMethod]
+            [CommandMethodSwitch("Data")]
             public static int GetData(int n, float f)
             {
                 throw new Exception();

@@ -6,9 +6,11 @@ using System.ComponentModel;
 
 namespace Ntreev.Library
 {
-    class SwitchDescriptorCollection : List<SwitchDescriptor>
+    public class SwitchDescriptorCollection : IReadOnlyList<SwitchDescriptor>
     {
-        public SwitchDescriptorCollection()
+        private readonly List<SwitchDescriptor> descriptors = new List<SwitchDescriptor>();
+
+        internal SwitchDescriptorCollection()
         {
 
         }
@@ -17,15 +19,41 @@ namespace Ntreev.Library
         {
             get
             {
-                var query = from item in this
-                            where item.Name == name
+                var query = from item in descriptors
+                            where string.Compare(item.Name, name, true) == 0
                             select item;
 
                 if (query.Count() == 0)
                     return null;
 
-                return query.ToArray()[0];
+                return query.First();
             }
+        }
+
+        internal IList<SwitchDescriptor> List
+        {
+            get { return this.descriptors; }
+        }
+
+
+        public SwitchDescriptor this[int index]
+        {
+            get { return this.descriptors[index]; }
+        }
+
+        public int Count
+        {
+            get { return this.descriptors.Count; }
+        }
+
+        IEnumerator<SwitchDescriptor> IEnumerable<SwitchDescriptor>.GetEnumerator()
+        {
+            return this.descriptors.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.descriptors.GetEnumerator();
         }
     }
 }
