@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 //Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
@@ -105,7 +105,7 @@ namespace Ntreev.Library
 
         private string ParseRequired(object instance, SwitchDescriptor switchDescriptor, string arguments)
         {
-            string normalPattern = string.Format(@"^((""[^""]*"")|([\S-[{0}]]+))", CommandSwitchAttribute.SwitchDelimiter);
+            string normalPattern = @"^((""[^""]*"")|(\S+))";
 
             Match match = Regex.Match(arguments, normalPattern);
 
