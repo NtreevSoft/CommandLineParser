@@ -14,7 +14,6 @@ namespace Ntreev.Library
         private readonly CommandMethodAttribute attribute;
         private MethodUsageProvider usageProvider;
         private readonly List<SwitchDescriptor> switches = new List<SwitchDescriptor>();
-        private readonly List<SwitchDescriptor> options = new List<SwitchDescriptor>();
 
         public MethodDescriptor(MethodInfo methodInfo)
         {
@@ -47,16 +46,13 @@ namespace Ntreev.Library
                 foreach(string item in attr.PropertyNames)
                 {
                     SwitchDescriptor switchDescriptor = CommandDescriptor.GetSwitchDescriptors(methodInfo.DeclaringType)[item];
-                    if (switchDescriptor.Required == true)
-                        this.switches.Add(switchDescriptor);
-                    else
-                        this.options.Add(switchDescriptor);
+                    this.switches.Add(switchDescriptor);
                 }
             }
 
             if (this.attribute.Name == CommandLineInvoker.defaultMethod)
             {
-                if (this.switches.Count > 0 || this.options.Count > 0)
+                if (this.switches.Count > 0)
                     throw new SwitchException("default 메소드는 필수 또는 선택 인자를 가질 수 없습니다.");
             }
         }
@@ -86,11 +82,6 @@ namespace Ntreev.Library
             get { return this.switches.ToArray(); }
         }
 
-        public SwitchDescriptor[] OptionSwitches
-        {
-            get { return this.options.ToArray(); }
-        }
-
         public string Description
         {
             get { return this.methodInfo.GetDescription(); }
@@ -100,7 +91,7 @@ namespace Ntreev.Library
         {
             if (target is Type)
                 target = null;
-            SwitchHelper helper = new SwitchHelper(this.switches, this.options);
+            SwitchHelper helper = new SwitchHelper(this.switches);
             helper.Parse(target, arguments);
 
             ArrayList values = new ArrayList();

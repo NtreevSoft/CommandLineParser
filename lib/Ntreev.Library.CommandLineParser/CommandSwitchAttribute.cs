@@ -37,15 +37,17 @@ namespace Ntreev.Library
     public class CommandSwitchAttribute : Attribute
     {
         // 유닉스 계열 경로 문자인 / 과 같게 하면, 경로 인자를 스위치로 오인하여 에러가 난다.
-        static char switchDelimiter = '-'; // '/';
+        private static string switchDelimiter = "--"; // '/';
+        private static string shortSwitchDelimiter = "-";
         static internal CommandSwitchAttribute DefaultValue = new CommandSwitchAttribute();
 
+        string name = string.Empty;
         string shortName = string.Empty;
         char? argSeperator = null;
 
         public System.Drawing.Color Color { get; set; } 
        
-        public static char SwitchDelimiter
+        public static string SwitchDelimiter
         {
             get
             {
@@ -53,9 +55,23 @@ namespace Ntreev.Library
             }
             set
             {
-                if (char.IsPunctuation(value) == false)
+                if (value.Any(item => char.IsPunctuation(item)) == false)
                     throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
                 CommandSwitchAttribute.switchDelimiter = value;
+            }
+        }
+
+        public static string ShortSwitchDelimiter
+        {
+            get
+            {
+                return CommandSwitchAttribute.shortSwitchDelimiter;
+            }
+            set
+            {
+                if (value.Any(item => char.IsPunctuation(item)) == false)
+                    throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
+                CommandSwitchAttribute.shortSwitchDelimiter = value;
             }
         }
 
@@ -81,10 +97,20 @@ namespace Ntreev.Library
         /// <summary>
         /// 짧은 이름을 사용하여 <seealso cref="CommandSwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
+        [Obsolete]
         public CommandSwitchAttribute(string shortName)
             : this()
         {
             this.shortName = shortName == null ? string.Empty : shortName;
+        }
+
+        /// <summary>
+        /// 해당 스위치의 이름을 설정하거나 가져옵니다.
+        /// </summary>
+        public string Name
+        {
+            get { return this.name; }
+            set { this.name = value; }
         }
 
         /// <summary>
@@ -93,6 +119,7 @@ namespace Ntreev.Library
         public string ShortName
         {
             get { return this.shortName; }
+            set { this.shortName = value; }
         }
 
         /// <summary>
@@ -120,7 +147,7 @@ namespace Ntreev.Library
                 {
                     if (char.IsPunctuation(value) == false)
                         throw new Exception(Resources.ArgSeperatorMustBeAPunctuation);
-                    if (value == CommandSwitchAttribute.SwitchDelimiter)
+                    if (value.ToString() == CommandSwitchAttribute.SwitchDelimiter || value.ToString() == CommandSwitchAttribute.ShortSwitchDelimiter)
                         throw new Exception(Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
                 }
                 this.argSeperator = (char)value; 

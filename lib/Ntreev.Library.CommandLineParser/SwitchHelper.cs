@@ -36,8 +36,7 @@ namespace Ntreev.Library
 {
     class SwitchHelper
     {
-        private readonly IEnumerable<SwitchDescriptor> switches;
-        private readonly IEnumerable<SwitchDescriptor> options;
+        private readonly SwitchDescriptor[] switches;
         private readonly Dictionary<string, string> args = new Dictionary<string, string>();
 
         public SwitchHelper(object target)
@@ -47,63 +46,79 @@ namespace Ntreev.Library
                 switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target as Type);
             else
                 switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target);
-            this.switches = switchDescriptors.Where(item => item.Required == true);
-            this.options = switchDescriptors.Where(item => item.Required == false);
+            this.switches = switchDescriptors.ToArray();
         }
 
-        public SwitchHelper(IEnumerable<SwitchDescriptor> switches, IEnumerable<SwitchDescriptor> options)
+        public SwitchHelper(IEnumerable<SwitchDescriptor> switches)
         {
-            this.switches = switches;
-            this.options = options;
+            this.switches = switches.ToArray();
+            //this.options = options;
         }
 
         public void Parse(object instance, string arguments)
         {
-            IDictionary<string, SwitchDescriptor> o = this.options.ToDictionary(item => item.Name);
-            IList<SwitchDescriptor> r = this.switches.ToList();
+            IDictionary<string, SwitchDescriptor> o = this.switches.Where(item => item.Required == false).ToDictionary(item => item.Name);
+            IList<SwitchDescriptor> requiredSwitches = this.switches.Where(item => item.Required == true).ToList();
 
             string line = arguments;
             while (string.IsNullOrEmpty(line) == false)
             {
-                if (line.First() == CommandSwitchAttribute.SwitchDelimiter)
+                if (line.StartsWith(CommandSwitchAttribute.SwitchDelimiter) == true || line.StartsWith(CommandSwitchAttribute.ShortSwitchDelimiter))
                 {
-                    line = this.ParseOption(instance, o, line);
+                    SwitchDescriptor descriptor = this.ParseOption(instance, ref line);
+                    if(descriptor.Required == true)
+                        requiredSwitches.Remove(descriptor);
                 }
                 else
                 {
-                    if (r.Count == 0)
+                    if (requiredSwitches.Count == 0)
                         throw new SwitchException("필수 인자가 너무 많이 포함되어 있습니다.");
-                    line = this.ParseRequired(instance, r.First(), line);
-                    r.RemoveAt(0);
+                    this.ParseRequired(requiredSwitches.First(), ref line);
+                    requiredSwitches.RemoveAt(0);
                 }
             }
 
-            if (r.Count > 0)
+            if (requiredSwitches.Count > 0)
             {
-                throw new MissingSwitchException("필수 인자가 빠져있습니다", r.First().Name);
+                throw new MissingSwitchException("필수 인자가 빠져있습니다", requiredSwitches.First().Name);
             }
 
             this.SetValues(instance);
         }
 
-        private string ParseOption(object instance, IDictionary<string, SwitchDescriptor> options, string arguments)
+        private SwitchDescriptor ParseOption(object instance, ref string arguments)
         {
-            string delimiterPattern = string.Format(@"{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.SwitchDelimiter);
+            string pattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.SwitchDelimiter);
+            string shortPattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.ShortSwitchDelimiter);
 
-            Match match = Regex.Match(arguments, delimiterPattern);
+            Match match = Regex.Match(arguments, pattern);
 
             if (match.Success == true)
             {
-                if (this.DoMatch(match.Value) == true)
+                SwitchDescriptor descriptor = this.DoMatch(match.Value);
+                if (descriptor != null)
                 {
-                    return arguments.Substring(match.Length).Trim();
+                    arguments = arguments.Substring(match.Length).Trim();
+                    return descriptor;
                 }
             }
-            
+
+            Match shortMatch = Regex.Match(arguments, shortPattern);
+
+            if (shortMatch.Success == true)
+            {
+                SwitchDescriptor descriptor = this.DoMatch(shortMatch.Value);
+                if (descriptor != null)
+                {
+                    arguments = arguments.Substring(shortMatch.Length).Trim();
+                    return descriptor;
+                }
+            }
+
             throw new SwitchException("확인할 수 없는 인자가 포함되어 있습니다.");
         }
 
-        private string ParseRequired(object instance, SwitchDescriptor switchDescriptor, string arguments)
+        private void ParseRequired(SwitchDescriptor switchDescriptor, ref string arguments)
         {
             string normalPattern = @"^((""[^""]*"")|(\S+))";
 
@@ -112,12 +127,13 @@ namespace Ntreev.Library
             if (match.Success == true)
             {
                 this.args.Add(switchDescriptor.Name, match.Value);
-                return arguments.Substring(match.Length).Trim();
+                arguments = arguments.Substring(match.Length).Trim();
+                return;
             }
 
             throw new Exception();
         }
-        
+
 
         public void Parse(object instance, string[] switchLines)
         {
@@ -129,8 +145,8 @@ namespace Ntreev.Library
                 foreach (string switchLine in switchLines)
                 {
                     Trace.WriteLine("finding switch : " + switchLine);
-
-                    if (this.DoMatch(switchLine) == false)
+                    SwitchDescriptor descriptor = this.DoMatch(switchLine);
+                    if (descriptor== null)
                         throw new SwitchException(Resources.NotFoundMatchedSwitch, switchLine);
                 }
 
@@ -147,33 +163,23 @@ namespace Ntreev.Library
                     continue;
                 item.SetValue(instance, this.args[item.Name].Trim('\"'));
             }
-
-            foreach (SwitchDescriptor item in this.options)
-            {
-                if (this.args.ContainsKey(item.Name) == false)
-                    continue;
-                item.SetValue(instance, this.args[item.Name].Trim('\"'));
-            }
         }
 
-        private bool DoMatch(string switchLine)
+        private SwitchDescriptor DoMatch(string switchLine)
         {
-            SwitchDescriptor matchedSwitch = null;
-            foreach (SwitchDescriptor item in this.options)
+            foreach (SwitchDescriptor item in this.switches)
             {
                 if (this.args.ContainsKey(item.Name) == true)
-                    continue;
+                    throw new SwitchException("이름이 같은 선택 인자가 두번 설정되었습니다.");
                 string arg = item.TryMatch(switchLine);
                 if (arg != null)
                 {
-                    if(this.args.ContainsKey(item.Name) == true)
-                        throw new SwitchException("이름이 같은 선택 인자가 두번 정의되어 있습니다.");
                     this.args.Add(item.Name, arg);
-                    return true;
+                    return item;
                 }
             }
 
-            return matchedSwitch != null;
+            return null;
         }
 
         private void AssertRequired()

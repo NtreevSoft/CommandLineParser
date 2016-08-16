@@ -88,7 +88,12 @@ namespace Ntreev.Library
         /// </summary>
         public string Name
         {
-            get { return this.name; }
+            get
+            {
+                if (this.switchAttribute.Name != string.Empty)
+                    return this.switchAttribute.Name;
+                return this.name;
+            }
         }
 
         /// <summary>
@@ -96,7 +101,10 @@ namespace Ntreev.Library
         /// </summary>
         public string DisplayName
         {
-            get { return this.displayName; }
+            get
+            {
+                return this.displayName;
+            }
         }
 
         /// <summary>
@@ -162,7 +170,7 @@ namespace Ntreev.Library
             this.displayName = propertyInfo.GetDisplayName();
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
-            this.description = propertyInfo.GetDescription();;
+            this.description = propertyInfo.GetDescription(); ;
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
         }
 
@@ -197,7 +205,7 @@ namespace Ntreev.Library
 
             if (this.switchAttribute.UsageProvider == null)
             {
-                this.usageProvider = new InternalSwitchUsageProvider(this);
+                this.usageProvider = new InternalSwitchUsageProvider(this, false);
             }
             else
             {
@@ -241,11 +249,11 @@ namespace Ntreev.Library
             string quotes = string.Format(@"(""(?<{0}>.*)"")", SwitchDescriptor.ArgGroupName);
             string normal = string.Format(@"(?<{0}>(\S)+)", SwitchDescriptor.ArgGroupName);
 
-            string pattern;
-            if (this.ShortName == string.Empty)
-                pattern = string.Format(@"^{0}(?<{1}>{2})", CommandSwitchAttribute.SwitchDelimiter, SwitchDescriptor.SwitchGroupName, this.Name);
-            else
-                pattern = string.Format(@"^{0}(?<{1}>({2}|{3}))", CommandSwitchAttribute.SwitchDelimiter, SwitchDescriptor.SwitchGroupName, this.Name, this.ShortName);
+            string pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name);
+            if (this.ShortName != string.Empty)
+            {
+                pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
+            }
 
             char? argSeperator = this.switchAttribute.GetArgSeperator();
             if (this.ArgType != typeof(bool) || argSeperator != null)
@@ -347,7 +355,7 @@ namespace Ntreev.Library
             private readonly SwitchDescriptor switchDescriptor;
             private object value;
             private bool parsed = false;
-            
+
             public ParameterValueSetter(SwitchDescriptor switchDescriptor, ParameterInfo parameterInfo)
             {
                 this.switchDescriptor = switchDescriptor;
@@ -369,7 +377,7 @@ namespace Ntreev.Library
                     if (this.parameterInfo.TryGetDefaultValue(out defaultValue) == true)
                         return defaultValue;
                 }
-                return this.value; 
+                return this.value;
             }
         }
     }

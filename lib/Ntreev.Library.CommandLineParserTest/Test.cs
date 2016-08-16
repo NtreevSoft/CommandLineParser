@@ -112,7 +112,7 @@ namespace CommandLineParserTest
         {
             try
             {
-                CommandSwitchAttribute.SwitchDelimiter = 'a';
+                CommandSwitchAttribute.SwitchDelimiter = "a";
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -122,7 +122,7 @@ namespace CommandLineParserTest
 
             try
             {
-                CommandSwitchAttribute.SwitchDelimiter = '1';
+                CommandSwitchAttribute.SwitchDelimiter = "1";
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -132,7 +132,7 @@ namespace CommandLineParserTest
 
             try
             {
-                CommandSwitchAttribute.SwitchDelimiter = ' ';
+                CommandSwitchAttribute.SwitchDelimiter = " ";
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -142,7 +142,7 @@ namespace CommandLineParserTest
 
             try
             {
-                CommandSwitchAttribute.SwitchDelimiter = '\"';
+                CommandSwitchAttribute.SwitchDelimiter = "\"";
                 Assert.Inconclusive();
             }
             catch (Exception)
@@ -150,7 +150,7 @@ namespace CommandLineParserTest
 
             }
 
-            CommandSwitchAttribute.SwitchDelimiter = '/';
+            CommandSwitchAttribute.SwitchDelimiter = "/";
         }
 
         [TestMethod]
