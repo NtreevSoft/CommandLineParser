@@ -11,22 +11,22 @@ namespace Ntreev.Library
     public class MethodUsagePrinter
     {
         private readonly MethodDescriptor[] descriptors;
-        private readonly string command;
+        private readonly string name;
 
-        public MethodUsagePrinter(object target, string command)
+        public MethodUsagePrinter(object instance, string name)
         {
             MethodDescriptorCollection descriptors = null;
-            if (target is Type)
+            if (instance is Type)
             {
-                descriptors = CommandDescriptor.GetMethodDescriptors(target as Type);
+                descriptors = CommandDescriptor.GetMethodDescriptors(instance as Type);
             }
             else
             {
-                descriptors = CommandDescriptor.GetMethodDescriptors(target);
+                descriptors = CommandDescriptor.GetMethodDescriptors(instance);
             }
             this.descriptors = descriptors.Where(item => item.Name != CommandLineInvoker.defaultMethod).ToArray();
 
-            this.command = command;
+            this.name = name;
         }
 
         public void PrintUsage(TextWriter textWriter)
@@ -45,7 +45,7 @@ namespace Ntreev.Library
             {
                 tw.Indent = indentLevel;
                 //tw.WriteLine("{0} {1}", this.Title, this.Version);
-                tw.WriteLine("{0}: {1} subcommand [args | ...]", Resources.Usage, this.command);
+                tw.WriteLine("{0}: {1} subcommand [args | ...]", Resources.Usage, this.name);
                 tw.WriteLine();
 
                 tw.WriteLine("subcommands:");
@@ -88,7 +88,7 @@ namespace Ntreev.Library
                 string args = methodDescriptor.Switches.Where(item => item.Required).Aggregate("", (l, n) => l += "[" + n.UsageProvider.Usage + "] ", item => item);
 
                 tw.WriteLine("{0}: {1}", Resources.Description, methodDescriptor.Description);
-                tw.WriteLine("{0}: {1} {2} {3}", Resources.Usage, this.command, methodName, args);
+                tw.WriteLine("{0}: {1} {2} {3}", Resources.Usage, this.name, methodName, args);
                 tw.WriteLine();
 
 
@@ -136,7 +136,7 @@ namespace Ntreev.Library
 
         protected string Command
         {
-            get { return this.command; }
+            get { return this.name; }
         }
 
         private MethodDescriptor GetMethodDescriptor(string methodName)

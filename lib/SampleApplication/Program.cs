@@ -38,11 +38,13 @@ namespace SampleApplication
         {
             Options options = new Options();
 
-            CommandLineParser parser = new CommandLineParser();
+            CommandLineParser parser = new CommandLineParser(options);
             CommandLineInvoker invoker = new CommandLineInvoker(options);
             try
             {
-                invoker.PrintUsage("database");
+                parser.PrintUsage();
+                //Console.WriteLine("===================================");
+                //invoker.PrintUsage("database");
                 //CommandLineInvoker.PrintUsage(options, "wow", "database");
                 //invoker.Invoke(Environment.CommandLine, typeof(wow));
                 invoker.Invoke("ss.exe database -p hehe 127.0.0.1 4004");
@@ -50,7 +52,7 @@ namespace SampleApplication
                 //invoker.Invoke(options, "wow");
                 //invoker.PrintUsage();
 
-                parser.Parse(options, Environment.CommandLine);
+                //parser.Parse(options, Environment.CommandLine);
                 Environment.Exit(0);
             }
             //catch (SwitchException e)
