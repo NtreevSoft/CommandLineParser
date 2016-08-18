@@ -30,6 +30,14 @@ namespace Ntreev.Library
 {
     class InternalSwitchUsageProvider : SwitchUsageProvider
     {
+        private bool hasDelimiter = true;
+
+        public InternalSwitchUsageProvider(SwitchDescriptor switchDescriptor, bool hasDelimiter)
+            : base(switchDescriptor)
+        {
+            this.hasDelimiter = hasDelimiter;
+        }
+
         public InternalSwitchUsageProvider(SwitchDescriptor switchDescriptor)
             : base(switchDescriptor)
         {
@@ -38,52 +46,53 @@ namespace Ntreev.Library
 
         public override string Usage
         {
-            get 
+            get
             {
                 string shortName = this.SwitchDescriptor.ShortName;
                 string name = this.SwitchDescriptor.Name;
 
-                string help;
-                char delim = CommandSwitchAttribute.SwitchDelimiter;
-                if (this.SwitchDescriptor.Required == true)
-                    delim = char.MinValue;
-                if(shortName == string.Empty)
-                    help = string.Format("{0}{1}", delim, name);
-                else
-                    help = string.Format("{0}{1}", delim, shortName);
+                string delim = this.hasDelimiter == true ? CommandSwitchAttribute.SwitchDelimiter : string.Empty;
+                string help = string.Format("{0}{1}", delim, name);
 
-                char? argSeperator = this.SwitchDescriptor.ArgSeperator;
-                Type argType = this.SwitchDescriptor.ArgType;
-                if (argType != typeof(bool) || argSeperator != null)
+
+                if (shortName != string.Empty)
                 {
-                    string argTypeName = this.SwitchDescriptor.ArgTypeSummary;
-
-                    if (argSeperator == null)
-                    {
-                        help += string.Format(" <{0}>", argTypeName);
-                    }
-                    else
-                    {
-                        if (argSeperator != char.MinValue)
-                            help += string.Format("{0}<{1}>", argSeperator, argTypeName);
-                        else
-                            help += string.Format("<{0}>", argTypeName);
-                    }
+                    delim = this.hasDelimiter == true ? CommandSwitchAttribute.ShortSwitchDelimiter : string.Empty;
+                    help = string.Format("{0} | {1}{2}", help, CommandSwitchAttribute.ShortSwitchDelimiter, shortName);
                 }
+
+                //char? argSeperator = this.SwitchDescriptor.ArgSeperator;
+                //Type argType = this.SwitchDescriptor.ArgType;
+                //if (argType != typeof(bool) || argSeperator != null)
+                //{
+                //    string argTypeName = this.SwitchDescriptor.ArgTypeSummary;
+
+                //    if (argSeperator == null)
+                //    {
+                //        help += string.Format(" <{0}>", argTypeName);
+                //    }
+                //    else
+                //    {
+                //        if (argSeperator != char.MinValue)
+                //            help += string.Format("{0}<{1}>", argSeperator, argTypeName);
+                //        else
+                //            help += string.Format("<{0}>", argTypeName);
+                //    }
+                //}
                 return help;
             }
         }
 
         public override string Description
         {
-            get 
+            get
             {
                 string description = this.SwitchDescriptor.Description;
 
-                if (this.SwitchDescriptor.DisplayName != this.SwitchDescriptor.Name)
-                    description = this.SwitchDescriptor.DisplayName + " " + description;
-                return description;
+                if (this.SwitchDescriptor.DisplayName == string.Empty)
+                    return description;
 
+                return this.SwitchDescriptor.DisplayName + " " + description;
             }
         }
 
@@ -97,9 +106,9 @@ namespace Ntreev.Library
 
                 string description = string.Empty;
 
-                foreach(string name in Enum.GetNames(argType))
+                foreach (string name in Enum.GetNames(argType))
                 {
-                    if(description != string.Empty)
+                    if (description != string.Empty)
                     {
                         description += string.Format(", {0}", name);
                     }
@@ -110,7 +119,6 @@ namespace Ntreev.Library
                 }
 
                 return string.Format("{0} is {1}", argType.GetSimpleName(), description);
-
             }
         }
     }

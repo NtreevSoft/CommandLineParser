@@ -1,0 +1,9 @@
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\obj\Debug\Ntreev.Library.CommandLineParserTest.csprojResolveAssemblyReference.cache
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\bin\Debug\CommandLineParserTest.dll
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\bin\Debug\CommandLineParserTest.pdb
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\bin\Debug\Ntreev.Library.CommandLineParser.dll
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\bin\Debug\Ntreev.Library.CommandLineParser.pdb
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\bin\Debug\ko\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\obj\Debug\CommandLineParserTest.dll
+C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParserTest\obj\Debug\CommandLineParserTest.pdb

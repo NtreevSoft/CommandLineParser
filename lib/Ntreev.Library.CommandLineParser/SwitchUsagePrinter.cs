@@ -36,19 +36,19 @@ namespace Ntreev.Library
     {
         private readonly IEnumerable<SwitchDescriptor> switches;
         private readonly IEnumerable<SwitchDescriptor> options;
-        private string command;
+        private string name;
 
-        public SwitchUsagePrinter(object target, string command)
+        public SwitchUsagePrinter(object instance, string name)
         {
             SwitchDescriptorCollection switchDescriptors;
-            if (target is Type)
-                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target as Type);
+            if (instance is Type)
+                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance as Type);
             else
-                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target);
+                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance);
             this.switches = switchDescriptors.Where(item => item.Required == true);
             this.options = switchDescriptors.Where(item => item.Required == false);
 
-            this.command = command;
+            this.name = name;
         }
 
          public string Usage { get; set; }
@@ -68,7 +68,7 @@ namespace Ntreev.Library
                 string args = this.switches.Aggregate("", (l, n) => l += "[" + n.Name + "] ", item => item);
 
                 //tw.WriteLine(methodDescriptor.UsageProvider.Usage);
-                tw.WriteLine("{0}: {1} {2}", Resources.Usage, this.command, args);
+                tw.WriteLine("{0}: {1} {2}", Resources.Usage, this.name, args);
                 tw.WriteLine();
 
                 //tw.WriteLine();
@@ -95,6 +95,7 @@ namespace Ntreev.Library
                         }
                         tw.Indent--;
                     }
+                    tw.WriteLine();
                 }
 
                 if (this.options.Count() > 0)
@@ -121,7 +122,7 @@ namespace Ntreev.Library
 
         string GetDefaultUsage(SwitchDescriptor[] switchDescriptors)
         {
-            FileInfo fileInfo = new FileInfo(this.command);
+            FileInfo fileInfo = new FileInfo(this.name);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(string.Format("{0}", fileInfo.Name));
 

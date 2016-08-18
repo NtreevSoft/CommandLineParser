@@ -32,6 +32,7 @@ namespace Ntreev.Library
     /// 분석 옵션을 설정하는 데 사용하는 열거형 값을 제공합니다.
     /// </summary>
     [Flags]
+    [Obsolete]
     public enum ParseOptions
     {
         /// <summary>

@@ -38,18 +38,21 @@ namespace SampleApplication
         {
             Options options = new Options();
 
-            CommandLineParser parser = new CommandLineParser();
-            CommandLineInvoker invoker = new CommandLineInvoker();
+            CommandLineParser parser = new CommandLineParser(options);
+            CommandLineInvoker invoker = new CommandLineInvoker(options);
             try
             {
+                parser.PrintUsage();
+                //Console.WriteLine("===================================");
+                //invoker.PrintUsage("database");
                 //CommandLineInvoker.PrintUsage(options, "wow", "database");
                 //invoker.Invoke(Environment.CommandLine, typeof(wow));
-                invoker.Invoke(options, "ss.exe TestMethod1 \"wow werwer\" true");
+                invoker.Invoke("ss.exe database -p hehe 127.0.0.1 4004");
                 //invoker.Invoke(options, Environment.CommandLine);
                 //invoker.Invoke(options, "wow");
                 //invoker.PrintUsage();
 
-                parser.Parse(options, Environment.CommandLine);
+                //parser.Parse(options, Environment.CommandLine);
                 Environment.Exit(0);
             }
             //catch (SwitchException e)
@@ -68,7 +71,7 @@ namespace SampleApplication
                 Environment.Exit(1);
             }
         }
-      
+
         class Options
         {
             private int number;
@@ -79,7 +82,7 @@ namespace SampleApplication
 
             public string Text { get; set; }
 
-            public int Number 
+            public int Number
             {
                 get { return this.number; }
                 set { this.number = value; }
@@ -89,13 +92,13 @@ namespace SampleApplication
 
             public TypeCode TypeCode { get; set; }
 
-            [CommandSwitch("a", ArgSeperator='\0')]
+            [CommandSwitch("a", ArgSeperator = '\0')]
             public AttributeTargets AttributeTargets { get; set; }
 
-            [TypeConverter(typeof(FileInfoTypeConverter))]
             [Description("파일 경로를 나타냅니다.")]
             [DisplayName("File Path")]
-            public FileInfo Path { get; set; }
+            [CommandSwitch(Name = "path", ShortName = "p", Required = true)]
+            public string Path { get; set; }
 
             [Description("list of paths")]
             public List<int> PathList { get; set; }
@@ -104,7 +107,7 @@ namespace SampleApplication
 
             public Options()
             {
-                
+
             }
 
             [CommandMethod]
@@ -130,7 +133,7 @@ namespace SampleApplication
             [CommandMethod("database")]
             [CommandMethodSwitch("Path", "Number")]
             [Description("데이터 베이스에 직접 연결합니다.")]
-            public void SetDataBase([Description("주소입니다.")]string ip, [DefaultValue("4004")]string port)
+            public void SetDataBase([Description("주소입니다.")]string ip, string port)
             {
                 int qwer = 0;
                 throw new Exception();

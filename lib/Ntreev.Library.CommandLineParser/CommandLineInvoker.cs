@@ -43,23 +43,50 @@ namespace Ntreev.Library
         internal const string defaultMethod = "default";
         private const string helpMethod = "help";
 
-        //private object instance;
-        private string command;
+        private object instance;
+        private MethodUsagePrinter usagePrinter;
+        private string name;
         private string arguments;
         private string method;
-        private MethodUsagePrinter usagePrinter;
+
+
+        [Obsolete]
+        public CommandLineInvoker()
+        {
+
+        }
 
         /// <summary>
         /// <seealso cref="CommandLineParser"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
-        public CommandLineInvoker()
+        public CommandLineInvoker(object instance)
+            : this(Path.GetFileName(Assembly.GetEntryAssembly().Location), instance)
         {
+            
+        }
+
+        public CommandLineInvoker(string name, object instance)
+        {
+            this.instance = instance;
+            this.name = name;
+            this.usagePrinter = this.CreateUsagePrinterCore(name, instance);
             this.TextWriter = Console.Out;
         }
 
-        public CommandLineInvoker(string executeName)
+        [Obsolete]
+        public bool Invoke(object instance, string commandLine)
         {
-            this.TextWriter = Console.Out;
+            this.instance = instance;
+            this.usagePrinter = this.CreateUsagePrinterCore(name, instance);
+            return this.InvokeCore(commandLine);
+        }
+
+        [Obsolete]
+        public bool Invoke(Type type, string commandLine)
+        {
+            this.instance = type;
+            this.usagePrinter = this.CreateUsagePrinterCore(name, instance);
+            return this.InvokeCore(commandLine);
         }
 
         /// <summary>
@@ -70,14 +97,9 @@ namespace Ntreev.Library
         /// </param>
         /// <param name="instance"></param>
         /// <param name="parsingOptions"></param>
-        public bool Invoke(object instance, string commandLine)
+        public bool Invoke(string commandLine)
         {
-            return this.InvokeCore(instance, commandLine);
-        }
-
-        public bool Invoke(Type type, string commandLine)
-        {
-            return this.InvokeCore(type, commandLine);
+            return this.InvokeCore(commandLine);
         }
 
         /// <summary>
@@ -106,9 +128,9 @@ namespace Ntreev.Library
             get { return this.usagePrinter; }
         }
 
-        public string Command
+        public string Name
         {
-            get { return this.command; }
+            get { return this.name; }
         }
 
         public string Method
@@ -143,15 +165,15 @@ namespace Ntreev.Library
 
         protected virtual void PrintSummary(object target)
         {
-            this.TextWriter.WriteLine("Type '{0} help' for usage.", this.command);
+            this.TextWriter.WriteLine("Type '{0} help' for usage.", this.name);
         }
 
-        protected virtual MethodUsagePrinter CreateUsagePrinterCore(object target)
+        protected virtual MethodUsagePrinter CreateUsagePrinterCore(string name, object target)
         {
-            return new MethodUsagePrinter(target, this.command);
+            return new MethodUsagePrinter(target, name);
         }
 
-        private bool InvokeCore(object target, string commandLine)
+        private bool InvokeCore(string commandLine)
         {
             using (Tracer tracer = new Tracer("Inovking"))
             {
@@ -159,10 +181,10 @@ namespace Ntreev.Library
 
                 Regex regex = new Regex(@"^((""[^""]*"")|(\S+))");
                 Match match = regex.Match(cmdLine);
-                this.command = match.Value.Trim(new char[] { '\"', });
+                this.name = match.Value.Trim(new char[] { '\"', });
 
-                if (File.Exists(this.command) == true)
-                    this.command = Path.GetFileNameWithoutExtension(this.command).ToLower();
+                if (File.Exists(this.name) == true)
+                    this.name = Path.GetFileNameWithoutExtension(this.name).ToLower();
 
                 cmdLine = cmdLine.Substring(match.Length).Trim();
                 match = regex.Match(cmdLine);
@@ -171,21 +193,21 @@ namespace Ntreev.Library
                 this.arguments = cmdLine.Substring(match.Length).Trim();
                 this.arguments = this.arguments.Trim();
 
-                this.usagePrinter = this.CreateUsagePrinterCore(target);
+                
 
                 if (string.IsNullOrEmpty(this.method) == true)
                 {
-                    this.PrintSummary(target);
+                    this.PrintSummary(this.instance);
                     return false;
                 }
                 else if (this.method == CommandLineInvoker.helpMethod)
                 {
-                    this.PrintHelp(target, this.command, this.arguments);
+                    this.PrintHelp(this.instance, this.name, this.arguments);
                     return false;
                 }
                 else
                 {
-                    MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target, this.method);
+                    MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, this.method);
 
                     if (descriptor == null)
                     {
@@ -194,7 +216,7 @@ namespace Ntreev.Library
 
                     try
                     {
-                        descriptor.Invoke(target, this.arguments);
+                        descriptor.Invoke(this.instance, this.arguments);
                         return true;
                     }
                     catch (SwitchException e)
