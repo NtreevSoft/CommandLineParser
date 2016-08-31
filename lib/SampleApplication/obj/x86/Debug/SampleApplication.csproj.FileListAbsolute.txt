@@ -1,8 +1,0 @@
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\obj\x86\Debug\SampleApplication.csprojResolveAssemblyReference.cache
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\bin\Debug\SampleApplication.exe.config
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\bin\Debug\SampleApplication.exe
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\bin\Debug\SampleApplication.pdb
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\bin\Debug\Ntreev.Library.CommandLineParser.dll
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\bin\Debug\Ntreev.Library.CommandLineParser.pdb
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\obj\x86\Debug\SampleApplication.exe
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\SampleApplication\obj\x86\Debug\SampleApplication.pdb

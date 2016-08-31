@@ -175,7 +175,7 @@ namespace Ntreev.Library
 
         private bool InvokeCore(string commandLine)
         {
-            using (Tracer tracer = new Tracer("Inovking"))
+            //using (Tracer tracer = new Tracer("Inovking"))
             {
                 string cmdLine = commandLine;
 
@@ -192,8 +192,6 @@ namespace Ntreev.Library
 
                 this.arguments = cmdLine.Substring(match.Length).Trim();
                 this.arguments = this.arguments.Trim();
-
-                
 
                 if (string.IsNullOrEmpty(this.method) == true)
                 {

@@ -43,6 +43,7 @@ namespace SampleApplication
             try
             {
                 parser.PrintUsage();
+                parser.Parse(Environment.CommandLine);
                 //Console.WriteLine("===================================");
                 //invoker.PrintUsage("database");
                 //CommandLineInvoker.PrintUsage(options, "wow", "database");
@@ -76,10 +77,11 @@ namespace SampleApplication
         {
             private int number;
 
-            [CommandSwitch("n", Required = true)]
+            [CommandSwitch(ShortName = "n", Required = true)]
             [Description("백업 여부를 설정합니다.")]
             public bool NoBackup { get; set; }
 
+            [CommandSwitch(ShortName = "t")]
             public string Text { get; set; }
 
             public int Number
@@ -92,7 +94,7 @@ namespace SampleApplication
 
             public TypeCode TypeCode { get; set; }
 
-            [CommandSwitch("a", ArgSeperator = '\0')]
+            [CommandSwitch(Name = "attr")]
             public AttributeTargets AttributeTargets { get; set; }
 
             [Description("파일 경로를 나타냅니다.")]

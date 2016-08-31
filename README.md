@@ -29,7 +29,7 @@ SourceCode:
             class Options
             {
                 public bool Toggle { get; set; }
-                [Switch("i")]
+                [Switch(ShortName = "i")]
                 public int Index { get; set; }
                 public string Text { get; set; }
 				public List<int> Numbers { get; set; }
@@ -39,9 +39,9 @@ SourceCode:
 
 You can call like this:
 
-    C:\>Example.exe /Toggle /Index 3 /Text "this is text" /Numbers "1,2,3,4,5"
+    C:\>Example.exe --Toggle --Index 3 --Text "this is text" --Numbers "1,2,3,4,5"
     or
-    C:\>Example.exe /i 3
+    C:\>Example.exe -i 3
 
 
 License

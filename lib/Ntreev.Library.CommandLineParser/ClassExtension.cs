@@ -11,23 +11,12 @@ namespace Ntreev.Library
     {
         public static CommandSwitchAttribute GetCommandSwitchAttribute(this PropertyDescriptor propertyDescriptor)
         {
-            CommandSwitchAttribute attribute = propertyDescriptor.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
-
-            if (attribute == null)
-            {
-                attribute = CommandSwitchAttribute.DefaultValue;
-            }
-
-            return attribute;
+            return propertyDescriptor.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
         }
 
         public static CommandSwitchAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
         {
-            CommandSwitchAttribute attribute = customAttributeProvider.GetCustomAttribute<CommandSwitchAttribute>();
-            if (attribute == null)
-                return CommandSwitchAttribute.DefaultValue;
-
-            return attribute;
+            return customAttributeProvider.GetCustomAttribute<CommandSwitchAttribute>();
         }
 
         public static T GetCustomAttribute<T>(this ICustomAttributeProvider customAttributeProvider)

@@ -102,6 +102,9 @@ namespace Ntreev.Library
                 if (parser == null)
                     continue;
 
+                if (item.GetCommandSwitchAttribute() == null)
+                    continue;
+
                 switches.List.Add(new SwitchDescriptor(item));
             }
 

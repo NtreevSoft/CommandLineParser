@@ -37,7 +37,7 @@ namespace Ntreev.Library
     class SwitchHelper
     {
         private readonly SwitchDescriptor[] switches;
-        private readonly Dictionary<string, string> args = new Dictionary<string, string>();
+        private readonly Dictionary<SwitchDescriptor, string> args = new Dictionary<SwitchDescriptor, string>();
 
         public SwitchHelper(object target)
         {
@@ -57,7 +57,7 @@ namespace Ntreev.Library
 
         public void Parse(object instance, string arguments)
         {
-            IDictionary<string, SwitchDescriptor> o = this.switches.Where(item => item.Required == false).ToDictionary(item => item.Name);
+            //IDictionary<string, SwitchDescriptor> o = this.switches.Where(item => item.Required == false).ToDictionary(item => item.Name);
             IList<SwitchDescriptor> requiredSwitches = this.switches.Where(item => item.Required == true).ToList();
 
             string line = arguments;
@@ -126,7 +126,7 @@ namespace Ntreev.Library
 
             if (match.Success == true)
             {
-                this.args.Add(switchDescriptor.Name, match.Value);
+                this.args.Add(switchDescriptor, match.Value);
                 arguments = arguments.Substring(match.Length).Trim();
                 return;
             }
@@ -137,7 +137,7 @@ namespace Ntreev.Library
 
         public void Parse(object instance, string[] switchLines)
         {
-            using (new Tracer("Parsing switches"))
+            //using (new Tracer("Parsing switches"))
             {
                 this.args.Clear();
                 this.AssertValidation();
@@ -159,9 +159,9 @@ namespace Ntreev.Library
         {
             foreach (SwitchDescriptor item in this.switches)
             {
-                if (this.args.ContainsKey(item.Name) == false)
+                if (this.args.ContainsKey(item) == false)
                     continue;
-                item.SetValue(instance, this.args[item.Name].Trim('\"'));
+                item.SetValue(instance, this.args[item].Trim('\"'));
             }
         }
 
@@ -169,12 +169,12 @@ namespace Ntreev.Library
         {
             foreach (SwitchDescriptor item in this.switches)
             {
-                if (this.args.ContainsKey(item.Name) == true)
-                    throw new SwitchException("이름이 같은 선택 인자가 두번 설정되었습니다.");
                 string arg = item.TryMatch(switchLine);
                 if (arg != null)
                 {
-                    this.args.Add(item.Name, arg);
+                    if (this.args.ContainsKey(item) == true)
+                        throw new SwitchException("이름이 같은 선택 인자가 두번 설정되었습니다.");
+                    this.args.Add(item, arg);
                     return item;
                 }
             }
@@ -186,7 +186,7 @@ namespace Ntreev.Library
         {
             foreach (SwitchDescriptor item in this.switches)
             {
-                if (item.Required == true && this.args.ContainsKey(item.Name) == false)
+                if (item.Required == true && this.args.ContainsKey(item) == false)
                     throw new MissingSwitchException(Resources.SwitchIsMissing, item.Name);
             }
         }

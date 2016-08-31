@@ -54,8 +54,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\Ntreev.Library.CommandLineParser.xml</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
+    <UpdateAssemblyVersion>False</UpdateAssemblyVersion>
+    <UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
+    <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
+    <AssemblyFileVersionSettings>None.None.DateStamp.TimeStamp</AssemblyFileVersionSettings>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
