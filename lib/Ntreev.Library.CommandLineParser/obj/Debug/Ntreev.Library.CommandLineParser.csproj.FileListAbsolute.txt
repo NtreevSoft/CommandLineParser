@@ -1,7 +1,0 @@
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParser\obj\Debug\Ntreev.Library.CommandLineParser.csprojResolveAssemblyReference.cache
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParser\obj\Debug\Ntreev.Library.Properties.Resources.resources
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParser\obj\Debug\Ntreev.Library.CommandLineParser.csproj.GenerateResource.Cache
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\bin\Debug\Ntreev.Library.CommandLineParser.dll
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\bin\Debug\Ntreev.Library.CommandLineParser.pdb
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParser\obj\Debug\Ntreev.Library.CommandLineParser.dll
-C:\Users\s2quake\Documents\GitHub\CommandLineParser\lib\Ntreev.Library.CommandLineParser\obj\Debug\Ntreev.Library.CommandLineParser.pdb

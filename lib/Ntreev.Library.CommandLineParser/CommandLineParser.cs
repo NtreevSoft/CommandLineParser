@@ -69,6 +69,11 @@ namespace Ntreev.Library
             this.TextWriter = Console.Out;
         }
 
+        public void Parse(string commandLine)
+        {
+            this.ParseCore(commandLine);
+        }
+
         /// <summary>
         /// 문자열을 분석하여 데이터로 변환합니다.
         /// </summary>
@@ -84,9 +89,10 @@ namespace Ntreev.Library
         /// <exception cref="ArgumentException">
         /// commandLine에 전달 인자가 하나도 포함되어 있지 않은 경우
         /// </exception>
-        public bool Parse(object instance, string commandLine)
+        public void Parse(object instance, string commandLine)
         {
-            return this.ParseCore(instance, commandLine);
+            this.instance = instance;
+            this.ParseCore(commandLine);
         }
 
         /// <summary>
@@ -108,18 +114,15 @@ namespace Ntreev.Library
         /// commandLine에 전달 인자가 하나도 포함되어 있지 않은 경우
         /// </exception>
         [Obsolete]
-        public bool Parse(object instance, string commandLine, ParseOptions parsingOptions)
+        public void Parse(object instance, string commandLine, ParseOptions parsingOptions)
         {
-            return this.ParseCore(instance, commandLine);
+            this.ParseCore(commandLine);
         }
 
-        private bool ParseCore(object target, string commandLine)
+        private void ParseCore(string commandLine)
         {
-            using (Tracer tracer = new Tracer("Parsing"))
+            //using (Tracer tracer = new Tracer("Parsing"))
             {
-                this.usagePrinter = null;
-                //Trace.WriteLine(string.Format("parsing options : {0}", parsingOptions));
-
                 string cmdLine = commandLine;
 
                 Match match = Regex.Match(cmdLine, @"^((""[^""]*"")|(\S+))");
@@ -130,24 +133,14 @@ namespace Ntreev.Library
 
                 string arguments = cmdLine.Substring(match.Length).Trim();
 
-                if (string.IsNullOrEmpty(arguments) == true)
+                if (arguments == "help")
                 {
-                    this.PrintSummary(target);
-                    return false;
-                }
-                else if (arguments == "help")
-                {
-                    this.PrintHelp(target, this.name);
-                    return false;
+                    this.PrintHelp(this.instance, this.name);
                 }
                 else
                 {
-                    if (arguments.Length == 0)
-                        throw new ArgumentException(Resources.NoArguments, commandLine);
-
-                    SwitchHelper helper = new SwitchHelper(target);
-                    helper.Parse(target, arguments);
-                    return true;
+                    SwitchHelper helper = new SwitchHelper(this.instance);
+                    helper.Parse(this.instance, arguments);
                 }
             }
         }
@@ -162,14 +155,14 @@ namespace Ntreev.Library
             this.TextWriter.WriteLine("Type '{0} help' for usage.", this.name);
         }
 
-        public bool Parse(Type type, string commandLine)
+        public void Parse(Type type, string commandLine)
         {
-            return this.Parse(type, commandLine, ParseOptions.None);
+            this.Parse(type, commandLine, ParseOptions.None);
         }
 
-        public bool Parse(Type type, string commandLine, ParseOptions parsingOptions)
+        public void Parse(Type type, string commandLine, ParseOptions parsingOptions)
         {
-            return this.ParseCore(type, commandLine);
+            this.ParseCore(commandLine);
         }
 
         /// <summary>
@@ -193,30 +186,19 @@ namespace Ntreev.Library
             get { return this.usagePrinter; }
         }
 
+        public string Name
+        {
+            get { return this.name; }
+        }
+
+        public object Instance
+        {
+            get { return this.instance; }
+        }
+
         protected virtual SwitchUsagePrinter CreateUsagePrinterCore(string name, object target)
         {
             return new SwitchUsagePrinter(target, name);
         }
-
-        //private string[] SplitSwitches(string arg)
-        //{
-        //    using (Tracer tracer = new Tracer("Split Switches"))
-        //    {
-        //        List<string> switches = new List<string>();
-        //        string pattern = string.Format(@"{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))*", CommandSwitchAttribute.SwitchDelimiter);
-        //        Regex regex = new Regex(pattern);
-        //        Match match = regex.Match(arg);
-
-        //        while (match.Success == true)
-        //        {
-        //            string matchedString = match.ToString().Trim();
-        //            Trace.WriteLine(matchedString);
-        //            switches.Add(matchedString);
-        //            match = match.NextMatch();
-        //        }
-
-        //        return switches.ToArray();
-        //    }
-        //}
     }
 }

@@ -89,16 +89,16 @@ namespace Ntreev.Library
             get { return this.name; }
         }
 
-        /// <summary>
-        /// 스위치의 표시 이름을 가져옵니다.
-        /// </summary>
-        public string DisplayName
-        {
-            get
-            {
-                return this.displayName;
-            }
-        }
+        ///// <summary>
+        ///// 스위치의 표시 이름을 가져옵니다.
+        ///// </summary>
+        //public string DisplayName
+        //{
+        //    get
+        //    {
+        //        return this.displayName;
+        //    }
+        //}
 
         /// <summary>
         /// 스위치의 부가적인 설명을 가져옵니다.
@@ -185,8 +185,10 @@ namespace Ntreev.Library
                     new object[] { this, }) as SwitchUsageProvider;
             }
 
-            this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
+            this.name = this.switchAttribute.Name;
             this.shortName = this.Required == false ? this.switchAttribute.ShortName : string.Empty;
+            if (this.name == string.Empty && this.shortName == string.Empty)
+                this.name = propertyDescriptor.Name;
             this.displayName = propertyDescriptor.DisplayName;
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
@@ -245,10 +247,18 @@ namespace Ntreev.Library
             string quotes = string.Format(@"(""(?<{0}>.*)"")", SwitchDescriptor.ArgGroupName);
             string normal = string.Format(@"(?<{0}>(\S)+)", SwitchDescriptor.ArgGroupName);
 
-            string pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name);
-            if (this.ShortName != string.Empty)
+            string pattern = string.Empty;
+            if (this.Name != string.Empty && this.ShortName != string.Empty)
             {
                 pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
+            }
+            else if (this.Name != string.Empty)
+            {
+                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name);
+            }
+            else if (this.ShortName != string.Empty)
+            {
+                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
             }
 
             char? argSeperator = this.switchAttribute.GetArgSeperator();

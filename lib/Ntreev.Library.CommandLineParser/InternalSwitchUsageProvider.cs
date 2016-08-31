@@ -52,13 +52,19 @@ namespace Ntreev.Library
                 string name = this.SwitchDescriptor.Name;
 
                 string delim = this.hasDelimiter == true ? CommandSwitchAttribute.SwitchDelimiter : string.Empty;
-                string help = string.Format("{0}{1}", delim, name);
+                string help = string.Empty;
 
+                if (name != string.Empty)
+                {
+                    help = string.Format("{0}{1}", delim, name);
+                }
 
                 if (shortName != string.Empty)
                 {
                     delim = this.hasDelimiter == true ? CommandSwitchAttribute.ShortSwitchDelimiter : string.Empty;
-                    help = string.Format("{0} | {1}{2}", help, CommandSwitchAttribute.ShortSwitchDelimiter, shortName);
+                    if(help != string.Empty)
+                        help += " | ";
+                    help += string.Format("{0}{1}", CommandSwitchAttribute.ShortSwitchDelimiter, shortName);
                 }
 
                 //char? argSeperator = this.SwitchDescriptor.ArgSeperator;
@@ -85,15 +91,7 @@ namespace Ntreev.Library
 
         public override string Description
         {
-            get
-            {
-                string description = this.SwitchDescriptor.Description;
-
-                if (this.SwitchDescriptor.DisplayName == string.Empty)
-                    return description;
-
-                return this.SwitchDescriptor.DisplayName + " " + description;
-            }
+            get { return this.SwitchDescriptor.Description; }
         }
 
         public override string ArgumentTypeDescription
