@@ -40,11 +40,11 @@ namespace Ntreev.Library
             }
 
             var attr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
-            if(attr != null)
+            if (attr != null)
             {
-                foreach(var item in attr.PropertyNames)
+                foreach (var item in attr.PropertyNames)
                 {
-                    var switchDescriptor = CommandDescriptor.GetSwitchDescriptors(methodInfo.DeclaringType)[item];
+                    var switchDescriptor = CommandDescriptor.GetMethodSwitchDescriptors(methodInfo.DeclaringType)[item];
                     this.switches.Add(switchDescriptor);
                 }
             }

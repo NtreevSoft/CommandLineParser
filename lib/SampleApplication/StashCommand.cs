@@ -28,10 +28,23 @@ namespace SampleApplication
         }
 
         [CommandMethod("save")]
+        [CommandMethodSwitch("Path", "Port")]
         public void Save(int value)
         {
 
 
+        }
+
+        [CommandSwitch]
+        public int Path
+        {
+            get; set;
+        }
+
+        [CommandSwitch(Required = true)]
+        public int Port
+        {
+            get; set;
         }
     }
 }

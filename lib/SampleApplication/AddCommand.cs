@@ -40,7 +40,7 @@ namespace SampleApplication
             get; set;
         }
 
-        [CommandSwitch(ShortName = "r")]
+        [CommandSwitch(ShortName = 'r')]
         [Description("대상이 경로일때 하위 목록들까지 추가할지에 대한 여부를 나타냅니다.")]
         public bool Recursive
         {

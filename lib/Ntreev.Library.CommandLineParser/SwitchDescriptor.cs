@@ -133,12 +133,11 @@ namespace Ntreev.Library
 
         internal SwitchDescriptor(PropertyInfo propertyInfo)
         {
-            //Regex.Replace(input, @"([a-z])([A-Z])", "$1-$2").ToLower()
             this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
 
             if (this.switchAttribute.UsageProvider == null)
             {
-                this.usageProvider = new InternalSwitchUsageProvider(this);
+                this.usageProvider = new InternalSwitchUsageProvider(this, true);
             }
             else
             {
@@ -150,7 +149,8 @@ namespace Ntreev.Library
             }
 
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyInfo.Name;
-            this.shortName = this.switchAttribute.ShortName;
+            this.name = this.name.ToSpinalCase();
+            this.shortName = this.switchAttribute.ShortNameInternal;
             this.displayName = propertyInfo.GetDisplayName();
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
@@ -176,7 +176,7 @@ namespace Ntreev.Library
             }
 
             this.name = this.switchAttribute.Name;
-            this.shortName = this.Required == false ? this.switchAttribute.ShortName : string.Empty;
+            this.shortName = this.Required == false ? this.switchAttribute.ShortNameInternal : string.Empty;
             if (this.name == string.Empty && this.shortName == string.Empty)
                 this.name = propertyDescriptor.Name.ToSpinalCase();
             this.displayName = propertyDescriptor.DisplayName;
@@ -203,7 +203,7 @@ namespace Ntreev.Library
                     new object[] { this, }) as SwitchUsageProvider;
             }
 
-            this.name = parameterInfo.Name;
+            this.name = parameterInfo.Name.ToSpinalCase();
             this.shortName = string.Empty;
             this.displayName = parameterInfo.GetDisplayName();
             this.type = parameterInfo.ParameterType;

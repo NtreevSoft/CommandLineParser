@@ -40,12 +40,10 @@ namespace Ntreev.Library
         private static string shortSwitchDelimiter = "-";
         static internal CommandSwitchAttribute DefaultValue = new CommandSwitchAttribute();
 
-        string name = string.Empty;
-        string shortName = string.Empty;
-        char? argSeperator = null;
+        private string name = string.Empty;
+        private char shortName;
+        private char? argSeperator = null;
 
-        public System.Drawing.Color Color { get; set; } 
-       
         public static string SwitchDelimiter
         {
             get
@@ -86,21 +84,8 @@ namespace Ntreev.Library
         {
             this.Required = false;
 
-            foreach (char item in this.shortName)
-            {
-                if (char.IsLetterOrDigit(item) == false)
-                    throw new Exception(Resources.InvalidSwitchName);
-            }
-        }
-
-        /// <summary>
-        /// 짧은 이름을 사용하여 <seealso cref="CommandSwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
-        /// </summary>
-        [Obsolete]
-        public CommandSwitchAttribute(string shortName)
-            : this()
-        {
-            this.shortName = shortName == null ? string.Empty : shortName;
+            //if (char.IsLetterOrDigit(this.shortName) == false)
+            //    throw new SwitchException(Resources.InvalidSwitchName);
         }
 
         /// <summary>
@@ -115,7 +100,7 @@ namespace Ntreev.Library
         /// <summary>
         /// 해당 스위치의 짧은 이름을 설정하거나 가져옵니다.
         /// </summary>
-        public string ShortName
+        public char ShortName
         {
             get { return this.shortName; }
             set { this.shortName = value; }
@@ -157,5 +142,10 @@ namespace Ntreev.Library
         /// 해당 스위치의 사용법 출력 제공자의 타입을 설정하거나 가져옵니다.
         /// </summary>
         public Type UsageProvider { get; set; }
+
+        internal string ShortNameInternal
+        {
+            get { return this.shortName == char.MinValue ? string.Empty : this.shortName.ToString(); }
+        }
     }
 }

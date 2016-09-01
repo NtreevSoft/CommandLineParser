@@ -26,7 +26,7 @@ namespace SampleApplication
             throw new NotImplementedException();
         }
 
-        [CommandSwitch(ShortName = "v")]
+        [CommandSwitch(ShortName = 'v')]
         public bool IsVisible
         {
             get; set;
