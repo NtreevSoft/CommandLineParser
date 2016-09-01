@@ -1,1 +1,7 @@
 *.suo
+*.dll
+*.cache
+bin/
+obj/
+Debug/
+Release/

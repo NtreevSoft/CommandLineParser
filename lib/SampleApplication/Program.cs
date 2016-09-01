@@ -29,6 +29,7 @@ using Ntreev.Library;
 using System.IO;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace SampleApplication
 {
@@ -36,6 +37,15 @@ namespace SampleApplication
     {
         static void Main(string[] args)
         {
+            string input = "IsVisible";
+            string output = Regex.Replace(input, @"([a-z])([A-Z])", "$1-$2").ToLower();
+            Console.WriteLine(output);
+
+            var context = Container.GetService<CommandContext>();
+            context.Execute(Environment.CommandLine);
+            //context.Execute(args);
+
+            return;
             Options options = new Options();
 
             CommandLineParser parser = new CommandLineParser(options);

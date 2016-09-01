@@ -64,6 +64,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -81,10 +82,12 @@
     <Compile Include="ArgSeperator.cs" />
     <Compile Include="BooleanParser.cs" />
     <Compile Include="ClassExtension.cs" />
+    <Compile Include="CommandContext.cs" />
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandLineInvoker.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
+    <Compile Include="ICommand.cs" />
     <Compile Include="InternalMethodUsageProvider.cs" />
     <Compile Include="InvalidSwitchStringException.cs" />
     <Compile Include="MethodDescriptor.cs" />
@@ -93,7 +96,6 @@
     <Compile Include="MethodUsagePrinter.cs" />
     <Compile Include="MethodUsageProvider.cs" />
     <Compile Include="ListParser.cs" />
-    <Compile Include="NoCommandSwitchAttribute.cs" />
     <Compile Include="NotFoundMethodException.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="CommandLineParser.cs" />
@@ -105,6 +107,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="StringUtility.cs" />
     <Compile Include="SwitchDescriptorCollection.cs" />
     <Compile Include="SwitchUsageProvider.cs" />
     <Compile Include="MissingSwitchException.cs" />

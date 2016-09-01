@@ -36,8 +36,7 @@ namespace Ntreev.Library
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class CommandSwitchAttribute : Attribute
     {
-        // 유닉스 계열 경로 문자인 / 과 같게 하면, 경로 인자를 스위치로 오인하여 에러가 난다.
-        private static string switchDelimiter = "--"; // '/';
+        private static string switchDelimiter = "--";
         private static string shortSwitchDelimiter = "-";
         static internal CommandSwitchAttribute DefaultValue = new CommandSwitchAttribute();
 

@@ -30,10 +30,7 @@ namespace Ntreev.Library
             }
         }
 
-        internal IList<SwitchDescriptor> List
-        {
-            get { return this.descriptors; }
-        }
+        
 
 
         public SwitchDescriptor this[int index]
@@ -46,6 +43,26 @@ namespace Ntreev.Library
             get { return this.descriptors.Count; }
         }
 
+        internal void Add(SwitchDescriptor descriptor)
+        {
+            foreach(var item in this.descriptors)
+            {
+                if(item.Name != string.Empty && descriptor.Name != string.Empty && descriptor.Name == item.Name)
+                {
+                    throw new SwitchException(string.Format("{0} 은(는) 이미 존재하는 이름입니다.", descriptor.Name));
+                }
+
+                if (item.ShortName != string.Empty && descriptor.ShortName != string.Empty && descriptor.ShortName == item.ShortName)
+                {
+                    throw new SwitchException(string.Format("{0} 은(는) 이미 존재하는 이름입니다.", descriptor.ShortName));
+                }
+            }
+
+            this.descriptors.Add(descriptor);
+        }
+
+        #region IEnumerable
+
         IEnumerator<SwitchDescriptor> IEnumerable<SwitchDescriptor>.GetEnumerator()
         {
             return this.descriptors.GetEnumerator();
@@ -55,5 +72,7 @@ namespace Ntreev.Library
         {
             return this.descriptors.GetEnumerator();
         }
+
+        #endregion
     }
 }

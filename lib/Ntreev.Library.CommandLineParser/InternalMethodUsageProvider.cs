@@ -18,18 +18,12 @@ namespace Ntreev.Library
         {
             get 
             {
-                StringBuilder sb = new StringBuilder();
-                MethodInfo methodInfo = this.MethodDescriptor.MethodInfo;
+                var sb = new StringBuilder();
+                var methodInfo = this.MethodDescriptor.MethodInfo;
                 sb.Append(this.MethodDescriptor.Name);
 
                 sb.Append(" ");
                 sb.Append(this.MethodDescriptor.Description);
-
-
-                //foreach (ParameterInfo item in methodInfo.GetParameters())
-                //{
-                //    sb.AppendFormat(" ({0} as {1})", item.Name, item.ParameterType.GetSimpleName());
-                //}
 
                 return sb.ToString();
              }

@@ -89,17 +89,6 @@ namespace Ntreev.Library
             get { return this.name; }
         }
 
-        ///// <summary>
-        ///// 스위치의 표시 이름을 가져옵니다.
-        ///// </summary>
-        //public string DisplayName
-        //{
-        //    get
-        //    {
-        //        return this.displayName;
-        //    }
-        //}
-
         /// <summary>
         /// 스위치의 부가적인 설명을 가져옵니다.
         /// </summary>
@@ -144,6 +133,7 @@ namespace Ntreev.Library
 
         internal SwitchDescriptor(PropertyInfo propertyInfo)
         {
+            //Regex.Replace(input, @"([a-z])([A-Z])", "$1-$2").ToLower()
             this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
 
             if (this.switchAttribute.UsageProvider == null)
@@ -188,7 +178,7 @@ namespace Ntreev.Library
             this.name = this.switchAttribute.Name;
             this.shortName = this.Required == false ? this.switchAttribute.ShortName : string.Empty;
             if (this.name == string.Empty && this.shortName == string.Empty)
-                this.name = propertyDescriptor.Name;
+                this.name = propertyDescriptor.Name.ToSpinalCase();
             this.displayName = propertyDescriptor.DisplayName;
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
@@ -234,9 +224,7 @@ namespace Ntreev.Library
 
         internal string TryMatch(string switchLine)
         {
-            RegexOptions regexOptions = RegexOptions.ExplicitCapture;
-
-            Match match = Regex.Match(switchLine, this.Pattern, regexOptions);
+            var match = Regex.Match(switchLine, this.Pattern, RegexOptions.ExplicitCapture);
             if (match.Success == false)
                 return null;
             return match.Groups[SwitchDescriptor.ArgGroupName].Value;
@@ -244,10 +232,10 @@ namespace Ntreev.Library
 
         private string BuildPattern()
         {
-            string quotes = string.Format(@"(""(?<{0}>.*)"")", SwitchDescriptor.ArgGroupName);
-            string normal = string.Format(@"(?<{0}>(\S)+)", SwitchDescriptor.ArgGroupName);
+            var quotes = string.Format(@"(""(?<{0}>.*)"")", SwitchDescriptor.ArgGroupName);
+            var normal = string.Format(@"(?<{0}>(\S)+)", SwitchDescriptor.ArgGroupName);
 
-            string pattern = string.Empty;
+            var pattern = string.Empty;
             if (this.Name != string.Empty && this.ShortName != string.Empty)
             {
                 pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
@@ -312,10 +300,10 @@ namespace Ntreev.Library
 
             public void SetValue(object instance, string arg)
             {
-                object value = this.propertyDescriptor.GetValue(instance);
+                var value = this.propertyDescriptor.GetValue(instance);
 
-                Parser parser = Parser.GetParser(this.propertyDescriptor);
-                object newValue = parser.Parse(this.switchDescriptor, arg, value);
+                var parser = Parser.GetParser(this.propertyDescriptor);
+                var newValue = parser.Parse(this.switchDescriptor, arg, value);
 
                 if (value != newValue && this.propertyDescriptor.IsReadOnly == false)
                     this.propertyDescriptor.SetValue(instance, newValue);
@@ -340,10 +328,10 @@ namespace Ntreev.Library
 
             public void SetValue(object instance, string arg)
             {
-                object value = this.propertyInfo.GetValue(instance, null);
+                var value = this.propertyInfo.GetValue(instance, null);
 
-                Parser parser = Parser.GetParser(this.propertyInfo);
-                object newValue = parser.Parse(this.switchDescriptor, arg, value);
+                var parser = Parser.GetParser(this.propertyInfo);
+                var newValue = parser.Parse(this.switchDescriptor, arg, value);
 
                 if (value != newValue && this.propertyInfo.CanWrite == true)
                     this.propertyInfo.SetValue(instance, newValue, null);
@@ -370,7 +358,7 @@ namespace Ntreev.Library
 
             public void SetValue(object instance, string arg)
             {
-                Parser parser = Parser.GetParser(this.parameterInfo);
+                var parser = Parser.GetParser(this.parameterInfo);
                 this.value = parser.Parse(this.switchDescriptor, arg, value);
                 this.parsed = true;
             }

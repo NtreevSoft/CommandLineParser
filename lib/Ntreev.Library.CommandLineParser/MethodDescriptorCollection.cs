@@ -29,12 +29,6 @@ namespace Ntreev.Library
             }
         }
 
-        internal IList<MethodDescriptor> List
-        {
-            get { return this.descriptors; }
-        }
-
-
         public MethodDescriptor this[int index]
         {
             get { return this.descriptors[index]; }
@@ -45,6 +39,13 @@ namespace Ntreev.Library
             get { return this.descriptors.Count; }
         }
 
+        internal void Add(MethodDescriptor item)
+        {
+            this.descriptors.Add(item);
+        }
+
+        #region IEnumerable
+
         IEnumerator<MethodDescriptor> IEnumerable<MethodDescriptor>.GetEnumerator()
         {
             return this.descriptors.GetEnumerator();
@@ -54,5 +55,7 @@ namespace Ntreev.Library
         {
             return this.descriptors.GetEnumerator();
         }
+
+        #endregion
     }
 }

@@ -15,117 +15,98 @@ namespace Ntreev.Library
 
         public MethodUsagePrinter(object instance, string name)
         {
-            MethodDescriptorCollection descriptors = null;
-            if (instance is Type)
-            {
-                descriptors = CommandDescriptor.GetMethodDescriptors(instance as Type);
-            }
-            else
-            {
-                descriptors = CommandDescriptor.GetMethodDescriptors(instance);
-            }
+            var descriptors = CommandDescriptor.GetMethodDescriptors(instance);
             this.descriptors = descriptors.Where(item => item.Name != CommandLineInvoker.defaultMethod).ToArray();
 
             this.name = name;
         }
 
-        public void PrintUsage(TextWriter textWriter)
+        public virtual void PrintUsage(TextWriter textWriter)
         {
-            this.PrintUsage(textWriter, 0);
-        }
-
-        public void PrintUsage(TextWriter textWriter, string methodName)
-        {
-            this.PrintUsage(textWriter, methodName, 0);
-        }
-
-        public virtual void PrintUsage(TextWriter textWriter, int indentLevel)
-        {
-            using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
+            using (var tw = new IndentedTextWriter(textWriter))
             {
-                tw.Indent = indentLevel;
-                //tw.WriteLine("{0} {1}", this.Title, this.Version);
-                tw.WriteLine("{0}: {1} subcommand [args | ...]", Resources.Usage, this.name);
-                tw.WriteLine();
-
-                tw.WriteLine("subcommands:");
-
-                tw.Indent++;
-
-                int maxLength = 0;
-
-
-                foreach (MethodDescriptor item in this.descriptors)
-                {
-                    maxLength = Math.Max(item.Name.Length, maxLength);
-                }
-
-                foreach (MethodDescriptor item in this.descriptors)
-                {
-                    string name = item.Name;
-                    name = name.PadRight(maxLength + 4);
-                    tw.Write(name);
-                    tw.WriteLine(item.Description);
-                }
-                tw.Indent--;
+                this.PrintUsage(tw);
             }
         }
 
-        public virtual void PrintUsage(TextWriter textWriter, string methodName, int indentLevel)
+        public virtual void PrintUsage(TextWriter textWriter, string methodName)
         {
-            using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
+            using (var tw = new IndentedTextWriter(textWriter))
             {
-                tw.Indent = indentLevel;
+                this.PrintUsage(tw, methodName);
+            }
+        }
 
-                MethodDescriptor methodDescriptor = this.GetMethodDescriptor(methodName);
+        private void PrintUsage(IndentedTextWriter textWriter)
+        {
+            textWriter.WriteLine("{0}: {1} command [args | ...]", Resources.Usage, this.name);
+            textWriter.WriteLine();
 
-                if (methodDescriptor == null)
+            textWriter.WriteLine("commands:");
+            textWriter.Indent++;
+
+            var usages = new string[this.descriptors.Length];
+            var descriptions = new string[this.descriptors.Length];
+            for (var i = 0; i < this.descriptors.Length; i++)
+            {
+                var item = this.descriptors[i];
+                usages[i] = item.Name;
+                descriptions[i] = item.Description;
+            }
+            this.PrintUsages(textWriter, usages, descriptions);
+
+            textWriter.Indent--;
+        }
+
+        private void PrintUsage(IndentedTextWriter textWriter, string methodName)
+        {
+            var methodDescriptor = this.GetMethodDescriptor(methodName);
+
+            if (methodDescriptor == null)
+            {
+                textWriter.WriteLine("not found method : {0}", methodName);
+                return;
+            }
+
+            var args = methodDescriptor.Switches.Where(item => item.Required).Aggregate("", (l, n) => l += "[" + n.UsageProvider.Usage + "] ", item => item);
+
+            textWriter.WriteLine("{0}: {1}", Resources.Description, methodDescriptor.Description);
+            textWriter.WriteLine("{0}: {1} {2} {3}", Resources.Usage, this.name, methodName, args);
+            textWriter.WriteLine();
+
+            var requiredSwitched = methodDescriptor.Switches.Where(item => item.Required == true).ToArray();
+            if (requiredSwitched.Length > 0)
+            {
+                textWriter.WriteLine("required : ");
+                textWriter.Indent++;
+                var usages = new string[requiredSwitched.Length];
+                var descriptions = new string[requiredSwitched.Length];
+                for (var i = 0; i < requiredSwitched.Length; i++)
                 {
-                    tw.WriteLine("not found method : {0}", methodName);
-                    return;
+                    var item = requiredSwitched[i];
+                    usages[i] = item.UsageProvider.Usage;
+                    descriptions[i] = item.UsageProvider.Description;
                 }
+                this.PrintUsages(textWriter, usages, descriptions);
+                textWriter.Indent--;
+                textWriter.WriteLine();
+            }
 
-                string args = methodDescriptor.Switches.Where(item => item.Required).Aggregate("", (l, n) => l += "[" + n.UsageProvider.Usage + "] ", item => item);
-
-                tw.WriteLine("{0}: {1}", Resources.Description, methodDescriptor.Description);
-                tw.WriteLine("{0}: {1} {2} {3}", Resources.Usage, this.name, methodName, args);
-                tw.WriteLine();
-
-
-                SwitchDescriptor[] requiredSwitched = methodDescriptor.Switches.Where(item => item.Required == true).ToArray();
-                if (requiredSwitched.Length > 0)
+            var optionSwitched = methodDescriptor.Switches.Where(item => item.Required == false).ToArray();
+            if (optionSwitched.Length > 0)
+            {
+                textWriter.WriteLine("options : ");
+                textWriter.Indent++;
+                var usages = new string[optionSwitched.Length];
+                var descriptions = new string[optionSwitched.Length];
+                for (var i = 0; i < optionSwitched.Length; i++)
                 {
-                    tw.WriteLine("required : ");
-                    tw.Indent++;
-                    string[] usages = new string[requiredSwitched.Length];
-                    string[] descriptions = new string[requiredSwitched.Length];
-                    for(int i=0;i< requiredSwitched.Length; i++)
-                    {
-                        SwitchDescriptor item = requiredSwitched[i];
-                        usages[i] = item.UsageProvider.Usage;
-                        descriptions[i] = item.UsageProvider.Description;
-                    }
-                    this.PrintUsages(tw, usages, descriptions);
-                    tw.Indent--;
-                    tw.WriteLine();
+                    var item = optionSwitched[i];
+                    usages[i] = item.UsageProvider.Usage;
+                    descriptions[i] = item.UsageProvider.Description;
                 }
-
-                SwitchDescriptor[] optionSwitched = methodDescriptor.Switches.Where(item => item.Required == false).ToArray();
-                if (optionSwitched.Length > 0)
-                {
-                    tw.WriteLine("options : ");
-                    tw.Indent++;
-                    string[] usages = new string[optionSwitched.Length];
-                    string[] descriptions = new string[optionSwitched.Length];
-                    for (int i = 0; i < optionSwitched.Length; i++)
-                    {
-                        SwitchDescriptor item = optionSwitched[i];
-                        usages[i] = item.UsageProvider.Usage;
-                        descriptions[i] = item.UsageProvider.Description;
-                    }
-                    this.PrintUsages(tw, usages, descriptions);
-                    tw.Indent--;
-                }
+                this.PrintUsages(textWriter, usages, descriptions);
+                textWriter.Indent--;
             }
         }
 
@@ -152,17 +133,17 @@ namespace Ntreev.Library
 
         private void PrintUsages(TextWriter textWriter, string[] usages, string[] descriptions)
         {
-            int maxLength = 0;
-            foreach(string item in usages)
+            var maxLength = 0;
+            foreach(var item in usages)
             {
                 maxLength = Math.Max(maxLength, item.Length);
             }
             maxLength += maxLength % 4;
 
-            for (int i = 0; i < usages.Length; i++)
+            for (var i = 0; i < usages.Length; i++)
             {
-                string usage = usages[i].PadRight(maxLength);
-                string description = descriptions[i];
+                var usage = usages[i].PadRight(maxLength);
+                var description = descriptions[i];
                 textWriter.WriteLine("{0} {1}", usage, description);
             }
         }
