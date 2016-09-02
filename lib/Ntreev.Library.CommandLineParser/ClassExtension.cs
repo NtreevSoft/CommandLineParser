@@ -22,7 +22,7 @@ namespace Ntreev.Library
         public static T GetCustomAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
             where T : Attribute
         {
-            object[] attrs = customAttributeProvider.GetCustomAttributes(typeof(T), true);
+            var attrs = customAttributeProvider.GetCustomAttributes(typeof(T), true);
             if (attrs.Length == 0)
                 return null;
 
@@ -31,7 +31,7 @@ namespace Ntreev.Library
 
         public static string GetDisplayName(this ICustomAttributeProvider customAttributeProvider)
         {
-            DisplayNameAttribute attribute = customAttributeProvider.GetCustomAttribute<DisplayNameAttribute>();
+            var attribute = customAttributeProvider.GetCustomAttribute<DisplayNameAttribute>();
             if (attribute == null)
                 return string.Empty;
 
@@ -40,7 +40,7 @@ namespace Ntreev.Library
 
         public static string GetDescription(this ICustomAttributeProvider customAttributeProvider)
         {
-            DescriptionAttribute attribute = customAttributeProvider.GetCustomAttribute<DescriptionAttribute>();
+            var attribute = customAttributeProvider.GetCustomAttribute<DescriptionAttribute>();
             if (attribute == null)
                 return string.Empty;
 
@@ -49,7 +49,7 @@ namespace Ntreev.Library
 
         public static bool GetBrowsable(this ICustomAttributeProvider customAttributeProvider)
         {
-            BrowsableAttribute attribute = customAttributeProvider.GetCustomAttribute<BrowsableAttribute>();
+            var attribute = customAttributeProvider.GetCustomAttribute<BrowsableAttribute>();
             if (attribute == null)
                 return true;
 
@@ -68,13 +68,13 @@ namespace Ntreev.Library
 
         public static TypeConverter GetConverter(this ICustomAttributeProvider customAttributeProvider, Type type)
         {
-            TypeConverterAttribute attribute = customAttributeProvider.GetCustomAttribute<TypeConverterAttribute>();
+            var attribute = customAttributeProvider.GetCustomAttribute<TypeConverterAttribute>();
             if (attribute == null)
                 return TypeDescriptor.GetConverter(type);
 
             try
             {
-                Type converterType = Type.GetType(attribute.ConverterTypeName);
+                var converterType = Type.GetType(attribute.ConverterTypeName);
                 return Activator.CreateInstance(converterType) as TypeConverter;
             }
             catch (Exception)
@@ -85,13 +85,13 @@ namespace Ntreev.Library
 
         public static bool IsCommandMethod(this MethodInfo methodInfo)
         {
-            object[] attrs = methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false);
+            var attrs = methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false);
             return attrs.Length > 0;
         }
 
         public static CommandMethodAttribute GetCommandMethodAttribute(this MethodInfo methodInfo)
         {
-            object[] attrs = methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false);
+            var attrs = methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false);
 
             if (attrs.Length > 0)
             {
@@ -103,50 +103,52 @@ namespace Ntreev.Library
 
         public static object GetValue(this ParameterInfo parameterInfo, string arg)
         {
-            TypeConverter converter = TypeDescriptor.GetConverter(parameterInfo.ParameterType);
+            var converter = TypeDescriptor.GetConverter(parameterInfo.ParameterType);
             return converter.ConvertFromString(arg);
         }
 
         public static bool TryGetDefaultValue(this ParameterInfo parameterInfo, out object value)
         {
             value = null;
-            object[] attrs = parameterInfo.GetCustomAttributes(typeof(DefaultValueAttribute), true);
+            var attrs = parameterInfo.GetCustomAttributes(typeof(DefaultValueAttribute), true);
             if (attrs.Length == 0)
                 return false;
-            DefaultValueAttribute attr = attrs[0] as DefaultValueAttribute;
+            var attr = attrs[0] as DefaultValueAttribute;
             value = attr.Value;
             return true;
         }
 
         public static string GetSimpleName(this Type type)
         {
-            if (type == typeof(int))
-                return "int";
+            if (type == typeof(bool))
+                return "bool";
             else if (type == typeof(string))
                 return "string";
-            else if (type == typeof(bool))
-                return "bool";
-            else if (type == typeof(float))
-                return "float";
-            else if (type == typeof(uint))
-                return "uint";
             else if (type == typeof(char))
                 return "char";
+            else if (type == typeof(sbyte))
+                return "int8";
             else if (type == typeof(byte))
-                return "byte";
+                return "uint8";
             else if (type == typeof(short))
-                return "short";
+                return "int16";
             else if (type == typeof(ushort))
-                return "ushort";
+                return "uint16";
+            else if (type == typeof(int))
+                return "int32";
+            else if (type == typeof(uint))
+                return "uint32";
+            else if (type == typeof(long))
+                return "int64";
+            else if (type == typeof(ulong))
+                return "uint64";
+            else if (type == typeof(float))
+                return "single";
             else if (type == typeof(double))
                 return "double";
             else if (type == typeof(decimal))
                 return "decimal";
-            else if (type == typeof(long))
-                return "long";
-            else if (type == typeof(ulong))
-                return "ulong";
-
+            
             return type.Name;
         }
     }

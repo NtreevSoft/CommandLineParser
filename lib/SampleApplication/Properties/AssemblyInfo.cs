@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 // 어셈블리와 관련된 정보를 수정하려면
 // 이 특성 값을 변경하십시오.
 [assembly: AssemblyTitle("SampleApplication")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("123")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("NTREEV SOFT")]
 [assembly: AssemblyProduct("SampleApplication")]
@@ -56,4 +56,4 @@ using System.Runtime.InteropServices;
 // 지정되도록 할 수 있습니다.
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.4461.33698")]
-[assembly: AssemblyFileVersion("1.0.4461.33698")]
+[assembly: AssemblyFileVersion("1.0.4461.33699")]

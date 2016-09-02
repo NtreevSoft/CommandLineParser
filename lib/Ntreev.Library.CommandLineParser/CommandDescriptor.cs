@@ -7,97 +7,90 @@ using System.Reflection;
 
 namespace Ntreev.Library
 {
-    using static_this = CommandDescriptor;
-
     public static class CommandDescriptor
     {
         private static Dictionary<Type, SwitchDescriptorCollection> typeToSwitchDescriptors = new Dictionary<Type, SwitchDescriptorCollection>();
         private static Dictionary<Type, MethodDescriptorCollection> typeToMethodDescriptors = new Dictionary<Type, MethodDescriptorCollection>();
+        private static Dictionary<Type, SwitchDescriptorCollection> typeToMethodSwitchDescriptors = new Dictionary<Type, SwitchDescriptorCollection>();
 
         public static MethodDescriptor GetMethodDescriptor(Type type, string methodName)
         {
-            return static_this.GetMethodDescriptors(type)[methodName];
+            return GetMethodDescriptors(type)[methodName];
         }
 
         public static MethodDescriptor GetMethodDescriptor(object instance, string methodName)
         {
-            return static_this.GetMethodDescriptors(instance)[methodName];
+            return GetMethodDescriptors(instance)[methodName];
         }
 
         public static MethodDescriptorCollection GetMethodDescriptors(object instance)
         {
             if(instance is Type)
-                return static_this.GetMethodDescriptors(instance as Type);
-            return static_this.GetMethodDescriptors(instance.GetType());
+                return GetMethodDescriptors(instance as Type);
+            return GetMethodDescriptors(instance.GetType());
         }
 
         public static MethodDescriptorCollection GetMethodDescriptors(Type type)
         {
-            if (static_this.typeToMethodDescriptors.ContainsKey(type) == false)
+            if (typeToMethodDescriptors.ContainsKey(type) == false)
             {
-                MethodDescriptorCollection descriptors = new MethodDescriptorCollection();
+                var descriptors = new MethodDescriptorCollection();
 
-                foreach (MethodInfo item in type.GetMethods())
+                foreach (var item in type.GetMethods())
                 {
                     if (item.IsCommandMethod() == false)
                         continue;
-                    descriptors.List.Add(new MethodDescriptor(item));
+                    descriptors.Add(new MethodDescriptor(item));
                 }
-                static_this.typeToMethodDescriptors.Add(type, descriptors);
+                typeToMethodDescriptors.Add(type, descriptors);
             }
-            return static_this.typeToMethodDescriptors[type];
+            return typeToMethodDescriptors[type];
         }
 
         public static SwitchDescriptorCollection GetSwitchDescriptors(object instance)
         {
-            if (static_this.typeToSwitchDescriptors.ContainsKey(instance.GetType()) == false)
-            {
-                static_this.CreateSwitches(instance);
-            }
-            return static_this.GetSwitchDescriptors(instance.GetType());
+            if (instance is Type)
+                return GetSwitchDescriptors(instance as Type);
+            return GetSwitchDescriptors(instance.GetType());
         }
 
         public static SwitchDescriptorCollection GetSwitchDescriptors(Type type)
         {
-            if (static_this.typeToSwitchDescriptors.ContainsKey(type) == false)
+            if (typeToSwitchDescriptors.ContainsKey(type) == false)
             {
-                static_this.CreateSwitches(type);
+                typeToSwitchDescriptors.Add(type, CreateSwitches(type));
             }
-
-            return static_this.typeToSwitchDescriptors[type];
+            return typeToSwitchDescriptors[type];
         }
 
-        private static void CreateSwitches(Type type)
+        public static SwitchDescriptorCollection GetMethodSwitchDescriptors(object instance)
         {
-            SwitchDescriptorCollection switches = new SwitchDescriptorCollection();
-
-            foreach (PropertyInfo item in type.GetProperties())
-            {
-                if(item.GetBrowsable() == false || item.CanRead == false || item.CanWrite == false)
-                    continue;
-
-                Parser parser = Parser.GetParser(item);
-
-                if (parser == null)
-                    continue;
-
-                switches.List.Add(new SwitchDescriptor(item));
-            }
-
-            static_this.typeToSwitchDescriptors.Add(type, switches);
+            if (instance is Type)
+                return GetMethodSwitchDescriptors(instance as Type);
+            return GetMethodSwitchDescriptors(instance.GetType());
         }
 
-        private static void CreateSwitches(object instance)
+        public static SwitchDescriptorCollection GetMethodSwitchDescriptors(Type type)
         {
-            SwitchDescriptorCollection switches = new SwitchDescriptorCollection();
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(instance);
-
-            foreach (PropertyDescriptor item in properties)
+            if (typeToMethodSwitchDescriptors.ContainsKey(type) == false)
             {
-                if (item.IsBrowsable == false || item.IsReadOnly == true)
+                typeToMethodSwitchDescriptors.Add(type, CreateMethodSwitches(type));
+            }
+
+            return typeToMethodSwitchDescriptors[type];
+        }
+
+        private static SwitchDescriptorCollection CreateMethodSwitches(Type type)
+        {
+            var switches = new SwitchDescriptorCollection();
+            var properties = type.GetProperties();
+
+            foreach (var item in properties)
+            {
+                if (item.GetBrowsable() == false || item.CanWrite == false)
                     continue;
 
-                Parser parser = Parser.GetParser(item);
+                var parser = Parser.GetParser(item);
 
                 if (parser == null)
                     continue;
@@ -105,10 +98,34 @@ namespace Ntreev.Library
                 if (item.GetCommandSwitchAttribute() == null)
                     continue;
 
-                switches.List.Add(new SwitchDescriptor(item));
+                switches.Add(new SwitchDescriptor(item));
             }
 
-            static_this.typeToSwitchDescriptors.Add(instance.GetType(), switches);
+            return switches;
+        }
+
+        private static SwitchDescriptorCollection CreateSwitches(Type type)
+        {
+            var switches = new SwitchDescriptorCollection();
+            var properties = TypeDescriptor.GetProperties(type);
+
+            foreach (PropertyDescriptor item in properties)
+            {
+                if (item.IsBrowsable == false || item.IsReadOnly == true)
+                    continue;
+
+                var parser = Parser.GetParser(item);
+
+                if (parser == null)
+                    continue;
+
+                if (item.GetCommandSwitchAttribute() == null)
+                    continue;
+
+                switches.Add(new SwitchDescriptor(item));
+            }
+
+            return switches;
         }
     }
 }

@@ -34,113 +34,86 @@ namespace Ntreev.Library
 {
     public class SwitchUsagePrinter
     {
-        private readonly IEnumerable<SwitchDescriptor> switches;
-        private readonly IEnumerable<SwitchDescriptor> options;
-        private string name;
+        private readonly string name;
+        private readonly string description;
+        private readonly SwitchDescriptor[] switches;
+        private readonly SwitchDescriptor[] options;
 
         public SwitchUsagePrinter(object instance, string name)
         {
-            SwitchDescriptorCollection switchDescriptors;
-            if (instance is Type)
-                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance as Type);
-            else
-                switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance);
-            this.switches = switchDescriptors.Where(item => item.Required == true);
-            this.options = switchDescriptors.Where(item => item.Required == false);
-
             this.name = name;
+            this.description = instance.GetType().GetDescription();
+            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance);
+            this.switches = switchDescriptors.Where(item => item.Required == true).ToArray();
+            this.options = switchDescriptors.Where(item => item.Required == false).ToArray();
         }
 
-         public string Usage { get; set; }
-
-         public void PrintUsage(TextWriter textWriter)
-         {
-             this.PrintUsage(textWriter, 0);
-         }
-
-        public virtual void PrintUsage(TextWriter textWriter, int indentLevel)
+        public virtual void PrintUsage(TextWriter textWriter)
         {
-            using (IndentedTextWriter tw = new IndentedTextWriter(textWriter))
+            using (var tw = new IndentedTextWriter(textWriter))
             {
-                tw.Indent = indentLevel;
-
-
-                string args = this.switches.Aggregate("", (l, n) => l += "[" + n.Name + "] ", item => item);
-
-                //tw.WriteLine(methodDescriptor.UsageProvider.Usage);
-                tw.WriteLine("{0}: {1} {2}", Resources.Usage, this.name, args);
-                tw.WriteLine();
-
-                //tw.WriteLine();
-                //if (this.Usage == null)
-                //    tw.WriteLine("{0}: {1}", Resources.Usage, this.GetDefaultUsage(this.switchDescriptors));
-                //else
-                //    tw.WriteLine("{0}: {1}", Resources.Usage, this.Usage);
-
-                if (this.switches.Count() > 0)
-                {
-                    tw.WriteLine("required : ");
-
-                    foreach (SwitchDescriptor item in this.switches)
-                    {
-                        SwitchUsageProvider usageProvider = item.UsageProvider;
-                        tw.Indent++;
-                        tw.WriteLine("{0} {1}", usageProvider.Usage, usageProvider.Description);
-
-                        if (usageProvider.ArgumentTypeDescription != string.Empty)
-                        {
-                            tw.Indent++;
-                            tw.WriteLine("{0}", usageProvider.ArgumentTypeDescription);
-                            tw.Indent--;
-                        }
-                        tw.Indent--;
-                    }
-                    tw.WriteLine();
-                }
-
-                if (this.options.Count() > 0)
-                {
-                    tw.WriteLine("options : ");
-                    foreach (SwitchDescriptor item in this.options)
-                    {
-                        SwitchUsageProvider usageProvider = item.UsageProvider;
-                        tw.Indent++;
-                        tw.WriteLine("{0} {1}", usageProvider.Usage, usageProvider.Description);
-
-                        if (usageProvider.ArgumentTypeDescription != string.Empty)
-                        {
-                            tw.Indent++;
-                            tw.WriteLine("{0}", usageProvider.ArgumentTypeDescription);
-                            tw.Indent--;
-                        }
-                        tw.Indent--;
-                    }
-                }
+                this.PrintUsage(tw);
             }
         }
 
-
-        string GetDefaultUsage(SwitchDescriptor[] switchDescriptors)
+        private void PrintUsage(IndentedTextWriter textWriter)
         {
-            FileInfo fileInfo = new FileInfo(this.name);
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(string.Format("{0}", fileInfo.Name));
+            var args = this.switches.Aggregate("", (l, n) => l += "[" + n.Name + "] ", item => item);
 
-            foreach (SwitchDescriptor item in switchDescriptors)
+            textWriter.WriteLine("{0}: {1}", Resources.Description, this.description); 
+            textWriter.WriteLine("{0}: {1} {2}", Resources.Usage, this.name, args);
+            textWriter.WriteLine();
+
+            if (this.switches.Length > 0)
             {
-                if (item.Required == false)
-                    continue;
-                stringBuilder.Append(" " + item.UsageProvider.Usage);
+                textWriter.WriteLine("required : ");
+                textWriter.Indent++;
+                var usages = new string[this.switches.Length];
+                var descriptions = new string[this.switches.Length];
+                for (var i = 0; i < this.switches.Length; i++)
+                {
+                    var item = this.switches[i];
+                    usages[i] = item.UsageProvider.Usage;
+                    descriptions[i] = item.UsageProvider.Description;
+                }
+                this.PrintUsages(textWriter, usages, descriptions);
+                textWriter.Indent--;
+                textWriter.WriteLine();
             }
 
-            stringBuilder.Append(" [options | ...]");
-
-            return stringBuilder.ToString();
+            if (this.options.Length > 0)
+            {
+                textWriter.WriteLine("options : ");
+                textWriter.Indent++;
+                var usages = new string[this.options.Length];
+                var descriptions = new string[this.options.Length];
+                for (var i = 0; i < this.options.Length; i++)
+                {
+                    var item = this.options[i];
+                    usages[i] = item.UsageProvider.Usage;
+                    descriptions[i] = item.UsageProvider.Description;
+                }
+                this.PrintUsages(textWriter, usages, descriptions);
+                textWriter.Indent--;
+                textWriter.WriteLine();
+            }
         }
 
-        //public void PrintUsage(TextWriter textWriter, string memberName)
-        //{
-        //    this.PrintSwitchUsage(textWriter, memberName);
-        //}
-             }
+        private void PrintUsages(TextWriter textWriter, string[] usages, string[] descriptions)
+        {
+            var maxLength = 0;
+            foreach (var item in usages)
+            {
+                maxLength = Math.Max(maxLength, item.Length);
+            }
+            maxLength += maxLength % 4;
+
+            for (var i = 0; i < usages.Length; i++)
+            {
+                var usage = usages[i].PadRight(maxLength);
+                var description = descriptions[i];
+                textWriter.WriteLine("{0} {1}", usage, description);
+            }
+        }
+    }
 }

@@ -33,19 +33,18 @@ namespace Ntreev.Library
                    new object[] { this, }) as MethodUsageProvider;
             }
 
-            foreach (ParameterInfo item in methodInfo.GetParameters())
+            foreach (var item in methodInfo.GetParameters())
             {
-                SwitchDescriptor switchDescriptor = new SwitchDescriptor(item);
+                var switchDescriptor = new SwitchDescriptor(item);
                 this.switches.Add(switchDescriptor);
             }
 
-
-            CommandMethodSwitchAttribute attr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
-            if(attr != null)
+            var attr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
+            if (attr != null)
             {
-                foreach(string item in attr.PropertyNames)
+                foreach (var item in attr.PropertyNames)
                 {
-                    SwitchDescriptor switchDescriptor = CommandDescriptor.GetSwitchDescriptors(methodInfo.DeclaringType)[item];
+                    var switchDescriptor = CommandDescriptor.GetMethodSwitchDescriptors(methodInfo.DeclaringType)[item];
                     this.switches.Add(switchDescriptor);
                 }
             }
@@ -89,42 +88,21 @@ namespace Ntreev.Library
 
         internal void Invoke(object target, string arguments)
         {
-            if (target is Type)
-                target = null;
-            SwitchHelper helper = new SwitchHelper(this.switches);
+            var helper = new SwitchHelper(this.switches);
             helper.Parse(target, arguments);
 
-            ArrayList values = new ArrayList();
+            var values = new ArrayList();
+            var s = this.switches.ToDictionary(item => item.Name);
 
-            IDictionary<string, SwitchDescriptor> s = this.switches.ToDictionary(item => item.Name);
-
-            foreach (ParameterInfo item in methodInfo.GetParameters())
+            foreach (var item in methodInfo.GetParameters())
             {
-                SwitchDescriptor switchDescriptor = s[item.Name];
+                var switchDescriptor = s[item.Name];
 
-                object value = switchDescriptor.GetVaue(target); ;
+                var value = switchDescriptor.GetVaue(target);
                 values.Add(value);
             }
 
             this.methodInfo.Invoke(target, values.ToArray());
-        }
-
-        internal void Invoke(object instance, string[] parameters)
-        {
-            //SwitchHelper helper = new SwitchHelper(this.nameToStwich.Values);
-            //helper.Parse(instance, parameters, caseSensitive);
-
-            //ArrayList values = new ArrayList();
-
-            //foreach (ParameterInfo item in methodInfo.GetParameters())
-            //{
-            //    SwitchDescriptor switchDescriptor = this.nameToStwich[item.Name];
-
-            //    object value = switchDescriptor.GetVaue(instance);;
-            //    values.Add(value);
-            //}
-
-            //this.methodInfo.Invoke(instance, values.ToArray());
         }
     }
 }

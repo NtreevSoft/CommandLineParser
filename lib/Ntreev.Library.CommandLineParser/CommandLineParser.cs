@@ -44,16 +44,8 @@ namespace Ntreev.Library
         private object instance;
         //private string arguments;
         //private ParseOptions parsingOptions;
-        private SwitchUsagePrinter usagePrinter;
-
-        /// <summary>
-        /// <seealso cref="CommandLineParser"/> 클래스의 새 인스턴스를 초기화합니다.
-        /// </summary>
-        [Obsolete]
-        public CommandLineParser()
-        {
-            this.TextWriter = Console.Out;
-        }
+        private SwitchUsagePrinter switchUsagePrinter;
+        private MethodUsagePrinter methodUsagePrinter;
 
         public CommandLineParser(object instance)
             : this(Path.GetFileName(Assembly.GetEntryAssembly().Location), instance)
@@ -65,104 +57,101 @@ namespace Ntreev.Library
         {
             this.instance = instance;
             this.name = name;
-            this.usagePrinter = this.CreateUsagePrinterCore(name, instance);
+            this.switchUsagePrinter = this.CreateUsagePrinterCore(name, instance);
+            this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(name, instance);
             this.TextWriter = Console.Out;
         }
 
-        public void Parse(string commandLine)
+        public bool Parse(string commandLine)
         {
-            this.ParseCore(commandLine);
-        }
+            var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
+            var name = match.Value.Trim(new char[] { '\"', });
 
-        /// <summary>
-        /// 문자열을 분석하여 데이터로 변환합니다.
-        /// </summary>
-        /// <param name="commandLine">
-        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
-        /// </param>
-        /// <param name="instance">
-        /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
-        /// </param>
-        /// <exception cref="SwitchException">
-        /// 스위치의 인자가 문자열에 의한 변환을 지원하지 않거나 변환할 수 없는 경우
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// commandLine에 전달 인자가 하나도 포함되어 있지 않은 경우
-        /// </exception>
-        public void Parse(object instance, string commandLine)
-        {
-            this.instance = instance;
-            this.ParseCore(commandLine);
-        }
+            if (File.Exists(name) == true)
+                name = Path.GetFileNameWithoutExtension(name);
 
-        /// <summary>
-        /// 문자열을 분석하여 데이터로 변환합니다.
-        /// </summary>
-        /// <param name="commandLine">
-        /// 실행파일의 경로와 인자가 포함되어 있는 전체 문자열입니다.
-        /// </param>
-        /// <param name="instance">
-        /// 데이터를 설정할 속성과 스위치 특성이 포함되어 있는 인스턴스입니다.
-        /// </param>
-        /// <param name="parsingOptions">
-        /// 문자열을 분석하기 위한 옵션입니다.
-        /// </param>
-        /// <exception cref="SwitchException">
-        /// 스위치의 인자가 문자열에 의한 변환을 지원하지 않거나 변환할 수 없는 경우
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// commandLine에 전달 인자가 하나도 포함되어 있지 않은 경우
-        /// </exception>
-        [Obsolete]
-        public void Parse(object instance, string commandLine, ParseOptions parsingOptions)
-        {
-            this.ParseCore(commandLine);
-        }
+            if (this.name != name)
+                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다."));
 
-        private void ParseCore(string commandLine)
-        {
-            //using (Tracer tracer = new Tracer("Parsing"))
+            var arguments = commandLine.Substring(match.Length).Trim();
+
+            if (arguments == "help")
             {
-                string cmdLine = commandLine;
-
-                Match match = Regex.Match(cmdLine, @"^((""[^""]*"")|(\S+))");
-                this.name = match.Value.Trim(new char[] { '\"', });
-
-                if (File.Exists(this.name) == true)
-                    this.name = Path.GetFileNameWithoutExtension(this.name).ToLower();
-
-                string arguments = cmdLine.Substring(match.Length).Trim();
-
-                if (arguments == "help")
-                {
-                    this.PrintHelp(this.instance, this.name);
-                }
-                else
-                {
-                    SwitchHelper helper = new SwitchHelper(this.instance);
-                    helper.Parse(this.instance, arguments);
-                }
+                this.PrintHelp(this.instance, this.name);
+                return false;
+            }
+            else
+            {
+                var helper = new SwitchHelper(this.instance);
+                helper.Parse(this.instance, arguments);
+                return true;
             }
         }
 
-        protected virtual void PrintHelp(object target, string commandName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="commandLine">
+        /// command subcommand arguments
+        /// </param>
+        /// <param name="instance"></param>
+        /// <param name="parsingOptions"></param>
+        public bool Invoke(string commandLine)
         {
-            this.PrintUsage();
-        }
+            var cmdLine = commandLine;
 
-        protected virtual void PrintSummary(object target)
-        {
-            this.TextWriter.WriteLine("Type '{0} help' for usage.", this.name);
-        }
+            var regex = new Regex(@"^((""[^""]*"")|(\S+))");
+            var match = regex.Match(cmdLine);
+            this.name = match.Value.Trim(new char[] { '\"', });
 
-        public void Parse(Type type, string commandLine)
-        {
-            this.Parse(type, commandLine, ParseOptions.None);
-        }
+            if (File.Exists(this.name) == true)
+                this.name = Path.GetFileNameWithoutExtension(this.name).ToLower();
 
-        public void Parse(Type type, string commandLine, ParseOptions parsingOptions)
-        {
-            this.ParseCore(commandLine);
+            cmdLine = cmdLine.Substring(match.Length).Trim();
+            match = regex.Match(cmdLine);
+            var method = match.Value;
+
+            var arguments = cmdLine.Substring(match.Length).Trim();
+
+            if (string.IsNullOrEmpty(method) == true)
+            {
+                this.PrintSummary(this.instance);
+                return false;
+            }
+            else if (method == "help")
+            {
+                this.PrintMethodHelp(this.instance, this.name, arguments);
+                return false;
+            }
+            else
+            {
+                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
+
+                if (descriptor == null)
+                {
+                    throw new NotFoundMethodException(method);
+                }
+
+                try
+                {
+                    descriptor.Invoke(this.instance, arguments);
+                    return true;
+                }
+                catch (SwitchException e)
+                {
+                    throw e;
+                }
+                catch (TargetInvocationException e)
+                {
+                    if (e.InnerException != null)
+                        throw new MethodInvokeException(method, e.InnerException);
+                    throw e;
+                }
+                catch (Exception e)
+                {
+                    throw new MethodInvokeException(method, e);
+                }
+            }
         }
 
         /// <summary>
@@ -170,21 +159,66 @@ namespace Ntreev.Library
         /// </summary>
         public void PrintUsage()
         {
-            this.usagePrinter.PrintUsage(this.TextWriter);
+            this.switchUsagePrinter.PrintUsage(this.TextWriter);
+        }
+
+        public void PrintMethodUsage()
+        {
+            this.methodUsagePrinter.PrintUsage(this.TextWriter);
+        }
+
+        public void PrintMethodUsage(string methodName)
+        {
+            this.methodUsagePrinter.PrintUsage(this.TextWriter, methodName);
+        }
+
+        public static string[] Split(string commandLine)
+        {
+            var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
+            var name = match.Value.Trim(new char[] { '\"', });
+
+            if (File.Exists(name) == true)
+                name = Path.GetFileNameWithoutExtension(name);
+
+            var arguments = commandLine.Substring(match.Length).Trim();
+
+            return new string[] { name, arguments, };
+        }
+
+        protected virtual void PrintHelp(object target, string commandName)
+        {
+            this.PrintUsage();
+        }
+
+        protected virtual void PrintMethodHelp(object target, string commandName, string methodName)
+        {
+            if (string.IsNullOrEmpty(methodName) == true)
+            {
+                this.PrintMethodUsage();
+            }
+            else
+            {
+                MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target, methodName);
+                if (descriptor == null)
+                {
+                    this.TextWriter.WriteLine("{0} is not subcommand", methodName);
+                }
+                else
+                {
+                    this.PrintMethodUsage(methodName);
+                }
+            }
+        }
+
+        protected virtual void PrintSummary(object target)
+        {
+            this.TextWriter.WriteLine("Type '{0} help' for usage.", this.name);
         }
 
         /// <summary>
         /// 분석과정중 생기는 다양한 정보를 출력할 수 있는 처리기를 지정합니다.
         /// </summary>
         public TextWriter TextWriter { get; set; }
-
-        /// <summary>
-        /// 사용방법을 출력하는 방법을 나타내는 인스턴를 가져옵니다.
-        /// </summary>
-        public SwitchUsagePrinter Usage
-        {
-            get { return this.usagePrinter; }
-        }
 
         public string Name
         {
@@ -199,6 +233,11 @@ namespace Ntreev.Library
         protected virtual SwitchUsagePrinter CreateUsagePrinterCore(string name, object target)
         {
             return new SwitchUsagePrinter(target, name);
+        }
+
+        protected virtual MethodUsagePrinter CreateMethodUsagePrinterCore(string name, object target)
+        {
+            return new MethodUsagePrinter(target, name);
         }
     }
 }

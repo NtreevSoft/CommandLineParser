@@ -48,11 +48,11 @@ namespace Ntreev.Library
         {
             get
             {
-                string shortName = this.SwitchDescriptor.ShortName;
-                string name = this.SwitchDescriptor.Name;
+                var shortName = this.SwitchDescriptor.ShortName;
+                var name = this.SwitchDescriptor.Name;
 
-                string delim = this.hasDelimiter == true ? CommandSwitchAttribute.SwitchDelimiter : string.Empty;
-                string help = string.Empty;
+                var delim = this.hasDelimiter == true ? CommandSwitchAttribute.SwitchDelimiter : string.Empty;
+                var help = string.Empty;
 
                 if (name != string.Empty)
                 {
@@ -67,24 +67,6 @@ namespace Ntreev.Library
                     help += string.Format("{0}{1}", CommandSwitchAttribute.ShortSwitchDelimiter, shortName);
                 }
 
-                //char? argSeperator = this.SwitchDescriptor.ArgSeperator;
-                //Type argType = this.SwitchDescriptor.ArgType;
-                //if (argType != typeof(bool) || argSeperator != null)
-                //{
-                //    string argTypeName = this.SwitchDescriptor.ArgTypeSummary;
-
-                //    if (argSeperator == null)
-                //    {
-                //        help += string.Format(" <{0}>", argTypeName);
-                //    }
-                //    else
-                //    {
-                //        if (argSeperator != char.MinValue)
-                //            help += string.Format("{0}<{1}>", argSeperator, argTypeName);
-                //        else
-                //            help += string.Format("<{0}>", argTypeName);
-                //    }
-                //}
                 return help;
             }
         }
@@ -98,21 +80,21 @@ namespace Ntreev.Library
         {
             get
             {
-                Type argType = this.SwitchDescriptor.ArgType;
+                var argType = this.SwitchDescriptor.ArgType;
                 if (argType.IsEnum == false)
                     return base.ArgumentTypeDescription;
 
-                string description = string.Empty;
+                var description = string.Empty;
 
-                foreach (string name in Enum.GetNames(argType))
+                foreach (var item in Enum.GetNames(argType))
                 {
                     if (description != string.Empty)
                     {
-                        description += string.Format(", {0}", name);
+                        description += string.Format(", {0}", item);
                     }
                     else
                     {
-                        description = name;
+                        description = item;
                     }
                 }
 

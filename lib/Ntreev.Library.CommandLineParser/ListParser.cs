@@ -56,25 +56,25 @@ namespace Ntreev.Library
                 list = value as System.Collections.IList;
             }
 
-            Type itemType = GetItemType(switchDescriptor.ArgType);
+            var itemType = GetItemType(switchDescriptor.ArgType);
             if (itemType == null)
                 throw new NotSupportedException();
-            string[] args = SplitArgument(arg);
+            var args = this.SplitArgument(arg);
 
             try
             {
-                foreach (string item in args)
+                foreach (var item in args)
                 {
-                    string s = item.Trim();
+                    var s = item.Trim();
                     if(s.Length == 0)
                         continue;
-                    object element = OnItemParse(s, itemType);
+                    var element = OnItemParse(s, itemType);
                     list.Add(element);
                 }
 
                 if (switchDescriptor.ArgType.IsArray == true)
                 {
-                    Array array = Array.CreateInstance(itemType, list.Count);
+                    var array = Array.CreateInstance(itemType, list.Count);
                     list.CopyTo(array, 0);
                     list = array as System.Collections.IList;
                 }
@@ -105,7 +105,7 @@ namespace Ntreev.Library
         /// <returns>항목을 나타내는 문자열을 데이터로 변환한 값을 나타냅니다.</returns>
         protected virtual object OnItemParse(string arg, Type itemType)
         {
-            TypeConverter typeConverter = TypeDescriptor.GetConverter(itemType);
+            var typeConverter = TypeDescriptor.GetConverter(itemType);
             return typeConverter.ConvertFrom(arg);
         }
 
@@ -114,7 +114,7 @@ namespace Ntreev.Library
         /// </summary>
         /// <param name="propertyType">리스트를 나타내는 타입입니다.</param>
         /// <returns>리스트 형식의 타입이면 항목의 타입을 반환합니다. 그렇지 않다면 null을 반환합니다.</returns>
-        static public Type GetItemType(Type propertyType)
+        public static Type GetItemType(Type propertyType)
         {
             if (propertyType.IsArray == true)
             {
@@ -122,9 +122,9 @@ namespace Ntreev.Library
             }
             else
             {
-                PropertyInfo[] properties = TypeDescriptor.GetReflectionType(propertyType).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                var properties = TypeDescriptor.GetReflectionType(propertyType).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-                foreach (PropertyInfo item in properties)
+                foreach (var item in properties)
                 {
                     if (item.Name.Equals("Item") || item.Name.Equals("Items"))
                     {

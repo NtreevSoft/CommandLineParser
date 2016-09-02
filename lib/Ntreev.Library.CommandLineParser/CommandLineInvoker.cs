@@ -105,12 +105,12 @@ namespace Ntreev.Library
         /// <summary>
         /// 모든 스위치의 사용법을 출력합니다.
         /// </summary>
-        public void PrintUsage()
+        public void PrintMethodUsage()
         {
             this.usagePrinter.PrintUsage(this.TextWriter);
         }
 
-        public void PrintUsage(string methodName)
+        public void PrintMethodUsage(string methodName)
         {
             this.usagePrinter.PrintUsage(this.TextWriter, methodName);
         }
@@ -143,11 +143,11 @@ namespace Ntreev.Library
             get { return this.arguments; }
         }
 
-        protected virtual void PrintHelp(object target, string commandName, string methodName)
+        protected virtual void PrintMethodHelp(object target, string commandName, string methodName)
         {
             if (string.IsNullOrEmpty(methodName) == true)
             {
-                this.PrintUsage();
+                this.PrintMethodUsage();
             }
             else
             {
@@ -158,7 +158,7 @@ namespace Ntreev.Library
                 }
                 else
                 {
-                    this.PrintUsage(methodName);
+                    this.PrintMethodUsage(methodName);
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace Ntreev.Library
                 }
                 else if (this.method == CommandLineInvoker.helpMethod)
                 {
-                    this.PrintHelp(this.instance, this.name, this.arguments);
+                    this.PrintMethodHelp(this.instance, this.name, this.arguments);
                     return false;
                 }
                 else
