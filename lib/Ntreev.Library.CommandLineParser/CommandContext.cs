@@ -25,7 +25,8 @@ namespace Ntreev.Library
         public CommandContext([ImportMany]IEnumerable<ICommand> commands)
         {
             this.TextWriter = Console.Out;
-            
+            this.VerifyName = true;
+
             foreach (var item in commands)
             {
                 this.commands.Add(item.Name, new CommandLineParser(item.Name, item));
@@ -39,8 +40,8 @@ namespace Ntreev.Library
             var name = segments[0];
             var arguments = segments[1];
 
-            if (this.Name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다."));
+            if (this.VerifyName == true && this.Name != name)
+                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
 
             this.Execute(CommandLineParser.Split(arguments));
         }
@@ -107,6 +108,11 @@ namespace Ntreev.Library
             }
         }
 
+        public bool VerifyName
+        {
+            get; set;
+        }
+
         private bool Execute(string[] args)
         {
             var commandName = args[0];
@@ -121,7 +127,6 @@ namespace Ntreev.Library
             {
                 this.PrintHelp(CommandLineParser.Split(arguments));
                 return false;
-
             }
             else if (commandName == "--version")
             {
@@ -135,11 +140,11 @@ namespace Ntreev.Library
                 var command = parser.Instance as ICommand;
                 if (command.HasSubCommand == true)
                 {
-                    parser.Invoke(arguments);
+                    parser.Invoke(commandName + " " + arguments);
                 }
                 else
                 {
-                    if (parser.Parse(arguments) == false)
+                    if (parser.Parse(commandName + " " + arguments) == false)
                         return false;
 
                     command.Execute();
