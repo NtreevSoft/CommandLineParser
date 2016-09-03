@@ -13,12 +13,11 @@ namespace Ntreev.Library
         private readonly MethodDescriptor[] descriptors;
         private readonly string name;
 
-        public MethodUsagePrinter(object instance, string name)
+        public MethodUsagePrinter(string name, object instance)
         {
+            this.name = name;
             var descriptors = CommandDescriptor.GetMethodDescriptors(instance);
             this.descriptors = descriptors.Where(item => item.Name != CommandLineInvoker.defaultMethod).ToArray();
-
-            this.name = name;
         }
 
         public virtual void PrintUsage(TextWriter textWriter)

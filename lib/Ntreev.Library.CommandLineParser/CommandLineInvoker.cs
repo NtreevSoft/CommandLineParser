@@ -168,9 +168,9 @@ namespace Ntreev.Library
             this.TextWriter.WriteLine("Type '{0} help' for usage.", this.name);
         }
 
-        protected virtual MethodUsagePrinter CreateUsagePrinterCore(string name, object target)
+        protected virtual MethodUsagePrinter CreateUsagePrinterCore(string name, object instance)
         {
-            return new MethodUsagePrinter(target, name);
+            return new MethodUsagePrinter(name, instance);
         }
 
         private bool InvokeCore(string commandLine)

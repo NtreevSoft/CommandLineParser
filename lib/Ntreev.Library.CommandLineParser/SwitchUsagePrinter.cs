@@ -35,13 +35,15 @@ namespace Ntreev.Library
     public class SwitchUsagePrinter
     {
         private readonly string name;
+        private readonly object instance;
         private readonly string description;
         private readonly SwitchDescriptor[] switches;
         private readonly SwitchDescriptor[] options;
 
-        public SwitchUsagePrinter(object instance, string name)
+        public SwitchUsagePrinter(string name, object instance)
         {
             this.name = name;
+            this.instance = instance;
             this.description = instance.GetType().GetDescription();
             var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance);
             this.switches = switchDescriptors.Where(item => item.Required == true).ToArray();
@@ -54,6 +56,31 @@ namespace Ntreev.Library
             {
                 this.PrintUsage(tw);
             }
+        }
+
+        protected string Name
+        {
+            get { return this.name; }
+        }
+
+        protected object Instance
+        {
+            get { return this.instance; }
+        }
+
+        protected string Description
+        {
+            get { return this.description; }
+        }
+
+        protected SwitchDescriptor[] Switches
+        {
+            get { return this.switches; }
+        }
+
+        protected SwitchDescriptor[] Options
+        {
+            get { return this.options; }
         }
 
         private void PrintUsage(IndentedTextWriter textWriter)

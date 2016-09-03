@@ -88,6 +88,7 @@
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="ICommand.cs" />
+    <Compile Include="IndentedTextWriterExtensions.cs" />
     <Compile Include="InternalMethodUsageProvider.cs" />
     <Compile Include="InvalidSwitchStringException.cs" />
     <Compile Include="MethodDescriptor.cs" />
@@ -109,6 +110,7 @@
     </Compile>
     <Compile Include="StringUtility.cs" />
     <Compile Include="SwitchDescriptorCollection.cs" />
+    <Compile Include="SwitchNameTypes.cs" />
     <Compile Include="SwitchUsageProvider.cs" />
     <Compile Include="MissingSwitchException.cs" />
     <Compile Include="SwitchUsagePrinter.cs" />

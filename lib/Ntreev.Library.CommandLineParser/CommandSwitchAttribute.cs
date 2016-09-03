@@ -143,6 +143,8 @@ namespace Ntreev.Library
         /// </summary>
         public Type UsageProvider { get; set; }
 
+        public SwitchNameTypes NameType { get; set; }
+
         internal string ShortNameInternal
         {
             get { return this.shortName == char.MinValue ? string.Empty : this.shortName.ToString(); }

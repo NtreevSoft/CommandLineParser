@@ -48,7 +48,7 @@ namespace Ntreev.Library
         private MethodUsagePrinter methodUsagePrinter;
 
         public CommandLineParser(object instance)
-            : this(Path.GetFileName(Assembly.GetEntryAssembly().Location), instance)
+            : this(string.Empty, instance)
         {
 
         }
@@ -56,9 +56,16 @@ namespace Ntreev.Library
         public CommandLineParser(string name, object instance)
         {
             this.instance = instance;
-            this.name = name;
-            this.switchUsagePrinter = this.CreateUsagePrinterCore(name, instance);
-            this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(name, instance);
+            this.name = name ?? string.Empty;
+            if (this.name == string.Empty)
+            {
+                if (instance is ICommand)
+                    this.name = (instance as ICommand).Name;
+                else
+                    this.name = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+            }
+            this.switchUsagePrinter = this.CreateUsagePrinterCore(this.name, instance);
+            this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(this.name, instance);
             this.TextWriter = Console.Out;
         }
 
@@ -230,14 +237,14 @@ namespace Ntreev.Library
             get { return this.instance; }
         }
 
-        protected virtual SwitchUsagePrinter CreateUsagePrinterCore(string name, object target)
+        protected virtual SwitchUsagePrinter CreateUsagePrinterCore(string name, object instance)
         {
-            return new SwitchUsagePrinter(target, name);
+            return new SwitchUsagePrinter(name, instance);
         }
 
-        protected virtual MethodUsagePrinter CreateMethodUsagePrinterCore(string name, object target)
+        protected virtual MethodUsagePrinter CreateMethodUsagePrinterCore(string name, object instance)
         {
-            return new MethodUsagePrinter(target, name);
+            return new MethodUsagePrinter(name, instance);
         }
     }
 }

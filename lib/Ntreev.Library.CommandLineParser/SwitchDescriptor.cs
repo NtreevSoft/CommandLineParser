@@ -46,7 +46,6 @@ namespace Ntreev.Library
 
         private readonly string name;
         private readonly string shortName;
-        private readonly string displayName;
         private readonly Type type;
         private readonly TypeConverter converter;
         private readonly string description;
@@ -87,6 +86,26 @@ namespace Ntreev.Library
         public string Name
         {
             get { return this.name; }
+        }
+
+        public string NamePattern
+        {
+            get
+            {
+                if (this.name == string.Empty)
+                    return string.Empty;
+                return CommandSwitchAttribute.SwitchDelimiter + this.name;
+            }
+        }
+
+        public string ShortNamePattern
+        {
+            get
+            {
+                if (this.shortName == string.Empty)
+                    return string.Empty;
+                return CommandSwitchAttribute.ShortSwitchDelimiter + this.shortName;
+            }
         }
 
         /// <summary>
@@ -149,13 +168,31 @@ namespace Ntreev.Library
             }
 
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyInfo.Name;
-            this.name = this.name.ToSpinalCase();
             this.shortName = this.switchAttribute.ShortNameInternal;
-            this.displayName = propertyInfo.GetDisplayName();
+            this.VerifyName(ref this.name, ref this.shortName, this.switchAttribute.NameType);
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
             this.description = propertyInfo.GetDescription(); ;
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
+        }
+
+        private void VerifyName(ref string name, ref string shortName, SwitchNameTypes nameType)
+        {
+            name = name.ToSpinalCase();
+            if (this.switchAttribute.NameType == SwitchNameTypes.Name)
+            {
+                shortName = string.Empty;
+            }
+            else if (this.switchAttribute.NameType == SwitchNameTypes.ShortName)
+            {
+                if (shortName == string.Empty)
+                    throw new SwitchException("짧은 이름이 존재하지 않습니다.");
+                name = string.Empty;
+            }
+            else
+            {
+
+            }
         }
 
         internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
@@ -175,11 +212,9 @@ namespace Ntreev.Library
                     new object[] { this, }) as SwitchUsageProvider;
             }
 
-            this.name = this.switchAttribute.Name;
-            this.shortName = this.Required == false ? this.switchAttribute.ShortNameInternal : string.Empty;
-            if (this.name == string.Empty && this.shortName == string.Empty)
-                this.name = propertyDescriptor.Name.ToSpinalCase();
-            this.displayName = propertyDescriptor.DisplayName;
+            this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
+            this.shortName = this.switchAttribute.ShortNameInternal;
+            this.VerifyName(ref this.name, ref this.shortName, this.switchAttribute.NameType);
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
             this.description = propertyDescriptor.Description;
@@ -188,7 +223,7 @@ namespace Ntreev.Library
 
         internal SwitchDescriptor(ParameterInfo parameterInfo)
         {
-            this.switchAttribute = new CommandSwitchAttribute() { Required = true, };
+            this.switchAttribute = new CommandSwitchAttribute() { Required = true, NameType = SwitchNameTypes.Name, };
 
             if (this.switchAttribute.UsageProvider == null)
             {
@@ -205,7 +240,6 @@ namespace Ntreev.Library
 
             this.name = parameterInfo.Name.ToSpinalCase();
             this.shortName = string.Empty;
-            this.displayName = parameterInfo.GetDisplayName();
             this.type = parameterInfo.ParameterType;
             this.converter = parameterInfo.GetConverter();
             this.description = parameterInfo.GetDescription();
