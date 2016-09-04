@@ -17,6 +17,11 @@ namespace SampleApplication
         [Import]
         private Lazy<CommandContext> commandContext = null;
 
+        public HelpCommand()
+        {
+            this.CommandName = string.Empty;
+        }
+
         public bool HasSubCommand
         {
             get { return false; }
@@ -30,8 +35,15 @@ namespace SampleApplication
         public void Execute()
         {
             var commandContext = this.commandContext.Value;
-            var parser = commandContext.Parsers[this.Name];
+            var parser = commandContext.Parsers[this.CommandName];
             parser.PrintUsage();
+        }
+
+        [CommandSwitch(Name = "CommandName", Required = true)]
+        [DisplayName("COMMAND|GUIDE")]
+        public string CommandName
+        {
+            get; set;
         }
 
         [CommandSwitch(ShortName = 'a')]

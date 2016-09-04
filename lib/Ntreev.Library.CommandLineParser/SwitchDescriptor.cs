@@ -46,8 +46,10 @@ namespace Ntreev.Library
 
         private readonly string name;
         private readonly string shortName;
+        private readonly string displayName;
         private readonly Type type;
         private readonly TypeConverter converter;
+        private readonly string summary;
         private readonly string description;
         private readonly IValueSetter valueSetter;
 
@@ -106,6 +108,19 @@ namespace Ntreev.Library
                     return string.Empty;
                 return CommandSwitchAttribute.ShortSwitchDelimiter + this.shortName;
             }
+        }
+
+        public string DisplayName
+        {
+            get { return this.displayName; }
+        }
+
+        /// <summary>
+        /// 스위치의 부가적인 설명을 가져옵니다.
+        /// </summary>
+        public string Summary
+        {
+            get { return this.summary; }
         }
 
         /// <summary>
@@ -170,8 +185,10 @@ namespace Ntreev.Library
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyInfo.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
             this.VerifyName(ref this.name, ref this.shortName, this.switchAttribute.NameType);
+            this.displayName = propertyInfo.GetDisplayName();
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
+            this.summary = propertyInfo.GetSummary();
             this.description = propertyInfo.GetDescription(); ;
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
         }
@@ -215,8 +232,10 @@ namespace Ntreev.Library
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
             this.VerifyName(ref this.name, ref this.shortName, this.switchAttribute.NameType);
+            this.displayName = propertyDescriptor.DisplayName;
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
+            //this.summary = propertyDescriptor.
             this.description = propertyDescriptor.Description;
             this.valueSetter = new PropertyValueSetter(this, propertyDescriptor);
         }
@@ -240,8 +259,10 @@ namespace Ntreev.Library
 
             this.name = parameterInfo.Name.ToSpinalCase();
             this.shortName = string.Empty;
+            this.displayName = parameterInfo.GetDisplayName();
             this.type = parameterInfo.ParameterType;
             this.converter = parameterInfo.GetConverter();
+            this.description = parameterInfo.GetSummary();
             this.description = parameterInfo.GetDescription();
             this.valueSetter = new ParameterValueSetter(this, parameterInfo);
         }

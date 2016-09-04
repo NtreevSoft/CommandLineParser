@@ -135,8 +135,15 @@ namespace Ntreev.Library
                 }
                 else
                 {
-                    if (parser.Parse(commandName + " " + arguments) == false)
+                    if (arguments == string.Empty)
+                    {
+                        parser.PrintUsage();
                         return false;
+                    }
+                    else if (parser.Parse(commandName + " " + arguments) == false)
+                    {
+                        return false;
+                    }
 
                     command.Execute();
                 }

@@ -60,11 +60,22 @@ namespace SampleApplication
                         let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
                         select string.Join(" | ", patternItems.Where(i => i != string.Empty));
 
-            var synopsis = query.Aggregate("", (l, n) => l += "[" + n + "] ", item => item);
+            var options = query.Aggregate("", (l, n) => l += "[" + n + "] ", item => item);
+
+            var switches = this.Switches.Aggregate("", (l, n) => l += "[" + n.DisplayName != string.Empty ? n.DisplayName : n.Name + "] ", item => item);
 
             textWriter.WriteLine("Synopsis");
             textWriter.Indent++;
-            textWriter.WriteLine(synopsis);
+            textWriter.WriteLine("{0}[{1}]", options, switches);
+            textWriter.Indent--;
+            textWriter.WriteLine();
+        }
+
+        private void PrintDescription(IndentedTextWriter textWriter)
+        {
+            textWriter.WriteLine("Description");
+            textWriter.Indent++;
+            textWriter.WriteMultiline(this.Description);
             textWriter.Indent--;
             textWriter.WriteLine();
         }
@@ -72,12 +83,27 @@ namespace SampleApplication
         private void PrintOptions(IndentedTextWriter textWriter)
         {
             textWriter.WriteLine("Options");
-            textWriter.WriteLine();
             textWriter.Indent++;
+            foreach (var item in this.Switches)
+            {
+                this.PrintSwitch(textWriter, item);
+            }
             foreach (var item in this.Options)
             {
                 this.PrintOption(textWriter, item);
             }
+            textWriter.Indent--;
+            textWriter.WriteLine();
+        }
+
+        private void PrintSwitch(IndentedTextWriter textWriter, SwitchDescriptor descriptor)
+        {
+            if (descriptor.Description == string.Empty)
+                return;
+
+            textWriter.WriteLine(descriptor.DisplayName);
+            textWriter.Indent++;
+            textWriter.WriteMultiline(descriptor.Description);
             textWriter.Indent--;
             textWriter.WriteLine();
         }
@@ -92,6 +118,7 @@ namespace SampleApplication
             textWriter.Indent++;
             textWriter.WriteMultiline(descriptor.Description);
             textWriter.Indent--;
+            textWriter.WriteLine();
         }
 
         private void PrintUsage(IndentedTextWriter textWriter)
@@ -99,6 +126,7 @@ namespace SampleApplication
             var w = Console.LargestWindowWidth;
             this.PrintName(textWriter);
             this.PrintSynopsis(textWriter);
+            this.PrintDescription(textWriter);
             this.PrintOptions(textWriter);
 
             int qwer = 0;

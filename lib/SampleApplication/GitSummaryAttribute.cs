@@ -1,4 +1,5 @@
-﻿using SampleApplication.Properties;
+﻿using Ntreev.Library;
+using SampleApplication.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,20 +11,16 @@ using System.Threading.Tasks;
 namespace SampleApplication
 {
     [AttributeUsage(AttributeTargets.All)]
-    class GitSummaryAttribute : Attribute
+    class GitSummaryAttribute : SummaryAttribute
     {
         private readonly string summary;
 
         public GitSummaryAttribute(string resourceName)
-        {
-            this.summary = (string)typeof(Resources).InvokeMember(resourceName,
+            : base((string)typeof(Resources).InvokeMember(resourceName, 
                 BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Static,
-                null, null, null);
-        }
-
-        public string Summary
+                null, null, null))
         {
-            get { return this.summary; }
+            
         }
     }
 }

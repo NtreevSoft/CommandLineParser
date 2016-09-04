@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 namespace SampleApplication
 {
     [Export(typeof(ICommand))]
-    [Description("wqerwqer")]
+    [GitSummary("AddSummary")]
+    [GitDescription("AddDescription")]
     class AddCommand : ICommand
     {
         public AddCommand()
@@ -34,17 +35,46 @@ namespace SampleApplication
         }
 
         [CommandSwitch(Required = true)]
-        [Description("추가할 파일 또는 폴더의 경로를 나타냅니다.")]
+        [GitDescription("PathDescription_AddCommand")]
+        [DisplayName("<pathspec>...")]
         public string Path
         {
             get; set;
         }
 
-        [CommandSwitch(ShortName = 'r')]
-        [Description("대상이 경로일때 하위 목록들까지 추가할지에 대한 여부를 나타냅니다.")]
-        public bool Recursive
+        [CommandSwitch(ShortName = 'n')]
+        [Description("Don’t actually add the file(s), just show if they exist and/or will be ignored.")]
+        public bool DryRun
         {
             get; set;
+        }
+
+        [CommandSwitch(ShortName = 'v')]
+        [Description("Be verbose.")]
+        public bool Verbose
+        {
+            get; set;
+        }
+
+        [CommandSwitch(ShortName = 'f')]
+        [Description("Allow adding otherwise ignored files.")]
+        public bool Force
+        {
+            get; set;
+        }
+
+        [CommandSwitch(ShortName = 'i')]
+        [GitDescription("InteractiveDescription_AddCommand")]
+        public bool Interactive
+        {
+            get; set;
+        }
+
+        [CommandSwitch(ShortName = 'P')]
+        [GitDescription("PatchDescription_AddCommand")]
+        public bool Patch
+        {
+            get;set;
         }
     }
 }

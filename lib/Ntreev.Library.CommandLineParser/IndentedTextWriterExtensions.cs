@@ -13,7 +13,10 @@ namespace Ntreev.Library
         {
             foreach (var item in s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None))
             {
-                WriteMultilineCore(textWriter, item);
+                if (item == string.Empty)
+                    textWriter.WriteLine();
+                else
+                    WriteMultilineCore(textWriter, item);
             }
         }
 
@@ -24,16 +27,18 @@ namespace Ntreev.Library
 
             while (s != string.Empty)
             {
+                var line = string.Empty;
                 if (s.Length <= width)
                 {
-                    textWriter.WriteLine(s);
-                    break;
+                    line = s;
+                    s = string.Empty;
                 }
                 else
                 {
-                    textWriter.WriteLine(s.Remove(width));
+                    line = s.Remove(width);
                     s = s.Substring(width);
                 }
+                textWriter.WriteLine(line.TrimStart());
             }
         }
     }

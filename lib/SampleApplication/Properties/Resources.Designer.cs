@@ -61,6 +61,26 @@ namespace SampleApplication.Properties {
         }
         
         /// <summary>
+        ///   This command updates the index using the current content found in the working tree, to prepare the content staged for the next commit. It typically adds the current content of existing paths as a whole, but with some options it can also be used to add content with only part of the changes made to the working tree files applied, or remove paths that do not exist in the working tree anymore.
+        ///
+        ///The &quot;index&quot; holds a snapshot of the content of the working tree, and it is this snapshot that is taken as the conten[나머지 문자열은 잘림]&quot;;과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string AddDescription {
+            get {
+                return ResourceManager.GetString("AddDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Add file contents to the index과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string AddSummary {
+            get {
+                return ResourceManager.GetString("AddSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   With no options and no COMMAND or GUIDE given, the synopsis of the git command and a list of the most commonly used Git commands are printed on the standard output.
         ///
         ///If the option --all or -a is given, all available commands are printed on the standard output.
@@ -81,6 +101,35 @@ namespace SampleApplication.Properties {
         internal static string HelpSummary {
             get {
                 return ResourceManager.GetString("HelpSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Add modified contents in the working tree interactively to the index. Optional path arguments may be supplied to limit operation to a subset of the working tree. See “Interactive mode” for details.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string InteractiveDescription_AddCommand {
+            get {
+                return ResourceManager.GetString("InteractiveDescription_AddCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the difference before adding modified contents to the index.
+        ///
+        ///This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See “Interactive mode” for details.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string PatchDescription_AddCommand {
+            get {
+                return ResourceManager.GetString("PatchDescription_AddCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Files to add content from. Fileglobs (e.g. *.c) can be given to add all matching files. Also a leading directory name (e.g. dir to add dir/file1 and dir/file2) can be given to update the index to match the current state of the directory as a whole (e.g. specifying dir will record not just a file dir/file1 modified in the working tree, a file dir/file2 added to the working tree, but also a file dir/file3 removed from the working tree. Note that older versions of Git used to ignore removed files; use --no-all[나머지 문자열은 잘림]&quot;;과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string PathDescription_AddCommand {
+            get {
+                return ResourceManager.GetString("PathDescription_AddCommand", resourceCulture);
             }
         }
     }

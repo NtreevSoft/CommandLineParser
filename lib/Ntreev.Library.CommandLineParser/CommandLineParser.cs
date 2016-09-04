@@ -42,8 +42,6 @@ namespace Ntreev.Library
     {
         private string name;
         private object instance;
-        //private string arguments;
-        //private ParseOptions parsingOptions;
         private SwitchUsagePrinter switchUsagePrinter;
         private MethodUsagePrinter methodUsagePrinter;
 
