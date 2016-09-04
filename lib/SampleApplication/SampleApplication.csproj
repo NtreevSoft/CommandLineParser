@@ -54,8 +54,6 @@
     <Compile Include="GitCommandLineParser.cs" />
     <Compile Include="GitSummaryAttribute.cs" />
     <Compile Include="GitDescriptionAttribute.cs" />
-    <Compile Include="GitMethodUsagePrinter.cs" />
-    <Compile Include="GitCommandUsagePrinter.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

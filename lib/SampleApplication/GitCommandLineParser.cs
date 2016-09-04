@@ -14,15 +14,5 @@ namespace SampleApplication
         {
 
         }
-
-        //protected override CommandUsagePrinter CreateUsagePrinterCore(string name, object instance)
-        //{
-        //    return new GitCommandUsagePrinter(name, instance);
-        //}
-
-        //protected override MethodUsagePrinter CreateMethodUsagePrinterCore(string name, object instance)
-        //{
-        //    return new GitMethodUsagePrinter(name, instance);
-        //}
     }
 }

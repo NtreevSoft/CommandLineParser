@@ -130,7 +130,7 @@ namespace Ntreev.Library
             }
             else
             {
-                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
+                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), method);
 
                 if (descriptor == null)
                 {
@@ -203,7 +203,7 @@ namespace Ntreev.Library
             }
             else
             {
-                MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target, methodName);
+                MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target.GetType(), methodName);
                 if (descriptor == null)
                 {
                     this.TextWriter.WriteLine("{0} is not subcommand", methodName);

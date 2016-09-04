@@ -38,16 +38,13 @@ namespace Ntreev.Library
         private readonly object instance;
         private readonly string description;
         private readonly SwitchDescriptor[] switches;
-        private readonly SwitchDescriptor[] options;
 
         public CommandUsagePrinter(string name, object instance)
         {
             this.name = name;
             this.instance = instance;
             this.description = instance.GetType().GetDescription();
-            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance);
-            this.switches = switchDescriptors.Where(item => item.Required == true).ToArray();
-            this.options = switchDescriptors.Where(item => item.Required == false).ToArray();
+            this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
         }
 
         public virtual void PrintUsage(TextWriter textWriter)
@@ -78,10 +75,10 @@ namespace Ntreev.Library
             get { return this.switches; }
         }
 
-        protected SwitchDescriptor[] Options
-        {
-            get { return this.options; }
-        }
+        //protected SwitchDescriptor[] Options
+        //{
+        //    get { return this.options; }
+        //}
 
         private void PrintUsage(IndentedTextWriter textWriter)
         {
@@ -103,13 +100,14 @@ namespace Ntreev.Library
 
         private void PrintSynopsis(IndentedTextWriter textWriter)
         {
-            var query = from item in this.Options
+            var query = from item in this.switches
+                        where item.Required == false
                         let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
                         select string.Join(" | ", patternItems.Where(i => i != string.Empty));
 
             var options = query.Aggregate("", (l, n) => l += "[" + n + "] ", item => item);
 
-            var switches = this.Switches.Aggregate("", (l, n) => l += "[" + n.DisplayName + "] ", item => item);
+            var switches = this.Switches.Where(item => item.Required).Aggregate("", (l, n) => l += "[" + n.DisplayName + "] ", item => item);
 
             textWriter.WriteLine("Synopsis");
             textWriter.Indent++;
@@ -131,11 +129,11 @@ namespace Ntreev.Library
         {
             textWriter.WriteLine("Options");
             textWriter.Indent++;
-            foreach (var item in this.Switches)
+            foreach (var item in this.Switches.Where(i => i.Required == true))
             {
                 this.PrintSwitch(textWriter, item);
             }
-            foreach (var item in this.Options)
+            foreach (var item in this.Switches.Where(i => i.Required == false))
             {
                 this.PrintOption(textWriter, item);
             }

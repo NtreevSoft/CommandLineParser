@@ -39,7 +39,7 @@ namespace Ntreev.Library
 
         public SwitchHelper(object target)
         {
-            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target);
+            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target.GetType());
             this.switches = switchDescriptors.ToArray();
         }
 
@@ -76,6 +76,32 @@ namespace Ntreev.Library
             }
 
             this.SetValues(instance);
+        }
+
+        public void Parse(object instance, string[] switchLines)
+        {
+            this.args.Clear();
+            this.AssertValidation();
+
+            foreach (string switchLine in switchLines)
+            {
+                var descriptor = this.DoMatch(switchLine);
+                if (descriptor == null)
+                    throw new SwitchException(Resources.NotFoundMatchedSwitch, switchLine);
+            }
+
+            this.AssertRequired();
+            this.SetValues(instance);
+        }
+
+        public void SetValues(object instance)
+        {
+            foreach (var item in this.switches)
+            {
+                if (this.args.ContainsKey(item) == false)
+                    continue;
+                item.SetValue(instance, this.args[item].Trim('\"'));
+            }
         }
 
         private SwitchDescriptor ParseOption(object instance, ref string arguments)
@@ -124,33 +150,6 @@ namespace Ntreev.Library
             }
 
             throw new Exception();
-        }
-
-
-        public void Parse(object instance, string[] switchLines)
-        {
-            this.args.Clear();
-            this.AssertValidation();
-
-            foreach (string switchLine in switchLines)
-            {
-                var descriptor = this.DoMatch(switchLine);
-                if (descriptor == null)
-                    throw new SwitchException(Resources.NotFoundMatchedSwitch, switchLine);
-            }
-
-            this.AssertRequired();
-            this.SetValues(instance);
-        }
-
-        public void SetValues(object instance)
-        {
-            foreach (var item in this.switches)
-            {
-                if (this.args.ContainsKey(item) == false)
-                    continue;
-                item.SetValue(instance, this.args[item].Trim('\"'));
-            }
         }
 
         private SwitchDescriptor DoMatch(string switchLine)

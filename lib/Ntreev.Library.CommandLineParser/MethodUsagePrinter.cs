@@ -20,7 +20,7 @@ namespace Ntreev.Library
             this.name = name;
             this.instance = instance;
             this.description = instance.GetType().GetDescription();
-            this.descriptors = CommandDescriptor.GetMethodDescriptors(instance).ToArray();
+            this.descriptors = CommandDescriptor.GetMethodDescriptors(instance.GetType()).ToArray();
         }
 
         public virtual void PrintUsage(TextWriter textWriter)

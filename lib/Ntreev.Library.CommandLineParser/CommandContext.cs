@@ -23,7 +23,7 @@ namespace Ntreev.Library
         protected CommandContext(IEnumerable<ICommand> commands)
         {
             this.TextWriter = Console.Out;
-            
+
             foreach (var item in commands)
             {
                 this.commands.Add(item.Name, this.CreateInstance(item));

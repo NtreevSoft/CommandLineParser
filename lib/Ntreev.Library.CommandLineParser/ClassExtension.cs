@@ -22,11 +22,7 @@ namespace Ntreev.Library
         public static T GetCustomAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
             where T : Attribute
         {
-            var attrs = customAttributeProvider.GetCustomAttributes(typeof(T), true);
-            if (attrs.Length == 0)
-                return null;
-
-            return attrs[0] as T;
+            return customAttributeProvider.GetCustomAttributes(typeof(T), true).FirstOrDefault() as T;
         }
 
         public static string GetDisplayName(this ICustomAttributeProvider customAttributeProvider)
@@ -94,20 +90,12 @@ namespace Ntreev.Library
 
         public static bool IsCommandMethod(this MethodInfo methodInfo)
         {
-            var attrs = methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false);
-            return attrs.Length > 0;
+            return methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false).Any();
         }
 
         public static CommandMethodAttribute GetCommandMethodAttribute(this MethodInfo methodInfo)
         {
-            var attrs = methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false);
-
-            if (attrs.Length > 0)
-            {
-                return attrs[0] as CommandMethodAttribute;
-            }
-
-            return null;
+            return methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false).FirstOrDefault() as CommandMethodAttribute;
         }
 
         public static object GetValue(this ParameterInfo parameterInfo, string arg)
@@ -120,9 +108,9 @@ namespace Ntreev.Library
         {
             value = null;
             var attrs = parameterInfo.GetCustomAttributes(typeof(DefaultValueAttribute), true);
-            if (attrs.Length == 0)
+            if (attrs.Any() == false)
                 return false;
-            var attr = attrs[0] as DefaultValueAttribute;
+            var attr = attrs.First() as DefaultValueAttribute;
             value = attr.Value;
             return true;
         }
@@ -157,7 +145,6 @@ namespace Ntreev.Library
                 return "double";
             else if (type == typeof(decimal))
                 return "decimal";
-            
             return type.Name;
         }
     }
