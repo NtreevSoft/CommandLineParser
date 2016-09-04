@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SampleApplication</RootNamespace>
-    <AssemblyName>git</AssemblyName>
+    <AssemblyName>gitd</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -54,18 +54,18 @@
     <Compile Include="GitCommandLineParser.cs" />
     <Compile Include="GitSummaryAttribute.cs" />
     <Compile Include="GitDescriptionAttribute.cs" />
-    <Compile Include="GitSwitchUsagePrinter.cs" />
-    <Compile Include="HelpCommand.cs" />
+    <Compile Include="GitMethodUsagePrinter.cs" />
+    <Compile Include="GitCommandUsagePrinter.cs" />
+    <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AddCommand.cs" />
+    <Compile Include="Commands\AddCommand.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StashCommand.cs" />
-    <Compile Include="TestCommand.cs" />
+    <Compile Include="Commands\StashCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ntreev.Library.CommandLineParser\Ntreev.Library.CommandLineParser.csproj">

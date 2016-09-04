@@ -13,10 +13,16 @@ namespace SampleApplication
     class GitDescriptionAttribute : DescriptionAttribute
     {
         public GitDescriptionAttribute(string resourceName)
-        : base((string)typeof(Resources).InvokeMember(resourceName,
-        BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Static,
-        null, null, null))
+            : base(GetResourceString(resourceName))
         {
+
+        }
+
+        private static string GetResourceString(string resourceName)
+        {
+            return (string)typeof(Resources).InvokeMember(resourceName,
+                BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Static,
+                null, null, null);
         }
     }
 }

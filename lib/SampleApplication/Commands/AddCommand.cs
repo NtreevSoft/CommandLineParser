@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SampleApplication
+namespace SampleApplication.Commands
 {
     [Export(typeof(ICommand))]
     [GitSummary("AddSummary")]

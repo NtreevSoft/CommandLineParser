@@ -114,6 +114,32 @@ namespace SampleApplication.Properties {
         }
         
         /// <summary>
+        ///   List the stashes that you currently have. Each stash is listed with its name (e.g. stash@{0} is the latest stash, stash@{1} is the one before, etc.), the name of the branch that was current when the stash was made, and a short description of the commit the stash was based on.
+        ///
+        ///stash@{0}: WIP on submit: 6ebd0e2... Update git-stash documentation
+        ///stash@{1}: On master: 9cc0589... Add git-stash
+        ///The command takes options applicable to the git log command to control what is shown and how. See git-log[1].과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string ListDescription_AddCommand {
+            get {
+                return ResourceManager.GetString("ListDescription_AddCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   List the stashes that you currently have. Each stash is listed with its name (e.g. stash@{0} is the latest stash, stash@{1} is the one before, etc.), the name of the branch that was current when the stash was made, and a short description of the commit the stash was based on.
+        ///
+        ///stash@{0}: WIP on submit: 6ebd0e2... Update git-stash documentation
+        ///stash@{1}: On master: 9cc0589... Add git-stash
+        ///The command takes options applicable to the git log command to control what is shown and how. See git-log[1].과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string ListDescription_StashCommand {
+            get {
+                return ResourceManager.GetString("ListDescription_StashCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the difference before adding modified contents to the index.
         ///
         ///This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See “Interactive mode” for details.과(와) 유사한 지역화된 문자열을 찾습니다.
@@ -125,11 +151,53 @@ namespace SampleApplication.Properties {
         }
         
         /// <summary>
+        ///   you can interactively select hunks from the diff between HEAD and the working tree to be stashed. The stash entry is constructed such that its index state is the same as the index state of your repository, and its worktree contains only the changes you selected interactively. The selected changes are then rolled back from your worktree. See the “Interactive Mode” section of git-add[1] to learn how to operate the --patch mode.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string PatchDescription_StashCommand {
+            get {
+                return ResourceManager.GetString("PatchDescription_StashCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Files to add content from. Fileglobs (e.g. *.c) can be given to add all matching files. Also a leading directory name (e.g. dir to add dir/file1 and dir/file2) can be given to update the index to match the current state of the directory as a whole (e.g. specifying dir will record not just a file dir/file1 modified in the working tree, a file dir/file2 added to the working tree, but also a file dir/file3 removed from the working tree. Note that older versions of Git used to ignore removed files; use --no-all[나머지 문자열은 잘림]&quot;;과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string PathDescription_AddCommand {
             get {
                 return ResourceManager.GetString("PathDescription_AddCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Save your local modifications to a new stash, and run git reset --hard to revert them. The &lt;message&gt; part is optional and gives the description along with the stashed state. For quickly making a snapshot, you can omit both &quot;save&quot; and &lt;message&gt;, but giving only &lt;message&gt; does not trigger this action to prevent a misspelled subcommand from making an unwanted stash.
+        ///
+        ///If the --keep-index option is used, all changes already added to the index are left intact.
+        ///
+        ///If the --include-untracked option is used, all u[나머지 문자열은 잘림]&quot;;과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string SaveDescription_StashCommand {
+            get {
+                return ResourceManager.GetString("SaveDescription_StashCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Use git stash when you want to record the current state of the working directory and the index, but want to go back to a clean working directory. The command saves your local modifications away and reverts the working directory to match the HEAD commit.
+        ///
+        ///The modifications stashed away by this command can be listed with git stash list, inspected with git stash show, and restored (potentially on top of a different commit) with git stash apply. Calling git stash without any arguments is equivalent to git sta[나머지 문자열은 잘림]&quot;;과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string StashDescription {
+            get {
+                return ResourceManager.GetString("StashDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Stash the changes in a dirty working directory away과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string StashSummary {
+            get {
+                return ResourceManager.GetString("StashSummary", resourceCulture);
             }
         }
     }

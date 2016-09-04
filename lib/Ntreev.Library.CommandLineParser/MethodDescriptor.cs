@@ -12,7 +12,7 @@ namespace Ntreev.Library
     {
         private readonly MethodInfo methodInfo;
         private readonly CommandMethodAttribute attribute;
-        private MethodUsageProvider usageProvider;
+        //private MethodUsageProvider usageProvider;
         private readonly List<SwitchDescriptor> switches = new List<SwitchDescriptor>();
 
         public MethodDescriptor(MethodInfo methodInfo)
@@ -20,18 +20,18 @@ namespace Ntreev.Library
             this.methodInfo = methodInfo;
             this.attribute = this.methodInfo.GetCommandMethodAttribute();
 
-            if (this.attribute.UsageProvider == null)
-            {
-                this.usageProvider = new InternalMethodUsageProvider(this);
-            }
-            else
-            {
-                this.usageProvider = TypeDescriptor.CreateInstance(
-                   null,
-                   this.attribute.UsageProvider,
-                   new Type[] { typeof(MethodDescriptor), },
-                   new object[] { this, }) as MethodUsageProvider;
-            }
+            //if (this.attribute.UsageProvider == null)
+            //{
+            //    this.usageProvider = new InternalMethodUsageProvider(this);
+            //}
+            //else
+            //{
+            //    this.usageProvider = TypeDescriptor.CreateInstance(
+            //       null,
+            //       this.attribute.UsageProvider,
+            //       new Type[] { typeof(MethodDescriptor), },
+            //       new object[] { this, }) as MethodUsageProvider;
+            //}
 
             foreach (var item in methodInfo.GetParameters())
             {
@@ -45,15 +45,17 @@ namespace Ntreev.Library
                 foreach (var item in attr.PropertyNames)
                 {
                     var switchDescriptor = CommandDescriptor.GetMethodSwitchDescriptors(methodInfo.DeclaringType)[item];
+                    if (switchDescriptor == null)
+                        throw new SwitchException(string.Format("{0} 은(는) 존재하지 않는 속성입니다.", item));
                     this.switches.Add(switchDescriptor);
                 }
             }
 
-            if (this.attribute.Name == CommandLineInvoker.defaultMethod)
-            {
-                if (this.switches.Count > 0)
-                    throw new SwitchException("default 메소드는 필수 또는 선택 인자를 가질 수 없습니다.");
-            }
+            //if (this.attribute.Name == CommandLineInvoker.defaultMethod)
+            //{
+            //    if (this.switches.Count > 0)
+            //        throw new SwitchException("default 메소드는 필수 또는 선택 인자를 가질 수 없습니다.");
+            //}
         }
 
         public string Name
@@ -66,10 +68,10 @@ namespace Ntreev.Library
             }
         }
 
-        public MethodUsageProvider UsageProvider
-        {
-            get { return this.usageProvider; }
-        }
+        //public MethodUsageProvider UsageProvider
+        //{
+        //    get { return this.usageProvider; }
+        //}
 
         public MethodInfo MethodInfo
         {
@@ -84,6 +86,11 @@ namespace Ntreev.Library
         public string Description
         {
             get { return this.methodInfo.GetDescription(); }
+        }
+
+        public string Summary
+        {
+            get { return this.methodInfo.GetSummary(); }
         }
 
         internal void Invoke(object target, string arguments)

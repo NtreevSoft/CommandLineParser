@@ -42,8 +42,8 @@ namespace Ntreev.Library
         private readonly CommandSwitchAttribute switchAttribute;
         //private readonly PropertyDescriptor propertyDescriptor;
         private string pattern;
-        private SwitchUsageProvider usageProvider;
 
+        private readonly string originalName;
         private readonly string name;
         private readonly string shortName;
         private readonly string displayName;
@@ -66,20 +66,9 @@ namespace Ntreev.Library
             get { return this.switchAttribute.GetArgSeperator(); }
         }
 
-        /// <summary>
-        /// 스위치의 사용 방법을 제공하는 제공자의 인스턴스를 가져옵니다.
-        /// </summary>
-        public SwitchUsageProvider UsageProvider
+        public string OriginalName
         {
-            get { return this.usageProvider; }
-        }
-
-        /// <summary>
-        /// 스위치의 짧은 이름을 가져옵니다.
-        /// </summary>
-        public string ShortName
-        {
-            get { return this.shortName; }
+            get { return this.originalName; }
         }
 
         /// <summary>
@@ -88,6 +77,14 @@ namespace Ntreev.Library
         public string Name
         {
             get { return this.name; }
+        }
+
+        /// <summary>
+        /// 스위치의 짧은 이름을 가져옵니다.
+        /// </summary>
+        public string ShortName
+        {
+            get { return this.shortName; }
         }
 
         public string NamePattern
@@ -169,23 +166,11 @@ namespace Ntreev.Library
         {
             this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
 
-            if (this.switchAttribute.UsageProvider == null)
-            {
-                this.usageProvider = new InternalSwitchUsageProvider(this, true);
-            }
-            else
-            {
-                this.usageProvider = TypeDescriptor.CreateInstance(
-                    null,
-                    this.switchAttribute.UsageProvider,
-                    new Type[] { typeof(SwitchDescriptor), },
-                    new object[] { this, }) as SwitchUsageProvider;
-            }
-
+            this.originalName = propertyInfo.Name;
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyInfo.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
-            this.VerifyName(ref this.name, ref this.shortName, this.switchAttribute.NameType);
             this.displayName = propertyInfo.GetDisplayName();
+            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
             this.summary = propertyInfo.GetSummary();
@@ -193,7 +178,7 @@ namespace Ntreev.Library
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
         }
 
-        private void VerifyName(ref string name, ref string shortName, SwitchNameTypes nameType)
+        private void VerifyName(ref string name, ref string shortName, ref string displayName, SwitchNameTypes nameType)
         {
             name = name.ToSpinalCase();
             if (this.switchAttribute.NameType == SwitchNameTypes.Name)
@@ -210,32 +195,23 @@ namespace Ntreev.Library
             {
 
             }
+
+            if (displayName == string.Empty)
+                displayName = name;
         }
 
         internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
         {
             this.switchAttribute = propertyDescriptor.GetCommandSwitchAttribute();
 
-            if (this.switchAttribute.UsageProvider == null)
-            {
-                this.usageProvider = new InternalSwitchUsageProvider(this, this.Required == false);
-            }
-            else
-            {
-                this.usageProvider = TypeDescriptor.CreateInstance(
-                    null,
-                    this.switchAttribute.UsageProvider,
-                    new Type[] { typeof(SwitchDescriptor), },
-                    new object[] { this, }) as SwitchUsageProvider;
-            }
-
+            this.originalName = propertyDescriptor.Name;
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
-            this.VerifyName(ref this.name, ref this.shortName, this.switchAttribute.NameType);
-            this.displayName = propertyDescriptor.DisplayName;
+            this.displayName = propertyDescriptor.DisplayName != string.Empty ? propertyDescriptor.DisplayName : this.name;
+            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
-            //this.summary = propertyDescriptor.
+            this.summary = string.Empty;
             this.description = propertyDescriptor.Description;
             this.valueSetter = new PropertyValueSetter(this, propertyDescriptor);
         }
@@ -244,22 +220,11 @@ namespace Ntreev.Library
         {
             this.switchAttribute = new CommandSwitchAttribute() { Required = true, NameType = SwitchNameTypes.Name, };
 
-            if (this.switchAttribute.UsageProvider == null)
-            {
-                this.usageProvider = new InternalSwitchUsageProvider(this, false);
-            }
-            else
-            {
-                this.usageProvider = TypeDescriptor.CreateInstance(
-                    null,
-                    this.switchAttribute.UsageProvider,
-                    new Type[] { typeof(SwitchDescriptor), },
-                    new object[] { this, }) as SwitchUsageProvider;
-            }
-
+            this.originalName = parameterInfo.Name;
             this.name = parameterInfo.Name.ToSpinalCase();
             this.shortName = string.Empty;
             this.displayName = parameterInfo.GetDisplayName();
+            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = parameterInfo.ParameterType;
             this.converter = parameterInfo.GetConverter();
             this.description = parameterInfo.GetSummary();

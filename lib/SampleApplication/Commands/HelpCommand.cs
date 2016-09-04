@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SampleApplication
+namespace SampleApplication.Commands
 {
     [Export(typeof(ICommand))]
     [GitSummary("HelpSummary")]
@@ -20,6 +20,7 @@ namespace SampleApplication
         public HelpCommand()
         {
             this.CommandName = string.Empty;
+            this.SubCommandName = string.Empty;
         }
 
         public bool HasSubCommand
@@ -36,7 +37,18 @@ namespace SampleApplication
         {
             var commandContext = this.commandContext.Value;
             var parser = commandContext.Parsers[this.CommandName];
-            parser.PrintUsage();
+            var command = parser.Instance as ICommand;
+            if (command.HasSubCommand == true)
+            {
+                if (this.SubCommandName != string.Empty)
+                    parser.PrintMethodUsage(this.SubCommandName);
+                else
+                    parser.PrintMethodUsage();
+            }
+            else
+            {
+                parser.PrintUsage();
+            }
         }
 
         [CommandSwitch(Name = "CommandName", Required = true)]
@@ -70,6 +82,12 @@ namespace SampleApplication
         [CommandSwitch(ShortName = 'm')]
         [Description("Display manual page for the command in the man format. This option may be used to override a value set in the help.format configuration variable. \r\nBy default the man program will be used to display the manual page, but the man.viewer configuration variable may be used to choose other display programs(see below).")]
         public bool Man
+        {
+            get; set;
+        }
+
+        [CommandSwitch(ShortName = 's', NameType = SwitchNameTypes.ShortName)]
+        public string SubCommandName
         {
             get; set;
         }

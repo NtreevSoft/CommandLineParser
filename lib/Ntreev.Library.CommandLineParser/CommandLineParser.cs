@@ -42,7 +42,7 @@ namespace Ntreev.Library
     {
         private string name;
         private object instance;
-        private SwitchUsagePrinter switchUsagePrinter;
+        private CommandUsagePrinter switchUsagePrinter;
         private MethodUsagePrinter methodUsagePrinter;
 
         public CommandLineParser(object instance)
@@ -235,9 +235,9 @@ namespace Ntreev.Library
             get { return this.instance; }
         }
 
-        protected virtual SwitchUsagePrinter CreateUsagePrinterCore(string name, object instance)
+        protected virtual CommandUsagePrinter CreateUsagePrinterCore(string name, object instance)
         {
-            return new SwitchUsagePrinter(name, instance);
+            return new CommandUsagePrinter(name, instance);
         }
 
         protected virtual MethodUsagePrinter CreateMethodUsagePrinterCore(string name, object instance)
