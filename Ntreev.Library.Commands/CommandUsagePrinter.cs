@@ -27,10 +27,10 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Reflection;
-using Ntreev.Library.Properties;
+using Ntreev.Library.Commands.Properties;
 using System.CodeDom.Compiler;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     public class CommandUsagePrinter
     {

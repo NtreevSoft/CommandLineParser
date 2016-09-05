@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     [AttributeUsage(AttributeTargets.All)]
     public class SummaryAttribute : Attribute

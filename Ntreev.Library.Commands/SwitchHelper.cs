@@ -28,9 +28,9 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections;
 using System.Text.RegularExpressions;
-using Ntreev.Library.Properties;
+using Ntreev.Library.Commands.Properties;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     class SwitchHelper
     {

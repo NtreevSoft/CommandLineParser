@@ -27,9 +27,9 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Reflection;
-using Ntreev.Library.Properties;
+using Ntreev.Library.Commands.Properties;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     /// <summary>
     /// 문자열을 분석하여 데이터로 변환할 수 있는 방법을 제공합니다.

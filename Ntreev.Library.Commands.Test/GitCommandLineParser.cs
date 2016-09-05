@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SampleApplication
+namespace Ntreev.Library.Commands.Commands.Test
 {
     class GitCommandLineParser : CommandLineParser
     {

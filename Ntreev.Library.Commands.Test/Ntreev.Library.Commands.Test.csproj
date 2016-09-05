@@ -8,8 +8,8 @@
     <ProjectGuid>{B28150A9-B0E4-4B84-A6BB-120117C06FA9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SampleApplication</RootNamespace>
-    <AssemblyName>gitd</AssemblyName>
+    <RootNamespace>Ntreev.Library.Commands.Test</RootNamespace>
+    <AssemblyName>ncmd</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -62,7 +62,7 @@
     <Compile Include="Commands\StashCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ntreev.Library.CommandLineParser\Ntreev.Library.CommandLineParser.csproj">
+    <ProjectReference Include="..\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj">
       <Project>{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}</Project>
       <Name>Ntreev.Library.CommandLineParser</Name>
     </ProjectReference>

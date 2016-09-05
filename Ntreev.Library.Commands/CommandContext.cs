@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     public abstract class CommandContext
     {

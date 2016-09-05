@@ -27,9 +27,9 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.ComponentModel;
-using Ntreev.Library.Properties;
+using Ntreev.Library.Commands.Properties;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     /// <summary>
     /// 문자열을 리스트 형식으로 변환하는 방법을 제공합니다.

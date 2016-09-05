@@ -7,7 +7,7 @@
 //using System.Text;
 //using System.Threading.Tasks;
 
-//namespace SampleApplication.Commands
+//namespace Ntreev.Library.Commands.Commands.Test.Commands
 //{
 //    [Export(typeof(ICommand))]
 //    [GitSummary("HelpSummary")]

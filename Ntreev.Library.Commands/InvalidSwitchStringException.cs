@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ntreev.Library.Properties;
+using Ntreev.Library.Commands.Properties;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     public class InvalidSwitchStringException : SwitchException
     {

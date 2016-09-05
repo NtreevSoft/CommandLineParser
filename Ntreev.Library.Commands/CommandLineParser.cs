@@ -30,10 +30,10 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 using Trace = System.Diagnostics.Trace;
-using Ntreev.Library.Properties;
+using Ntreev.Library.Commands.Properties;
 using System.Reflection;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     /// <summary>
     /// 커맨드 라인을 분석할 수 있는 방법을 제공합니다.

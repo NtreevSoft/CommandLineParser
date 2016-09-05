@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.CodeDom.Compiler;
-using Ntreev.Library.Properties;
+using Ntreev.Library.Commands.Properties;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     public class MethodUsagePrinter
     {

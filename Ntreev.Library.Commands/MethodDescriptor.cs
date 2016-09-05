@@ -6,7 +6,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Collections;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     public class MethodDescriptor
     {

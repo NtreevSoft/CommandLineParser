@@ -31,7 +31,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace SampleApplication
+namespace Ntreev.Library.Commands.Commands.Test
 {
     class Program
     {

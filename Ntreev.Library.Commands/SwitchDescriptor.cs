@@ -29,7 +29,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     /// <summary>
     /// 스위치의 정보를 담고 있는 클래스입니다.

@@ -1,5 +1,5 @@
 ﻿using Ntreev.Library;
-using SampleApplication.Properties;
+using Ntreev.Library.Commands.Test.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SampleApplication
+namespace Ntreev.Library.Commands.Commands.Test
 {
     [AttributeUsage(AttributeTargets.All)]
     class GitSummaryAttribute : SummaryAttribute

@@ -5,7 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     public static class CommandDescriptor
     {

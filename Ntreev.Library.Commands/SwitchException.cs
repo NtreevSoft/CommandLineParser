@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ntreev.Library
+namespace Ntreev.Library.Commands
 {
     /// <summary>
     /// 유효하지 않은 스위치 또는 잘못된 인자가 사용되었을때 발생하는 예외를 나타냅니다.
