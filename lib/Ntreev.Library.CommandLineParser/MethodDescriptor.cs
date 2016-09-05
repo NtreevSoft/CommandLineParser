@@ -12,31 +12,19 @@ namespace Ntreev.Library
     {
         private readonly MethodInfo methodInfo;
         private readonly CommandMethodAttribute attribute;
-        private MethodUsageProvider usageProvider;
-        private readonly List<SwitchDescriptor> switches = new List<SwitchDescriptor>();
+        private readonly SwitchDescriptor[] switches;
 
         public MethodDescriptor(MethodInfo methodInfo)
         {
             this.methodInfo = methodInfo;
             this.attribute = this.methodInfo.GetCommandMethodAttribute();
 
-            if (this.attribute.UsageProvider == null)
-            {
-                this.usageProvider = new InternalMethodUsageProvider(this);
-            }
-            else
-            {
-                this.usageProvider = TypeDescriptor.CreateInstance(
-                   null,
-                   this.attribute.UsageProvider,
-                   new Type[] { typeof(MethodDescriptor), },
-                   new object[] { this, }) as MethodUsageProvider;
-            }
+            var switchList = new List<SwitchDescriptor>();
 
             foreach (var item in methodInfo.GetParameters())
             {
                 var switchDescriptor = new SwitchDescriptor(item);
-                this.switches.Add(switchDescriptor);
+                switchList.Add(switchDescriptor);
             }
 
             var attr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
@@ -45,15 +33,13 @@ namespace Ntreev.Library
                 foreach (var item in attr.PropertyNames)
                 {
                     var switchDescriptor = CommandDescriptor.GetMethodSwitchDescriptors(methodInfo.DeclaringType)[item];
-                    this.switches.Add(switchDescriptor);
+                    if (switchDescriptor == null)
+                        throw new SwitchException(string.Format("{0} 은(는) 존재하지 않는 속성입니다.", item));
+                    switchList.Add(switchDescriptor);
                 }
             }
 
-            if (this.attribute.Name == CommandLineInvoker.defaultMethod)
-            {
-                if (this.switches.Count > 0)
-                    throw new SwitchException("default 메소드는 필수 또는 선택 인자를 가질 수 없습니다.");
-            }
+            this.switches = switchList.ToArray();
         }
 
         public string Name
@@ -64,11 +50,6 @@ namespace Ntreev.Library
                     return this.methodInfo.Name;
                 return this.attribute.Name;
             }
-        }
-
-        public MethodUsageProvider UsageProvider
-        {
-            get { return this.usageProvider; }
         }
 
         public MethodInfo MethodInfo
@@ -86,10 +67,15 @@ namespace Ntreev.Library
             get { return this.methodInfo.GetDescription(); }
         }
 
-        internal void Invoke(object target, string arguments)
+        public string Summary
+        {
+            get { return this.methodInfo.GetSummary(); }
+        }
+
+        internal void Invoke(object instance, string arguments)
         {
             var helper = new SwitchHelper(this.switches);
-            helper.Parse(target, arguments);
+            helper.Parse(instance, arguments);
 
             var values = new ArrayList();
             var s = this.switches.ToDictionary(item => item.Name);
@@ -98,11 +84,11 @@ namespace Ntreev.Library
             {
                 var switchDescriptor = s[item.Name];
 
-                var value = switchDescriptor.GetVaue(target);
+                var value = switchDescriptor.GetVaue(instance);
                 values.Add(value);
             }
 
-            this.methodInfo.Invoke(target, values.ToArray());
+            this.methodInfo.Invoke(instance, values.ToArray());
         }
     }
 }

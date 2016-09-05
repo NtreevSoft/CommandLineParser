@@ -48,5 +48,5 @@ namespace Ntreev.Library
         {
             return new ArgSeperator(argSeperator);
         }
-     }
+    }
 }

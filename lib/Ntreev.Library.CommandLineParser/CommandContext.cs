@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library
 {
-    [Export(typeof(CommandContext))]
-    public class CommandContext
+    public abstract class CommandContext
     {
         private readonly Dictionary<string, CommandLineParser> commands = new Dictionary<string, CommandLineParser>();
         private string name;
@@ -21,15 +20,13 @@ namespace Ntreev.Library
         private TextWriter textWriter;
         private IndentedTextWriter tw;
 
-        [ImportingConstructor]
-        public CommandContext([ImportMany]IEnumerable<ICommand> commands)
+        protected CommandContext(IEnumerable<ICommand> commands)
         {
             this.TextWriter = Console.Out;
-            this.VerifyName = true;
 
             foreach (var item in commands)
             {
-                this.commands.Add(item.Name, new CommandLineParser(item.Name, item));
+                this.commands.Add(item.Name, this.CreateInstance(item));
             }
         }
 
@@ -40,8 +37,8 @@ namespace Ntreev.Library
             var name = segments[0];
             var arguments = segments[1];
 
-            if (this.VerifyName == true && this.Name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
+            if (this.Name != name)
+                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다."));
 
             this.Execute(CommandLineParser.Split(arguments));
         }
@@ -83,7 +80,7 @@ namespace Ntreev.Library
             get
             {
                 if ((this.name ?? string.Empty) == string.Empty)
-                    return Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
+                    return System.Diagnostics.Process.GetCurrentProcess().ProcessName;
                 return this.name;
             }
             set
@@ -108,9 +105,14 @@ namespace Ntreev.Library
             }
         }
 
-        public bool VerifyName
+        public IReadOnlyDictionary<string, CommandLineParser> Parsers
         {
-            get; set;
+            get { return this.commands; }
+        }
+
+        protected virtual CommandLineParser CreateInstance(ICommand command)
+        {
+            return new CommandLineParser(command.Name, command);
         }
 
         private bool Execute(string[] args)
@@ -123,33 +125,41 @@ namespace Ntreev.Library
                 this.TextWriter.WriteLine("type '{0} help' for usage.", this.name);
                 return false;
             }
-            else if (commandName == "help")
-            {
-                this.PrintHelp(CommandLineParser.Split(arguments));
-                return false;
-            }
-            else if (commandName == "--version")
-            {
-                this.PrintVersion();
-                return false;
-
-            }
             else if (this.commands.ContainsKey(commandName) == true)
             {
                 var parser = this.commands[commandName];
                 var command = parser.Instance as ICommand;
                 if (command.HasSubCommand == true)
                 {
-                    parser.Invoke(commandName + " " + arguments);
+                    parser.Invoke(arguments);
                 }
                 else
                 {
-                    if (parser.Parse(commandName + " " + arguments) == false)
+                    if (arguments == string.Empty)
+                    {
+                        parser.PrintUsage();
                         return false;
+                    }
+                    else if (parser.Parse(commandName + " " + arguments) == false)
+                    {
+                        return false;
+                    }
 
                     command.Execute();
                 }
                 return true;
+            }
+            else if (commandName == "help")
+            {
+                this.PrintHelp(CommandLineParser.Split(arguments));
+                return false;
+
+            }
+            else if (commandName == "--version")
+            {
+                this.PrintVersion();
+                return false;
+
             }
 
             throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 명령어입니다", commandName));

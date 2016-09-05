@@ -42,13 +42,11 @@ namespace Ntreev.Library
     {
         private string name;
         private object instance;
-        //private string arguments;
-        //private ParseOptions parsingOptions;
-        private SwitchUsagePrinter switchUsagePrinter;
+        private CommandUsagePrinter switchUsagePrinter;
         private MethodUsagePrinter methodUsagePrinter;
 
         public CommandLineParser(object instance)
-            : this(System.Diagnostics.Process.GetCurrentProcess().ProcessName, instance)
+            : this(string.Empty, instance)
         {
 
         }
@@ -56,9 +54,16 @@ namespace Ntreev.Library
         public CommandLineParser(string name, object instance)
         {
             this.instance = instance;
-            this.name = name;
-            this.switchUsagePrinter = this.CreateUsagePrinterCore(name, instance);
-            this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(name, instance);
+            this.name = name ?? string.Empty;
+            if (this.name == string.Empty)
+            {
+                if (instance is ICommand)
+                    this.name = (instance as ICommand).Name;
+                else
+                    this.name = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+            }
+            this.switchUsagePrinter = this.CreateUsagePrinterCore(this.name, instance);
+            this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(this.name, instance);
             this.TextWriter = Console.Out;
         }
 
@@ -71,7 +76,7 @@ namespace Ntreev.Library
                 name = Path.GetFileNameWithoutExtension(name);
 
             if (this.name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
+                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다."));
 
             var arguments = commandLine.Substring(match.Length).Trim();
 
@@ -125,7 +130,7 @@ namespace Ntreev.Library
             }
             else
             {
-                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
+                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), method);
 
                 if (descriptor == null)
                 {
@@ -198,7 +203,7 @@ namespace Ntreev.Library
             }
             else
             {
-                MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target, methodName);
+                MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target.GetType(), methodName);
                 if (descriptor == null)
                 {
                     this.TextWriter.WriteLine("{0} is not subcommand", methodName);
@@ -230,14 +235,14 @@ namespace Ntreev.Library
             get { return this.instance; }
         }
 
-        protected virtual SwitchUsagePrinter CreateUsagePrinterCore(string name, object target)
+        protected virtual CommandUsagePrinter CreateUsagePrinterCore(string name, object instance)
         {
-            return new SwitchUsagePrinter(target, name);
+            return new CommandUsagePrinter(name, instance);
         }
 
-        protected virtual MethodUsagePrinter CreateMethodUsagePrinterCore(string name, object target)
+        protected virtual MethodUsagePrinter CreateMethodUsagePrinterCore(string name, object instance)
         {
-            return new MethodUsagePrinter(target, name);
+            return new MethodUsagePrinter(name, instance);
         }
     }
 }

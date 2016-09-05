@@ -18,17 +18,17 @@ namespace Ntreev.Library
             return GetMethodDescriptors(type)[methodName];
         }
 
-        public static MethodDescriptor GetMethodDescriptor(object instance, string methodName)
-        {
-            return GetMethodDescriptors(instance)[methodName];
-        }
+        //public static MethodDescriptor GetMethodDescriptor(object instance, string methodName)
+        //{
+        //    return GetMethodDescriptors(instance)[methodName];
+        //}
 
-        public static MethodDescriptorCollection GetMethodDescriptors(object instance)
-        {
-            if(instance is Type)
-                return GetMethodDescriptors(instance as Type);
-            return GetMethodDescriptors(instance.GetType());
-        }
+        //public static MethodDescriptorCollection GetMethodDescriptors(object instance)
+        //{
+        //    if(instance is Type)
+        //        return GetMethodDescriptors(instance as Type);
+        //    return GetMethodDescriptors(instance.GetType());
+        //}
 
         public static MethodDescriptorCollection GetMethodDescriptors(Type type)
         {
@@ -47,12 +47,12 @@ namespace Ntreev.Library
             return typeToMethodDescriptors[type];
         }
 
-        public static SwitchDescriptorCollection GetSwitchDescriptors(object instance)
-        {
-            if (instance is Type)
-                return GetSwitchDescriptors(instance as Type);
-            return GetSwitchDescriptors(instance.GetType());
-        }
+        //public static SwitchDescriptorCollection GetSwitchDescriptors(object instance)
+        //{
+        //    if (instance is Type)
+        //        return GetSwitchDescriptors(instance as Type);
+        //    return GetSwitchDescriptors(instance.GetType());
+        //}
 
         public static SwitchDescriptorCollection GetSwitchDescriptors(Type type)
         {
@@ -63,12 +63,12 @@ namespace Ntreev.Library
             return typeToSwitchDescriptors[type];
         }
 
-        public static SwitchDescriptorCollection GetMethodSwitchDescriptors(object instance)
-        {
-            if (instance is Type)
-                return GetMethodSwitchDescriptors(instance as Type);
-            return GetMethodSwitchDescriptors(instance.GetType());
-        }
+        //public static SwitchDescriptorCollection GetMethodSwitchDescriptors(object instance)
+        //{
+        //    if (instance is Type)
+        //        return GetMethodSwitchDescriptors(instance as Type);
+        //    return GetMethodSwitchDescriptors(instance.GetType());
+        //}
 
         public static SwitchDescriptorCollection GetMethodSwitchDescriptors(Type type)
         {

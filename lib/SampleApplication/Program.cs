@@ -38,7 +38,7 @@ namespace SampleApplication
         static void Main(string[] args)
         {
             var context = Container.GetService<CommandContext>();
-            
+           
             try
             {
                 context.Execute(Environment.CommandLine);

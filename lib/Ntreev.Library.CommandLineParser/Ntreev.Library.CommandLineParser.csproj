@@ -84,24 +84,21 @@
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandContext.cs" />
     <Compile Include="CommandDescriptor.cs" />
-    <Compile Include="CommandLineInvoker.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
+    <Compile Include="SummaryAttribute.cs" />
     <Compile Include="ICommand.cs" />
-    <Compile Include="InternalMethodUsageProvider.cs" />
+    <Compile Include="IndentedTextWriterExtensions.cs" />
     <Compile Include="InvalidSwitchStringException.cs" />
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="MethodDescriptorCollection.cs" />
     <Compile Include="MethodInvokeException.cs" />
     <Compile Include="MethodUsagePrinter.cs" />
-    <Compile Include="MethodUsageProvider.cs" />
     <Compile Include="ListParser.cs" />
     <Compile Include="NotFoundMethodException.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="CommandLineParser.cs" />
-    <Compile Include="InternalSwitchUsageProvider.cs" />
     <Compile Include="CommandParserAttribute.cs" />
-    <Compile Include="ParseOptions.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -109,16 +106,14 @@
     </Compile>
     <Compile Include="StringManager.cs" />
     <Compile Include="SwitchDescriptorCollection.cs" />
-    <Compile Include="SwitchUsageProvider.cs" />
+    <Compile Include="SwitchNameTypes.cs" />
     <Compile Include="MissingSwitchException.cs" />
-    <Compile Include="SwitchUsagePrinter.cs" />
+    <Compile Include="CommandUsagePrinter.cs" />
     <Compile Include="CommandSwitchAttribute.cs" />
     <Compile Include="SwitchDescriptor.cs" />
     <Compile Include="SwitchHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwitchException.cs" />
-    <Compile Include="Tracer.cs" />
-    <Compile Include="UsagePrinter.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
