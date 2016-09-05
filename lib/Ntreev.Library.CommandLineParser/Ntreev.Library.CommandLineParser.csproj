@@ -107,7 +107,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StringUtility.cs" />
+    <Compile Include="StringManager.cs" />
     <Compile Include="SwitchDescriptorCollection.cs" />
     <Compile Include="SwitchUsageProvider.cs" />
     <Compile Include="MissingSwitchException.cs" />

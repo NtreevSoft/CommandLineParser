@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library
 {
-    public static class StringUtility
+    public static class StringManager
     {
         public static string ToSpinalCase(this string text)
         {

@@ -48,7 +48,7 @@ namespace Ntreev.Library
         private MethodUsagePrinter methodUsagePrinter;
 
         public CommandLineParser(object instance)
-            : this(Path.GetFileName(Assembly.GetEntryAssembly().Location), instance)
+            : this(System.Diagnostics.Process.GetCurrentProcess().ProcessName, instance)
         {
 
         }
@@ -71,7 +71,7 @@ namespace Ntreev.Library
                 name = Path.GetFileNameWithoutExtension(name);
 
             if (this.name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다."));
+                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
 
             var arguments = commandLine.Substring(match.Length).Trim();
 
