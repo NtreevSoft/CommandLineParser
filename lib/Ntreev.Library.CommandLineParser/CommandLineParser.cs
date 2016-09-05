@@ -60,7 +60,7 @@ namespace Ntreev.Library
                 if (instance is ICommand)
                     this.name = (instance as ICommand).Name;
                 else
-                    this.name = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+                    this.name = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
             }
             this.switchUsagePrinter = this.CreateUsagePrinterCore(this.name, instance);
             this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(this.name, instance);
@@ -76,7 +76,7 @@ namespace Ntreev.Library
                 name = Path.GetFileNameWithoutExtension(name);
 
             if (this.name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다."));
+                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
 
             var arguments = commandLine.Substring(match.Length).Trim();
 
