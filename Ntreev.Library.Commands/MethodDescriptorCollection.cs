@@ -19,7 +19,7 @@ namespace Ntreev.Library.Commands
             get
             {
                 var query = from item in descriptors
-                            where string.Compare(item.Name, name, true) == 0
+                            where item.Name == name
                             select item;
 
                 if (query.Count() == 0)

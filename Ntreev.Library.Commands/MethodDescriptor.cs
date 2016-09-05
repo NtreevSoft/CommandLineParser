@@ -12,12 +12,18 @@ namespace Ntreev.Library.Commands
     {
         private readonly MethodInfo methodInfo;
         private readonly CommandMethodAttribute attribute;
+        private readonly string originalName;
+        private readonly string name;
+        private readonly string displayName;
         private readonly SwitchDescriptor[] switches;
 
         public MethodDescriptor(MethodInfo methodInfo)
         {
             this.methodInfo = methodInfo;
             this.attribute = this.methodInfo.GetCommandMethodAttribute();
+            this.originalName = methodInfo.Name;
+            this.name = this.attribute.Name != string.Empty ? this.attribute.Name : methodInfo.Name.ToSpinalCase();
+            this.displayName = methodInfo.GetDisplayName();
 
             var switchList = new List<SwitchDescriptor>();
 
@@ -42,19 +48,19 @@ namespace Ntreev.Library.Commands
             this.switches = switchList.ToArray();
         }
 
-        public string Name
+        public string OriginalName
         {
-            get
-            {
-                if (string.IsNullOrEmpty(this.attribute.Name) == true)
-                    return this.methodInfo.Name;
-                return this.attribute.Name;
-            }
+            get { return this.originalName; }
         }
 
-        public MethodInfo MethodInfo
+        public string Name
         {
-            get { return this.methodInfo; }
+            get { return this.name; }
+        }
+
+        public string DisplayName
+        {
+            get { return this.displayName; }
         }
 
         public SwitchDescriptor[] Switches
@@ -78,7 +84,7 @@ namespace Ntreev.Library.Commands
             helper.Parse(instance, arguments);
 
             var values = new ArrayList();
-            var s = this.switches.ToDictionary(item => item.Name);
+            var s = this.switches.ToDictionary(item => item.OriginalName);
 
             foreach (var item in methodInfo.GetParameters())
             {

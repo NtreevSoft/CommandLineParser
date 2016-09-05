@@ -138,11 +138,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        /// <summary>
-        /// 해당 스위치의 사용법 출력 제공자의 타입을 설정하거나 가져옵니다.
-        /// </summary>
-        public Type UsageProvider { get; set; }
-
         public SwitchNameTypes NameType { get; set; }
 
         internal string ShortNameInternal

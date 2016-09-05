@@ -21,14 +21,9 @@ namespace Ntreev.Library.Commands
             this.name = name;
         }
 
-        /// <summary>
-        /// 해당 메소드의 사용법 출력 제공자의 타입을 설정하거나 가져옵니다.
-        /// </summary>
-        public Type UsageProvider { get; set; }
-
         public string Name
         {
-            get { return this.name; }
+            get { return this.name ?? string.Empty; }
         }
     }
 }
