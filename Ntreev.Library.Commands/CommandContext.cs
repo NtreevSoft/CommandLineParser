@@ -22,6 +22,7 @@ namespace Ntreev.Library.Commands
 
         protected CommandContext(IEnumerable<ICommand> commands)
         {
+            this.VerifyName = true;
             this.TextWriter = Console.Out;
 
             foreach (var item in commands)
@@ -37,8 +38,8 @@ namespace Ntreev.Library.Commands
             var name = segments[0];
             var arguments = segments[1];
 
-            if (this.Name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다."));
+            if (this.VerifyName == true && this.Name != name)
+                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
 
             this.Execute(CommandLineParser.Split(arguments));
         }
@@ -109,6 +110,8 @@ namespace Ntreev.Library.Commands
         {
             get { return this.commands; }
         }
+
+        public bool VerifyName { get; set; }
 
         protected virtual CommandLineParser CreateInstance(ICommand command)
         {
