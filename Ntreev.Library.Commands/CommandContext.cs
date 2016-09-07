@@ -18,7 +18,6 @@ namespace Ntreev.Library.Commands
         private string name;
         private Version version;
         private TextWriter textWriter;
-        private IndentedTextWriter tw;
 
         protected CommandContext(IEnumerable<ICommand> commands)
         {
@@ -29,6 +28,9 @@ namespace Ntreev.Library.Commands
             {
                 this.commands.Add(item.Name, this.CreateInstance(item));
             }
+
+            if (this.commands.ContainsKey("help") == false)
+                this.commands.Add("help", this.CreateInstance(new HelpCommand(this)));
         }
 
         public void Execute(string commandLine)
@@ -47,33 +49,25 @@ namespace Ntreev.Library.Commands
         public virtual void PrintVersion()
         {
             var info = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-            this.tw.WriteLine("{0} {1}", this.Name, this.Version);
-            this.tw.WriteLine(info.LegalCopyright);
+            using (var writer = new IndentedTextWriter(this.TextWriter))
+            {
+                writer.WriteLine("{0} {1}", this.Name, this.Version);
+                writer.WriteLine(info.LegalCopyright);
+            }
         }
 
         public virtual void PrintHelp()
         {
-            this.tw.WriteLine("사용 가능한 명령들");
-
-            this.tw.Indent++;
-            foreach (var item in this.commands)
+            using (var writer = new IndentedTextWriter(this.TextWriter))
             {
-                this.tw.WriteLine(item.Value.Name);
-            }
-            this.tw.Indent--;
 
+            }
         }
 
         public TextWriter TextWriter
         {
-            get { return this.textWriter; }
-            set
-            {
-                this.textWriter = value;
-                if (this.textWriter == null)
-                    this.textWriter = Console.Out;
-                this.tw = new IndentedTextWriter(this.textWriter);
-            }
+            get { return this.textWriter ?? Console.Out; }
+            set { this.textWriter = value; }
         }
 
         public string Name
@@ -196,6 +190,19 @@ namespace Ntreev.Library.Commands
                     }
                 }
             }
+        }
+
+        private void PrintHel(IndentedTextWriter textWriter)
+        {
+
+            textWriter.WriteLine("Commands");
+
+            textWriter.Indent++;
+            foreach (var item in this.commands)
+            {
+                textWriter.WriteLine(item.Value.Name);
+            }
+            textWriter.Indent--;
         }
     }
 }

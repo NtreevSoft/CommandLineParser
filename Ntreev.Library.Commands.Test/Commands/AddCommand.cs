@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Commands.Test.Commands
+namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
     [GitSummary("AddSummary")]
@@ -31,7 +31,7 @@ namespace Ntreev.Library.Commands.Commands.Test.Commands
 
         public void Execute()
         {
-
+            
         }
 
         [CommandSwitch(Required = true)]

@@ -164,7 +164,7 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public void PrintUsage()
         {
-            this.switchUsagePrinter.PrintUsage(this.TextWriter);
+            this.switchUsagePrinter.Print(this.TextWriter);
         }
 
         public void PrintMethodUsage()
