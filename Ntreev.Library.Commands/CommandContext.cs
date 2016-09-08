@@ -53,7 +53,9 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintHelp()
         {
-            this.tw.WriteLine("사용 가능한 명령들");
+            this.tw.WriteLine("usage: {0} <command> [options]", this.Name);
+            this.tw.WriteLine("type {0} --version", this.Name);
+            this.tw.WriteLine("commands");
 
             this.tw.Indent++;
             foreach (var item in this.commands)

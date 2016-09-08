@@ -51,7 +51,7 @@ namespace Ntreev.Library.Commands
         {
             using (var tw = new IndentedTextWriter(textWriter))
             {
-                this.PrintUsage(tw);
+                this.PrintUsages(tw);
             }
         }
 
@@ -80,15 +80,15 @@ namespace Ntreev.Library.Commands
         //    get { return this.options; }
         //}
 
-        private void PrintUsage(IndentedTextWriter textWriter)
+        private void PrintUsages(IndentedTextWriter textWriter)
         {
-            this.PrintName(textWriter);
-            this.PrintSynopsis(textWriter);
+            this.PrintSummary(textWriter);
+            this.PrintUsage(textWriter);
             this.PrintDescription(textWriter);
             this.PrintOptions(textWriter);
         }
 
-        private void PrintName(IndentedTextWriter textWriter)
+        private void PrintSummary(IndentedTextWriter textWriter)
         {
             var summary = this.Instance.GetType().GetSummary();
             textWriter.WriteLine("Name");
@@ -98,7 +98,7 @@ namespace Ntreev.Library.Commands
             textWriter.WriteLine();
         }
 
-        private void PrintSynopsis(IndentedTextWriter textWriter)
+        private void PrintUsage(IndentedTextWriter textWriter)
         {
             var query = from item in this.switches
                         where item.Required == false
@@ -109,9 +109,9 @@ namespace Ntreev.Library.Commands
 
             var switches = this.Switches.Where(item => item.Required).Aggregate("", (l, n) => l += "[" + n.DisplayName + "] ", item => item);
 
-            textWriter.WriteLine("Synopsis");
+            textWriter.WriteLine("Usage");
             textWriter.Indent++;
-            textWriter.WriteLine("{0}{1}", options, switches);
+            textWriter.WriteLine("{0}", switches);
             textWriter.Indent--;
             textWriter.WriteLine();
         }
