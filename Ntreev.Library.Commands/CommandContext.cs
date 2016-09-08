@@ -17,18 +17,20 @@ namespace Ntreev.Library.Commands
         private readonly Dictionary<string, CommandLineParser> commands = new Dictionary<string, CommandLineParser>();
         private string name;
         private Version version;
-        private TextWriter textWriter;
-        private IndentedTextWriter tw;
+        private TextWriter writer;
 
         protected CommandContext(IEnumerable<ICommand> commands)
         {
             this.VerifyName = true;
-            this.TextWriter = Console.Out;
+            this.Out = Console.Out;
 
             foreach (var item in commands)
             {
                 this.commands.Add(item.Name, this.CreateInstance(item));
             }
+
+            if (this.commands.ContainsKey("help") == false)
+                this.commands.Add("help", this.CreateInstance(new HelpCommand(this)));
         }
 
         public void Execute(string commandLine)
@@ -47,35 +49,25 @@ namespace Ntreev.Library.Commands
         public virtual void PrintVersion()
         {
             var info = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-            this.tw.WriteLine("{0} {1}", this.Name, this.Version);
-            this.tw.WriteLine(info.LegalCopyright);
+            using (var writer = new IndentedTextWriter(this.Out))
+            {
+                writer.WriteLine("{0} {1}", this.Name, this.Version);
+                writer.WriteLine(info.LegalCopyright);
+            }
         }
 
         public virtual void PrintHelp()
         {
-            this.tw.WriteLine("usage: {0} <command> [options]", this.Name);
-            this.tw.WriteLine("type {0} --version", this.Name);
-            this.tw.WriteLine("commands");
-
-            this.tw.Indent++;
-            foreach (var item in this.commands)
+            using (var writer = new IndentedTextWriter(this.Out))
             {
-                this.tw.WriteLine(item.Value.Name);
-            }
-            this.tw.Indent--;
 
+            }
         }
 
-        public TextWriter TextWriter
+        public TextWriter Out
         {
-            get { return this.textWriter; }
-            set
-            {
-                this.textWriter = value;
-                if (this.textWriter == null)
-                    this.textWriter = Console.Out;
-                this.tw = new IndentedTextWriter(this.textWriter);
-            }
+            get { return this.writer ?? Console.Out; }
+            set { this.writer = value; }
         }
 
         public string Name
@@ -115,6 +107,19 @@ namespace Ntreev.Library.Commands
 
         public bool VerifyName { get; set; }
 
+        public TextWriter Writer
+        {
+            get
+            {
+                return writer;
+            }
+
+            set
+            {
+                writer = value;
+            }
+        }
+
         protected virtual CommandLineParser CreateInstance(ICommand command)
         {
             return new CommandLineParser(command.Name, command);
@@ -127,23 +132,23 @@ namespace Ntreev.Library.Commands
 
             if (commandName == string.Empty)
             {
-                this.TextWriter.WriteLine("type '{0} help' for usage.", this.name);
+                this.Out.WriteLine("type '{0} help' for usage.", this.name);
                 return false;
             }
             else if (this.commands.ContainsKey(commandName) == true)
             {
                 var parser = this.commands[commandName];
                 var command = parser.Instance as ICommand;
-                if (command.HasSubCommand == true)
+                if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
                 {
                     parser.Invoke(arguments);
                 }
                 else
                 {
-                    if (arguments == string.Empty)
+                    if(arguments == string.Empty && command.Types.HasFlag(CommandTypes.AllowEmptyArgument))
                     {
-                        parser.PrintUsage();
-                        return false;
+                        command.Execute();
+                        return true;
                     }
                     else if (parser.Parse(commandName + " " + arguments) == false)
                     {
@@ -184,7 +189,7 @@ namespace Ntreev.Library.Commands
                     var parser = this.commands[commandName];
                     var command = parser.Instance as ICommand;
 
-                    if (command.HasSubCommand == true)
+                    if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
                     {
                         var subCommandName = args.Skip(1).FirstOrDefault() ?? string.Empty;
                         if (subCommandName == string.Empty)
@@ -198,6 +203,19 @@ namespace Ntreev.Library.Commands
                     }
                 }
             }
+        }
+
+        private void PrintHel(IndentedTextWriter textWriter)
+        {
+
+            textWriter.WriteLine("Commands");
+
+            textWriter.Indent++;
+            foreach (var item in this.commands)
+            {
+                textWriter.WriteLine(item.Value.Name);
+            }
+            textWriter.Indent--;
         }
     }
 }

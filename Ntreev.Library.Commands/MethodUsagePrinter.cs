@@ -23,17 +23,17 @@ namespace Ntreev.Library.Commands
             this.descriptors = CommandDescriptor.GetMethodDescriptors(instance.GetType()).ToArray();
         }
 
-        public virtual void PrintUsage(TextWriter textWriter)
+        public virtual void PrintUsage(TextWriter writer)
         {
-            using (var tw = new IndentedTextWriter(textWriter))
+            using (var tw = new IndentedTextWriter(writer))
             {
                 this.PrintUsage(tw);
             }
         }
 
-        public virtual void PrintUsage(TextWriter textWriter, string methodName)
+        public virtual void PrintUsage(TextWriter writer, string methodName)
         {
-            using (var tw = new IndentedTextWriter(textWriter))
+            using (var tw = new IndentedTextWriter(writer))
             {
                 this.PrintUsage(tw, methodName);
             }
@@ -64,148 +64,148 @@ namespace Ntreev.Library.Commands
             get { return this.descriptors; }
         }
 
-        private void PrintSummary(IndentedTextWriter textWriter)
+        private void PrintSummary(IndentedTextWriter writer)
         {
             var summary = this.Instance.GetType().GetSummary();
-            textWriter.WriteLine("Name");
-            textWriter.Indent++;
-            textWriter.WriteLine("git-{0} - {1}", this.Name, summary);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine("Name");
+            writer.Indent++;
+            writer.WriteLine("{0} - {1}", this.Name, summary);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintSummary(IndentedTextWriter textWriter, MethodDescriptor descriptor)
+        private void PrintSummary(IndentedTextWriter writer, MethodDescriptor descriptor)
         {
             var summary = descriptor.Summary;
-            textWriter.WriteLine("Name");
-            textWriter.Indent++;
-            textWriter.WriteLine("git {0} {1} - {2}", this.Name, descriptor.Name, summary);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine("Name");
+            writer.Indent++;
+            writer.WriteLine("{0} {1} - {2}", this.Name, descriptor.Name, summary);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintUsage(IndentedTextWriter textWriter)
+        private void PrintUsage(IndentedTextWriter writer)
         {
-            this.PrintSummary(textWriter);
-            this.PrintSynopsis(textWriter);
-            this.PrintDescription(textWriter);
-            this.PrintOptions(textWriter);
+            this.PrintSummary(writer);
+            this.PrintSynopsis(writer);
+            this.PrintDescription(writer);
+            this.PrintOptions(writer);
         }
 
-        private void PrintUsage(IndentedTextWriter textWriter, string methodName)
+        private void PrintUsage(IndentedTextWriter writer, string methodName)
         {
             var descriptor = this.Methods.First(item => item.Name == methodName);
-            this.PrintSummary(textWriter, descriptor);
-            this.PrintSynopsis(textWriter, descriptor);
-            this.PrintDescription(textWriter, descriptor);
-            this.PrintOptions(textWriter, descriptor);
+            this.PrintSummary(writer, descriptor);
+            this.PrintSynopsis(writer, descriptor);
+            this.PrintDescription(writer, descriptor);
+            this.PrintOptions(writer, descriptor);
         }
 
-        private void PrintDescription(IndentedTextWriter textWriter)
+        private void PrintDescription(IndentedTextWriter writer)
         {
-            textWriter.WriteLine("Description");
-            textWriter.Indent++;
-            textWriter.WriteMultiline(this.Description);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine("Description");
+            writer.Indent++;
+            writer.WriteMultiline(this.Description);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintDescription(IndentedTextWriter textWriter, MethodDescriptor descriptor)
+        private void PrintDescription(IndentedTextWriter writer, MethodDescriptor descriptor)
         {
-            textWriter.WriteLine("Description");
-            textWriter.Indent++;
-            textWriter.WriteMultiline(descriptor.Description);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine("Description");
+            writer.Indent++;
+            writer.WriteMultiline(descriptor.Description);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintSynopsis(IndentedTextWriter textWriter)
+        private void PrintSynopsis(IndentedTextWriter writer)
         {
-            textWriter.WriteLine("Synopsis");
-            textWriter.Indent++;
+            writer.WriteLine("Synopsis");
+            writer.Indent++;
 
             foreach (var item in this.Methods)
             {
                 var switches = this.GetSwitchesString(item.Switches.Where(i => i.Required));
                 var options = this.GetOptionsString(item.Switches.Where(i => i.Required == false));
-                textWriter.WriteLine("{0} {1} {2} {3}", this.Name, item.Name, switches, options);
+                writer.WriteLine("{0} {1} {2} {3}", this.Name, item.Name, switches, options);
             }
 
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintSynopsis(IndentedTextWriter textWriter, MethodDescriptor descriptor)
+        private void PrintSynopsis(IndentedTextWriter writer, MethodDescriptor descriptor)
         {
-            textWriter.WriteLine("Synopsis");
-            textWriter.Indent++;
+            writer.WriteLine("Synopsis");
+            writer.Indent++;
 
             var switches = this.GetSwitchesString(descriptor.Switches.Where(i => i.Required));
             var options = this.GetOptionsString(descriptor.Switches.Where(i => i.Required == false));
-            textWriter.WriteLine("{0} {1} {2} {3}", this.Name, descriptor.Name, switches, options);
+            writer.WriteLine("{0} {1} {2} {3}", this.Name, descriptor.Name, switches, options);
 
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintOptions(IndentedTextWriter textWriter)
+        private void PrintOptions(IndentedTextWriter writer)
         {
-            textWriter.WriteLine("Options");
-            textWriter.Indent++;
+            writer.WriteLine("Options");
+            writer.Indent++;
             foreach (var item in this.Methods)
             {
                 var switches = this.GetSwitchesString(item.Switches.Where(i => i.Required));
                 var options = this.GetOptionsString(item.Switches.Where(i => i.Required == false));
-                textWriter.WriteLine("{0} {1} {2} {3}", this.Name, item.Name, switches, options);
+                writer.WriteLine("{0} {1} {2} {3}", this.Name, item.Name, switches, options);
 
-                textWriter.Indent++;
-                textWriter.WriteMultiline(item.Description);
-                textWriter.Indent--;
-                textWriter.WriteLine();
+                writer.Indent++;
+                writer.WriteMultiline(item.Description);
+                writer.Indent--;
+                writer.WriteLine();
             }
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintOptions(IndentedTextWriter textWriter, MethodDescriptor descriptor)
+        private void PrintOptions(IndentedTextWriter writer, MethodDescriptor descriptor)
         {
-            textWriter.WriteLine("Options");
-            textWriter.Indent++;
+            writer.WriteLine("Options");
+            writer.Indent++;
             foreach (var item in descriptor.Switches.Where(i => i.Required == true))
             {
-                this.PrintSwitch(textWriter, item);
+                this.PrintSwitch(writer, item);
             }
             foreach (var item in descriptor.Switches.Where(i => i.Required == false))
             {
-                this.PrintOption(textWriter, item);
+                this.PrintOption(writer, item);
             }
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintSwitch(IndentedTextWriter textWriter, SwitchDescriptor descriptor)
+        private void PrintSwitch(IndentedTextWriter writer, SwitchDescriptor descriptor)
         {
             if (descriptor.Description == string.Empty)
                 return;
 
-            textWriter.WriteLine(descriptor.DisplayName);
-            textWriter.Indent++;
-            textWriter.WriteMultiline(descriptor.Description);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine(descriptor.DisplayName);
+            writer.Indent++;
+            writer.WriteMultiline(descriptor.Description);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintOption(IndentedTextWriter textWriter, SwitchDescriptor descriptor)
+        private void PrintOption(IndentedTextWriter writer, SwitchDescriptor descriptor)
         {
             if (descriptor.ShortNamePattern != string.Empty)
-                textWriter.WriteLine(descriptor.ShortNamePattern);
+                writer.WriteLine(descriptor.ShortNamePattern);
             if (descriptor.NamePattern != string.Empty)
-                textWriter.WriteLine(descriptor.NamePattern);
+                writer.WriteLine(descriptor.NamePattern);
 
-            textWriter.Indent++;
-            textWriter.WriteMultiline(descriptor.Description);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent++;
+            writer.WriteMultiline(descriptor.Description);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
         private string GetOptionsString(IEnumerable<SwitchDescriptor> switches)
@@ -219,7 +219,7 @@ namespace Ntreev.Library.Commands
 
         private string GetSwitchesString(IEnumerable<SwitchDescriptor> switches)
         {
-            return string.Join(" ", switches.Select(item => "[" + item.DisplayName + "]"));
+            return string.Join(" ", switches.Select(item => "<" + item.DisplayName + ">"));
         }
     }
 }

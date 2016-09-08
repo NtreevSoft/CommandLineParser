@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Commands.Test
+namespace Ntreev.Library.Commands.Test
 {
     [Export(typeof(CommandContext))]
     class GitCommandContext : CommandContext

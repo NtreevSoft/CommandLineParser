@@ -64,7 +64,7 @@ namespace Ntreev.Library.Commands
             }
             this.switchUsagePrinter = this.CreateUsagePrinterCore(this.name, instance);
             this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(this.name, instance);
-            this.TextWriter = Console.Out;
+            this.Out = Console.Out;
         }
 
         public bool Parse(string commandLine)
@@ -164,17 +164,17 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public void PrintUsage()
         {
-            this.switchUsagePrinter.PrintUsage(this.TextWriter);
+            this.switchUsagePrinter.Print(this.Out);
         }
 
         public void PrintMethodUsage()
         {
-            this.methodUsagePrinter.PrintUsage(this.TextWriter);
+            this.methodUsagePrinter.PrintUsage(this.Out);
         }
 
         public void PrintMethodUsage(string methodName)
         {
-            this.methodUsagePrinter.PrintUsage(this.TextWriter, methodName);
+            this.methodUsagePrinter.PrintUsage(this.Out, methodName);
         }
 
         public static string[] Split(string commandLine)
@@ -206,7 +206,7 @@ namespace Ntreev.Library.Commands
                 MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target.GetType(), methodName);
                 if (descriptor == null)
                 {
-                    this.TextWriter.WriteLine("{0} is not subcommand", methodName);
+                    this.Out.WriteLine("{0} is not subcommand", methodName);
                 }
                 else
                 {
@@ -217,13 +217,13 @@ namespace Ntreev.Library.Commands
 
         protected virtual void PrintSummary(object target)
         {
-            this.TextWriter.WriteLine("Type '{0} help' for usage.", this.name);
+            this.Out.WriteLine("Type '{0} help' for usage.", this.name);
         }
 
         /// <summary>
         /// 분석과정중 생기는 다양한 정보를 출력할 수 있는 처리기를 지정합니다.
         /// </summary>
-        public TextWriter TextWriter { get; set; }
+        public TextWriter Out { get; set; }
 
         public string Name
         {

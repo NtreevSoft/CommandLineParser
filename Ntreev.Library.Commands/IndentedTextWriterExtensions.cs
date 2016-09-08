@@ -9,36 +9,49 @@ namespace Ntreev.Library.Commands
 {
     public static class IndentedTextWriterExtensions
     {
-        public static void WriteMultiline(this IndentedTextWriter textWriter, string s)
+        public static void WriteMultiline(this IndentedTextWriter writer, string s)
         {
             foreach (var item in s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None))
             {
                 if (item == string.Empty)
-                    textWriter.WriteLine();
+                    writer.WriteLine();
                 else
-                    WriteMultilineCore(textWriter, item);
+                    WriteMultilineCore(writer, item);
             }
         }
 
-        private static void WriteMultilineCore(this IndentedTextWriter textWriter, string s)
+        private static void WriteMultilineCore(this IndentedTextWriter writer, string s)
         {
-            var emptyCount = IndentedTextWriter.DefaultTabString.Length * textWriter.Indent + 1;
-            var width = Console.WindowWidth - emptyCount;
+            var oldIndent = writer.Indent;
+            var emptyCount = IndentedTextWriter.DefaultTabString.Length * writer.Indent;
+            if (Console.CursorLeft != 0)
+                emptyCount = Console.CursorLeft;
+            var width = (Console.WindowWidth - emptyCount) - 1;
 
-            while (s != string.Empty)
+            try
+
             {
-                var line = string.Empty;
-                if (s.Length <= width)
+                writer.Indent = 0;
+                while (s != string.Empty)
                 {
-                    line = s;
-                    s = string.Empty;
+                    var line = string.Empty;
+                    if (s.Length <= width)
+                    {
+                        line = s;
+                        s = string.Empty;
+                    }
+                    else
+                    {
+                        line = s.Remove(width);
+                        s = s.Substring(width);
+                    }
+                    Console.CursorLeft = emptyCount;
+                    writer.WriteLine(line.TrimStart());
                 }
-                else
-                {
-                    line = s.Remove(width);
-                    s = s.Substring(width);
-                }
-                textWriter.WriteLine(line.TrimStart());
+            }
+            finally
+            {
+                writer.Indent = oldIndent;
             }
         }
     }
