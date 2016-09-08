@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Commands.Test
+namespace Ntreev.Library.Commands.Test
 {
     [AttributeUsage(AttributeTargets.All)]
     class GitSummaryAttribute : SummaryAttribute

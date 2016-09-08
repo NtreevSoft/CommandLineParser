@@ -7,16 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Commands.Test.Commands
+namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
     [GitSummary("StashSummary")]
     [GitDescription("StashDescription")]
     class StashCommand : ICommand
     {
-        public bool HasSubCommand
+        public CommandTypes Types
         {
-            get { return true; }
+            get { return CommandTypes.HasSubCommand; }
         }
 
         public string Name
@@ -26,7 +26,7 @@ namespace Ntreev.Library.Commands.Commands.Test.Commands
 
         public void Execute()
         {
-
+            
         }
 
         [CommandMethod("list")]
