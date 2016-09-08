@@ -86,6 +86,7 @@
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
+    <Compile Include="CommandTypes.cs" />
     <Compile Include="HelpCommand.cs" />
     <Compile Include="SRDescriptionAttribute.cs" />
     <Compile Include="SR.Designer.cs">

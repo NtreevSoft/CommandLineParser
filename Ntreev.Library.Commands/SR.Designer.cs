@@ -22,7 +22,7 @@ namespace Ntreev.Library.Commands {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal partial class SR {
+    internal class SR {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -61,7 +61,10 @@ namespace Ntreev.Library.Commands {
         }
         
         /// <summary>
-        ///   sadfljsadlfkjsafkdlj과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   사용 가능한 명령의 목록을 표시합니다. 특정 명령의 사용법을 표시하려면 &apos;help&apos; 뒤에 인자로 명령의 이름을 지정하시면 됩니다.
+        ///help &lt;command&gt;
+        ///하위명령의 표시법은 -s 인자뒤에 하위명령의 이름을 설정하시면 됩니다.
+        ///help &lt;command&gt; -s &lt;sub-command&gt;과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string HelpDescription {
             get {

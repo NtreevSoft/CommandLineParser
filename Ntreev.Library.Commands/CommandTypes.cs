@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    public interface ICommand
+    [Flags]
+    public enum CommandTypes
     {
-        void Execute();
+        None = 0,
 
-        string Name { get; }
+        HasSubCommand = 1,
 
-        CommandTypes Types { get; }
+        AllowEmptyArgument = 2,
     }
 }

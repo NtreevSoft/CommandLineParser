@@ -14,9 +14,9 @@ namespace Ntreev.Library.Commands.Test.Commands
     [GitDescription("StashDescription")]
     class StashCommand : ICommand
     {
-        public bool HasSubCommand
+        public CommandTypes Types
         {
-            get { return true; }
+            get { return CommandTypes.HasSubCommand; }
         }
 
         public string Name

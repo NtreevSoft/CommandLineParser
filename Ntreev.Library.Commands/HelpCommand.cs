@@ -1,5 +1,6 @@
 ﻿using Ntreev.Library;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -24,24 +25,35 @@ namespace Ntreev.Library.Commands
 
         public void Execute()
         {
-            var parser = this.commandContext.Parsers[this.CommandName];
-            var command = parser.Instance as ICommand;
-            if (command.HasSubCommand == true)
+            if (this.CommandName == string.Empty)
             {
-                if (this.SubCommandName != string.Empty)
-                    parser.PrintMethodUsage(this.SubCommandName);
-                else
-                    parser.PrintMethodUsage();
+                using (var writer = new IndentedTextWriter(this.commandContext.Out))
+                {
+                    this.PrintList(writer);
+                }
             }
             else
             {
-                parser.PrintUsage();
+                var parser = this.commandContext.Parsers[this.CommandName];
+                var command = parser.Instance as ICommand;
+                if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+                {
+                    if (this.SubCommandName != string.Empty)
+                        parser.PrintMethodUsage(this.SubCommandName);
+                    else
+                        parser.PrintMethodUsage();
+                }
+                else
+                {
+                    parser.PrintUsage();
+                }
             }
+
         }
 
-        public bool HasSubCommand
+        public CommandTypes Types
         {
-            get { return false; }
+            get { return CommandTypes.AllowEmptyArgument; }
         }
 
         public string Name
@@ -51,16 +63,45 @@ namespace Ntreev.Library.Commands
 
         [CommandSwitch(Name = "CommandName", Required = true)]
         [DisplayName("command")]
+        [Description("사용법을 표시할 명령의 이름을 나타냅니다. 사용 가능한 명령의 목록은 AvaliableCommands에 표시됩니다.")]
         public string CommandName
         {
             get; set;
         }
 
-        [CommandSwitch(Name="sub-command", ShortName = 's')]
+        [CommandSwitch(Name = "sub-command", ShortName = 's')]
         [Description("사용법을 표시할 하위 명령을 설정합니다.")]
         public string SubCommandName
         {
             get; set;
+        }
+
+        [CommandSwitch(ShortName = 'd', NameType = SwitchNameTypes.ShortName)]
+        [Description("사용법을 표시할 하위 명령을 설정합니다.")]
+        public bool Detail
+        {
+            get; set;
+        }
+
+        private void PrintList(IndentedTextWriter writer)
+        {
+            this.commandContext.Parsers[this.Name].PrintUsage();
+
+            writer.WriteLine("AvaliableCommands");
+            writer.Indent++;
+            foreach (var item in this.commandContext.Parsers)
+            {
+                var instance = item.Value.Instance;
+                var summary = instance.GetType().GetSummary();
+                if (item.Key == this.Name)
+                    continue;
+                writer.WriteLine(item.Key);
+                writer.Indent++;
+                writer.WriteMultiline(summary);
+                writer.Indent--;
+            }
+            writer.Indent--;
+            writer.WriteLine();
         }
     }
 }

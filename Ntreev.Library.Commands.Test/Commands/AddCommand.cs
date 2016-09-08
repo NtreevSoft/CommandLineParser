@@ -19,9 +19,9 @@ namespace Ntreev.Library.Commands.Test.Commands
             this.Path = string.Empty;
         }
 
-        public bool HasSubCommand
+        public CommandTypes Types
         {
-            get { return false; }
+            get { return CommandTypes.None; }
         }
 
         public string Name
