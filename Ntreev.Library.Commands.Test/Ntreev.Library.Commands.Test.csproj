@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CopyCommand.cs" />
+    <Compile Include="Commands\DirectoryCommand.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="GitCommandContext.cs" />
     <Compile Include="GitCommandLineParser.cs" />
