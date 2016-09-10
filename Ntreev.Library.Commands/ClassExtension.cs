@@ -14,6 +14,18 @@ namespace Ntreev.Library.Commands
             return propertyDescriptor.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
         }
 
+        public static object GetDefaultValue(this PropertyDescriptor propertyDescriptor)
+        {
+            var attr = propertyDescriptor.Attributes[typeof(DefaultValueAttribute)] as DefaultValueAttribute;
+            if (attr == null)
+                return DBNull.Value;
+            if (attr.Value == null)
+                return null;
+            var parser = Parser.GetParser(propertyDescriptor);
+            //parser.Parse()
+            return attr.Value.ToString();
+        }
+
         public static CommandSwitchAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttribute<CommandSwitchAttribute>();
@@ -87,6 +99,11 @@ namespace Ntreev.Library.Commands
                 return TypeDescriptor.GetConverter(type);
             }
         }
+
+        //public static bool IsCommand(this MethodInfo methodInfo)
+        //{
+        //    return methodInfo.GetCustomAttributes(typeof(DefaultCommandAttribute), false).Any();
+        //}
 
         public static bool IsCommandMethod(this MethodInfo methodInfo)
         {

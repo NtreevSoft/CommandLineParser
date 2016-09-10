@@ -53,6 +53,7 @@ namespace Ntreev.Library.Commands
 
         public CommandLineParser(string name, object instance)
         {
+            this.HelpName = "help";
             this.instance = instance;
             this.name = name ?? string.Empty;
             if (this.name == string.Empty)
@@ -67,6 +68,11 @@ namespace Ntreev.Library.Commands
             this.Out = Console.Out;
         }
 
+        /// <summary>
+        /// 문자열을 분석하여 해당 인스턴스에 적절한 값을 설정합니다. 만약 <see cref="DefaultCommandAttribute"/> 로 설정된 메소드가 있을때는 메소드 기준으로 값을 읽어들입니다.
+        /// </summary>
+        /// <param name="commandLine"></param>
+        /// <returns></returns>
         public bool Parse(string commandLine)
         {
             var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
@@ -80,9 +86,9 @@ namespace Ntreev.Library.Commands
 
             var arguments = commandLine.Substring(match.Length).Trim();
 
-            if (arguments == "help")
+            if (arguments == this.HelpName)
             {
-                this.PrintHelp(this.instance, this.name);
+                this.PrintHelp();
                 return false;
             }
             else
@@ -169,12 +175,12 @@ namespace Ntreev.Library.Commands
 
         public void PrintMethodUsage()
         {
-            this.methodUsagePrinter.PrintUsage(this.Out);
+            this.methodUsagePrinter.Print(this.Out);
         }
 
         public void PrintMethodUsage(string methodName)
         {
-            this.methodUsagePrinter.PrintUsage(this.Out, methodName);
+            this.methodUsagePrinter.Print(this.Out, methodName);
         }
 
         public static string[] Split(string commandLine)
@@ -190,7 +196,7 @@ namespace Ntreev.Library.Commands
             return new string[] { name, arguments, };
         }
 
-        protected virtual void PrintHelp(object target, string commandName)
+        protected virtual void PrintHelp()
         {
             this.PrintUsage();
         }
@@ -233,6 +239,11 @@ namespace Ntreev.Library.Commands
         public object Instance
         {
             get { return this.instance; }
+        }
+
+        public string HelpName
+        {
+            get;set;
         }
 
         protected virtual CommandUsagePrinter CreateUsagePrinterCore(string name, object instance)

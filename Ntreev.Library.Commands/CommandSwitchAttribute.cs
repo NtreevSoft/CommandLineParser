@@ -43,6 +43,7 @@ namespace Ntreev.Library.Commands
         private string name = string.Empty;
         private char shortName;
         private char? argSeperator = null;
+        private bool required;
 
         public static string SwitchDelimiter
         {
@@ -82,7 +83,7 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public CommandSwitchAttribute()
         {
-            this.Required = false;
+
 
             //if (char.IsLetterOrDigit(this.shortName) == false)
             //    throw new SwitchException(Resources.InvalidSwitchName);
@@ -109,7 +110,11 @@ namespace Ntreev.Library.Commands
         /// <summary>
         /// 해당 스위치가 꼭 필요한지의 여부를 설정하거나 가져옵니다.
         /// </summary>
-        public bool Required { get; set; }
+        public bool Required
+        {
+            get { return this.required; }
+            set { this.required = value; }
+        }
 
         /// <summary>
         /// 인자가 스위치에 포함되어 있을때 인자와 스위치를 구분하기 위한 문자를 설정하거나 가져옵니다.

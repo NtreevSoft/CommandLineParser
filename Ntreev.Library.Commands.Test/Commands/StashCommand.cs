@@ -39,7 +39,7 @@ namespace Ntreev.Library.Commands.Test.Commands
 
         [CommandMethod("show")]
         [CommandMethodSwitch("Path", "Port")]
-        public void Show(int value)
+        public void Show(int value, int test = 0)
         {
 
 

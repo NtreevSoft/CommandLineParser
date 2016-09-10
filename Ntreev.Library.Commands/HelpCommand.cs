@@ -34,8 +34,9 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var parser = this.commandContext.Parsers[this.CommandName];
-                var command = parser.Instance as ICommand;
+                var command = this.commandContext.Commands[this.CommandName];
+                var parser = this.commandContext.Parsers[command];
+
                 if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
                 {
                     if (this.SubCommandName != string.Empty)
@@ -51,6 +52,12 @@ namespace Ntreev.Library.Commands
 
         }
 
+        //[DefaultCommand]
+        //public void Execute(string commandName, string subCommandName = null)
+        //{
+
+        //}
+
         public CommandTypes Types
         {
             get { return CommandTypes.AllowEmptyArgument; }
@@ -58,7 +65,7 @@ namespace Ntreev.Library.Commands
 
         public string Name
         {
-            get { return "help"; }
+            get { return "--help"; }
         }
 
         [CommandSwitch(Name = "CommandName", Required = true)]
@@ -69,32 +76,25 @@ namespace Ntreev.Library.Commands
             get; set;
         }
 
-        [CommandSwitch(Name = "sub-command", ShortName = 's')]
+        [CommandSwitch(Name = "sub-command", Required = true)]
         [Description("사용법을 표시할 하위 명령을 설정합니다.")]
+        [DefaultValue(1)]
         public string SubCommandName
-        {
-            get; set;
-        }
-
-        [CommandSwitch(ShortName = 'd', NameType = SwitchNameTypes.ShortName)]
-        [Description("사용법을 표시할 하위 명령을 설정합니다.")]
-        public bool Detail
         {
             get; set;
         }
 
         private void PrintList(IndentedTextWriter writer)
         {
-            this.commandContext.Parsers[this.Name].PrintUsage();
+            this.commandContext.Parsers[this].PrintUsage();
 
             writer.WriteLine("AvaliableCommands");
             writer.Indent++;
-            foreach (var item in this.commandContext.Parsers)
+            foreach (var item in this.commandContext.Commands)
             {
-                var instance = item.Value.Instance;
-                var summary = instance.GetType().GetSummary();
-                if (item.Key == this.Name)
-                    continue;
+                var command = item.Value;
+                var summary = command.GetType().GetSummary();
+
                 writer.WriteLine(item.Key);
                 writer.Indent++;
                 writer.WriteMultiline(summary);

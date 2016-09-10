@@ -14,10 +14,13 @@ namespace Ntreev.Library.Commands
 {
     public abstract class CommandContext
     {
-        private readonly Dictionary<string, CommandLineParser> commands = new Dictionary<string, CommandLineParser>();
+        private readonly Dictionary<ICommand, CommandLineParser> parsers = new Dictionary<ICommand, CommandLineParser>();
+        private readonly Dictionary<string, ICommand> commands;
         private string name;
         private Version version;
         private TextWriter writer;
+        private ICommand helpCommand;
+        private ICommand versionCommand;
 
         protected CommandContext(IEnumerable<ICommand> commands)
         {
@@ -26,11 +29,13 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in commands)
             {
-                this.commands.Add(item.Name, this.CreateInstance(item));
+                this.parsers.Add(item, this.CreateInstance(item));
             }
-
-            if (this.commands.ContainsKey("help") == false)
-                this.commands.Add("help", this.CreateInstance(new HelpCommand(this)));
+            this.commands = commands.ToDictionary(item => item.Name);
+            this.helpCommand = new HelpCommand(this);
+            this.versionCommand = new VersionCommand(this);
+            this.parsers.Add(this.helpCommand, this.CreateInstance(this.helpCommand));
+            this.parsers.Add(this.versionCommand, this.CreateInstance(this.versionCommand));
         }
 
         public void Execute(string commandLine)
@@ -100,25 +105,27 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public IReadOnlyDictionary<string, CommandLineParser> Parsers
+        public IReadOnlyDictionary<string, ICommand> Commands
         {
             get { return this.commands; }
         }
 
-        public bool VerifyName { get; set; }
-
-        public TextWriter Writer
+        public IReadOnlyDictionary<ICommand, CommandLineParser> Parsers
         {
-            get
-            {
-                return writer;
-            }
-
-            set
-            {
-                writer = value;
-            }
+            get { return this.parsers; }
         }
+
+        public virtual ICommand HelpCommand
+        {
+            get { return this.helpCommand; }
+        }
+
+        public virtual ICommand VersionCommand
+        {
+            get { return this.versionCommand; }
+        }
+
+        public bool VerifyName { get; set; }
 
         protected virtual CommandLineParser CreateInstance(ICommand command)
         {
@@ -132,47 +139,48 @@ namespace Ntreev.Library.Commands
 
             if (commandName == string.Empty)
             {
-                this.Out.WriteLine("type '{0} help' for usage.", this.name);
+                this.Out.WriteLine("type '{0} {1}' for usage.", this.name, this.HelpCommand.Name);
+                this.Out.WriteLine("type '{0} {1}' to see the version.", this.name, this.VersionCommand.Name);
                 return false;
+            }
+            else if (commandName == this.HelpCommand.Name)
+            {
+                return this.Execute(this.HelpCommand, arguments);
+            }
+            else if (commandName == this.VersionCommand.Name)
+            {
+                return this.Execute(this.VersionCommand, arguments);
             }
             else if (this.commands.ContainsKey(commandName) == true)
             {
-                var parser = this.commands[commandName];
-                var command = parser.Instance as ICommand;
-                if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
-                {
-                    parser.Invoke(arguments);
-                }
-                else
-                {
-                    if(arguments == string.Empty && command.Types.HasFlag(CommandTypes.AllowEmptyArgument))
-                    {
-                        command.Execute();
-                        return true;
-                    }
-                    else if (parser.Parse(commandName + " " + arguments) == false)
-                    {
-                        return false;
-                    }
-
-                    command.Execute();
-                }
-                return true;
-            }
-            else if (commandName == "help")
-            {
-                this.PrintHelp(CommandLineParser.Split(arguments));
-                return false;
-
-            }
-            else if (commandName == "--version")
-            {
-                this.PrintVersion();
-                return false;
-
+                return this.Execute(this.commands[commandName], arguments);
             }
 
             throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 명령어입니다", commandName));
+        }
+
+        private bool Execute(ICommand command, string arguments)
+        {
+            var parser = this.parsers[command];
+            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+            {
+                parser.Invoke(command.Name + " " + arguments);
+            }
+            else
+            {
+                if (arguments == string.Empty && command.Types.HasFlag(CommandTypes.AllowEmptyArgument))
+                {
+                    command.Execute();
+                    return true;
+                }
+                else if (parser.Parse(command.Name + " " + arguments) == false)
+                {
+                    return false;
+                }
+
+                command.Execute();
+            }
+            return true;
         }
 
         private void PrintHelp(string[] args)
@@ -186,8 +194,8 @@ namespace Ntreev.Library.Commands
                 var commandName = args.First();
                 if (this.commands.ContainsKey(commandName) == true)
                 {
-                    var parser = this.commands[commandName];
-                    var command = parser.Instance as ICommand;
+                    var command = this.commands[commandName];
+                    var parser = this.parsers[command];
 
                     if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
                     {
@@ -207,11 +215,10 @@ namespace Ntreev.Library.Commands
 
         private void PrintHel(IndentedTextWriter textWriter)
         {
-
             textWriter.WriteLine("Commands");
 
             textWriter.Indent++;
-            foreach (var item in this.commands)
+            foreach (var item in this.parsers)
             {
                 textWriter.WriteLine(item.Value.Name);
             }

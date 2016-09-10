@@ -40,9 +40,9 @@ namespace Ntreev.Library.Commands
         public const string ArgGroupName = "arg";
 
         private readonly CommandSwitchAttribute switchAttribute;
-        //private readonly PropertyDescriptor propertyDescriptor;
         private string pattern;
 
+        private readonly SwitchTypes switchType;
         private readonly string originalName;
         private readonly string name;
         private readonly string shortName;
@@ -51,12 +51,14 @@ namespace Ntreev.Library.Commands
         private readonly TypeConverter converter;
         private readonly string summary;
         private readonly string description;
+        private readonly object defaultValue = DBNull.Value;
         private readonly ValueSetter valueSetter;
 
         internal SwitchDescriptor(PropertyInfo propertyInfo)
         {
             this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
 
+            this.switchType = SwitchTypes.Property;
             this.originalName = propertyInfo.Name;
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyInfo.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
@@ -65,7 +67,8 @@ namespace Ntreev.Library.Commands
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
             this.summary = propertyInfo.GetSummary();
-            this.description = propertyInfo.GetDescription(); ;
+            this.description = propertyInfo.GetDescription();
+
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
         }
 
@@ -73,6 +76,7 @@ namespace Ntreev.Library.Commands
         {
             this.switchAttribute = propertyDescriptor.GetCommandSwitchAttribute();
 
+            this.switchType = SwitchTypes.Property;
             this.originalName = propertyDescriptor.Name;
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
@@ -82,6 +86,7 @@ namespace Ntreev.Library.Commands
             this.converter = propertyDescriptor.Converter;
             this.summary = string.Empty;
             this.description = propertyDescriptor.Description;
+            this.defaultValue = propertyDescriptor.GetDefaultValue();
             this.valueSetter = new PropertyValueSetter(this, propertyDescriptor);
         }
 
@@ -89,6 +94,7 @@ namespace Ntreev.Library.Commands
         {
             this.switchAttribute = new CommandSwitchAttribute() { Required = true, NameType = SwitchNameTypes.Name, };
 
+            this.switchType = SwitchTypes.Parameter;
             this.originalName = parameterInfo.Name;
             this.name = parameterInfo.Name.ToSpinalCase();
             this.shortName = string.Empty;
@@ -96,8 +102,9 @@ namespace Ntreev.Library.Commands
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = parameterInfo.ParameterType;
             this.converter = parameterInfo.GetConverter();
-            this.description = parameterInfo.GetSummary();
+            this.summary = parameterInfo.GetSummary();
             this.description = parameterInfo.GetDescription();
+            this.defaultValue = parameterInfo.DefaultValue;
             this.valueSetter = new ParameterValueSetter(this, parameterInfo);
         }
 
@@ -176,6 +183,11 @@ namespace Ntreev.Library.Commands
             get { return this.description; }
         }
 
+        public object DefaultValue
+        {
+            get { return this.defaultValue; }
+        }
+
         public string ArgTypeSummary
         {
             get
@@ -208,6 +220,11 @@ namespace Ntreev.Library.Commands
         public TypeConverter Converter
         {
             get { return this.converter; }
+        }
+
+        public SwitchTypes SwitchType
+        {
+            get { return this.switchType; }
         }
 
         internal void SetValue(object instance, string arg)
@@ -368,8 +385,7 @@ namespace Ntreev.Library.Commands
         {
             private readonly ParameterInfo parameterInfo;
             private readonly SwitchDescriptor switchDescriptor;
-            private object value;
-            private bool parsed = false;
+            private object value = DBNull.Value;
 
             public ParameterValueSetter(SwitchDescriptor switchDescriptor, ParameterInfo parameterInfo)
             {
@@ -381,16 +397,13 @@ namespace Ntreev.Library.Commands
             {
                 var parser = Parser.GetParser(this.parameterInfo);
                 this.value = parser.Parse(this.switchDescriptor, arg, value);
-                this.parsed = true;
             }
 
             public override object GetValue(object instance)
             {
-                if (this.parsed == false)
+                if (this.value == DBNull.Value)
                 {
-                    object defaultValue;
-                    if (this.parameterInfo.TryGetDefaultValue(out defaultValue) == true)
-                        return defaultValue;
+                    return this.parameterInfo.DefaultValue;
                 }
                 return this.value;
             }

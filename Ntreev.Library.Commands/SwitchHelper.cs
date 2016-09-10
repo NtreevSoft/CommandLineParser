@@ -37,9 +37,9 @@ namespace Ntreev.Library.Commands
         private readonly SwitchDescriptor[] switches;
         private readonly Dictionary<SwitchDescriptor, string> args = new Dictionary<SwitchDescriptor, string>();
 
-        public SwitchHelper(object target)
+        public SwitchHelper(object instance)
         {
-            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target.GetType());
+            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance.GetType());
             this.switches = switchDescriptors.ToArray();
         }
 
@@ -67,6 +67,14 @@ namespace Ntreev.Library.Commands
                         throw new SwitchException("필수 인자가 너무 많이 포함되어 있습니다.");
                     this.ParseRequired(requiredSwitches.First(), ref line);
                     requiredSwitches.RemoveAt(0);
+                }
+            }
+
+            foreach (var item in requiredSwitches.ToArray())
+            {
+                if (item.GetVaue(instance) != DBNull.Value)
+                {
+                    requiredSwitches.Remove(item);
                 }
             }
 

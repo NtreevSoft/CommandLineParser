@@ -84,9 +84,13 @@
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandContext.cs" />
     <Compile Include="CommandDescriptor.cs" />
+    <Compile Include="DefaultCommandAttribute.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandTypes.cs" />
+    <Compile Include="ConsoleWriter.cs" />
+    <Compile Include="SwitchTypes.cs" />
+    <Compile Include="VersionCommand.cs" />
     <Compile Include="HelpCommand.cs" />
     <Compile Include="SRDescriptionAttribute.cs" />
     <Compile Include="SR.Designer.cs">
