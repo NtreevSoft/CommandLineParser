@@ -275,7 +275,7 @@ namespace Ntreev.Library.Commands
                 var text = item.SwitchType == SwitchTypes.Parameter ? item.DisplayName : this.GetOptionString(item);
                 if (item.DefaultValue == DBNull.Value)
                     return string.Format("<{0}>", text);
-                return string.Format("<{0} = {1}>", text, item.DefaultValue);
+                return string.Format("<{0} = {1}>", text, item.DefaultValue ?? "null");
             }));
         }
     }

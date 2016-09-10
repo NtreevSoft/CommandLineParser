@@ -47,9 +47,9 @@ namespace Ntreev.Library.Commands
             this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
         }
 
-        public virtual void Print(TextWriter textWriter)
+        public virtual void Print(TextWriter writer)
         {
-            using (var tw = new IndentedTextWriter(textWriter))
+            using (var tw = new IndentedTextWriter(writer))
             {
                 this.Print(tw);
             }
@@ -94,22 +94,32 @@ namespace Ntreev.Library.Commands
             textWriter.WriteLine();
         }
 
-        private void PrintUsage(IndentedTextWriter textWriter)
+        private void PrintUsage(IndentedTextWriter writer)
         {
-            var query = from item in this.switches
-                        where item.Required == false
-                        let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
-                        select string.Join(" | ", patternItems.Where(i => i != string.Empty));
+            //var query = from item in this.switches
+            //            where item.Required == false
+            //            let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
+            //            select string.Join(" | ", patternItems.Where(i => i != string.Empty));
 
-            var options = string.Join(" ", query.Select(item => "[" + item + "]"));
+            //var options = string.Join(" ", query.Select(item => "[" + item + "]"));
 
-            var switches = string.Join(" ", this.Switches.Where(item => item.Required).Select(item => "<" + item.DisplayName + ">"));
+            //var switches = string.Join(" ", this.Switches.Where(item => item.Required).Select(item => "<" + item.DisplayName + ">"));
 
-            textWriter.WriteLine("Usage");
-            textWriter.Indent++;
-            textWriter.WriteLine("{0} {1} {2}", this.Name, switches, options);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            //textWriter.WriteLine("Usage");
+            //textWriter.Indent++;
+            //textWriter.WriteLine("{0} {1} {2}", this.Name, switches, options);
+            //textWriter.Indent--;
+            //textWriter.WriteLine();
+
+            writer.WriteLine("Usage");
+            writer.Indent++;
+
+            var switches = this.GetSwitchesString(this.Switches.Where(i => i.Required));
+            var options = this.GetOptionsString(this.Switches.Where(i => i.Required == false));
+            writer.WriteLine("{0} {1} {2}", this.Name, switches, options);
+
+            writer.Indent--;
+            writer.WriteLine();
         }
 
         private void PrintDescription(IndentedTextWriter textWriter)
@@ -178,6 +188,12 @@ namespace Ntreev.Library.Commands
             textWriter.WriteLine();
         }
 
+        private string GetOptionString(SwitchDescriptor descriptor)
+        {
+            var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
+            return string.Join(" | ", patternItems.Where(i => i != string.Empty));
+        }
+
         private string GetOptionsString(IEnumerable<SwitchDescriptor> switches)
         {
             var query = from item in switches
@@ -189,7 +205,13 @@ namespace Ntreev.Library.Commands
 
         private string GetSwitchesString(IEnumerable<SwitchDescriptor> switches)
         {
-            return string.Join(" ", switches.Select(item => "[" + item.DisplayName + "]"));
+            return string.Join(" ", switches.Select(item =>
+            {
+                var text = item.Required == true ? item.DisplayName : this.GetOptionString(item);
+                if (item.DefaultValue == DBNull.Value)
+                    return string.Format("<{0}>", text);
+                return string.Format("<{0} = {1}>", text, item.DefaultValue ?? "null");
+            }));
         }
     }
 }

@@ -126,12 +126,12 @@ namespace Ntreev.Library.Commands
 
             if (string.IsNullOrEmpty(method) == true)
             {
-                this.PrintSummary(this.instance);
+                this.PrintSummary();
                 return false;
             }
-            else if (method == "help")
+            else if (method == this.HelpName)
             {
-                this.PrintMethodHelp(this.instance, this.name, arguments);
+                this.PrintMethodHelp(arguments);
                 return false;
             }
             else
@@ -201,7 +201,7 @@ namespace Ntreev.Library.Commands
             this.PrintUsage();
         }
 
-        protected virtual void PrintMethodHelp(object target, string commandName, string methodName)
+        protected virtual void PrintMethodHelp(string methodName)
         {
             if (string.IsNullOrEmpty(methodName) == true)
             {
@@ -209,7 +209,7 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target.GetType(), methodName);
+                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), methodName);
                 if (descriptor == null)
                 {
                     this.Out.WriteLine("{0} is not subcommand", methodName);
@@ -221,9 +221,9 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        protected virtual void PrintSummary(object target)
+        protected virtual void PrintSummary()
         {
-            this.Out.WriteLine("Type '{0} help' for usage.", this.name);
+            this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
         }
 
         /// <summary>

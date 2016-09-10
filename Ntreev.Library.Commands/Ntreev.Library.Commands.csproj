@@ -84,11 +84,10 @@
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandContext.cs" />
     <Compile Include="CommandDescriptor.cs" />
-    <Compile Include="DefaultCommandAttribute.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandTypes.cs" />
-    <Compile Include="ConsoleWriter.cs" />
+    <Compile Include="SRSummaryAttribute.cs" />
     <Compile Include="SwitchTypes.cs" />
     <Compile Include="VersionCommand.cs" />
     <Compile Include="HelpCommand.cs" />
@@ -116,7 +115,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StringManager.cs" />
     <Compile Include="SwitchDescriptorCollection.cs" />
     <Compile Include="SwitchNameTypes.cs" />
     <Compile Include="MissingSwitchException.cs" />

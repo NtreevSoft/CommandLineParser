@@ -9,7 +9,12 @@ namespace Ntreev.Library.Commands
     [AttributeUsage(AttributeTargets.All)]
     public class SummaryAttribute : Attribute
     {
-        private readonly string summary;
+        private string summary;
+
+        public SummaryAttribute()
+        {
+
+        }
 
         public SummaryAttribute(string summary)
         {
@@ -19,6 +24,7 @@ namespace Ntreev.Library.Commands
         public string Summary
         {
             get { return this.summary ?? string.Empty; }
+            set { this.summary = value; }
         }
     }
 }

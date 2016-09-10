@@ -68,7 +68,7 @@ namespace Ntreev.Library.Commands
             this.converter = propertyInfo.GetConverter();
             this.summary = propertyInfo.GetSummary();
             this.description = propertyInfo.GetDescription();
-
+            this.defaultValue = propertyInfo.GetDefaultValue();
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
         }
 

@@ -120,7 +120,10 @@
   <data name="HelpDescription" xml:space="preserve">
     <value>사용 가능한 명령의 목록을 표시합니다. 특정 명령의 사용법을 표시하려면 'help' 뒤에 인자로 명령의 이름을 지정하시면 됩니다.
 help &lt;command&gt;
-하위명령의 표시법은 -s 인자뒤에 하위명령의 이름을 설정하시면 됩니다.
-help &lt;command&gt; -s &lt;sub-command&gt;</value>
+하위명령의 표시법은 하위명령의 이름을 추가로 설정하시면 됩니다.
+help &lt;command&gt; &lt;sub-command = null&gt;</value>
+  </data>
+  <data name="VersionSummary" xml:space="preserve">
+    <value>프로그램의 버전 및 저작권 내용을 표시합니다.</value>
   </data>
 </root>

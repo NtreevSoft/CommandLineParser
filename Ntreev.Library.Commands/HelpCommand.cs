@@ -65,7 +65,7 @@ namespace Ntreev.Library.Commands
 
         public string Name
         {
-            get { return "--help"; }
+            get { return "help"; }
         }
 
         [CommandSwitch(Name = "CommandName", Required = true)]
@@ -78,7 +78,7 @@ namespace Ntreev.Library.Commands
 
         [CommandSwitch(Name = "sub-command", Required = true)]
         [Description("사용법을 표시할 하위 명령을 설정합니다.")]
-        [DefaultValue(1)]
+        [DefaultValue(null)]
         public string SubCommandName
         {
             get; set;

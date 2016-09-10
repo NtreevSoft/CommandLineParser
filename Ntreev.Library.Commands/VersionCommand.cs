@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    [Summary("사용할 수 있는 명령을 나열하고 사용법을 알려줍니다.")]
-    [SRDescription("HelpDescription")]
+    [SRSummary("VersionSummary")]
     class VersionCommand : ICommand
     {
         private readonly CommandContext commandContext;
