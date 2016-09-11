@@ -26,7 +26,7 @@ namespace Ntreev.Library.Commands.Test.Commands
 
         public void Execute()
         {
-            
+
         }
 
         [CommandMethod("list")]
@@ -39,10 +39,10 @@ namespace Ntreev.Library.Commands.Test.Commands
 
         [CommandMethod("show")]
         [CommandMethodSwitch("Path", "Port")]
-        public void Show(int value)
+        public void Show(int value, int test = 0)
         {
-
-
+            Console.WriteLine("value : {0}", value);
+            Console.WriteLine("test : {0}", test);
         }
 
         [CommandMethod("save")]

@@ -32,6 +32,7 @@ using System.Text.RegularExpressions;
 using Trace = System.Diagnostics.Trace;
 using Ntreev.Library.Commands.Properties;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Ntreev.Library.Commands
 {
@@ -42,6 +43,7 @@ namespace Ntreev.Library.Commands
     {
         private string name;
         private object instance;
+        private Version version;
         private CommandUsagePrinter switchUsagePrinter;
         private MethodUsagePrinter methodUsagePrinter;
 
@@ -53,20 +55,20 @@ namespace Ntreev.Library.Commands
 
         public CommandLineParser(string name, object instance)
         {
+            this.HelpName = "help";
+            this.VersionName = "--version";
             this.instance = instance;
-            this.name = name ?? string.Empty;
-            if (this.name == string.Empty)
-            {
-                if (instance is ICommand)
-                    this.name = (instance as ICommand).Name;
-                else
-                    this.name = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-            }
+            this.name = string.IsNullOrEmpty(name) == true ? Process.GetCurrentProcess().ProcessName : name;
             this.switchUsagePrinter = this.CreateUsagePrinterCore(this.name, instance);
             this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(this.name, instance);
             this.Out = Console.Out;
         }
 
+        /// <summary>
+        /// 문자열을 분석하여 해당 인스턴스에 적절한 값을 설정합니다. 만약 <see cref="DefaultCommandAttribute"/> 로 설정된 메소드가 있을때는 메소드 기준으로 값을 읽어들입니다.
+        /// </summary>
+        /// <param name="commandLine"></param>
+        /// <returns></returns>
         public bool Parse(string commandLine)
         {
             var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
@@ -80,9 +82,14 @@ namespace Ntreev.Library.Commands
 
             var arguments = commandLine.Substring(match.Length).Trim();
 
-            if (arguments == "help")
+            if (arguments == this.HelpName)
             {
-                this.PrintHelp(this.instance, this.name);
+                this.PrintUsage();
+                return false;
+            }
+            else if (arguments == this.VersionName)
+            {
+                this.PrintVersion();
                 return false;
             }
             else
@@ -120,12 +127,17 @@ namespace Ntreev.Library.Commands
 
             if (string.IsNullOrEmpty(method) == true)
             {
-                this.PrintSummary(this.instance);
+                this.PrintSummary();
                 return false;
             }
-            else if (method == "help")
+            else if (method == this.HelpName)
             {
-                this.PrintMethodHelp(this.instance, this.name, arguments);
+                this.PrintMethodUsage(arguments);
+                return false;
+            }
+            else if (arguments == this.VersionName)
+            {
+                this.PrintVersion();
                 return false;
             }
             else
@@ -137,44 +149,39 @@ namespace Ntreev.Library.Commands
                     throw new NotFoundMethodException(method);
                 }
 
-                try
-                {
-                    descriptor.Invoke(this.instance, arguments);
-                    return true;
-                }
-                catch (SwitchException e)
-                {
-                    throw e;
-                }
-                catch (TargetInvocationException e)
-                {
-                    if (e.InnerException != null)
-                        throw new MethodInvokeException(method, e.InnerException);
-                    throw e;
-                }
-                catch (Exception e)
-                {
-                    throw new MethodInvokeException(method, e);
-                }
+                descriptor.Invoke(this.instance, arguments);
+                return true;
             }
+        }
+
+        public virtual void PrintSummary()
+        {
+            this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
         }
 
         /// <summary>
         /// 모든 스위치의 사용법을 출력합니다.
         /// </summary>
-        public void PrintUsage()
+        public virtual void PrintUsage()
         {
             this.switchUsagePrinter.Print(this.Out);
         }
 
-        public void PrintMethodUsage()
+        public virtual void PrintVersion()
         {
-            this.methodUsagePrinter.PrintUsage(this.Out);
+            var info = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+            this.Out.WriteLine("{0} {1}", this.Name, this.Version);
+            this.Out.WriteLine(info.LegalCopyright);
         }
 
-        public void PrintMethodUsage(string methodName)
+        public virtual void PrintMethodUsage()
         {
-            this.methodUsagePrinter.PrintUsage(this.Out, methodName);
+            this.methodUsagePrinter.Print(this.Out);
+        }
+
+        public virtual void PrintMethodUsage(string methodName)
+        {
+            this.methodUsagePrinter.Print(this.Out, methodName);
         }
 
         public static string[] Split(string commandLine)
@@ -190,36 +197,6 @@ namespace Ntreev.Library.Commands
             return new string[] { name, arguments, };
         }
 
-        protected virtual void PrintHelp(object target, string commandName)
-        {
-            this.PrintUsage();
-        }
-
-        protected virtual void PrintMethodHelp(object target, string commandName, string methodName)
-        {
-            if (string.IsNullOrEmpty(methodName) == true)
-            {
-                this.PrintMethodUsage();
-            }
-            else
-            {
-                MethodDescriptor descriptor = CommandDescriptor.GetMethodDescriptor(target.GetType(), methodName);
-                if (descriptor == null)
-                {
-                    this.Out.WriteLine("{0} is not subcommand", methodName);
-                }
-                else
-                {
-                    this.PrintMethodUsage(methodName);
-                }
-            }
-        }
-
-        protected virtual void PrintSummary(object target)
-        {
-            this.Out.WriteLine("Type '{0} help' for usage.", this.name);
-        }
-
         /// <summary>
         /// 분석과정중 생기는 다양한 정보를 출력할 수 있는 처리기를 지정합니다.
         /// </summary>
@@ -233,6 +210,32 @@ namespace Ntreev.Library.Commands
         public object Instance
         {
             get { return this.instance; }
+        }
+
+        public string HelpName
+        {
+            get; set;
+        }
+
+        public string VersionName
+        {
+            get; set;
+        }
+
+        public Version Version
+        {
+            get
+            {
+                if (this.version == null)
+                {
+                    return new Version(FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion);
+                }
+                return this.version;
+            }
+            set
+            {
+                this.version = value;
+            }
         }
 
         protected virtual CommandUsagePrinter CreateUsagePrinterCore(string name, object instance)

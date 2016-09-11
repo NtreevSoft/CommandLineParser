@@ -47,9 +47,9 @@ namespace Ntreev.Library.Commands
             this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
         }
 
-        public virtual void Print(TextWriter textWriter)
+        public virtual void Print(TextWriter writer)
         {
-            using (var tw = new IndentedTextWriter(textWriter))
+            using (var tw = new IndentedTextWriter(writer))
             {
                 this.Print(tw);
             }
@@ -75,107 +75,108 @@ namespace Ntreev.Library.Commands
             get { return this.switches; }
         }
 
-        private void Print(IndentedTextWriter textWriter)
+        private void Print(IndentedTextWriter writer)
         {
-            this.PrintSummary(textWriter);
-            this.PrintUsage(textWriter);
-            this.PrintDescription(textWriter);
-            this.PrintRequirements(textWriter);
-            this.PrintOptions(textWriter);
+            this.PrintSummary(writer);
+            this.PrintUsage(writer);
+            this.PrintDescription(writer);
+            this.PrintRequirements(writer);
+            this.PrintOptions(writer);
         }
 
-        private void PrintSummary(IndentedTextWriter textWriter)
+        private void PrintSummary(IndentedTextWriter writer)
         {
             var summary = this.Instance.GetType().GetSummary();
-            textWriter.WriteLine("Summary");
-            textWriter.Indent++;
-            textWriter.WriteLine(summary);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine(Resources.Summary);
+            writer.Indent++;
+            writer.WriteLine(summary);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintUsage(IndentedTextWriter textWriter)
+        private void PrintUsage(IndentedTextWriter writer)
         {
-            var query = from item in this.switches
-                        where item.Required == false
-                        let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
-                        select string.Join(" | ", patternItems.Where(i => i != string.Empty));
+            var switches = this.GetSwitchesString(this.Switches.Where(i => i.Required));
+            var options = this.GetOptionsString(this.Switches.Where(i => i.Required == false));
+            var items = new string[] { this.Name, switches, options, };
 
-            var options = string.Join(" ", query.Select(item => "[" + item + "]"));
-
-            var switches = string.Join(" ", this.Switches.Where(item => item.Required).Select(item => "<" + item.DisplayName + ">"));
-
-            textWriter.WriteLine("Usage");
-            textWriter.Indent++;
-            textWriter.WriteLine("{0} {1} {2}", this.Name, switches, options);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine(Resources.Usage);
+            writer.Indent++;
+            writer.WriteLine(string.Join(" ", items.Where(i => i != string.Empty)));
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintDescription(IndentedTextWriter textWriter)
+        private void PrintDescription(IndentedTextWriter writer)
         {
-            textWriter.WriteLine("Description");
-            textWriter.Indent++;
-            textWriter.WriteMultiline(this.Description);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.WriteLine(Resources.Description);
+            writer.Indent++;
+            writer.WriteMultiline(this.Description);
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintRequirements(IndentedTextWriter textWriter)
+        private void PrintRequirements(IndentedTextWriter writer)
         {
             var switches = this.Switches.Where(i => i.Required == true).ToArray();
             if (switches.Any() == false)
                 return;
 
-            textWriter.WriteLine("Requirements");
-            textWriter.Indent++;
+            writer.WriteLine(Resources.Requirements);
+            writer.Indent++;
             foreach (var item in switches)
             {
-                this.PrintRequirement(textWriter, item);
+                this.PrintRequirement(writer, item);
             }
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintOptions(IndentedTextWriter textWriter)
+        private void PrintOptions(IndentedTextWriter writer)
         {
             var switches = this.Switches.Where(i => i.Required == false).ToArray();
             if (switches.Any() == false)
                 return;
 
-            textWriter.WriteLine("Options");
-            textWriter.Indent++;
+            writer.WriteLine(Resources.Options);
+            writer.Indent++;
             foreach (var item in switches)
             {
-                this.PrintOption(textWriter, item);
+                this.PrintOption(writer, item);
             }
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent--;
+            writer.WriteLine();
         }
 
-        private void PrintRequirement(IndentedTextWriter textWriter, SwitchDescriptor descriptor)
+        private void PrintRequirement(IndentedTextWriter writer, SwitchDescriptor descriptor)
         {
-            textWriter.WriteLine(descriptor.DisplayName);
+            writer.WriteLine(descriptor.DisplayName);
             if (descriptor.Description != string.Empty)
             {
-                textWriter.Indent++;
-                textWriter.WriteMultiline(descriptor.Description);
-                textWriter.Indent--;
+                writer.Indent++;
+                writer.WriteMultiline(descriptor.Description);
+                writer.Indent--;
             }
-            textWriter.WriteLine();
+            writer.WriteLine();
         }
 
-        private void PrintOption(IndentedTextWriter textWriter, SwitchDescriptor descriptor)
+        private void PrintOption(IndentedTextWriter writer, SwitchDescriptor descriptor)
         {
             if (descriptor.ShortNamePattern != string.Empty)
-                textWriter.WriteLine(descriptor.ShortNamePattern);
+                writer.WriteLine(descriptor.ShortNamePattern);
             if (descriptor.NamePattern != string.Empty)
-                textWriter.WriteLine(descriptor.NamePattern);
+                writer.WriteLine(descriptor.NamePattern);
 
-            textWriter.Indent++;
-            textWriter.WriteMultiline(descriptor.Description);
-            textWriter.Indent--;
-            textWriter.WriteLine();
+            writer.Indent++;
+            writer.WriteMultiline(descriptor.Description);
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private string GetOptionString(SwitchDescriptor descriptor)
+        {
+            var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
+            return string.Join(" | ", patternItems.Where(i => i != string.Empty));
         }
 
         private string GetOptionsString(IEnumerable<SwitchDescriptor> switches)
@@ -189,7 +190,13 @@ namespace Ntreev.Library.Commands
 
         private string GetSwitchesString(IEnumerable<SwitchDescriptor> switches)
         {
-            return string.Join(" ", switches.Select(item => "[" + item.DisplayName + "]"));
+            return string.Join(" ", switches.Select(item =>
+            {
+                var text = item.Required == true ? item.DisplayName : this.GetOptionString(item);
+                if (item.DefaultValue == DBNull.Value)
+                    return string.Format("<{0}>", text);
+                return string.Format("<{0} = {1}>", text, item.DefaultValue ?? "null");
+            }));
         }
     }
 }

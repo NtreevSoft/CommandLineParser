@@ -87,6 +87,9 @@
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandTypes.cs" />
+    <Compile Include="SRSummaryAttribute.cs" />
+    <Compile Include="SwitchTypes.cs" />
+    <Compile Include="VersionCommand.cs" />
     <Compile Include="HelpCommand.cs" />
     <Compile Include="SRDescriptionAttribute.cs" />
     <Compile Include="SR.Designer.cs">
@@ -97,7 +100,6 @@
     <Compile Include="SummaryAttribute.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="IndentedTextWriterExtensions.cs" />
-    <Compile Include="InvalidSwitchStringException.cs" />
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="MethodDescriptorCollection.cs" />
     <Compile Include="MethodInvokeException.cs" />
@@ -112,7 +114,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StringManager.cs" />
     <Compile Include="SwitchDescriptorCollection.cs" />
     <Compile Include="SwitchNameTypes.cs" />
     <Compile Include="MissingSwitchException.cs" />

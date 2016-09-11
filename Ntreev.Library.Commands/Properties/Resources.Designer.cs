@@ -79,6 +79,15 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   사용 가능한 명령들과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string AvaliableCommands {
+            get {
+                return ResourceManager.GetString("AvaliableCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string CannotConvertFromString {
@@ -178,6 +187,33 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   선택 인수과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Options {
+            get {
+                return ResourceManager.GetString("Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   필수 인수과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Requirements {
+            get {
+                return ResourceManager.GetString("Requirements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   요약과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Summary {
+            get {
+                return ResourceManager.GetString("Summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   SwitchDelimiter 는 문장부호여야만 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string SwitchDelimiterMustBePunctuation {
@@ -205,7 +241,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   방법과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   사용 방법과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Usage {
             get {

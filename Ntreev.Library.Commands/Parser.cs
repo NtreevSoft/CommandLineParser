@@ -58,7 +58,7 @@ namespace Ntreev.Library.Commands
         /// <exception cref="NotSupportedException">문자열을 데이터로 변환할 수 없을때</exception>
         virtual public object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
         {
-            TypeConverter typeConverter = switchDescriptor.Converter;
+            var typeConverter = switchDescriptor.Converter;
 
             if (typeConverter.CanConvertFrom(typeof(string)) == false)
                 throw new NotSupportedException(Resources.CannotConvertFromString);
@@ -69,14 +69,14 @@ namespace Ntreev.Library.Commands
             }
             catch (Exception e)
             {
-                throw new SwitchException(Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new ArgumentException(Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
             return value;
         }
 
         internal static Parser GetParser(PropertyDescriptor propertyDescriptor)
         {
-            CommandParserAttribute parserAttribute = propertyDescriptor.Attributes[typeof(CommandParserAttribute)] as CommandParserAttribute;
+            var parserAttribute = propertyDescriptor.Attributes[typeof(CommandParserAttribute)] as CommandParserAttribute;
 
             if (parserAttribute != null)
             {
@@ -105,14 +105,14 @@ namespace Ntreev.Library.Commands
 
         internal static Parser GetParser(ICustomAttributeProvider customAttributeProvider, Type type)
         {
-            CommandParserAttribute attribute = customAttributeProvider.GetCustomAttribute<CommandParserAttribute>();
+            var attribute = customAttributeProvider.GetCustomAttribute<CommandParserAttribute>();
 
             if (attribute != null)
             {
                 return TypeDescriptor.CreateInstance(null, attribute.ParserType, null, null) as Parser;
             }
 
-            TypeConverter converter = customAttributeProvider.GetConverter(type);
+            var converter = customAttributeProvider.GetConverter(type);
             if (type.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(type) == true)
             {
                 return Parser.DefaultListParser;

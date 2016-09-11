@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Ntreev.Library.Commands
 {
@@ -14,9 +15,49 @@ namespace Ntreev.Library.Commands
             return propertyDescriptor.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
         }
 
+        public static object GetDefaultValue(this PropertyDescriptor propertyDescriptor)
+        {
+            var attr = propertyDescriptor.Attributes[typeof(DefaultValueAttribute)] as DefaultValueAttribute;
+            if (attr == null)
+                return DBNull.Value;
+
+            var value = attr.Value;
+            if (value == null)
+            {
+                if (propertyDescriptor.PropertyType.IsClass == false)
+                    return DBNull.Value;
+                return null;
+            }
+
+            if (value.GetType() == propertyDescriptor.PropertyType)
+                return value;
+
+            return propertyDescriptor.Converter.ConvertFrom(value);
+        }
+
         public static CommandSwitchAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttribute<CommandSwitchAttribute>();
+        }
+
+        public static object GetDefaultValue(this PropertyInfo propertyInfo)
+        {
+            var attr = propertyInfo.GetCustomAttribute<DefaultValueAttribute>();
+            if (attr == null)
+                return DBNull.Value;
+
+            var value = attr.Value;
+            if (value == null)
+            {
+                if (propertyInfo.PropertyType.IsClass == false)
+                    return DBNull.Value;
+                return null;
+            }
+
+            if (value.GetType() == propertyInfo.PropertyType)
+                return value;
+
+            return propertyInfo.GetConverter().ConvertFrom(value);
         }
 
         public static T GetCustomAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
@@ -88,6 +129,11 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        //public static bool IsCommand(this MethodInfo methodInfo)
+        //{
+        //    return methodInfo.GetCustomAttributes(typeof(DefaultCommandAttribute), false).Any();
+        //}
+
         public static bool IsCommandMethod(this MethodInfo methodInfo)
         {
             return methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false).Any();
@@ -146,6 +192,11 @@ namespace Ntreev.Library.Commands
             else if (type == typeof(decimal))
                 return "decimal";
             return type.Name;
+        }
+
+        public static string ToSpinalCase(this string text)
+        {
+            return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
         }
     }
 }

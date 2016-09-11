@@ -30,9 +30,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        
-
-
         public SwitchDescriptor this[int index]
         {
             get { return this.descriptors[index]; }
@@ -49,12 +46,12 @@ namespace Ntreev.Library.Commands
             {
                 if(item.Name != string.Empty && descriptor.Name != string.Empty && descriptor.Name == item.Name)
                 {
-                    throw new SwitchException(string.Format("{0} 은(는) 이미 존재하는 이름입니다.", descriptor.Name));
+                    throw new ArgumentException(string.Format("{0} 은(는) 이미 존재하는 이름입니다.", descriptor.Name));
                 }
 
                 if (item.ShortName != string.Empty && descriptor.ShortName != string.Empty && descriptor.ShortName == item.ShortName)
                 {
-                    throw new SwitchException(string.Format("{0} 은(는) 이미 존재하는 이름입니다.", descriptor.ShortName));
+                    throw new ArgumentException(string.Format("{0} 은(는) 이미 존재하는 이름입니다.", descriptor.ShortName));
                 }
             }
 

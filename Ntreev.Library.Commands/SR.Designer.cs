@@ -63,12 +63,21 @@ namespace Ntreev.Library.Commands {
         /// <summary>
         ///   사용 가능한 명령의 목록을 표시합니다. 특정 명령의 사용법을 표시하려면 &apos;help&apos; 뒤에 인자로 명령의 이름을 지정하시면 됩니다.
         ///help &lt;command&gt;
-        ///하위명령의 표시법은 -s 인자뒤에 하위명령의 이름을 설정하시면 됩니다.
-        ///help &lt;command&gt; -s &lt;sub-command&gt;과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///하위명령의 표시법은 하위명령의 이름을 추가로 설정하시면 됩니다.
+        ///help &lt;command&gt; &lt;sub-command = null&gt;과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string HelpDescription {
             get {
                 return ResourceManager.GetString("HelpDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   프로그램의 버전 및 저작권 내용을 표시합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string VersionSummary {
+            get {
+                return ResourceManager.GetString("VersionSummary", resourceCulture);
             }
         }
     }

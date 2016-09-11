@@ -123,6 +123,9 @@
   <data name="ArgSeperatorMustBeAPunctuation" xml:space="preserve">
     <value>ArgSeperator는 문장부호여야만 합니다.</value>
   </data>
+  <data name="AvaliableCommands" xml:space="preserve">
+    <value>사용 가능한 명령들</value>
+  </data>
   <data name="CannotConvertFromString" xml:space="preserve">
     <value>타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.</value>
   </data>
@@ -156,6 +159,15 @@
   <data name="NotFoundMatchedSwitch" xml:space="preserve">
     <value>해당 스위치를 찾을 수가 없거나 잘못된 인자 형식입니다.</value>
   </data>
+  <data name="Options" xml:space="preserve">
+    <value>선택 인수</value>
+  </data>
+  <data name="Requirements" xml:space="preserve">
+    <value>필수 인수</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>요약</value>
+  </data>
   <data name="SwitchDelimiterMustBePunctuation" xml:space="preserve">
     <value>SwitchDelimiter 는 문장부호여야만 합니다.</value>
   </data>
@@ -166,6 +178,6 @@
     <value>스위치가 이미 등록되어 있습니다. 중복여부를 확인하세요.</value>
   </data>
   <data name="Usage" xml:space="preserve">
-    <value>방법</value>
+    <value>사용 방법</value>
   </data>
 </root>

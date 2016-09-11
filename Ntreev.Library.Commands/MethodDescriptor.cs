@@ -11,18 +11,22 @@ namespace Ntreev.Library.Commands
     public class MethodDescriptor
     {
         private readonly MethodInfo methodInfo;
-        private readonly CommandMethodAttribute attribute;
         private readonly string originalName;
         private readonly string name;
         private readonly string displayName;
         private readonly SwitchDescriptor[] switches;
 
-        public MethodDescriptor(MethodInfo methodInfo)
+        internal MethodDescriptor(MethodInfo methodInfo)
+            : this(methodInfo, methodInfo.Name.ToSpinalCase())
         {
+
+        }
+
+        internal MethodDescriptor(MethodInfo methodInfo, string name)
+        { 
             this.methodInfo = methodInfo;
-            this.attribute = this.methodInfo.GetCommandMethodAttribute();
             this.originalName = methodInfo.Name;
-            this.name = this.attribute.Name != string.Empty ? this.attribute.Name : methodInfo.Name.ToSpinalCase();
+            this.name = name;
             this.displayName = methodInfo.GetDisplayName();
 
             var switchList = new List<SwitchDescriptor>();
@@ -40,7 +44,7 @@ namespace Ntreev.Library.Commands
                 {
                     var switchDescriptor = CommandDescriptor.GetMethodSwitchDescriptors(methodInfo.DeclaringType)[item];
                     if (switchDescriptor == null)
-                        throw new SwitchException(string.Format("{0} 은(는) 존재하지 않는 속성입니다.", item));
+                        throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 속성입니다.", item));
                     switchList.Add(switchDescriptor);
                 }
             }
@@ -84,13 +88,13 @@ namespace Ntreev.Library.Commands
             helper.Parse(instance, arguments);
 
             var values = new ArrayList();
-            var s = this.switches.ToDictionary(item => item.OriginalName);
+            var descriptors = this.switches.ToDictionary(item => item.OriginalName);
 
             foreach (var item in methodInfo.GetParameters())
             {
-                var switchDescriptor = s[item.Name];
+                var descriptor = descriptors[item.Name];
 
-                var value = switchDescriptor.GetVaue(instance);
+                var value = descriptor.GetVaue(instance);
                 values.Add(value);
             }
 

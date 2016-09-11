@@ -45,12 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CopyCommand.cs" />
+    <Compile Include="Commands\DirectoryCommand.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="GitCommandContext.cs" />
     <Compile Include="GitCommandLineParser.cs" />
     <Compile Include="GitSummaryAttribute.cs" />
     <Compile Include="GitDescriptionAttribute.cs" />
-    <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

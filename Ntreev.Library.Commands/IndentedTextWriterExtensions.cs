@@ -32,22 +32,13 @@ namespace Ntreev.Library.Commands
 
             {
                 writer.Indent = 0;
-                while (s != string.Empty)
+                foreach (var i in s)
                 {
-                    var line = string.Empty;
-                    if (s.Length <= width)
-                    {
-                        line = s;
-                        s = string.Empty;
-                    }
-                    else
-                    {
-                        line = s.Remove(width);
-                        s = s.Substring(width);
-                    }
-                    Console.CursorLeft = emptyCount;
-                    writer.WriteLine(line.TrimStart());
+                    if (Console.CursorLeft == 0)
+                        Console.CursorLeft = emptyCount;
+                    writer.Write(i);
                 }
+                writer.WriteLine();
             }
             finally
             {

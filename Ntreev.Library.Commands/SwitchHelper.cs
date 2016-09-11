@@ -37,9 +37,9 @@ namespace Ntreev.Library.Commands
         private readonly SwitchDescriptor[] switches;
         private readonly Dictionary<SwitchDescriptor, string> args = new Dictionary<SwitchDescriptor, string>();
 
-        public SwitchHelper(object target)
+        public SwitchHelper(object instance)
         {
-            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(target.GetType());
+            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance.GetType());
             this.switches = switchDescriptors.ToArray();
         }
 
@@ -64,15 +64,23 @@ namespace Ntreev.Library.Commands
                 else
                 {
                     if (requiredSwitches.Count == 0)
-                        throw new SwitchException("필수 인자가 너무 많이 포함되어 있습니다.");
+                        throw new ArgumentException("필수 인자가 너무 많이 포함되어 있습니다.");
                     this.ParseRequired(requiredSwitches.First(), ref line);
                     requiredSwitches.RemoveAt(0);
                 }
             }
 
+            foreach (var item in requiredSwitches.ToArray())
+            {
+                if (item.GetVaue(instance) != DBNull.Value)
+                {
+                    requiredSwitches.Remove(item);
+                }
+            }
+
             if (requiredSwitches.Count > 0)
             {
-                throw new MissingSwitchException("필수 인자가 빠져있습니다", requiredSwitches.First().Name);
+                throw new ArgumentException("필수 인자가 빠져있습니다", requiredSwitches.First().Name);
             }
 
             this.SetValues(instance);
@@ -87,7 +95,7 @@ namespace Ntreev.Library.Commands
             {
                 var descriptor = this.DoMatch(switchLine);
                 if (descriptor == null)
-                    throw new SwitchException(Resources.NotFoundMatchedSwitch, switchLine);
+                    throw new ArgumentException(Resources.NotFoundMatchedSwitch, switchLine);
             }
 
             this.AssertRequired();
@@ -133,7 +141,7 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            throw new SwitchException("확인할 수 없는 인자가 포함되어 있습니다.");
+            throw new ArgumentException("확인할 수 없는 인자가 포함되어 있습니다.");
         }
 
         private void ParseRequired(SwitchDescriptor switchDescriptor, ref string arguments)
@@ -160,7 +168,7 @@ namespace Ntreev.Library.Commands
                 if (arg != null)
                 {
                     if (this.args.ContainsKey(item) == true)
-                        throw new SwitchException("이름이 같은 선택 인자가 두번 설정되었습니다.");
+                        throw new ArgumentException("이름이 같은 선택 인자가 두번 설정되었습니다.");
                     this.args.Add(item, arg);
                     return item;
                 }
@@ -174,7 +182,7 @@ namespace Ntreev.Library.Commands
             foreach (var item in this.switches)
             {
                 if (item.Required == true && this.args.ContainsKey(item) == false)
-                    throw new MissingSwitchException(Resources.SwitchIsMissing, item.Name);
+                    throw new ArgumentException(Resources.SwitchIsMissing, item.Name);
             }
         }
 
@@ -194,7 +202,7 @@ namespace Ntreev.Library.Commands
                     continue;
 
                 if (hashSet.Contains(shortName) == true)
-                    throw new SwitchException(Resources.SwitchWasAlreadyRegistered, shortName);
+                    throw new ArgumentException(Resources.SwitchWasAlreadyRegistered, shortName);
                 hashSet.Add(shortName);
             }
         }
