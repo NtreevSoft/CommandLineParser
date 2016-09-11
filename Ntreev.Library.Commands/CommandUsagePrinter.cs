@@ -87,7 +87,7 @@ namespace Ntreev.Library.Commands
         private void PrintSummary(IndentedTextWriter textWriter)
         {
             var summary = this.Instance.GetType().GetSummary();
-            textWriter.WriteLine("Summary");
+            textWriter.WriteLine(Resources.Summary);
             textWriter.Indent++;
             textWriter.WriteLine(summary);
             textWriter.Indent--;
@@ -111,7 +111,7 @@ namespace Ntreev.Library.Commands
             //textWriter.Indent--;
             //textWriter.WriteLine();
 
-            writer.WriteLine("Usage");
+            writer.WriteLine(Resources.Usage);
             writer.Indent++;
 
             var switches = this.GetSwitchesString(this.Switches.Where(i => i.Required));
@@ -124,7 +124,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintDescription(IndentedTextWriter textWriter)
         {
-            textWriter.WriteLine("Description");
+            textWriter.WriteLine(Resources.Description);
             textWriter.Indent++;
             textWriter.WriteMultiline(this.Description);
             textWriter.Indent--;
@@ -137,7 +137,7 @@ namespace Ntreev.Library.Commands
             if (switches.Any() == false)
                 return;
 
-            textWriter.WriteLine("Requirements");
+            textWriter.WriteLine(Resources.Requirements);
             textWriter.Indent++;
             foreach (var item in switches)
             {
@@ -153,7 +153,7 @@ namespace Ntreev.Library.Commands
             if (switches.Any() == false)
                 return;
 
-            textWriter.WriteLine("Options");
+            textWriter.WriteLine(Resources.Options);
             textWriter.Indent++;
             foreach (var item in switches)
             {

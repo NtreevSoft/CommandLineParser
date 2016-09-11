@@ -1,4 +1,5 @@
 ﻿using Ntreev.Library;
+using Ntreev.Library.Commands.Properties;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -88,7 +89,7 @@ namespace Ntreev.Library.Commands
         {
             this.commandContext.Parsers[this].PrintUsage();
 
-            writer.WriteLine("AvaliableCommands");
+            writer.WriteLine(Resources.AvaliableCommands);
             writer.Indent++;
             foreach (var item in this.commandContext.Commands)
             {

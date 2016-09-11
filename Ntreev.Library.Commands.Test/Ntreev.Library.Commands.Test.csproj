@@ -52,7 +52,6 @@
     <Compile Include="GitCommandLineParser.cs" />
     <Compile Include="GitSummaryAttribute.cs" />
     <Compile Include="GitDescriptionAttribute.cs" />
-    <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

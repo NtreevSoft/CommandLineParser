@@ -100,7 +100,6 @@
     <Compile Include="SummaryAttribute.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="IndentedTextWriterExtensions.cs" />
-    <Compile Include="InvalidSwitchStringException.cs" />
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="MethodDescriptorCollection.cs" />
     <Compile Include="MethodInvokeException.cs" />
