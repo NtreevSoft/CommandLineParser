@@ -51,24 +51,6 @@ namespace Ntreev.Library.Commands
             this.Execute(CommandLineParser.Split(arguments));
         }
 
-        //public virtual void PrintVersion()
-        //{
-        //    var info = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-        //    using (var writer = new IndentedTextWriter(this.Out))
-        //    {
-        //        writer.WriteLine("{0} {1}", this.Name, this.Version);
-        //        writer.WriteLine(info.LegalCopyright);
-        //    }
-        //}
-
-        //public virtual void PrintHelp()
-        //{
-        //    using (var writer = new IndentedTextWriter(this.Out))
-        //    {
-
-        //    }
-        //}
-
         public TextWriter Out
         {
             get { return this.writer ?? Console.Out; }
@@ -182,47 +164,5 @@ namespace Ntreev.Library.Commands
             }
             return true;
         }
-
-        //private void PrintHelp(string[] args)
-        //{
-        //    if (args.Any() == false || args.First() == string.Empty)
-        //    {
-        //        this.PrintHelp();
-        //    }
-        //    else
-        //    {
-        //        var commandName = args.First();
-        //        if (this.commands.ContainsKey(commandName) == true)
-        //        {
-        //            var command = this.commands[commandName];
-        //            var parser = this.parsers[command];
-
-        //            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
-        //            {
-        //                var subCommandName = args.Skip(1).FirstOrDefault() ?? string.Empty;
-        //                if (subCommandName == string.Empty)
-        //                    parser.PrintMethodUsage();
-        //                else
-        //                    parser.PrintMethodUsage(subCommandName);
-        //            }
-        //            else
-        //            {
-        //                parser.PrintUsage();
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private void PrintHel(IndentedTextWriter textWriter)
-        //{
-        //    textWriter.WriteLine("Commands");
-
-        //    textWriter.Indent++;
-        //    foreach (var item in this.parsers)
-        //    {
-        //        textWriter.WriteLine(item.Value.Name);
-        //    }
-        //    textWriter.Indent--;
-        //}
     }
 }

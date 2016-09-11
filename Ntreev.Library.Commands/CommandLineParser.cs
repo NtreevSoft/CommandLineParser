@@ -32,6 +32,7 @@ using System.Text.RegularExpressions;
 using Trace = System.Diagnostics.Trace;
 using Ntreev.Library.Commands.Properties;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Ntreev.Library.Commands
 {
@@ -42,6 +43,7 @@ namespace Ntreev.Library.Commands
     {
         private string name;
         private object instance;
+        private Version version;
         private CommandUsagePrinter switchUsagePrinter;
         private MethodUsagePrinter methodUsagePrinter;
 
@@ -54,15 +56,9 @@ namespace Ntreev.Library.Commands
         public CommandLineParser(string name, object instance)
         {
             this.HelpName = "help";
+            this.VersionName = "--version";
             this.instance = instance;
-            this.name = name ?? string.Empty;
-            if (this.name == string.Empty)
-            {
-                if (instance is ICommand)
-                    this.name = (instance as ICommand).Name;
-                else
-                    this.name = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-            }
+            this.name = string.IsNullOrEmpty(name) == true ? Process.GetCurrentProcess().ProcessName : name;
             this.switchUsagePrinter = this.CreateUsagePrinterCore(this.name, instance);
             this.methodUsagePrinter = this.CreateMethodUsagePrinterCore(this.name, instance);
             this.Out = Console.Out;
@@ -88,7 +84,12 @@ namespace Ntreev.Library.Commands
 
             if (arguments == this.HelpName)
             {
-                this.PrintHelp();
+                this.PrintUsage();
+                return false;
+            }
+            else if (arguments == this.VersionName)
+            {
+                this.PrintVersion();
                 return false;
             }
             else
@@ -131,7 +132,12 @@ namespace Ntreev.Library.Commands
             }
             else if (method == this.HelpName)
             {
-                this.PrintMethodHelp(arguments);
+                this.PrintMethodUsage(arguments);
+                return false;
+            }
+            else if (arguments == this.VersionName)
+            {
+                this.PrintVersion();
                 return false;
             }
             else
@@ -143,42 +149,37 @@ namespace Ntreev.Library.Commands
                     throw new NotFoundMethodException(method);
                 }
 
-                try
-                {
-                    descriptor.Invoke(this.instance, arguments);
-                    return true;
-                }
-                catch (SwitchException e)
-                {
-                    throw e;
-                }
-                catch (TargetInvocationException e)
-                {
-                    if (e.InnerException != null)
-                        throw new MethodInvokeException(method, e.InnerException);
-                    throw e;
-                }
-                catch (Exception e)
-                {
-                    throw new MethodInvokeException(method, e);
-                }
+                descriptor.Invoke(this.instance, arguments);
+                return true;
             }
+        }
+
+        public virtual void PrintSummary()
+        {
+            this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
         }
 
         /// <summary>
         /// 모든 스위치의 사용법을 출력합니다.
         /// </summary>
-        public void PrintUsage()
+        public virtual void PrintUsage()
         {
             this.switchUsagePrinter.Print(this.Out);
         }
 
-        public void PrintMethodUsage()
+        public virtual void PrintVersion()
+        {
+            var info = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+            this.Out.WriteLine("{0} {1}", this.Name, this.Version);
+            this.Out.WriteLine(info.LegalCopyright);
+        }
+
+        public virtual void PrintMethodUsage()
         {
             this.methodUsagePrinter.Print(this.Out);
         }
 
-        public void PrintMethodUsage(string methodName)
+        public virtual void PrintMethodUsage(string methodName)
         {
             this.methodUsagePrinter.Print(this.Out, methodName);
         }
@@ -194,36 +195,6 @@ namespace Ntreev.Library.Commands
             var arguments = commandLine.Substring(match.Length).Trim();
 
             return new string[] { name, arguments, };
-        }
-
-        protected virtual void PrintHelp()
-        {
-            this.PrintUsage();
-        }
-
-        protected virtual void PrintMethodHelp(string methodName)
-        {
-            if (string.IsNullOrEmpty(methodName) == true)
-            {
-                this.PrintMethodUsage();
-            }
-            else
-            {
-                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), methodName);
-                if (descriptor == null)
-                {
-                    this.Out.WriteLine("{0} is not subcommand", methodName);
-                }
-                else
-                {
-                    this.PrintMethodUsage(methodName);
-                }
-            }
-        }
-
-        protected virtual void PrintSummary()
-        {
-            this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
         }
 
         /// <summary>
@@ -243,7 +214,28 @@ namespace Ntreev.Library.Commands
 
         public string HelpName
         {
-            get;set;
+            get; set;
+        }
+
+        public string VersionName
+        {
+            get; set;
+        }
+
+        public Version Version
+        {
+            get
+            {
+                if (this.version == null)
+                {
+                    return new Version(FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion);
+                }
+                return this.version;
+            }
+            set
+            {
+                this.version = value;
+            }
         }
 
         protected virtual CommandUsagePrinter CreateUsagePrinterCore(string name, object instance)

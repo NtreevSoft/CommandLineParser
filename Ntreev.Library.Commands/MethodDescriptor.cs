@@ -11,7 +11,6 @@ namespace Ntreev.Library.Commands
     public class MethodDescriptor
     {
         private readonly MethodInfo methodInfo;
-        //private readonly CommandMethodAttribute attribute;
         private readonly string originalName;
         private readonly string name;
         private readonly string displayName;
@@ -45,7 +44,7 @@ namespace Ntreev.Library.Commands
                 {
                     var switchDescriptor = CommandDescriptor.GetMethodSwitchDescriptors(methodInfo.DeclaringType)[item];
                     if (switchDescriptor == null)
-                        throw new SwitchException(string.Format("{0} 은(는) 존재하지 않는 속성입니다.", item));
+                        throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 속성입니다.", item));
                     switchList.Add(switchDescriptor);
                 }
             }

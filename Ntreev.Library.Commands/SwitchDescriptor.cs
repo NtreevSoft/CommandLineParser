@@ -227,24 +227,6 @@ namespace Ntreev.Library.Commands
             get { return this.switchType; }
         }
 
-        internal void SetValue(object instance, string arg)
-        {
-            this.valueSetter.SetValue(instance, arg);
-        }
-
-        internal object GetVaue(object instance)
-        {
-            return this.valueSetter.GetValue(instance);
-        }
-
-        internal string TryMatch(string switchLine)
-        {
-            var match = Regex.Match(switchLine, this.Pattern, RegexOptions.ExplicitCapture);
-            if (match.Success == false)
-                return null;
-            return match.Groups[SwitchDescriptor.ArgGroupName].Value;
-        }
-
         private string BuildPattern()
         {
             var quotes = string.Format(@"(""(?<{0}>.*)"")", SwitchDescriptor.ArgGroupName);
@@ -264,7 +246,7 @@ namespace Ntreev.Library.Commands
                 pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
             }
 
-            char? argSeperator = this.switchAttribute.GetArgSeperator();
+            var argSeperator = this.switchAttribute.GetArgSeperator();
             if (this.ArgType != typeof(bool) || argSeperator != null)
             {
                 if (argSeperator == null)
@@ -296,7 +278,7 @@ namespace Ntreev.Library.Commands
             else if (this.switchAttribute.NameType == SwitchNameTypes.ShortName)
             {
                 if (shortName == string.Empty)
-                    throw new SwitchException("짧은 이름이 존재하지 않습니다.");
+                    throw new ArgumentException("짧은 이름이 존재하지 않습니다.");
                 name = string.Empty;
             }
             else
@@ -317,6 +299,26 @@ namespace Ntreev.Library.Commands
                 return this.pattern;
             }
         }
+
+        internal void SetValue(object instance, string arg)
+        {
+            this.valueSetter.SetValue(instance, arg);
+        }
+
+        internal object GetVaue(object instance)
+        {
+            return this.valueSetter.GetValue(instance);
+        }
+
+        internal string TryMatch(string switchLine)
+        {
+            var match = Regex.Match(switchLine, this.Pattern, RegexOptions.ExplicitCapture);
+            if (match.Success == false)
+                return null;
+            return match.Groups[SwitchDescriptor.ArgGroupName].Value;
+        }
+
+        #region setters
 
         abstract class ValueSetter
         {
@@ -408,5 +410,7 @@ namespace Ntreev.Library.Commands
                 return this.value;
             }
         }
+
+        #endregion
     }
 }

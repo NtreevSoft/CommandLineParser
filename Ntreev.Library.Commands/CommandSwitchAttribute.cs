@@ -73,11 +73,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        internal char? GetArgSeperator()
-        {
-            return this.argSeperator;
-        }
-
         /// <summary>
         /// <seealso cref="CommandSwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
         /// </summary>
@@ -144,6 +139,11 @@ namespace Ntreev.Library.Commands
         }
 
         public SwitchNameTypes NameType { get; set; }
+
+        internal char? GetArgSeperator()
+        {
+            return this.argSeperator;
+        }
 
         internal string ShortNameInternal
         {

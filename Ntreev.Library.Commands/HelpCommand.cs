@@ -53,12 +53,6 @@ namespace Ntreev.Library.Commands
 
         }
 
-        //[DefaultCommand]
-        //public void Execute(string commandName, string subCommandName = null)
-        //{
-
-        //}
-
         public CommandTypes Types
         {
             get { return CommandTypes.AllowEmptyArgument; }

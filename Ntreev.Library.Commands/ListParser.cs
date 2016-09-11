@@ -81,7 +81,7 @@ namespace Ntreev.Library.Commands
             }
             catch (Exception e)
             {
-                throw new SwitchException(Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new ArgumentException(Resources.InvalidArgumentType, switchDescriptor.Name, e);
             }
 
             return list;
