@@ -86,21 +86,22 @@ namespace Ntreev.Library.Commands
             this.SetValues(instance);
         }
 
-        public void Parse(object instance, string[] switchLines)
-        {
-            this.args.Clear();
-            this.AssertValidation();
+        //public void Parse(object instance, string[] switchLines)
+        //{
+        //    this.args.Clear();
+        //    this.AssertValidation();
 
-            foreach (string switchLine in switchLines)
-            {
-                var descriptor = this.DoMatch(switchLine);
-                if (descriptor == null)
-                    throw new ArgumentException(Resources.NotFoundMatchedSwitch, switchLine);
-            }
+        //    foreach (string switchLine in switchLines)
+        //    {
+        //        var parsed = string.Empty;
+        //        var descriptor = this.DoMatch(switchLine, ref parsed);
+        //        if (descriptor == null)
+        //            throw new ArgumentException(Resources.NotFoundMatchedSwitch, switchLine);
+        //    }
 
-            this.AssertRequired();
-            this.SetValues(instance);
-        }
+        //    this.AssertRequired();
+        //    this.SetValues(instance);
+        //}
 
         public void SetValues(object instance)
         {
@@ -118,13 +119,14 @@ namespace Ntreev.Library.Commands
             var shortPattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.ShortSwitchDelimiter);
 
             var match = Regex.Match(arguments, pattern);
+            var parsed = string.Empty;
 
             if (match.Success == true)
             {
-                var descriptor = this.DoMatch(match.Value);
+                var descriptor = this.DoMatch(match.Value, ref parsed);
                 if (descriptor != null)
                 {
-                    arguments = arguments.Substring(match.Length).Trim();
+                    arguments = arguments.Substring(parsed.Length).Trim();
                     return descriptor;
                 }
             }
@@ -133,10 +135,10 @@ namespace Ntreev.Library.Commands
 
             if (shortMatch.Success == true)
             {
-                var descriptor = this.DoMatch(shortMatch.Value);
+                var descriptor = this.DoMatch(shortMatch.Value, ref parsed);
                 if (descriptor != null)
                 {
-                    arguments = arguments.Substring(shortMatch.Length).Trim();
+                    arguments = arguments.Substring(parsed.Length).Trim();
                     return descriptor;
                 }
             }
@@ -160,11 +162,11 @@ namespace Ntreev.Library.Commands
             throw new Exception();
         }
 
-        private SwitchDescriptor DoMatch(string switchLine)
+        private SwitchDescriptor DoMatch(string switchLine, ref string parsed)
         {
             foreach (var item in this.switches)
             {
-                var arg = item.TryMatch(switchLine);
+                var arg = item.TryMatch(switchLine, ref parsed);
                 if (arg != null)
                 {
                     if (this.args.ContainsKey(item) == true)

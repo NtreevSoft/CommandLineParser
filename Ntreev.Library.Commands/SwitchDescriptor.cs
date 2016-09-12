@@ -310,11 +310,12 @@ namespace Ntreev.Library.Commands
             return this.valueSetter.GetValue(instance);
         }
 
-        internal string TryMatch(string switchLine)
+        internal string TryMatch(string switchLine, ref string parsed)
         {
             var match = Regex.Match(switchLine, this.Pattern, RegexOptions.ExplicitCapture);
             if (match.Success == false)
                 return null;
+            parsed = match.Value;
             return match.Groups[SwitchDescriptor.ArgGroupName].Value;
         }
 
