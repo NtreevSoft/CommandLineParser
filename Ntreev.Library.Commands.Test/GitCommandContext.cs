@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands.Test
 
         protected override CommandLineParser CreateInstance(ICommand command)
         {
-            return new GitCommandLineParser(command);
+            return new GitCommandLineParser(command.Name, command);
         }
     }
 }

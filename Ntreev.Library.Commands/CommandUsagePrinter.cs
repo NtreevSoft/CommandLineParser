@@ -49,7 +49,7 @@ namespace Ntreev.Library.Commands
 
         public virtual void Print(TextWriter writer)
         {
-            using (var tw = new IndentedTextWriter(writer))
+            using (var tw = new CommandTextWriter(writer))
             {
                 this.Print(tw);
             }
@@ -75,7 +75,7 @@ namespace Ntreev.Library.Commands
             get { return this.switches; }
         }
 
-        private void Print(IndentedTextWriter writer)
+        private void Print(CommandTextWriter writer)
         {
             this.PrintSummary(writer);
             this.PrintUsage(writer);
@@ -84,7 +84,7 @@ namespace Ntreev.Library.Commands
             this.PrintOptions(writer);
         }
 
-        private void PrintSummary(IndentedTextWriter writer)
+        private void PrintSummary(CommandTextWriter writer)
         {
             var summary = this.Instance.GetType().GetSummary();
             writer.WriteLine(Resources.Summary);
@@ -94,7 +94,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintUsage(IndentedTextWriter writer)
+        private void PrintUsage(CommandTextWriter writer)
         {
             var switches = this.GetSwitchesString(this.Switches.Where(i => i.Required));
             var options = this.GetOptionsString(this.Switches.Where(i => i.Required == false));
@@ -107,7 +107,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintDescription(IndentedTextWriter writer)
+        private void PrintDescription(CommandTextWriter writer)
         {
             writer.WriteLine(Resources.Description);
             writer.Indent++;
@@ -116,7 +116,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintRequirements(IndentedTextWriter writer)
+        private void PrintRequirements(CommandTextWriter writer)
         {
             var switches = this.Switches.Where(i => i.Required == true).ToArray();
             if (switches.Any() == false)
@@ -132,7 +132,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintOptions(IndentedTextWriter writer)
+        private void PrintOptions(CommandTextWriter writer)
         {
             var switches = this.Switches.Where(i => i.Required == false).ToArray();
             if (switches.Any() == false)
@@ -148,7 +148,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintRequirement(IndentedTextWriter writer, SwitchDescriptor descriptor)
+        private void PrintRequirement(CommandTextWriter writer, SwitchDescriptor descriptor)
         {
             writer.WriteLine(descriptor.DisplayName);
             if (descriptor.Description != string.Empty)
@@ -160,7 +160,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintOption(IndentedTextWriter writer, SwitchDescriptor descriptor)
+        private void PrintOption(CommandTextWriter writer, SwitchDescriptor descriptor)
         {
             if (descriptor.ShortNamePattern != string.Empty)
                 writer.WriteLine(descriptor.ShortNamePattern);

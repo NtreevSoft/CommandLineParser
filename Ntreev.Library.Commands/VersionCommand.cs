@@ -25,7 +25,7 @@ namespace Ntreev.Library.Commands
         public void Execute()
         {
             var info = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-            using (var writer = new IndentedTextWriter(this.commandContext.Out))
+            using (var writer = new CommandTextWriter(this.commandContext.Out))
             {
                 if (this.IsQuiet == false)
                 {
@@ -56,7 +56,7 @@ namespace Ntreev.Library.Commands
             get; set;
         }
 
-        private void PrintList(IndentedTextWriter writer)
+        private void PrintList(CommandTextWriter writer)
         {
             this.commandContext.Parsers[this].PrintUsage();
 
