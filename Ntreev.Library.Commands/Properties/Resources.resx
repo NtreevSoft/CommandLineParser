@@ -165,6 +165,9 @@
   <data name="Requirements" xml:space="preserve">
     <value>필수 인수</value>
   </data>
+  <data name="SubCommands" xml:space="preserve">
+    <value>하위 명령들</value>
+  </data>
   <data name="Summary" xml:space="preserve">
     <value>요약</value>
   </data>

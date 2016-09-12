@@ -87,7 +87,10 @@ namespace Ntreev.Library.Commands
         private void PrintSummary(CommandTextWriter writer)
         {
             var summary = this.Instance.GetType().GetSummary();
-            writer.WriteLine("Name");
+            if (summary == string.Empty)
+                return;
+
+            writer.WriteLine(Resources.Summary);
             writer.Indent++;
             writer.WriteLine(summary);
             writer.Indent--;
@@ -99,7 +102,7 @@ namespace Ntreev.Library.Commands
             if (descriptor.Summary == string.Empty)
                 return;
 
-            writer.WriteLine("Summary");
+            writer.WriteLine(Resources.Summary);
             writer.Indent++;
             writer.WriteLine(descriptor.Summary);
             writer.Indent--;
@@ -111,7 +114,7 @@ namespace Ntreev.Library.Commands
             if (this.Description == string.Empty)
                 return;
 
-            writer.WriteLine("Description");
+            writer.WriteLine(Resources.Description);
             writer.Indent++;
             writer.WriteMultiline(this.Description);
             writer.Indent--;
@@ -122,7 +125,8 @@ namespace Ntreev.Library.Commands
         {
             if (descriptor.Description == string.Empty)
                 return;
-            writer.WriteLine("Description");
+
+            writer.WriteLine(Resources.Description);
             writer.Indent++;
             writer.WriteMultiline(descriptor.Description);
             writer.Indent--;
@@ -131,7 +135,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintSubcommands(CommandTextWriter writer)
         {
-            writer.WriteLine("SubCommands");
+            writer.WriteLine(Resources.SubCommands);
             writer.Indent++;
 
             foreach (var item in this.Methods)
@@ -151,7 +155,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintUsage(CommandTextWriter writer)
         {
-            writer.WriteLine("Usage");
+            writer.WriteLine(Resources.Usage);
             writer.Indent++;
 
             writer.WriteLine("{0} <sub-command> [options...]", this.Name);
@@ -162,7 +166,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintUsage(CommandTextWriter writer, MethodDescriptor descriptor)
         {
-            writer.WriteLine("Usage");
+            writer.WriteLine(Resources.Usage);
             writer.Indent++;
 
             this.PrintMethodUsage(writer, descriptor);
@@ -208,7 +212,7 @@ namespace Ntreev.Library.Commands
             if (switches.Any() == false)
                 return;
 
-            writer.WriteLine("Requirements");
+            writer.WriteLine(Resources.Requirements);
             writer.Indent++;
             for (var i = 0; i < switches.Length; i++)
             {
@@ -228,7 +232,7 @@ namespace Ntreev.Library.Commands
             if (switches.Any() == false)
                 return;
 
-            writer.WriteLine("Options");
+            writer.WriteLine(Resources.Options);
             writer.Indent++;
 
             for (var i = 0; i < switches.Length; i++)
@@ -276,12 +280,12 @@ namespace Ntreev.Library.Commands
             writer.Indent--;
         }
 
-        private string GetOptionString(SwitchDescriptor descriptor)
-        {
-            var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
-            var patternText = string.Join(" | ", patternItems.Where(i => i != string.Empty));
-            return string.Format("[{0}]", patternText);
-        }
+        //private string GetOptionString(SwitchDescriptor descriptor)
+        //{
+        //    var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
+        //    var patternText = string.Join(" | ", patternItems.Where(i => i != string.Empty));
+        //    return string.Format("[{0}]", patternText);
+        //}
 
         //private string GetOptionsString(IEnumerable<SwitchDescriptor> switches)
         //{

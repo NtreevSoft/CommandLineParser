@@ -50,7 +50,6 @@ namespace Ntreev.Library.Commands
                     parser.PrintUsage();
                 }
             }
-
         }
 
         public CommandTypes Types
