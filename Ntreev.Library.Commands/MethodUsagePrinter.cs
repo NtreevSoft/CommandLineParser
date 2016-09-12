@@ -138,7 +138,10 @@ namespace Ntreev.Library.Commands
             {
                 writer.WriteLine(item.Name);
                 writer.Indent++;
-                writer.WriteMultiline(item.Summary);
+                if (item.Summary == string.Empty)
+                    writer.WriteMultiline("*요약이 정의되지 않았습니다.*");
+                else
+                    writer.WriteMultiline(item.Summary);
                 writer.Indent--;
             }
 
@@ -207,9 +210,12 @@ namespace Ntreev.Library.Commands
 
             writer.WriteLine("Requirements");
             writer.Indent++;
-            foreach (var item in switches)
+            for (var i = 0; i < switches.Length; i++)
             {
+                var item = switches[i];
                 this.PrintRequirement(writer, item);
+                if (i + 1 < switches.Length)
+                    writer.WriteLine();
             }
             writer.Indent--;
             writer.WriteLine();
@@ -217,12 +223,20 @@ namespace Ntreev.Library.Commands
 
         private void PrintOptions(CommandTextWriter writer, MethodDescriptor descriptor)
         {
+            var switches = descriptor.Switches.Where(i => i.Required == false).ToArray();
+
+            if (switches.Any() == false)
+                return;
+
             writer.WriteLine("Options");
             writer.Indent++;
 
-            foreach (var item in descriptor.Switches.Where(i => i.Required == false))
+            for (var i = 0; i < switches.Length; i++)
             {
+                var item = switches[i];
                 this.PrintOption(writer, item);
+                if (i + 1 < switches.Length)
+                    writer.WriteLine();
             }
             writer.Indent--;
             writer.WriteLine();
@@ -248,7 +262,6 @@ namespace Ntreev.Library.Commands
                 textWriter.WriteMultiline(descriptor.Description);
                 textWriter.Indent--;
             }
-            textWriter.WriteLine();
         }
 
         private void PrintOption(CommandTextWriter writer, SwitchDescriptor descriptor)
@@ -261,7 +274,6 @@ namespace Ntreev.Library.Commands
             writer.Indent++;
             writer.WriteMultiline(descriptor.Description);
             writer.Indent--;
-            writer.WriteLine();
         }
 
         private string GetOptionString(SwitchDescriptor descriptor)

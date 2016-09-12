@@ -39,19 +39,48 @@ namespace Ntreev.Library.Commands
 
         private void WriteMultilineCore(string s)
         {
+            var indent = this.Indent;
             var emptyCount = this.TabString.Length * this.Indent;
             var width = Console.WindowWidth - emptyCount;
 
             var i = emptyCount;
+            this.Indent = 0;
+            
             foreach (var item in s)
             {
-                this.Write(item);
                 if (Console.CursorLeft == 0)
                 {
                     this.Write(string.Empty.PadRight(emptyCount));
+                    if (item == ' ')
+                        continue;
                 }
+                if (Console.CursorLeft == emptyCount && item == ' ')
+                {
+                    
+                }
+                //else
+                {
+                    var y = Console.CursorTop;
+                    this.Write(item);
+                    if (Console.CursorTop != y && item != ' ')
+                    {
+                        if (Console.CursorLeft != 0)
+                        {
+                            Console.CursorLeft = 0;
+                            this.Write(string.Empty.PadRight(emptyCount));
+                            this.Write(item);
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+                
+
             }
             this.WriteLine();
+            this.Indent = indent;
         }
 
         public string TabString

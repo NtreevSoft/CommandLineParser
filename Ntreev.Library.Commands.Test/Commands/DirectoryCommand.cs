@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
+    [Summary("현재 경로에 하위 목록을 표시합니다.")]
     class DirectoryCommand : ICommand
     {
         public string Name

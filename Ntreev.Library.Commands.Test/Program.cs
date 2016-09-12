@@ -38,9 +38,9 @@ namespace Ntreev.Library.Commands.Test
     {
         static void Main(string[] args)
         {
-            var dir = new Commands.StashCommand();
+            var dir = new Commands.AddCommand();
             var parser = new CommandLineParser(dir);
-            if (parser.Invoke(Environment.CommandLine) == true)
+            if (parser.Parse(Environment.CommandLine) == true)
             {
 
             }
