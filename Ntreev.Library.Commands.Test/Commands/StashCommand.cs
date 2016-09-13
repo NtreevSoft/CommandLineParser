@@ -91,7 +91,7 @@ namespace Ntreev.Library.Commands.Test.Commands
             get; set;
         }
 
-        [CommandSwitch(Required = true)]
+        [CommandSwitch(ShortName = 't', Required = true)]
         public int Port
         {
             get; set;

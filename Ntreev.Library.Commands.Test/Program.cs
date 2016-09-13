@@ -30,6 +30,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Ntreev.Library.Commands.Test.Properties;
 
 namespace Ntreev.Library.Commands.Test
 {
@@ -37,14 +38,8 @@ namespace Ntreev.Library.Commands.Test
     {
         static void Main(string[] args)
         {
-            var dir = new Commands.DirectoryCommand();
-            var parser = new CommandLineParser(dir);
-            //parser.Parse(Environment.CommandLine);
-            parser.PrintMethodUsage();
-            return;
-
             var context = Container.GetService<CommandContext>();
-           
+
             try
             {
                 context.Execute(Environment.CommandLine);

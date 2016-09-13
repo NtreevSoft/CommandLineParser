@@ -132,7 +132,10 @@ namespace Ntreev.Library.Commands
             }
             else if (method == this.HelpName)
             {
-                this.PrintMethodUsage(arguments);
+                if (arguments == string.Empty)
+                    this.PrintMethodUsage();
+                else
+                    this.PrintMethodUsage(arguments);
                 return false;
             }
             else if (arguments == this.VersionName)

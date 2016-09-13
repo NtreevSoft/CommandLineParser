@@ -205,6 +205,15 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   하위 명령들과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string SubCommands {
+            get {
+                return ResourceManager.GetString("SubCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   요약과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Summary {

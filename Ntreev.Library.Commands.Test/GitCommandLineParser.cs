@@ -9,8 +9,8 @@ namespace Ntreev.Library.Commands.Test
 {
     class GitCommandLineParser : CommandLineParser
     {
-        public GitCommandLineParser(object instance)
-            : base(instance)
+        public GitCommandLineParser(string name, object instance)
+            : base(name, instance)
         {
 
         }

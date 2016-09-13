@@ -28,7 +28,7 @@ namespace Ntreev.Library.Commands
         {
             if (this.CommandName == string.Empty)
             {
-                using (var writer = new IndentedTextWriter(this.commandContext.Out))
+                using (var writer = new CommandTextWriter(this.commandContext.Out))
                 {
                     this.PrintList(writer);
                 }
@@ -50,7 +50,6 @@ namespace Ntreev.Library.Commands
                     parser.PrintUsage();
                 }
             }
-
         }
 
         public CommandTypes Types
@@ -79,7 +78,7 @@ namespace Ntreev.Library.Commands
             get; set;
         }
 
-        private void PrintList(IndentedTextWriter writer)
+        private void PrintList(CommandTextWriter writer)
         {
             this.commandContext.Parsers[this].PrintUsage();
 
