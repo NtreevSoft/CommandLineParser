@@ -38,14 +38,6 @@ namespace Ntreev.Library.Commands.Test
     {
         static void Main(string[] args)
         {
-            //var dir = new Commands.AddCommand();
-            //var parser = new CommandLineParser(dir);
-            //if (parser.Parse(Environment.CommandLine) == true)
-            //{
-
-            //}
-            //return;
-
             var context = Container.GetService<CommandContext>();
 
             try
