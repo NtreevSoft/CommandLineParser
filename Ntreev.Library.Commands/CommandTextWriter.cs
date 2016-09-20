@@ -13,7 +13,7 @@ namespace Ntreev.Library.Commands
         private readonly int width;
 
         public CommandTextWriter(TextWriter writer)
-            : this(writer, Console.WindowWidth)
+            : this(writer, Console.BufferWidth)
         {
 
         }
