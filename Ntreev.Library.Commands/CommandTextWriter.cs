@@ -13,7 +13,7 @@ namespace Ntreev.Library.Commands
         private readonly int width;
 
         public CommandTextWriter(TextWriter writer)
-            : this(writer, Console.BufferWidth)
+            : this(writer, Console.IsOutputRedirected == true ? int.MaxValue : Console.BufferWidth)
         {
 
         }
@@ -45,38 +45,23 @@ namespace Ntreev.Library.Commands
 
             var i = emptyCount;
             this.Indent = 0;
-            
+
+            var x = 0;
             foreach (var item in s)
             {
-                if (Console.CursorLeft == 0)
+                if (x == 0)
                 {
                     this.Write(string.Empty.PadRight(emptyCount));
+                    x += emptyCount;
                     if (item == ' ')
                         continue;
                 }
-                if (Console.CursorLeft == emptyCount && item == ' ')
+                this.Write(item);
+                x++;
+                if (x == this.width || Console.CursorLeft == 0)
                 {
-                    
+                    x = 0;
                 }
-                //else
-                {
-                    var y = Console.CursorTop;
-                    this.Write(item);
-                    if (Console.CursorTop != y && item != ' ')
-                    {
-                        if (Console.CursorLeft != 0)
-                        {
-                            Console.CursorLeft = 0;
-                            this.Write(string.Empty.PadRight(emptyCount));
-                            this.Write(item);
-                        }
-                        else
-                        {
-
-                        }
-                    }
-                }
-                
 
             }
             this.WriteLine();
