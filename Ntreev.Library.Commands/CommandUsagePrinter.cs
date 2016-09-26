@@ -38,6 +38,7 @@ namespace Ntreev.Library.Commands
         private readonly object instance;
         private readonly string description;
         private readonly SwitchDescriptor[] switches;
+        private readonly IUsageDescriptionProvider provider;
 
         public CommandUsagePrinter(string name, object instance)
         {
@@ -45,6 +46,7 @@ namespace Ntreev.Library.Commands
             this.instance = instance;
             this.description = instance.GetType().GetDescription();
             this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
+            this.provider = instance.GetType().GetUsageDescriptionProvider();
         }
 
         public virtual void Print(TextWriter writer)
@@ -86,7 +88,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintSummary(CommandTextWriter writer)
         {
-            var summary = this.Instance.GetType().GetSummary();
+            var summary = this.provider.GetSummary(this.Instance);
             if (summary == string.Empty)
                 return;
 

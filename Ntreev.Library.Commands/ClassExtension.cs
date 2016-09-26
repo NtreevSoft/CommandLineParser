@@ -15,6 +15,15 @@ namespace Ntreev.Library.Commands
             return propertyDescriptor.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
         }
 
+        public static string GetSummary(this PropertyDescriptor propertyDescriptor)
+        {
+            var attr = propertyDescriptor.Attributes[typeof(SummaryAttribute)] as SummaryAttribute;
+            if (attr == null)
+                return string.Empty;
+
+            return attr.Summary;
+        }
+
         public static object GetDefaultValue(this PropertyDescriptor propertyDescriptor)
         {
             var attr = propertyDescriptor.Attributes[typeof(DefaultValueAttribute)] as DefaultValueAttribute;
@@ -100,6 +109,15 @@ namespace Ntreev.Library.Commands
                 return true;
 
             return attribute.Browsable;
+        }
+
+        public static IUsageDescriptionProvider GetUsageDescriptionProvider(this ICustomAttributeProvider customAttributeProvider)
+        {
+            var attribute = customAttributeProvider.GetCustomAttribute<UsageDescriptionProviderAttribute>();
+            if (attribute == null)
+                return UsageDescriptionProvider.Default;
+
+            return attribute.CreateInstance();
         }
 
         public static TypeConverter GetConverter(this PropertyInfo propertyInfo)

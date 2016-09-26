@@ -69,6 +69,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgSeperator.cs" />
@@ -80,8 +81,11 @@
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
+    <Compile Include="UsageDescriptionProvider.cs" />
     <Compile Include="SRSummaryAttribute.cs" />
     <Compile Include="SwitchTypes.cs" />
+    <Compile Include="IUsageDescriptionProvider.cs" />
+    <Compile Include="UsageDescriptionProviderAttribute.cs" />
     <Compile Include="VersionCommand.cs" />
     <Compile Include="HelpCommand.cs" />
     <Compile Include="SRDescriptionAttribute.cs" />
