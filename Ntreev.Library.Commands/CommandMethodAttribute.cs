@@ -10,6 +10,12 @@ namespace Ntreev.Library.Commands
     {
         private readonly string name;
 
+        public CommandMethodAttribute()
+            : this(string.Empty)
+        {
+
+        }
+
         public CommandMethodAttribute(string name)
         {
             this.name = name;
