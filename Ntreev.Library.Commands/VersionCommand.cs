@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    [SRSummary("VersionSummary")]
+    [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class VersionCommand : ICommand
     {
         private readonly CommandContext commandContext;

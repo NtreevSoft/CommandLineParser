@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands
 
         public UsageDescriptionProviderAttribute(Type type)
         {
-            if (type.IsAssignableFrom(typeof(IUsageDescriptionProvider)) == false)
+            if (typeof(IUsageDescriptionProvider).IsAssignableFrom(type) == false)
                 throw new ArgumentException();
             this.type = type;
         }

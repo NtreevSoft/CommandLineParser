@@ -39,28 +39,28 @@ namespace Ntreev.Library.Commands.Test
     {
         static void Main(string[] args)
         {
-            var res = typeof(Program).Assembly.GetManifestResourceNames();
+            //var res = typeof(Program).Assembly.GetManifestResourceNames();
 
-            var stream = typeof(Program).Assembly.GetManifestResourceStream(typeof(Commands.AddCommand).FullName + ".resources");
+            //var stream = typeof(Program).Assembly.GetManifestResourceStream(typeof(Commands.AddCommand).FullName + ".resources");
 
-            ResourceSet resSet = new ResourceSet(stream);
-            int qwe11r = 0;
+            //ResourceSet resSet = new ResourceSet(stream);
+            //int qwe11r = 0;
 
-            var reader = new StreamReader(stream);
-            reader.ReadToEnd();
-            for (var i = 255; i < 600; i++)
-            {
-                var c = Convert.ToChar(i);
-                Console.CursorLeft = 0;
-                Console.Write(c);
-                if (Console.CursorLeft == 1)
-                {
-                    var category = char.GetUnicodeCategory(c);
-                    if (category == System.Globalization.UnicodeCategory.LowercaseLetter)
-                        continue;
-                    int qwer = 0;
-                }
-            }
+            //var reader = new StreamReader(stream);
+            //reader.ReadToEnd();
+            //for (var i = 255; i < 600; i++)
+            //{
+            //    var c = Convert.ToChar(i);
+            //    Console.CursorLeft = 0;
+            //    Console.Write(c);
+            //    if (Console.CursorLeft == 1)
+            //    {
+            //        var category = char.GetUnicodeCategory(c);
+            //        if (category == System.Globalization.UnicodeCategory.LowercaseLetter)
+            //            continue;
+            //        int qwer = 0;
+            //    }
+            //}
             var context = Container.GetService<CommandContext>();
 
             try

@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
-    [GitSummary("StashSummary")]
-    [GitDescription("StashDescription")]
+    [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class StashCommand : ICommand
     {
         public CommandTypes Types
@@ -30,7 +29,6 @@ namespace Ntreev.Library.Commands.Test.Commands
         }
 
         [CommandMethod("list")]
-        [GitDescription("ListDescription_StashCommand")]
         public void List(string options)
         {
 

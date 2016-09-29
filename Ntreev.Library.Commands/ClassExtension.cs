@@ -111,14 +111,7 @@ namespace Ntreev.Library.Commands
             return attribute.Browsable;
         }
 
-        public static IUsageDescriptionProvider GetUsageDescriptionProvider(this ICustomAttributeProvider customAttributeProvider)
-        {
-            var attribute = customAttributeProvider.GetCustomAttribute<UsageDescriptionProviderAttribute>();
-            if (attribute == null)
-                return UsageDescriptionProvider.Default;
-
-            return attribute.CreateInstance();
-        }
+        
 
         public static TypeConverter GetConverter(this PropertyInfo propertyInfo)
         {

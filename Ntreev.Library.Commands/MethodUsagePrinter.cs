@@ -12,15 +12,18 @@ namespace Ntreev.Library.Commands
     {
         private readonly string name;
         private readonly object instance;
-        private readonly string description;
         private readonly MethodDescriptor[] descriptors;
+        private readonly string summary;
+        private readonly string description;
 
         public MethodUsagePrinter(string name, object instance)
         {
             this.name = name;
             this.instance = instance;
-            this.description = instance.GetType().GetDescription();
             this.descriptors = CommandDescriptor.GetMethodDescriptors(instance.GetType()).ToArray();
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
+            this.summary = provider.GetSummary(instance);
+            this.description = provider.GetDescription(instance);
         }
 
         public virtual void Print(TextWriter writer)
@@ -52,6 +55,11 @@ namespace Ntreev.Library.Commands
         protected object Instance
         {
             get { return this.instance; }
+        }
+
+        protected string Summary
+        {
+            get { return this.summary; }
         }
 
         protected string Description
@@ -86,20 +94,19 @@ namespace Ntreev.Library.Commands
 
         private void PrintSummary(CommandTextWriter writer)
         {
-            var summary = this.Instance.GetType().GetSummary();
-            if (summary == string.Empty)
+            if (this.Summary == string.Empty)
                 return;
 
             writer.WriteLine(Resources.Summary);
             writer.Indent++;
-            writer.WriteLine(summary);
+            writer.WriteLine(this.Summary);
             writer.Indent--;
             writer.WriteLine();
         }
 
         private void PrintSummary(CommandTextWriter writer, MethodDescriptor descriptor)
         {
-            if (descriptor.Summary == string.Empty)
+            if (this.Description == string.Empty)
                 return;
 
             writer.WriteLine(Resources.Summary);

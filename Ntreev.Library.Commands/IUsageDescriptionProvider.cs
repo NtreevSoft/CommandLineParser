@@ -25,5 +25,9 @@ namespace Ntreev.Library.Commands
         string GetDescription(ParameterInfo parameterInfo);
 
         string GetSummary(ParameterInfo parameterInfo);
+
+        string GetDescription(MethodInfo methodInfo);
+
+        string GetSummary(MethodInfo methodInfo);
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    class UsageDescriptionProvider : IUsageDescriptionProvider
+    public class UsageDescriptionProvider : IUsageDescriptionProvider
     {
         public string GetDescription(PropertyDescriptor descriptor)
         {
@@ -17,7 +17,7 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(PropertyInfo propertyInfo)
         {
-            throw new NotImplementedException();
+            return propertyInfo.GetDescription();
         }
 
         public string GetDescription(ParameterInfo parameterInfo)
@@ -28,6 +28,11 @@ namespace Ntreev.Library.Commands
         public string GetDescription(object instance)
         {
             return instance.GetType().GetDescription();
+        }
+
+        public string GetDescription(MethodInfo methodInfo)
+        {
+            return methodInfo.GetDescription();
         }
 
         public string GetSummary(PropertyInfo propertyInfo)
@@ -48,6 +53,11 @@ namespace Ntreev.Library.Commands
         public string GetSummary(object instance)
         {
             return instance.GetType().GetSummary();
+        }
+
+        public string GetSummary(MethodInfo methodInfo)
+        {
+            return methodInfo.GetSummary();
         }
 
         public static readonly UsageDescriptionProvider Default = new UsageDescriptionProvider();

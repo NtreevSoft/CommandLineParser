@@ -36,17 +36,19 @@ namespace Ntreev.Library.Commands
     {
         private readonly string name;
         private readonly object instance;
-        private readonly string description;
         private readonly SwitchDescriptor[] switches;
-        private readonly IUsageDescriptionProvider provider;
+        //private readonly IUsageDescriptionProvider provider;
+        private readonly string summary;
+        private readonly string description;
 
         public CommandUsagePrinter(string name, object instance)
         {
             this.name = name;
             this.instance = instance;
-            this.description = instance.GetType().GetDescription();
             this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
-            this.provider = instance.GetType().GetUsageDescriptionProvider();
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
+            this.summary = provider.GetSummary(instance);
+            this.description = provider.GetDescription(instance);
         }
 
         public virtual void Print(TextWriter writer)
@@ -65,6 +67,11 @@ namespace Ntreev.Library.Commands
         protected object Instance
         {
             get { return this.instance; }
+        }
+
+        protected string Summary
+        {
+            get { return this.summary; }
         }
 
         protected string Description
@@ -88,13 +95,12 @@ namespace Ntreev.Library.Commands
 
         private void PrintSummary(CommandTextWriter writer)
         {
-            var summary = this.provider.GetSummary(this.Instance);
-            if (summary == string.Empty)
+            if (this.Summary == string.Empty)
                 return;
 
             writer.WriteLine(Resources.Summary);
             writer.Indent++;
-            writer.WriteLine(summary);
+            writer.WriteLine(this.Summary);
             writer.Indent--;
             writer.WriteLine();
         }

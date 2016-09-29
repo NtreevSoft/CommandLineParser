@@ -81,6 +81,7 @@
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
+    <Compile Include="ResourceUsageDescriptionProvider.cs" />
     <Compile Include="UsageDescriptionProvider.cs" />
     <Compile Include="SRSummaryAttribute.cs" />
     <Compile Include="SwitchTypes.cs" />
@@ -137,6 +138,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="HelpCommand.resx">
+      <DependentUpon>HelpCommand.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -144,6 +148,9 @@
     <EmbeddedResource Include="SR.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VersionCommand.resx">
+      <DependentUpon>VersionCommand.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

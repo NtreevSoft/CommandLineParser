@@ -117,40 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="@AddCommand" xml:space="preserve">
-    <value>Add file contents to the index</value>
-  </data>
-  <data name="AddCommand" xml:space="preserve">
-    <value>This command updates the index using the current content found in the working tree, to prepare the content staged for the next commit. It typically adds the current content of existing paths as a whole, but with some options it can also be used to add content with only part of the changes made to the working tree files applied, or remove paths that do not exist in the working tree anymore.
-
-The "index" holds a snapshot of the content of the working tree, and it is this snapshot that is taken as the contents of the next commit. Thus after making any changes to the working tree, and before running the commit command, you must use the add command to add any new or modified files to the index.
-
-This command can be performed multiple times before a commit. It only adds the content of the specified file(s) at the time the add command is run; if you want subsequent changes included in the next commit, then you must run git add again to add the new content to the index.
-
-The git status command can be used to obtain a summary of which files have changes that are staged for the next commit.
-
-The git add command will not add ignored files by default. If any ignored files were explicitly specified on the command line, git add will fail with a list of ignored files. Ignored files reached by directory recursion or filename globbing performed by Git (quote your globs before the shell) will be silently ignored. The git add command can be used to add ignored files with the -f (force) option.
-
-Please see git-commit[1] for alternative ways to add content to a commit.</value>
-  </data>
-  <data name="DryRun" xml:space="preserve">
-    <value>Don’t actually add the file(s), just show if they exist and/or will be ignored.</value>
-  </data>
-  <data name="Forces" xml:space="preserve">
-    <value>Allow adding otherwise ignored files.</value>
-  </data>
-  <data name="Interactive" xml:space="preserve">
-    <value>Add modified contents in the working tree interactively to the index. Optional path arguments may be supplied to limit operation to a subset of the working tree. See “Interactive mode” for details.</value>
-  </data>
-  <data name="Patch" xml:space="preserve">
-    <value>Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the difference before adding modified contents to the index.
-
-This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See “Interactive mode” for details.</value>
-  </data>
-  <data name="Path" xml:space="preserve">
-    <value>Files to add content from. Fileglobs (e.g. *.c) can be given to add all matching files. Also a leading directory name (e.g. dir to add dir/file1 and dir/file2) can be given to update the index to match the current state of the directory as a whole (e.g. specifying dir will record not just a file dir/file1 modified in the working tree, a file dir/file2 added to the working tree, but also a file dir/file3 removed from the working tree. Note that older versions of Git used to ignore removed files; use --no-all option if you want to add modified or new files but ignore removed ones.</value>
-  </data>
-  <data name="Verbose" xml:space="preserve">
-    <value>Be verbose.</value>
+  <data name="@DirectoryCommand" xml:space="preserve">
+    <value>현재 경로에 하위 목록을 표시합니다.</value>
   </data>
 </root>

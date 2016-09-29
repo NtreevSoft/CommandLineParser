@@ -55,6 +55,7 @@
     <Compile Include="GitCommandLineParser.cs" />
     <Compile Include="GitSummaryAttribute.cs" />
     <Compile Include="GitDescriptionAttribute.cs" />
+    <Compile Include="GitUsageDescriptionProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +79,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Commands\AddCommand.resx">
       <DependentUpon>AddCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\DirectoryCommand.resx">
+      <DependentUpon>DirectoryCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\StashCommand.resx">
+      <DependentUpon>StashCommand.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

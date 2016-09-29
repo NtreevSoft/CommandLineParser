@@ -56,6 +56,7 @@ namespace Ntreev.Library.Commands
 
         internal SwitchDescriptor(PropertyInfo propertyInfo)
         {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyInfo.DeclaringType);
             this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
 
             this.switchType = SwitchTypes.Property;
@@ -66,14 +67,15 @@ namespace Ntreev.Library.Commands
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
-            this.summary = propertyInfo.GetSummary();
-            this.description = propertyInfo.GetDescription();
+            this.summary = provider.GetSummary(propertyInfo);
+            this.description = provider.GetDescription(propertyInfo);
             this.defaultValue = propertyInfo.GetDefaultValue();
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
         }
 
         internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
         {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyDescriptor.ComponentType);
             this.switchAttribute = propertyDescriptor.GetCommandSwitchAttribute();
 
             this.switchType = SwitchTypes.Property;
@@ -84,14 +86,15 @@ namespace Ntreev.Library.Commands
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
-            this.summary = string.Empty;
-            this.description = propertyDescriptor.Description;
+            this.summary = provider.GetSummary(propertyDescriptor);
+            this.description = provider.GetDescription(propertyDescriptor);
             this.defaultValue = propertyDescriptor.GetDefaultValue();
             this.valueSetter = new PropertyValueSetter(this, propertyDescriptor);
         }
 
         internal SwitchDescriptor(ParameterInfo parameterInfo)
         {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(parameterInfo.Member.DeclaringType);
             this.switchAttribute = new CommandSwitchAttribute() { Required = true, NameType = SwitchNameTypes.Name, };
 
             this.switchType = SwitchTypes.Parameter;
@@ -102,8 +105,8 @@ namespace Ntreev.Library.Commands
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = parameterInfo.ParameterType;
             this.converter = parameterInfo.GetConverter();
-            this.summary = parameterInfo.GetSummary();
-            this.description = parameterInfo.GetDescription();
+            this.summary = provider.GetSummary(parameterInfo);
+            this.description = provider.GetDescription(parameterInfo);
             this.defaultValue = parameterInfo.DefaultValue;
             this.valueSetter = new ParameterValueSetter(this, parameterInfo);
         }

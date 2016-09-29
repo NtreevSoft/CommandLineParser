@@ -13,6 +13,7 @@ namespace Ntreev.Library.Commands
         //private static Dictionary<Type, MethodDescriptor> typeToCommandDescriptors = new Dictionary<Type, MethodDescriptor>();
         private static Dictionary<Type, MethodDescriptorCollection> typeToMethodDescriptors = new Dictionary<Type, MethodDescriptorCollection>();
         private static Dictionary<Type, SwitchDescriptorCollection> typeToMethodSwitchDescriptors = new Dictionary<Type, SwitchDescriptorCollection>();
+        private static Dictionary<Type, IUsageDescriptionProvider> typeToUsageDescriptionProvider = new Dictionary<Type, IUsageDescriptionProvider>();
 
         //public static MethodDescriptor GetCommandDescriptor(Type type)
         //{
@@ -42,6 +43,18 @@ namespace Ntreev.Library.Commands
 
         //    return query.SingleOrDefault() != null;
         //}
+
+        public static IUsageDescriptionProvider GetUsageDescriptionProvider(Type type)
+        {
+            var attribute = type.GetCustomAttribute<UsageDescriptionProviderAttribute>();
+            if (attribute == null)
+                return UsageDescriptionProvider.Default;
+            if (typeToUsageDescriptionProvider.ContainsKey(type) == false)
+            {
+                typeToUsageDescriptionProvider.Add(type, attribute.CreateInstance());
+            }
+            return typeToUsageDescriptionProvider[type];
+        }
 
         public static MethodDescriptor GetMethodDescriptor(Type type, string methodName)
         {
