@@ -29,7 +29,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.IsQuiet == false)
                 {
-                    writer.WriteLine("{0} {1}", this.commandContext.Name, this.commandContext.Version);
+                    writer.WriteLine(string.Join(" ", this.commandContext.Name, this.commandContext.Version).Trim());
                     writer.WriteLine(info.LegalCopyright);
                 }
                 else
@@ -50,7 +50,6 @@ namespace Ntreev.Library.Commands
         }
 
         [CommandSwitch(ShortName = 'q', NameType = SwitchNameTypes.ShortName)]
-        [Description("버전만 표시합니다.")]
         public bool IsQuiet
         {
             get; set;

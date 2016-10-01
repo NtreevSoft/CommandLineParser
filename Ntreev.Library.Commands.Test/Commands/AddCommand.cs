@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
-    [GitSummary("AddSummary")]
-    [GitDescription("AddDescription")]
+    [ShellSummary("AddSummary")]
+    [ShellDescription("AddDescription")]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class AddCommand : ICommand
     {

@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -48,14 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ChangeDirectoryCommand.cs" />
     <Compile Include="Commands\CopyCommand.cs" />
-    <Compile Include="Commands\DirectoryCommand.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\ListDirectoryCommand.cs" />
     <Compile Include="Container.cs" />
-    <Compile Include="GitCommandContext.cs" />
-    <Compile Include="GitCommandLineParser.cs" />
-    <Compile Include="GitSummaryAttribute.cs" />
-    <Compile Include="GitDescriptionAttribute.cs" />
-    <Compile Include="GitUsageDescriptionProvider.cs" />
+    <Compile Include="getline.cs" />
+    <Compile Include="ShellCommandContext.cs" />
+    <Compile Include="ShellCommandLineParser.cs" />
+    <Compile Include="ShellSummaryAttribute.cs" />
+    <Compile Include="ShellDescriptionAttribute.cs" />
+    <Compile Include="IShell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,6 +70,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Commands\StashCommand.cs" />
+    <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj">
@@ -83,8 +88,14 @@
     <EmbeddedResource Include="Commands\AddCommand.resx">
       <DependentUpon>AddCommand.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Commands\DirectoryCommand.resx">
-      <DependentUpon>DirectoryCommand.cs</DependentUpon>
+    <EmbeddedResource Include="Commands\ChangeDirectoryCommand.resx">
+      <DependentUpon>ChangeDirectoryCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\ExitCommand.resx">
+      <DependentUpon>ExitCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\ListDirectoryCommand.resx">
+      <DependentUpon>ListDirectoryCommand.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Commands\StashCommand.resx">
       <DependentUpon>StashCommand.cs</DependentUpon>

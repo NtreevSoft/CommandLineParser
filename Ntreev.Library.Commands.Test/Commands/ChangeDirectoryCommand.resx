@@ -117,19 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="@HelpCommand" xml:space="preserve">
-    <value>"사용할 수 있는 명령을 나열하고 사용법을 알려줍니다."</value>
+  <data name="@ChangeDirectoryCommand" xml:space="preserve">
+    <value>Change the shell working directory.</value>
   </data>
-  <data name="CommandName" xml:space="preserve">
-    <value>사용법을 표시할 명령의 이름을 나타냅니다. 사용 가능한 명령의 목록은 AvaliableCommands에 표시됩니다.</value>
-  </data>
-  <data name="HelpCommand" xml:space="preserve">
-    <value>사용 가능한 명령의 목록을 표시합니다. 특정 명령의 사용법을 표시하려면 'help' 뒤에 인자로 명령의 이름을 지정하시면 됩니다.
-help &lt;command&gt;
-하위명령의 표시법은 하위명령의 이름을 추가로 설정하시면 됩니다.
-help &lt;command&gt; &lt;sub-command=null&gt;</value>
-  </data>
-  <data name="SubCommandName" xml:space="preserve">
-    <value>사용법을 표시할 하위 명령을 설정합니다.</value>
+  <data name="ChangeDirectoryCommand" xml:space="preserve">
+    <value>Change the shell working directory.
+    
+Change the current directory to DIR.  The default DIR is the value of the
+HOME shell variable.
+    
+The variable CDPATH defines the search path for the directory containing
+DIR.  Alternative directory names in CDPATH are separated by a colon (:).
+A null directory name is the same as the current directory.  If DIR begins
+with a slash (/), then CDPATH is not used.
+    
+If the directory is not found, and the shell option `cdable_vars' is set,
+the word is assumed to be  a variable name.  If that variable has a value,
+its value is used for DIR.</value>
   </data>
 </root>

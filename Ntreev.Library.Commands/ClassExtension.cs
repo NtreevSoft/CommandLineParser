@@ -44,6 +44,15 @@ namespace Ntreev.Library.Commands
             return propertyDescriptor.Converter.ConvertFrom(value);
         }
 
+        public static string GetDisplayName(this PropertyDescriptor propertyDescriptor)
+        {
+            var attr = propertyDescriptor.Attributes[typeof(DisplayNameAttribute)] as DisplayNameAttribute;
+            if (attr == null)
+                return string.Empty;
+
+            return attr.DisplayName;
+        }
+
         public static CommandSwitchAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttribute<CommandSwitchAttribute>();

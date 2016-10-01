@@ -45,7 +45,7 @@ namespace Ntreev.Library.Commands.Test.Commands
 
         [CommandMethod("save")]
         [CommandMethodSwitch("Patch", "KeepIndex", "IncludeUntracked", "All", "Quit")]
-        [GitDescription("SaveDescription_StashCommand")]
+        [ShellDescription("SaveDescription_StashCommand")]
         public void Save(string message)
         {
 
@@ -53,7 +53,7 @@ namespace Ntreev.Library.Commands.Test.Commands
         }
 
         [CommandSwitch(ShortName = 'p')]
-        [GitDescription("PatchDescription_StashCommand")]
+        [ShellDescription("PatchDescription_StashCommand")]
         public bool Patch
         {
             get; set;

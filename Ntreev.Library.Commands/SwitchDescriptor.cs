@@ -82,7 +82,7 @@ namespace Ntreev.Library.Commands
             this.originalName = propertyDescriptor.Name;
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
-            this.displayName = propertyDescriptor.DisplayName != string.Empty ? propertyDescriptor.DisplayName : this.name;
+            this.displayName = propertyDescriptor.GetDisplayName() != string.Empty ? propertyDescriptor.GetDisplayName() : this.name;
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;

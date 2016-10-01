@@ -34,6 +34,7 @@ using Ntreev.Library.Commands.Test.Properties;
 using System.Resources;
 using System.Drawing;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Ntreev.Library.Commands.Test
 {
@@ -41,19 +42,9 @@ namespace Ntreev.Library.Commands.Test
     {
         static void Main(string[] args)
         {
-            var info = CultureInfo.CurrentUICulture.GetConsoleFallbackUICulture();
-            
-            var context = Container.GetService<CommandContext>();
-
-            try
-            {
-                context.Execute(Environment.CommandLine);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Environment.Exit(1);
-            }
+            var shell = Container.GetService<IShell>();
+            shell.Prompt = Directory.GetCurrentDirectory();
+            shell.Start();
         }
     }
 }

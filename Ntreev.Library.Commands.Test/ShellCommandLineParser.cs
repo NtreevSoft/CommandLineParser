@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands.Test
 {
-    class GitCommandLineParser : CommandLineParser
+    class ShellCommandLineParser : CommandLineParser
     {
-        public GitCommandLineParser(string name, object instance)
+        public ShellCommandLineParser(string name, object instance)
             : base(name, instance)
         {
 

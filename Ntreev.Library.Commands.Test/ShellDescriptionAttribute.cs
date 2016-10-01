@@ -1,5 +1,4 @@
-﻿using Ntreev.Library;
-using Ntreev.Library.Commands.Test.Properties;
+﻿using Ntreev.Library.Commands.Test.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,12 +10,12 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test
 {
     [AttributeUsage(AttributeTargets.All)]
-    class GitSummaryAttribute : SummaryAttribute
+    class ShellDescriptionAttribute : DescriptionAttribute
     {
-        public GitSummaryAttribute(string resourceName)
+        public ShellDescriptionAttribute(string resourceName)
             : base(GetResourceString(resourceName))
         {
-            
+
         }
 
         private static string GetResourceString(string resourceName)

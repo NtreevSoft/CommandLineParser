@@ -120,4 +120,7 @@
   <data name="@VersionCommand" xml:space="preserve">
     <value>프로그램의 버전 및 저작권 내용을 표시합니다.</value>
   </data>
+  <data name="IsQuiet" xml:space="preserve">
+    <value>버전만 표시합니다.</value>
+  </data>
 </root>

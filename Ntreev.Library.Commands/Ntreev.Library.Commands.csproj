@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="ArgSeperator.cs" />
     <Compile Include="BooleanParser.cs" />
+    <Compile Include="CharWidth.cs" />
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandContext.cs" />
     <Compile Include="CommandDescriptor.cs" />
@@ -97,7 +98,7 @@
     </Compile>
     <Compile Include="SummaryAttribute.cs" />
     <Compile Include="ICommand.cs" />
-    <Compile Include="IndentedTextWriterExtensions.cs" />
+    <Compile Include="TextWriterExtensions.cs" />
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="MethodDescriptorCollection.cs" />
     <Compile Include="MethodInvokeException.cs" />

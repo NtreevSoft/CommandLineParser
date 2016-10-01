@@ -11,16 +11,19 @@ namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class DirectoryCommand : ICommand
+    class ListDirectoryCommand : ICommand
     {
+        [Import]
+        private Lazy<CommandContext> commandContext = null;
+
         public string Name
         {
-            get { return "dir"; }
+            get { return "ls"; }
         }
 
         public CommandTypes Types
         {
-            get { return CommandTypes.None; }
+            get { return CommandTypes.None | CommandTypes.AllowEmptyArgument; }
         }
 
         public void Execute()
@@ -35,24 +38,24 @@ namespace Ntreev.Library.Commands.Test.Commands
             {
                 var itemInfo = new DirectoryInfo(item);
 
-                Console.Write(itemInfo.LastWriteTime.ToString("yyyy-MM-dd tt hh:mm"));
-                Console.Write("\t");
-                Console.Write("<DIR>");
-                Console.Write("\t");
-                Console.Write(itemInfo.Name);
-                Console.WriteLine();
+                this.Out.Write(itemInfo.LastWriteTime.ToString("yyyy-MM-dd tt hh:mm"));
+                this.Out.Write("\t");
+                this.Out.Write("<DIR>");
+                this.Out.Write("\t");
+                this.Out.Write(itemInfo.Name);
+                this.Out.WriteLine();
             }
 
             foreach (var item in Directory.GetFiles(dir))
             {
                 var itemInfo = new FileInfo(item);
 
-                Console.Write(itemInfo.LastWriteTime.ToString("yyyy-MM-dd tt hh:mm"));
-                Console.Write("\t");
-                Console.Write("<DIR>");
-                Console.Write("\t");
-                Console.Write(itemInfo.Name);
-                Console.WriteLine();
+                this.Out.Write(itemInfo.LastWriteTime.ToString("yyyy-MM-dd tt hh:mm"));
+                this.Out.Write("\t");
+                this.Out.Write("    ");
+                this.Out.Write("\t");
+                this.Out.Write(itemInfo.Name);
+                this.Out.WriteLine();
             }
 
             if (this.IsRecursive == true)
@@ -68,6 +71,11 @@ namespace Ntreev.Library.Commands.Test.Commands
         public bool IsRecursive
         {
             get; set;
+        }
+
+        public TextWriter Out
+        {
+            get { return this.commandContext.Value.Out; }
         }
     }
 }

@@ -177,9 +177,6 @@ namespace Ntreev.Library.Commands
             writer.Indent++;
 
             this.PrintMethodUsage(writer, descriptor);
-            //var switches = this.GetSwitchesString(descriptor.Switches.Where(i => i.Required));
-            //var options = this.GetOptionsString(descriptor.Switches.Where(i => i.Required == false));
-            //writer.WriteLine("{0} {1} {2} {3}", this.Name, descriptor.Name, switches, options);
 
             writer.Indent--;
             writer.WriteLine();
@@ -287,22 +284,6 @@ namespace Ntreev.Library.Commands
             writer.Indent--;
         }
 
-        //private string GetOptionString(SwitchDescriptor descriptor)
-        //{
-        //    var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
-        //    var patternText = string.Join(" | ", patternItems.Where(i => i != string.Empty));
-        //    return string.Format("[{0}]", patternText);
-        //}
-
-        //private string GetOptionsString(IEnumerable<SwitchDescriptor> switches)
-        //{
-        //    var query = from item in switches
-        //                let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
-        //                select string.Join(" | ", patternItems.Where(i => i != string.Empty));
-
-        //    return string.Join(" ", query.Select(item => "[" + item + "]"));
-        //}
-
         private string GetString(SwitchDescriptor descriptor)
         {
             if (descriptor.Required == true)
@@ -328,24 +309,5 @@ namespace Ntreev.Library.Commands
                 return string.Format("[{0}]", patternText);
             }
         }
-
-        //private string GetSwitchString(SwitchDescriptor descriptor)
-        //{
-        //    var text = descriptor.SwitchType == SwitchTypes.Parameter ? descriptor.DisplayName : this.GetOptionString(descriptor);
-        //    if (descriptor.DefaultValue == DBNull.Value)
-        //        return string.Format("<{0}>", text);
-        //    return string.Format("<{0} = {1}>", text, descriptor.DefaultValue ?? "null");
-        //}
-
-        //private string GetSwitchesString(IEnumerable<SwitchDescriptor> switches)
-        //{
-        //    return string.Join(" ", switches.Select(item =>
-        //    {
-        //        var text = item.SwitchType == SwitchTypes.Parameter ? item.DisplayName : this.GetOptionString(item);
-        //        if (item.DefaultValue == DBNull.Value)
-        //            return string.Format("<{0}>", text);
-        //        return string.Format("<{0}={1}>", text, item.DefaultValue ?? "null");
-        //    }));
-        //}
     }
 }

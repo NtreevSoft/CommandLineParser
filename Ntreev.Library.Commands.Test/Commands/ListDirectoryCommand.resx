@@ -117,7 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="@DirectoryCommand" xml:space="preserve">
-    <value>현재 경로에 하위 목록을 표시합니다.</value>
+  <data name="@ListDirectoryCommand" xml:space="preserve">
+    <value>list directory contents</value>
+  </data>
+  <data name="ListDirectoryCommand" xml:space="preserve">
+    <value>List  information  about  the FILEs (the current directory by default).
+       Sort entries alphabetically if none of -cftuSUX nor --sort.
+
+       Mandatory arguments to long options are  mandatory  for  short  options
+       too.</value>
   </data>
 </root>
