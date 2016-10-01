@@ -40,8 +40,6 @@ namespace Ntreev.Library.Commands
         public const string ArgGroupName = "arg";
 
         private readonly CommandSwitchAttribute switchAttribute;
-        private string pattern;
-
         private readonly SwitchTypes switchType;
         private readonly string originalName;
         private readonly string name;
@@ -53,6 +51,8 @@ namespace Ntreev.Library.Commands
         private readonly string description;
         private readonly object defaultValue = DBNull.Value;
         private readonly ValueSetter valueSetter;
+
+        private string pattern;
 
         internal SwitchDescriptor(PropertyInfo propertyInfo)
         {

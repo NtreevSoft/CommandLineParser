@@ -120,8 +120,6 @@ namespace Ntreev.Library.Commands
             return attribute.Browsable;
         }
 
-        
-
         public static TypeConverter GetConverter(this PropertyInfo propertyInfo)
         {
             return (propertyInfo as ICustomAttributeProvider).GetConverter(propertyInfo.PropertyType);
@@ -148,11 +146,6 @@ namespace Ntreev.Library.Commands
                 return TypeDescriptor.GetConverter(type);
             }
         }
-
-        //public static bool IsCommand(this MethodInfo methodInfo)
-        //{
-        //    return methodInfo.GetCustomAttributes(typeof(DefaultCommandAttribute), false).Any();
-        //}
 
         public static bool IsCommandMethod(this MethodInfo methodInfo)
         {
