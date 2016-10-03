@@ -1,12 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ntreev.Library.Commands;
+using System.ComponentModel;
 
 namespace Ntreev.Library.Commands.Test.SingleCommand
 {
+    class Settings
+    {
+        [CommandSwitch(Name = "param1", Required = true)]
+        [Description("parameter1 description")]
+        public string Address
+        {
+            get; set;
+        }
+
+        [CommandSwitch(Name = "param2", Required = true)]
+        [Description("parameter2 description")]
+        public int Port
+        {
+            get; set;
+        }
+
+        [CommandSwitch(ShortName = 'o', NameType = SwitchNameTypes.ShortName)]
+        [Description("option1 description")]
+        public bool Option1
+        {
+            get; set;
+        }
+
+        [CommandSwitch(Name = "text-option")]
+        [Description("option2 description")]
+        public string Option2
+        {
+            get; set;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -21,89 +49,13 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
                     Environment.Exit(1);
                 }
 
-                if (Directory.Exists(settings.DirectoryName) == false)
-                    throw new DirectoryNotFoundException();
-
-                if (settings.OnlyName == true)
-                    PrintItems(Console.Out, settings.DirectoryName, settings.IsRecursive);
-                else
-                    PrintItemsDetail(Console.Out, settings.DirectoryName, settings.IsRecursive);
+                // todo
 
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 Environment.Exit(2);
-            }
-        }
-
-        private static void PrintItems(TextWriter writer, string dir, bool isRecursive)
-        {
-            foreach (var item in Directory.GetDirectories(dir))
-            {
-                var itemInfo = new DirectoryInfo(item);
-                writer.WriteLine(itemInfo.Name);
-            }
-
-            foreach (var item in Directory.GetFiles(dir))
-            {
-                var itemInfo = new FileInfo(item);
-                writer.WriteLine(itemInfo.Name);
-            }
-
-            if (isRecursive == true)
-            {
-                foreach (var item in Directory.GetDirectories(dir))
-                {
-                    PrintItems(writer, item, isRecursive);
-                }
-            }
-        }
-
-        private static void PrintItemsDetail(TextWriter writer, string dir, bool isRecursive)
-        {
-            var items = new List<string[]>();
-
-            {
-                var props = new List<string>();
-                props.Add("DateTime");
-                props.Add("");
-                props.Add("Name");
-                items.Add(props.ToArray());
-            }
-
-            foreach (var item in Directory.GetDirectories(dir))
-            {
-                var itemInfo = new DirectoryInfo(item);
-
-                var props = new List<string>();
-                props.Add(itemInfo.LastWriteTime.ToString("yyyy-MM-dd tt hh:mm"));
-                props.Add("<DIR>");
-                props.Add(itemInfo.Name);
-                items.Add(props.ToArray());
-            }
-
-            foreach (var item in Directory.GetFiles(dir))
-            {
-                var itemInfo = new FileInfo(item);
-
-                var props = new List<string>();
-                props.Add(itemInfo.LastWriteTime.ToString("yyyy-MM-dd tt hh:mm"));
-                props.Add(string.Empty);
-                props.Add(itemInfo.Name);
-                items.Add(props.ToArray());
-            }
-
-            writer.WriteLine();
-            writer.WriteLine(items.ToArray(), true);
-            writer.WriteLine();
-
-            if (isRecursive == true)
-            {
-                foreach (var item in Directory.GetDirectories(dir))
-                {
-                    PrintItemsDetail(writer, item, isRecursive);
-                }
             }
         }
     }

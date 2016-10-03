@@ -6,37 +6,76 @@ Example
 Single Command
 --------------
 
-
-SourceCode:
-
     using System;
-    using Ntreev.Library;
-    using System.Collections.Generic;
+    using Ntreev.Library.Commands;
 
-    namespace Example
+    namespace Program
     {
-        class Program
+        class Settings
         {
-            static void Main()
+            [CommandSwitch(Name = "param1", Required = true)]
+            [Description("parameter1 description")]
+            public string Parameter1
             {
-                var context = Container.GetService<CommandContext>();
-           
-                try
+                get; set;
+            }
+
+            [CommandSwitch(Name = "param2", Required = true)]
+            [Description("parameter2 description")]
+            public int Parameter2
+            {
+                get; set;
+            }
+
+            [CommandSwitch(ShortName = 'o', NameType = SwitchNameTypes.ShortName)]
+            [Description("option1 description")]
+            public bool Option1
+            {
+                get; set;
+            }
+
+            [CommandSwitch("text-option"]
+            [Description("option2 description")]
+            public string Option2
+            {
+                get; set;
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            var settings = new Settings();
+            var parser = new CommandLineParser(settings);
+
+            try
+            {
+                if (parser.Parse(Environment.CommandLine) == false)
                 {
-                    context.Execute(Environment.CommandLine);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
                     Environment.Exit(1);
                 }
+
+                // todo
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Environment.Exit(2);
             }
         }
     }
 
-You can call like this:
 
-    C:\>Example.exe help
+You can call like this in console:
+
+    Example.exe help
+
+    Example.exe --version
+
+    Example.exe text1 123 
+
+    Example.exe text1 123 -o --text-option "text string"
+
 
 
 License
