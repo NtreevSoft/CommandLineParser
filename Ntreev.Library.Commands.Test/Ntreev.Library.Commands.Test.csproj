@@ -23,6 +23,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -41,20 +43,23 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ChangeDirectoryCommand.cs" />
     <Compile Include="Commands\CopyCommand.cs" />
-    <Compile Include="Commands\DirectoryCommand.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\ListDirectoryCommand.cs" />
     <Compile Include="Container.cs" />
-    <Compile Include="GitCommandContext.cs" />
-    <Compile Include="GitCommandLineParser.cs" />
-    <Compile Include="GitSummaryAttribute.cs" />
-    <Compile Include="GitDescriptionAttribute.cs" />
+    <Compile Include="getline.cs" />
+    <Compile Include="ShellCommandContext.cs" />
+    <Compile Include="ShellCommandLineParser.cs" />
+    <Compile Include="ShellSummaryAttribute.cs" />
+    <Compile Include="ShellDescriptionAttribute.cs" />
+    <Compile Include="IShell.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -65,6 +70,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Commands\StashCommand.cs" />
+    <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj">
@@ -76,6 +82,24 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Commands\AddCommand.en.resx">
+      <DependentUpon>AddCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\AddCommand.resx">
+      <DependentUpon>AddCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\ChangeDirectoryCommand.resx">
+      <DependentUpon>ChangeDirectoryCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\ExitCommand.resx">
+      <DependentUpon>ExitCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\ListDirectoryCommand.resx">
+      <DependentUpon>ListDirectoryCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Commands\StashCommand.resx">
+      <DependentUpon>StashCommand.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

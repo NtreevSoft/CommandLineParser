@@ -36,6 +36,12 @@ namespace Ntreev.Library.Commands
             this.versionCommand = new VersionCommand(this);
             this.parsers.Add(this.helpCommand, this.CreateInstance(this.helpCommand));
             this.parsers.Add(this.versionCommand, this.CreateInstance(this.versionCommand));
+
+            foreach(var item in this.parsers.Values)
+            {
+                item.VersionName = string.Empty;
+                item.HelpName = string.Empty;
+            }
         }
 
         public void Execute(string commandLine)
@@ -61,7 +67,7 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                if ((this.name ?? string.Empty) == string.Empty)
+                if (this.name == null)
                     return System.Diagnostics.Process.GetCurrentProcess().ProcessName;
                 return this.name;
             }
@@ -146,14 +152,37 @@ namespace Ntreev.Library.Commands
             var parser = this.parsers[command];
             if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
             {
-                parser.Invoke(command.Name + " " + arguments);
+                if (arguments == string.Empty)
+                {
+                    if (command.Types.HasFlag(CommandTypes.AllowEmptyArgument) == true)
+                    {
+                        command.Execute();
+                    }
+                    else
+                    {
+                        this.Out.WriteLine("type '{0}' for usage.", string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
+                        return false;
+                    }
+                }
+                else if (parser.Invoke(command.Name + " " + arguments) == false)
+                {
+                    return false;
+                }
             }
             else
             {
-                if (arguments == string.Empty && command.Types.HasFlag(CommandTypes.AllowEmptyArgument))
+                if (arguments == string.Empty)
                 {
-                    command.Execute();
-                    return true;
+                    if (command.Types.HasFlag(CommandTypes.AllowEmptyArgument) == true)
+                    {
+                        command.Execute();
+                        return false;
+                    }
+                    else
+                    {
+                        this.Out.WriteLine("type '{0}' for usage.", string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
+                        return false;
+                    }
                 }
                 else if (parser.Parse(command.Name + " " + arguments) == false)
                 {

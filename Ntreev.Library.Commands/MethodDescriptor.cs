@@ -15,6 +15,8 @@ namespace Ntreev.Library.Commands
         private readonly string name;
         private readonly string displayName;
         private readonly SwitchDescriptor[] switches;
+        private readonly string summary;
+        private readonly string description;
 
         internal MethodDescriptor(MethodInfo methodInfo)
             : this(methodInfo, methodInfo.Name.ToSpinalCase())
@@ -23,7 +25,8 @@ namespace Ntreev.Library.Commands
         }
 
         internal MethodDescriptor(MethodInfo methodInfo, string name)
-        { 
+        {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(methodInfo.DeclaringType);
             this.methodInfo = methodInfo;
             this.originalName = methodInfo.Name;
             this.name = name;
@@ -50,6 +53,8 @@ namespace Ntreev.Library.Commands
             }
 
             this.switches = switchList.ToArray();
+            this.summary = provider.GetSummary(methodInfo);
+            this.description = provider.GetDescription(methodInfo);
         }
 
         public string OriginalName
@@ -72,14 +77,14 @@ namespace Ntreev.Library.Commands
             get { return this.switches.ToArray(); }
         }
 
-        public string Description
-        {
-            get { return this.methodInfo.GetDescription(); }
-        }
-
         public string Summary
         {
-            get { return this.methodInfo.GetSummary(); }
+            get { return this.summary; }
+        }
+
+        public string Description
+        {
+            get { return this.description; }
         }
 
         internal void Invoke(object instance, string arguments)

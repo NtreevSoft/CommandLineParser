@@ -86,23 +86,6 @@ namespace Ntreev.Library.Commands
             this.SetValues(instance);
         }
 
-        //public void Parse(object instance, string[] switchLines)
-        //{
-        //    this.args.Clear();
-        //    this.AssertValidation();
-
-        //    foreach (string switchLine in switchLines)
-        //    {
-        //        var parsed = string.Empty;
-        //        var descriptor = this.DoMatch(switchLine, ref parsed);
-        //        if (descriptor == null)
-        //            throw new ArgumentException(Resources.NotFoundMatchedSwitch, switchLine);
-        //    }
-
-        //    this.AssertRequired();
-        //    this.SetValues(instance);
-        //}
-
         public void SetValues(object instance)
         {
             foreach (var item in this.switches)

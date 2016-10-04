@@ -15,6 +15,15 @@ namespace Ntreev.Library.Commands
             return propertyDescriptor.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
         }
 
+        public static string GetSummary(this PropertyDescriptor propertyDescriptor)
+        {
+            var attr = propertyDescriptor.Attributes[typeof(SummaryAttribute)] as SummaryAttribute;
+            if (attr == null)
+                return string.Empty;
+
+            return attr.Summary;
+        }
+
         public static object GetDefaultValue(this PropertyDescriptor propertyDescriptor)
         {
             var attr = propertyDescriptor.Attributes[typeof(DefaultValueAttribute)] as DefaultValueAttribute;
@@ -33,6 +42,15 @@ namespace Ntreev.Library.Commands
                 return value;
 
             return propertyDescriptor.Converter.ConvertFrom(value);
+        }
+
+        public static string GetDisplayName(this PropertyDescriptor propertyDescriptor)
+        {
+            var attr = propertyDescriptor.Attributes[typeof(DisplayNameAttribute)] as DisplayNameAttribute;
+            if (attr == null)
+                return string.Empty;
+
+            return attr.DisplayName;
         }
 
         public static CommandSwitchAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
@@ -128,11 +146,6 @@ namespace Ntreev.Library.Commands
                 return TypeDescriptor.GetConverter(type);
             }
         }
-
-        //public static bool IsCommand(this MethodInfo methodInfo)
-        //{
-        //    return methodInfo.GetCustomAttributes(typeof(DefaultCommandAttribute), false).Any();
-        //}
 
         public static bool IsCommandMethod(this MethodInfo methodInfo)
         {

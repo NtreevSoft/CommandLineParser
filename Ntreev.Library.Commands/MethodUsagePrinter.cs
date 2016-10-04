@@ -12,15 +12,18 @@ namespace Ntreev.Library.Commands
     {
         private readonly string name;
         private readonly object instance;
-        private readonly string description;
         private readonly MethodDescriptor[] descriptors;
+        private readonly string summary;
+        private readonly string description;
 
         public MethodUsagePrinter(string name, object instance)
         {
             this.name = name;
             this.instance = instance;
-            this.description = instance.GetType().GetDescription();
             this.descriptors = CommandDescriptor.GetMethodDescriptors(instance.GetType()).ToArray();
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
+            this.summary = provider.GetSummary(instance);
+            this.description = provider.GetDescription(instance);
         }
 
         public virtual void Print(TextWriter writer)
@@ -52,6 +55,11 @@ namespace Ntreev.Library.Commands
         protected object Instance
         {
             get { return this.instance; }
+        }
+
+        protected string Summary
+        {
+            get { return this.summary; }
         }
 
         protected string Description
@@ -86,20 +94,19 @@ namespace Ntreev.Library.Commands
 
         private void PrintSummary(CommandTextWriter writer)
         {
-            var summary = this.Instance.GetType().GetSummary();
-            if (summary == string.Empty)
+            if (this.Summary == string.Empty)
                 return;
 
             writer.WriteLine(Resources.Summary);
             writer.Indent++;
-            writer.WriteLine(summary);
+            writer.WriteLine(this.Summary);
             writer.Indent--;
             writer.WriteLine();
         }
 
         private void PrintSummary(CommandTextWriter writer, MethodDescriptor descriptor)
         {
-            if (descriptor.Summary == string.Empty)
+            if (this.Description == string.Empty)
                 return;
 
             writer.WriteLine(Resources.Summary);
@@ -170,9 +177,6 @@ namespace Ntreev.Library.Commands
             writer.Indent++;
 
             this.PrintMethodUsage(writer, descriptor);
-            //var switches = this.GetSwitchesString(descriptor.Switches.Where(i => i.Required));
-            //var options = this.GetOptionsString(descriptor.Switches.Where(i => i.Required == false));
-            //writer.WriteLine("{0} {1} {2} {3}", this.Name, descriptor.Name, switches, options);
 
             writer.Indent--;
             writer.WriteLine();
@@ -280,22 +284,6 @@ namespace Ntreev.Library.Commands
             writer.Indent--;
         }
 
-        //private string GetOptionString(SwitchDescriptor descriptor)
-        //{
-        //    var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
-        //    var patternText = string.Join(" | ", patternItems.Where(i => i != string.Empty));
-        //    return string.Format("[{0}]", patternText);
-        //}
-
-        //private string GetOptionsString(IEnumerable<SwitchDescriptor> switches)
-        //{
-        //    var query = from item in switches
-        //                let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
-        //                select string.Join(" | ", patternItems.Where(i => i != string.Empty));
-
-        //    return string.Join(" ", query.Select(item => "[" + item + "]"));
-        //}
-
         private string GetString(SwitchDescriptor descriptor)
         {
             if (descriptor.Required == true)
@@ -321,24 +309,5 @@ namespace Ntreev.Library.Commands
                 return string.Format("[{0}]", patternText);
             }
         }
-
-        //private string GetSwitchString(SwitchDescriptor descriptor)
-        //{
-        //    var text = descriptor.SwitchType == SwitchTypes.Parameter ? descriptor.DisplayName : this.GetOptionString(descriptor);
-        //    if (descriptor.DefaultValue == DBNull.Value)
-        //        return string.Format("<{0}>", text);
-        //    return string.Format("<{0} = {1}>", text, descriptor.DefaultValue ?? "null");
-        //}
-
-        //private string GetSwitchesString(IEnumerable<SwitchDescriptor> switches)
-        //{
-        //    return string.Join(" ", switches.Select(item =>
-        //    {
-        //        var text = item.SwitchType == SwitchTypes.Parameter ? item.DisplayName : this.GetOptionString(item);
-        //        if (item.DefaultValue == DBNull.Value)
-        //            return string.Format("<{0}>", text);
-        //        return string.Format("<{0}={1}>", text, item.DefaultValue ?? "null");
-        //    }));
-        //}
     }
 }

@@ -36,15 +36,18 @@ namespace Ntreev.Library.Commands
     {
         private readonly string name;
         private readonly object instance;
-        private readonly string description;
         private readonly SwitchDescriptor[] switches;
+        private readonly string summary;
+        private readonly string description;
 
         public CommandUsagePrinter(string name, object instance)
         {
             this.name = name;
             this.instance = instance;
-            this.description = instance.GetType().GetDescription();
             this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
+            this.summary = provider.GetSummary(instance);
+            this.description = provider.GetDescription(instance);
         }
 
         public virtual void Print(TextWriter writer)
@@ -63,6 +66,11 @@ namespace Ntreev.Library.Commands
         protected object Instance
         {
             get { return this.instance; }
+        }
+
+        protected string Summary
+        {
+            get { return this.summary; }
         }
 
         protected string Description
@@ -86,24 +94,18 @@ namespace Ntreev.Library.Commands
 
         private void PrintSummary(CommandTextWriter writer)
         {
-            var summary = this.Instance.GetType().GetSummary();
-            if (summary == string.Empty)
+            if (this.Summary == string.Empty)
                 return;
 
             writer.WriteLine(Resources.Summary);
             writer.Indent++;
-            writer.WriteLine(summary);
+            writer.WriteLine(this.Summary);
             writer.Indent--;
             writer.WriteLine();
         }
 
         private void PrintUsage(CommandTextWriter writer)
         {
-            //var switches = this.GetSwitchesString(this.Switches.Where(i => i.Required));
-            //var options = this.GetOptionsString(this.Switches.Where(i => i.Required == false));
-            //var items = new string[] { this.Name, switches, options, };
-
-            var indent = writer.Indent;
             var query = from item in this.Switches
                         orderby item.Required descending
                         select this.GetString(item);
@@ -114,7 +116,6 @@ namespace Ntreev.Library.Commands
 
             writer.WriteLine(Resources.Usage);
             writer.Indent++;
-            //writer.WriteLine(string.Join(" ", items.Where(i => i != string.Empty)));
 
             foreach (var item in query)
             {
@@ -202,32 +203,6 @@ namespace Ntreev.Library.Commands
             writer.Indent--;
             writer.WriteLine();
         }
-
-        //private string GetOptionString(SwitchDescriptor descriptor)
-        //{
-        //    var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
-        //    return string.Join(" | ", patternItems.Where(i => i != string.Empty));
-        //}
-
-        //private string GetOptionsString(IEnumerable<SwitchDescriptor> switches)
-        //{
-        //    var query = from item in switches
-        //                let patternItems = new string[] { item.ShortNamePattern, item.NamePattern, }
-        //                select string.Join(" | ", patternItems.Where(i => i != string.Empty));
-
-        //    return string.Join(" ", query.Select(item => "[" + item + "]"));
-        //}
-
-        //private string GetSwitchesString(IEnumerable<SwitchDescriptor> switches)
-        //{
-        //    return string.Join(" ", switches.Select(item =>
-        //    {
-        //        var text = item.Required == true ? item.DisplayName : this.GetOptionString(item);
-        //        if (item.DefaultValue == DBNull.Value)
-        //            return string.Format("<{0}>", text);
-        //        return string.Format("<{0} = {1}>", text, item.DefaultValue ?? "null");
-        //    }));
-        //}
 
         private string GetString(SwitchDescriptor descriptor)
         {

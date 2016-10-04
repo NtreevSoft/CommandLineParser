@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
-    [GitSummary("AddSummary")]
-    [GitDescription("AddDescription")]
+    [ShellSummary("AddSummary")]
+    [ShellDescription("AddDescription")]
+    [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class AddCommand : ICommand
     {
         public AddCommand()
@@ -35,7 +36,6 @@ namespace Ntreev.Library.Commands.Test.Commands
         }
 
         [CommandSwitch(Required = true)]
-        [GitDescription("PathDescription_AddCommand")]
         [DisplayName("<pathspec>...")]
         public string Path
         {
@@ -43,35 +43,31 @@ namespace Ntreev.Library.Commands.Test.Commands
         }
 
         [CommandSwitch(ShortName = 'n')]
-        [Description("Don’t actually add the file(s), just show if they exist and/or will be ignored.")]
         public bool DryRun
         {
             get; set;
         }
 
         [CommandSwitch(ShortName = 'v')]
-        [Description("Be verbose.")]
+
         public bool Verbose
         {
             get; set;
         }
 
         [CommandSwitch(ShortName = 'f')]
-        [Description("Allow adding otherwise ignored files.")]
         public bool Force
         {
             get; set;
         }
 
         [CommandSwitch(ShortName = 'i')]
-        [GitDescription("InteractiveDescription_AddCommand")]
         public bool Interactive
         {
             get; set;
         }
 
         [CommandSwitch(ShortName = 'P')]
-        [GitDescription("PatchDescription_AddCommand")]
         public bool Patch
         {
             get;set;

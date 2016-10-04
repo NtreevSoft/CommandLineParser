@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    [Summary("사용할 수 있는 명령을 나열하고 사용법을 알려줍니다.")]
-    [SRDescription("HelpDescription")]
+    [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class HelpCommand : ICommand
     {
         private readonly CommandContext commandContext;
@@ -64,14 +63,12 @@ namespace Ntreev.Library.Commands
 
         [CommandSwitch(Name = "CommandName", Required = true)]
         [DisplayName("command")]
-        [Description("사용법을 표시할 명령의 이름을 나타냅니다. 사용 가능한 명령의 목록은 AvaliableCommands에 표시됩니다.")]
         public string CommandName
         {
             get; set;
         }
 
         [CommandSwitch(Name = "sub-command", Required = true)]
-        [Description("사용법을 표시할 하위 명령을 설정합니다.")]
         [DefaultValue(null)]
         public string SubCommandName
         {
@@ -87,7 +84,7 @@ namespace Ntreev.Library.Commands
             foreach (var item in this.commandContext.Commands)
             {
                 var command = item.Value;
-                var summary = command.GetType().GetSummary();
+                var summary = CommandDescriptor.GetUsageDescriptionProvider(command.GetType()).GetSummary(command);
 
                 writer.WriteLine(item.Key);
                 writer.Indent++;

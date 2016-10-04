@@ -40,8 +40,6 @@ namespace Ntreev.Library.Commands
         public const string ArgGroupName = "arg";
 
         private readonly CommandSwitchAttribute switchAttribute;
-        private string pattern;
-
         private readonly SwitchTypes switchType;
         private readonly string originalName;
         private readonly string name;
@@ -54,8 +52,11 @@ namespace Ntreev.Library.Commands
         private readonly object defaultValue = DBNull.Value;
         private readonly ValueSetter valueSetter;
 
+        private string pattern;
+
         internal SwitchDescriptor(PropertyInfo propertyInfo)
         {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyInfo.DeclaringType);
             this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
 
             this.switchType = SwitchTypes.Property;
@@ -66,32 +67,34 @@ namespace Ntreev.Library.Commands
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
-            this.summary = propertyInfo.GetSummary();
-            this.description = propertyInfo.GetDescription();
+            this.summary = provider.GetSummary(propertyInfo);
+            this.description = provider.GetDescription(propertyInfo);
             this.defaultValue = propertyInfo.GetDefaultValue();
             this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
         }
 
         internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
         {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyDescriptor.ComponentType);
             this.switchAttribute = propertyDescriptor.GetCommandSwitchAttribute();
 
             this.switchType = SwitchTypes.Property;
             this.originalName = propertyDescriptor.Name;
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
-            this.displayName = propertyDescriptor.DisplayName != string.Empty ? propertyDescriptor.DisplayName : this.name;
+            this.displayName = propertyDescriptor.GetDisplayName() != string.Empty ? propertyDescriptor.GetDisplayName() : this.name;
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
-            this.summary = string.Empty;
-            this.description = propertyDescriptor.Description;
+            this.summary = provider.GetSummary(propertyDescriptor);
+            this.description = provider.GetDescription(propertyDescriptor);
             this.defaultValue = propertyDescriptor.GetDefaultValue();
             this.valueSetter = new PropertyValueSetter(this, propertyDescriptor);
         }
 
         internal SwitchDescriptor(ParameterInfo parameterInfo)
         {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(parameterInfo.Member.DeclaringType);
             this.switchAttribute = new CommandSwitchAttribute() { Required = true, NameType = SwitchNameTypes.Name, };
 
             this.switchType = SwitchTypes.Parameter;
@@ -102,8 +105,8 @@ namespace Ntreev.Library.Commands
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
             this.type = parameterInfo.ParameterType;
             this.converter = parameterInfo.GetConverter();
-            this.summary = parameterInfo.GetSummary();
-            this.description = parameterInfo.GetDescription();
+            this.summary = provider.GetSummary(parameterInfo);
+            this.description = provider.GetDescription(parameterInfo);
             this.defaultValue = parameterInfo.DefaultValue;
             this.valueSetter = new ParameterValueSetter(this, parameterInfo);
         }

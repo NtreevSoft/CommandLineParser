@@ -36,9 +36,9 @@ namespace Ntreev.Library.Commands
     /// </summary>
     public class Parser
     {
-        static readonly internal Parser DefaultBooleanParser = new BooleanParser();
-        static readonly internal Parser DefaultParser = new Parser();
-        static readonly internal Parser DefaultListParser = new ListParser();
+        private static readonly Parser DefaultBooleanParser = new BooleanParser();
+        private static readonly Parser DefaultParser = new Parser();
+        private static readonly Parser DefaultListParser = new ListParser();
 
         /// <summary>
         /// <seealso cref="Parser"/> 클래스의 새 인스턴스를 초기화합니다.
@@ -56,7 +56,7 @@ namespace Ntreev.Library.Commands
         /// <param name="value">분석할 스위치와 연결되어 있는 데이터의 원본값 입니다.</param>
         /// <returns>문자열을 데이터로 변환한 값 입니다.</returns>
         /// <exception cref="NotSupportedException">문자열을 데이터로 변환할 수 없을때</exception>
-        virtual public object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
+        public virtual object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
         {
             var typeConverter = switchDescriptor.Converter;
 
