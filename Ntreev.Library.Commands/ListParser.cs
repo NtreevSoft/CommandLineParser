@@ -38,23 +38,27 @@ namespace Ntreev.Library.Commands
     {
         public override object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
         {
-            System.Collections.IList list;
+            var list = new List< object>() ;
 
-            if (value == null)
-            {
-                if (switchDescriptor.ArgType.IsArray == true)
-                {
-                    list = new System.Collections.ArrayList() as System.Collections.IList;
-                }
-                else
-                {
-                    list = TypeDescriptor.CreateInstance(null, switchDescriptor.ArgType, null, null) as System.Collections.IList;
-                }
-            }
-            else
-            {
-                list = value as System.Collections.IList;
-            }
+            //if (value == null)
+            //{
+            //    if (switchDescriptor.ArgType.IsArray == true)
+            //    {
+            //        list = new System.Collections.ArrayList() as System.Collections.IList;
+            //    }
+            //    else
+            //    {
+            //        list = TypeDescriptor.CreateInstance(null, switchDescriptor.ArgType, null, null) as System.Collections.IList;
+            //    }
+            //}
+            //else
+            //{
+            //    if(switchDescriptor.ArgType.IsArray == true)
+            //    {
+
+            //    }
+            //    list = value as System.Collections.IList;
+            //}
 
             var itemType = GetItemType(switchDescriptor.ArgType);
             if (itemType == null)
@@ -75,8 +79,12 @@ namespace Ntreev.Library.Commands
                 if (switchDescriptor.ArgType.IsArray == true)
                 {
                     var array = Array.CreateInstance(itemType, list.Count);
-                    list.CopyTo(array, 0);
-                    list = array as System.Collections.IList;
+                    //list.CopyTo(array, 0);
+                    //list = array as System.Collections.IList;
+                }
+                else
+                {
+
                 }
             }
             catch (Exception e)
@@ -94,7 +102,7 @@ namespace Ntreev.Library.Commands
         /// <returns>분리된 항목별 문자열의 배열입니다.</returns>
         protected virtual string[] SplitArgument(string arg)
         {
-            return arg.Split(new char[] { ',', });
+            return arg.Split(new char[] { CommandSettings.ItemSperator, });
         }
 
         /// <summary>

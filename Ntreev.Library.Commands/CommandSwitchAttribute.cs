@@ -138,7 +138,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public SwitchNameTypes NameType { get; set; }
+        public bool ShortNameOnly { get; set; }
 
         internal char? GetArgSeperator()
         {

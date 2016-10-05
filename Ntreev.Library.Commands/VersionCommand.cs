@@ -49,7 +49,7 @@ namespace Ntreev.Library.Commands
             get { return "--version"; }
         }
 
-        [CommandSwitch(ShortName = 'q', NameType = SwitchNameTypes.ShortName)]
+        [CommandSwitch(ShortName = 'q', ShortNameOnly = true)]
         public bool IsQuiet
         {
             get; set;

@@ -64,7 +64,7 @@ namespace Ntreev.Library.Commands
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyInfo.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
             this.displayName = propertyInfo.GetDisplayName();
-            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
+            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName);
             this.type = propertyInfo.PropertyType;
             this.converter = propertyInfo.GetConverter();
             this.summary = provider.GetSummary(propertyInfo);
@@ -83,7 +83,7 @@ namespace Ntreev.Library.Commands
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
             this.shortName = this.switchAttribute.ShortNameInternal;
             this.displayName = propertyDescriptor.GetDisplayName() != string.Empty ? propertyDescriptor.GetDisplayName() : this.name;
-            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
+            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName);
             this.type = propertyDescriptor.PropertyType;
             this.converter = propertyDescriptor.Converter;
             this.summary = provider.GetSummary(propertyDescriptor);
@@ -95,14 +95,14 @@ namespace Ntreev.Library.Commands
         internal SwitchDescriptor(ParameterInfo parameterInfo)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(parameterInfo.Member.DeclaringType);
-            this.switchAttribute = new CommandSwitchAttribute() { Required = true, NameType = SwitchNameTypes.Name, };
+            this.switchAttribute = new CommandSwitchAttribute() { Required = true, };
 
             this.switchType = SwitchTypes.Parameter;
             this.originalName = parameterInfo.Name;
             this.name = parameterInfo.Name.ToSpinalCase();
             this.shortName = string.Empty;
             this.displayName = parameterInfo.GetDisplayName();
-            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
+            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName);
             this.type = parameterInfo.ParameterType;
             this.converter = parameterInfo.GetConverter();
             this.summary = provider.GetSummary(parameterInfo);
@@ -271,14 +271,10 @@ namespace Ntreev.Library.Commands
             return pattern;
         }
 
-        private void VerifyName(ref string name, ref string shortName, ref string displayName, SwitchNameTypes nameType)
+        private void VerifyName(ref string name, ref string shortName, ref string displayName)
         {
             name = name.ToSpinalCase();
-            if (this.switchAttribute.NameType == SwitchNameTypes.Name)
-            {
-                shortName = string.Empty;
-            }
-            else if (this.switchAttribute.NameType == SwitchNameTypes.ShortName)
+            if (this.switchAttribute.ShortNameOnly == true)
             {
                 if (shortName == string.Empty)
                     throw new ArgumentException("짧은 이름이 존재하지 않습니다.");

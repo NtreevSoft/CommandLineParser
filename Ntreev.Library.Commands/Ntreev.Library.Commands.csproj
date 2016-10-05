@@ -79,6 +79,7 @@
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
+    <Compile Include="CommandSettings.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
     <Compile Include="ResourceUsageDescriptionProvider.cs" />

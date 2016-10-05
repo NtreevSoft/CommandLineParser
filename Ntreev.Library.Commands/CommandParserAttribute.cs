@@ -34,15 +34,7 @@ namespace Ntreev.Library.Commands
     [AttributeUsage(AttributeTargets.Property)]
     public class CommandParserAttribute : Attribute
     {
-        readonly Type parserType;
-
-        /// <summary>
-        /// <seealso cref="CommandParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
-        /// </summary>
-        public CommandParserAttribute()
-        {
-            this.parserType = typeof(Parser);
-        }
+        private readonly Type parserType;
 
         /// <summary>
         /// 파서의 타입을 가지고 <seealso cref="CommandParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
@@ -52,10 +44,21 @@ namespace Ntreev.Library.Commands
             this.parserType = parserType;
         }
 
+        public CommandParserAttribute(string typeName)
+            : this(Type.GetType(typeName))
+        {
+
+        }
+
         /// <summary>
         /// 파서의 타입을 나타냅니다.
         /// </summary>
-        public Type ParserType
+        public string ParserTypeName
+        {
+            get { return this.parserType.AssemblyQualifiedName; }
+        }
+
+        internal Type ParserType
         {
             get { return this.parserType; }
         }
