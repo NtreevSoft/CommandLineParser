@@ -55,7 +55,7 @@ namespace Ntreev.Library.Commands
             var line = arguments;
             while (string.IsNullOrEmpty(line) == false)
             {
-                if (line.StartsWith(CommandSwitchAttribute.SwitchDelimiter) == true || line.StartsWith(CommandSwitchAttribute.ShortSwitchDelimiter))
+                if (line.StartsWith(CommandSettings.SwitchDelimiter) == true || line.StartsWith(CommandSettings.ShortSwitchDelimiter))
                 {
                     var descriptor = this.ParseOption(instance, ref line);
                     if (descriptor.Required == true)
@@ -72,7 +72,7 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in requiredSwitches.ToArray())
             {
-                if (item.GetVaue(instance) != DBNull.Value)
+                if (item.DefaultValue != DBNull.Value)
                 {
                     requiredSwitches.Remove(item);
                 }
@@ -80,7 +80,7 @@ namespace Ntreev.Library.Commands
 
             if (requiredSwitches.Count > 0)
             {
-                throw new ArgumentException("필수 인자가 빠져있습니다", requiredSwitches.First().Name);
+                throw new ArgumentException(string.Format("필수 인자 {0}가 빠져있습니다", requiredSwitches.First().Name));
             }
 
             this.SetValues(instance);
@@ -98,8 +98,8 @@ namespace Ntreev.Library.Commands
 
         private SwitchDescriptor ParseOption(object instance, ref string arguments)
         {
-            var pattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.SwitchDelimiter);
-            var shortPattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.ShortSwitchDelimiter);
+            var pattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSettings.SwitchDelimiter);
+            var shortPattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSettings.ShortSwitchDelimiter);
 
             var match = Regex.Match(arguments, pattern);
             var parsed = string.Empty;

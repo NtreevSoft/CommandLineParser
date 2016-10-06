@@ -207,9 +207,9 @@ namespace Ntreev.Library.Commands
             return type.Name;
         }
 
-        public static string ToSpinalCase(this string text)
-        {
-            return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
-        }
+        //public static string ToSpinalCase(this string text)
+        //{
+        //    return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
+        //}
     }
 }

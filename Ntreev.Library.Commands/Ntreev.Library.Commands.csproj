@@ -71,8 +71,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgSeperator.cs" />
-    <Compile Include="BooleanParser.cs" />
     <Compile Include="CharWidth.cs" />
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandContext.cs" />
@@ -96,7 +94,6 @@
     <Compile Include="MethodDescriptorCollection.cs" />
     <Compile Include="MethodInvokeException.cs" />
     <Compile Include="MethodUsagePrinter.cs" />
-    <Compile Include="ListParser.cs" />
     <Compile Include="NotFoundMethodException.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="CommandLineParser.cs" />
@@ -107,7 +104,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SwitchDescriptorCollection.cs" />
-    <Compile Include="SwitchNameTypes.cs" />
     <Compile Include="CommandUsagePrinter.cs" />
     <Compile Include="CommandSwitchAttribute.cs" />
     <Compile Include="SwitchDescriptor.cs" />

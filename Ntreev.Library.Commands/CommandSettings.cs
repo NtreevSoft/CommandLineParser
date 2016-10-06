@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
@@ -12,6 +13,7 @@ namespace Ntreev.Library.Commands
         private static string switchDelimiter = "--";
         private static string shortSwitchDelimiter = "-";
         private static char itemSeperator = ';';
+        private static Func<string, string> nameGenerator;
 
         public static string SwitchDelimiter
         {
@@ -40,10 +42,21 @@ namespace Ntreev.Library.Commands
             get { return itemSeperator; }
             set
             {
-                if(char.IsPunctuation(value) == false)
+                if (char.IsPunctuation(value) == false)
                     throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
                 itemSeperator = value;
             }
+        }
+
+        public static Func<string, string> NameGenerator
+        {
+            get { return nameGenerator ?? ToSpinalCase; }
+            set { nameGenerator = value; }
+        }
+
+        private static string ToSpinalCase(string text)
+        {
+            return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
         }
     }
 }

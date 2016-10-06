@@ -19,7 +19,7 @@ namespace Ntreev.Library.Commands
         private readonly string description;
 
         internal MethodDescriptor(MethodInfo methodInfo)
-            : this(methodInfo, methodInfo.Name.ToSpinalCase())
+            : this(methodInfo, CommandSettings.NameGenerator(methodInfo.Name))
         {
 
         }
@@ -99,7 +99,7 @@ namespace Ntreev.Library.Commands
             {
                 var descriptor = descriptors[item.Name];
 
-                var value = descriptor.GetVaue(instance);
+                var value = descriptor.GetValue(instance);
                 values.Add(value);
             }
 

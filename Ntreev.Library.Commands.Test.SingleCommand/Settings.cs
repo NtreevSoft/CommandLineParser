@@ -13,11 +13,26 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
         {
             this.CacheSize = 1024;
             this.Libraries = new string[] { };
+            this.Port = 10001;
+        }
+
+        [CommandSwitch(Required = true)]
+        [Description("service name")]
+        public string ServiceName
+        {
+            get; set;
         }
 
         [CommandSwitch(Name = "path", Required = true)]
         [Description("path to work")]
         public string WorkingPath
+        {
+            get; set;
+        }
+
+        [CommandSwitch(Required = true)]
+        [Description("port")]
+        public int Port
         {
             get; set;
         }
@@ -40,7 +55,7 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
         [Description("library paths.")]
         public string[] Libraries
         {
-            get; set;
+            get;set;
         }
     }
 }

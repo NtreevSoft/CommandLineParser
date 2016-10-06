@@ -69,8 +69,8 @@ namespace Ntreev.Library.Commands
             this.converter = propertyInfo.GetConverter();
             this.summary = provider.GetSummary(propertyInfo);
             this.description = provider.GetDescription(propertyInfo);
-            this.defaultValue = propertyInfo.GetDefaultValue();
-            this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
+            this.defaultValue = DBNull.Value;
+            this.valueSetter = new PropertyInfoSetter(this, propertyInfo);
         }
 
         internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
@@ -88,8 +88,8 @@ namespace Ntreev.Library.Commands
             this.converter = propertyDescriptor.Converter;
             this.summary = provider.GetSummary(propertyDescriptor);
             this.description = provider.GetDescription(propertyDescriptor);
-            this.defaultValue = propertyDescriptor.GetDefaultValue();
-            this.valueSetter = new PropertyValueSetter(this, propertyDescriptor);
+            this.defaultValue = DBNull.Value;
+            this.valueSetter = new PropertyDescriptorSetter(this, propertyDescriptor);
         }
 
         internal SwitchDescriptor(ParameterInfo parameterInfo)
@@ -99,7 +99,7 @@ namespace Ntreev.Library.Commands
 
             this.switchType = SwitchTypes.Parameter;
             this.originalName = parameterInfo.Name;
-            this.name = parameterInfo.Name.ToSpinalCase();
+            this.name = CommandSettings.NameGenerator(parameterInfo.Name);
             this.shortName = string.Empty;
             this.displayName = parameterInfo.GetDisplayName();
             this.VerifyName(ref this.name, ref this.shortName, ref this.displayName);
@@ -108,7 +108,7 @@ namespace Ntreev.Library.Commands
             this.summary = provider.GetSummary(parameterInfo);
             this.description = provider.GetDescription(parameterInfo);
             this.defaultValue = parameterInfo.DefaultValue;
-            this.valueSetter = new ParameterValueSetter(this, parameterInfo);
+            this.valueSetter = new ParameterInfoSetter(this, parameterInfo);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.name == string.Empty)
                     return string.Empty;
-                return CommandSwitchAttribute.SwitchDelimiter + this.name;
+                return CommandSettings.SwitchDelimiter + this.name;
             }
         }
 
@@ -161,7 +161,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.shortName == string.Empty)
                     return string.Empty;
-                return CommandSwitchAttribute.ShortSwitchDelimiter + this.shortName;
+                return CommandSettings.ShortSwitchDelimiter + this.shortName;
             }
         }
 
@@ -191,18 +191,18 @@ namespace Ntreev.Library.Commands
             get { return this.defaultValue; }
         }
 
-        public string ArgTypeSummary
-        {
-            get
-            {
-                Type elementType = ListParser.GetItemType(this.type);
-                if (elementType != null)
-                {
-                    return elementType.GetSimpleName() + ", ...";
-                }
-                return this.ArgType.GetSimpleName();
-            }
-        }
+        //public string ArgTypeSummary
+        //{
+        //    get
+        //    {
+        //        Type elementType = ListParser.GetItemType(this.type);
+        //        if (elementType != null)
+        //        {
+        //            return elementType.GetSimpleName() + ", ...";
+        //        }
+        //        return this.ArgType.GetSimpleName();
+        //    }
+        //}
 
         /// <summary>
         /// 분석할때 해당 스위치가 꼭 필요한지에 대한 여부를 가져옵니다.
@@ -238,15 +238,15 @@ namespace Ntreev.Library.Commands
             var pattern = string.Empty;
             if (this.Name != string.Empty && this.ShortName != string.Empty)
             {
-                pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
+                pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSettings.SwitchDelimiter, this.Name, CommandSettings.ShortSwitchDelimiter, this.ShortName);
             }
             else if (this.Name != string.Empty)
             {
-                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name);
+                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.SwitchDelimiter, this.Name);
             }
             else if (this.ShortName != string.Empty)
             {
-                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
+                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.ShortSwitchDelimiter, this.ShortName);
             }
 
             var argSeperator = this.switchAttribute.GetArgSeperator();
@@ -273,7 +273,7 @@ namespace Ntreev.Library.Commands
 
         private void VerifyName(ref string name, ref string shortName, ref string displayName)
         {
-            name = name.ToSpinalCase();
+            name = CommandSettings.NameGenerator(name);
             if (this.switchAttribute.ShortNameOnly == true)
             {
                 if (shortName == string.Empty)
@@ -304,7 +304,7 @@ namespace Ntreev.Library.Commands
             this.valueSetter.SetValue(instance, arg);
         }
 
-        internal object GetVaue(object instance)
+        internal object GetValue(object instance)
         {
             return this.valueSetter.GetValue(instance);
         }
@@ -327,12 +327,12 @@ namespace Ntreev.Library.Commands
             public abstract object GetValue(object instance);
         }
 
-        class PropertyValueSetter : ValueSetter
+        class PropertyDescriptorSetter : ValueSetter
         {
             private readonly PropertyDescriptor propertyDescriptor;
             private readonly SwitchDescriptor switchDescriptor;
 
-            public PropertyValueSetter(SwitchDescriptor switchDescriptor, PropertyDescriptor propertyDescriptor)
+            public PropertyDescriptorSetter(SwitchDescriptor switchDescriptor, PropertyDescriptor propertyDescriptor)
             {
                 this.switchDescriptor = switchDescriptor;
                 this.propertyDescriptor = propertyDescriptor;
@@ -340,12 +340,7 @@ namespace Ntreev.Library.Commands
 
             public override void SetValue(object instance, string arg)
             {
-                var value = this.propertyDescriptor.GetValue(instance);
-
-                var parser = Parser.GetParser(this.propertyDescriptor);
-                var newValue = parser.Parse(this.switchDescriptor, arg, value);
-
-                if (value != newValue && this.propertyDescriptor.IsReadOnly == false)
+                var newValue = Parser.Parse(this.switchDescriptor, arg);
                     this.propertyDescriptor.SetValue(instance, newValue);
             }
 
@@ -355,12 +350,12 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        class PropertyInfoValueSetter : ValueSetter
+        class PropertyInfoSetter : ValueSetter
         {
             private readonly PropertyInfo propertyInfo;
             private readonly SwitchDescriptor switchDescriptor;
 
-            public PropertyInfoValueSetter(SwitchDescriptor switchDescriptor, PropertyInfo propertyInfo)
+            public PropertyInfoSetter(SwitchDescriptor switchDescriptor, PropertyInfo propertyInfo)
             {
                 this.switchDescriptor = switchDescriptor;
                 this.propertyInfo = propertyInfo;
@@ -368,13 +363,8 @@ namespace Ntreev.Library.Commands
 
             public override void SetValue(object instance, string arg)
             {
-                var value = this.propertyInfo.GetValue(instance, null);
-
-                var parser = Parser.GetParser(this.propertyInfo);
-                var newValue = parser.Parse(this.switchDescriptor, arg, value);
-
-                if (value != newValue && this.propertyInfo.CanWrite == true)
-                    this.propertyInfo.SetValue(instance, newValue, null);
+                var newValue = Parser.Parse(this.switchDescriptor, arg);
+                this.propertyInfo.SetValue(instance, newValue, null);
             }
 
             public override object GetValue(object instance)
@@ -383,13 +373,13 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        class ParameterValueSetter : ValueSetter
+        class ParameterInfoSetter : ValueSetter
         {
             private readonly ParameterInfo parameterInfo;
             private readonly SwitchDescriptor switchDescriptor;
             private object value = DBNull.Value;
 
-            public ParameterValueSetter(SwitchDescriptor switchDescriptor, ParameterInfo parameterInfo)
+            public ParameterInfoSetter(SwitchDescriptor switchDescriptor, ParameterInfo parameterInfo)
             {
                 this.switchDescriptor = switchDescriptor;
                 this.parameterInfo = parameterInfo;
@@ -397,8 +387,7 @@ namespace Ntreev.Library.Commands
 
             public override void SetValue(object instance, string arg)
             {
-                var parser = Parser.GetParser(this.parameterInfo);
-                this.value = parser.Parse(this.switchDescriptor, arg, value);
+                this.value = Parser.Parse(this.switchDescriptor, arg);
             }
 
             public override object GetValue(object instance)

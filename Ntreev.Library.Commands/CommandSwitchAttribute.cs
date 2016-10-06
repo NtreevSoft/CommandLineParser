@@ -36,42 +36,42 @@ namespace Ntreev.Library.Commands
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class CommandSwitchAttribute : Attribute
     {
-        private static string switchDelimiter = "--";
-        private static string shortSwitchDelimiter = "-";
-        static internal CommandSwitchAttribute DefaultValue = new CommandSwitchAttribute();
+        //private static string switchDelimiter = "--";
+        //private static string shortSwitchDelimiter = "-";
+        //static internal CommandSwitchAttribute DefaultValue = new CommandSwitchAttribute();
 
         private string name = string.Empty;
         private char shortName;
         private char? argSeperator = null;
         private bool required;
 
-        public static string SwitchDelimiter
-        {
-            get
-            {
-                return CommandSwitchAttribute.switchDelimiter;
-            }
-            set
-            {
-                if (value.Any(item => char.IsPunctuation(item)) == false)
-                    throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
-                CommandSwitchAttribute.switchDelimiter = value;
-            }
-        }
+        //public static string SwitchDelimiter
+        //{
+        //    get
+        //    {
+        //        return CommandSwitchAttribute.switchDelimiter;
+        //    }
+        //    set
+        //    {
+        //        if (value.Any(item => char.IsPunctuation(item)) == false)
+        //            throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
+        //        CommandSwitchAttribute.switchDelimiter = value;
+        //    }
+        //}
 
-        public static string ShortSwitchDelimiter
-        {
-            get
-            {
-                return CommandSwitchAttribute.shortSwitchDelimiter;
-            }
-            set
-            {
-                if (value.Any(item => char.IsPunctuation(item)) == false)
-                    throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
-                CommandSwitchAttribute.shortSwitchDelimiter = value;
-            }
-        }
+        //public static string ShortSwitchDelimiter
+        //{
+        //    get
+        //    {
+        //        return CommandSwitchAttribute.shortSwitchDelimiter;
+        //    }
+        //    set
+        //    {
+        //        if (value.Any(item => char.IsPunctuation(item)) == false)
+        //            throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
+        //        CommandSwitchAttribute.shortSwitchDelimiter = value;
+        //    }
+        //}
 
         /// <summary>
         /// <seealso cref="CommandSwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
@@ -131,7 +131,7 @@ namespace Ntreev.Library.Commands
                 {
                     if (char.IsPunctuation(value) == false)
                         throw new Exception(Resources.ArgSeperatorMustBeAPunctuation);
-                    if (value.ToString() == CommandSwitchAttribute.SwitchDelimiter || value.ToString() == CommandSwitchAttribute.ShortSwitchDelimiter)
+                    if (value.ToString() == CommandSettings.SwitchDelimiter || value.ToString() == CommandSettings.ShortSwitchDelimiter)
                         throw new Exception(Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
                 }
                 this.argSeperator = (char)value; 

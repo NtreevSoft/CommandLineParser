@@ -40,6 +40,17 @@ namespace Ntreev.Library.Commands
             get { return this.descriptors.Count; }
         }
 
+        internal void Sort()
+        {
+            var query = from item in this.descriptors
+                        orderby item.Required descending
+                        select item;
+
+            var items = query.ToArray();
+            this.descriptors.Clear();
+            this.descriptors.AddRange(items);
+        }
+
         internal void Add(SwitchDescriptor descriptor)
         {
             foreach(var item in this.descriptors)
@@ -69,6 +80,8 @@ namespace Ntreev.Library.Commands
         {
             return this.descriptors.GetEnumerator();
         }
+
+        
 
         #endregion
     }
