@@ -36,6 +36,7 @@ namespace Ntreev.Library.Commands
             {
                 var command = this.commandContext.Commands[this.CommandName];
                 var parser = this.commandContext.Parsers[command];
+                parser.Out = this.commandContext.Out;
 
                 if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
                 {

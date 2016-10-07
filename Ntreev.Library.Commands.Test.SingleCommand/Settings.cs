@@ -11,9 +11,7 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
     {
         public Settings()
         {
-            this.CacheSize = 1024;
             this.Libraries = new string[] { };
-            this.Port = 10001;
         }
 
         [CommandSwitch(Required = true)]
@@ -31,6 +29,7 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
         }
 
         [CommandSwitch(Required = true)]
+        [DefaultValue("10001")]
         [Description("port")]
         public int Port
         {
@@ -46,6 +45,7 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
 
         [CommandSwitch(Name = "cache-size")]
         [Description("cache size. default is 1024")]
+        [DefaultValue(1025)]
         public int CacheSize
         {
             get; set;
@@ -55,7 +55,7 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
         [Description("library paths.")]
         public string[] Libraries
         {
-            get;set;
+            get; set;
         }
     }
 }

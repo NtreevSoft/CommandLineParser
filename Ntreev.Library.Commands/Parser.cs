@@ -33,11 +33,6 @@ namespace Ntreev.Library.Commands
 {
     static class Parser
     {
-        //private static readonly Parser DefaultBooleanParser = new BooleanParser();
-        //private static readonly Parser DefaultParser = new Parser();
-        //private static readonly Parser DefaultListParser = new ListParser();
-
-
         public static object Parse(SwitchDescriptor descriptor, string arg)
         {
             if (descriptor.ArgType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(descriptor.ArgType) == true)
@@ -149,70 +144,5 @@ namespace Ntreev.Library.Commands
             }
             return null;
         }
-
-        //internal static Parser GetParser(PropertyDescriptor propertyDescriptor)
-        //{
-        //    var parserAttribute = propertyDescriptor.Attributes[typeof(CommandParserAttribute)] as CommandParserAttribute;
-
-        //    if (parserAttribute != null)
-        //    {
-        //        return TypeDescriptor.CreateInstance(null, parserAttribute.ParserType, null, null) as Parser;
-        //    }
-
-        //    if (propertyDescriptor.PropertyType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(propertyDescriptor.PropertyType) == true)
-        //    {
-        //        return Parser.DefaultListParser;
-        //    }
-        //    else if (propertyDescriptor.PropertyType == typeof(bool))
-        //    {
-        //        return Parser.DefaultBooleanParser;
-        //    }
-        //    else if (propertyDescriptor.PropertyType.IsValueType == true)
-        //    {
-        //        return Parser.DefaultParser;
-        //    }
-
-        //    if (propertyDescriptor.Converter.CanConvertFrom(typeof(string)) == true)
-        //        return Parser.DefaultParser;
-        //    return null;
-        //}
-
-        //internal static Parser GetParser(ICustomAttributeProvider customAttributeProvider, Type type)
-        //{
-        //    var attribute = customAttributeProvider.GetCustomAttribute<CommandParserAttribute>();
-
-        //    if (attribute != null)
-        //    {
-        //        return TypeDescriptor.CreateInstance(null, attribute.ParserType, null, null) as Parser;
-        //    }
-
-        //    var converter = customAttributeProvider.GetConverter(type);
-        //    if (type.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(type) == true)
-        //    {
-        //        return Parser.DefaultListParser;
-        //    }
-        //    else if (type == typeof(bool))
-        //    {
-        //        return Parser.DefaultBooleanParser;
-        //    }
-        //    else if (type.IsValueType == true)
-        //    {
-        //        return Parser.DefaultParser;
-        //    }
-
-        //    if (converter.CanConvertFrom(typeof(string)) == true)
-        //        return Parser.DefaultParser;
-        //    return null;
-        //}
-
-        //internal static Parser GetParser(ParameterInfo parameterInfo)
-        //{
-        //    return Parser.GetParser(parameterInfo, parameterInfo.ParameterType);
-        //}
-
-        //internal static Parser GetParser(PropertyInfo propertyInfo)
-        //{
-        //    return Parser.GetParser(propertyInfo, propertyInfo.PropertyType);
-        //}
     }
 }

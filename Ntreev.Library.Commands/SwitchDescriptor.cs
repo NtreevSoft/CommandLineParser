@@ -69,7 +69,7 @@ namespace Ntreev.Library.Commands
             this.converter = propertyInfo.GetConverter();
             this.summary = provider.GetSummary(propertyInfo);
             this.description = provider.GetDescription(propertyInfo);
-            this.defaultValue = DBNull.Value;
+            this.defaultValue = propertyInfo.GetDefaultValue();
             this.valueSetter = new PropertyInfoSetter(this, propertyInfo);
         }
 
@@ -88,7 +88,7 @@ namespace Ntreev.Library.Commands
             this.converter = propertyDescriptor.Converter;
             this.summary = provider.GetSummary(propertyDescriptor);
             this.description = provider.GetDescription(propertyDescriptor);
-            this.defaultValue = DBNull.Value;
+            this.defaultValue = propertyDescriptor.GetDefaultValue();
             this.valueSetter = new PropertyDescriptorSetter(this, propertyDescriptor);
         }
 
@@ -191,19 +191,6 @@ namespace Ntreev.Library.Commands
             get { return this.defaultValue; }
         }
 
-        //public string ArgTypeSummary
-        //{
-        //    get
-        //    {
-        //        Type elementType = ListParser.GetItemType(this.type);
-        //        if (elementType != null)
-        //        {
-        //            return elementType.GetSimpleName() + ", ...";
-        //        }
-        //        return this.ArgType.GetSimpleName();
-        //    }
-        //}
-
         /// <summary>
         /// 분석할때 해당 스위치가 꼭 필요한지에 대한 여부를 가져옵니다.
         /// </summary>
@@ -228,6 +215,11 @@ namespace Ntreev.Library.Commands
         public SwitchTypes SwitchType
         {
             get { return this.switchType; }
+        }
+
+        public IEnumerable<Attribute> Attributes
+        {
+            get { return null; }
         }
 
         private string BuildPattern()
@@ -304,6 +296,11 @@ namespace Ntreev.Library.Commands
             this.valueSetter.SetValue(instance, arg);
         }
 
+        internal void SetDefaultValue(object instance)
+        {
+            this.valueSetter.SetDefaultValue(instance);
+        }
+
         internal object GetValue(object instance)
         {
             return this.valueSetter.GetValue(instance);
@@ -324,6 +321,8 @@ namespace Ntreev.Library.Commands
         {
             public abstract void SetValue(object instance, string arg);
 
+            public abstract void SetDefaultValue(object instance);
+
             public abstract object GetValue(object instance);
         }
 
@@ -341,7 +340,12 @@ namespace Ntreev.Library.Commands
             public override void SetValue(object instance, string arg)
             {
                 var newValue = Parser.Parse(this.switchDescriptor, arg);
-                    this.propertyDescriptor.SetValue(instance, newValue);
+                this.propertyDescriptor.SetValue(instance, newValue);
+            }
+
+            public override void SetDefaultValue(object instance)
+            {
+                this.propertyDescriptor.SetValue(instance, this.switchDescriptor.defaultValue);
             }
 
             public override object GetValue(object instance)
@@ -367,6 +371,11 @@ namespace Ntreev.Library.Commands
                 this.propertyInfo.SetValue(instance, newValue, null);
             }
 
+            public override void SetDefaultValue(object instance)
+            {
+                this.propertyInfo.SetValue(instance, this.switchDescriptor.defaultValue, null);
+            }
+
             public override object GetValue(object instance)
             {
                 return this.propertyInfo.GetValue(instance, null);
@@ -388,6 +397,11 @@ namespace Ntreev.Library.Commands
             public override void SetValue(object instance, string arg)
             {
                 this.value = Parser.Parse(this.switchDescriptor, arg);
+            }
+
+            public override void SetDefaultValue(object instance)
+            {
+
             }
 
             public override object GetValue(object instance)

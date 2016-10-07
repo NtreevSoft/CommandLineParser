@@ -120,6 +120,11 @@ namespace Ntreev.Library.Commands
             return new CommandLineParser(command.Name, command);
         }
 
+        protected virtual bool IsCommandVisible(ICommand command)
+        {
+            return true;
+        }
+
         private bool Execute(string[] args)
         {
             var commandName = args[0];

@@ -74,6 +74,7 @@ namespace Ntreev.Library.Commands
             {
                 if (item.DefaultValue != DBNull.Value)
                 {
+                    item.SetDefaultValue(instance);
                     requiredSwitches.Remove(item);
                 }
             }
@@ -84,6 +85,14 @@ namespace Ntreev.Library.Commands
             }
 
             this.SetValues(instance);
+
+            foreach (var item in this.switches.Where(item => item.Required == false))
+            {
+                if (item.DefaultValue != DBNull.Value)
+                {
+                    item.SetDefaultValue(instance);
+                }
+            }
         }
 
         public void SetValues(object instance)
