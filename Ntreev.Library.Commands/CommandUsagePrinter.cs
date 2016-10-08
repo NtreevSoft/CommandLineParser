@@ -36,16 +36,14 @@ namespace Ntreev.Library.Commands
     {
         private readonly string name;
         private readonly object instance;
-        private readonly SwitchDescriptor[] switches;
         private readonly string summary;
         private readonly string description;
 
         public CommandUsagePrinter(string name, object instance)
         {
+            var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
             this.name = name;
             this.instance = instance;
-            this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
-            var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
             this.summary = provider.GetSummary(instance);
             this.description = provider.GetDescription(instance);
         }
@@ -58,29 +56,30 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        protected string Name
+        public string Name
         {
             get { return this.name; }
         }
 
-        protected object Instance
+        public object Instance
         {
             get { return this.instance; }
         }
 
-        protected string Summary
+        public string Summary
         {
             get { return this.summary; }
         }
 
-        protected string Description
+        public string Description
         {
             get { return this.description; }
         }
 
-        protected SwitchDescriptor[] Switches
+        public SwitchDescriptor[] Switches
         {
-            get { return this.switches; }
+            get;
+            internal set;
         }
 
         private void Print(CommandTextWriter writer)

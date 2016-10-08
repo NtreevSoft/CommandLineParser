@@ -131,8 +131,8 @@ namespace Ntreev.Library.Commands
                 {
                     if (char.IsPunctuation(value) == false)
                         throw new Exception(Resources.ArgSeperatorMustBeAPunctuation);
-                    if (value.ToString() == CommandSettings.SwitchDelimiter || value.ToString() == CommandSettings.ShortSwitchDelimiter)
-                        throw new Exception(Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
+                    //if (value.ToString() == CommandSettings.SwitchDelimiter || value.ToString() == CommandSettings.ShortSwitchDelimiter)
+                    //    throw new Exception(Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
                 }
                 this.argSeperator = (char)value; 
             }

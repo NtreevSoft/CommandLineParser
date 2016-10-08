@@ -14,8 +14,8 @@ namespace Ntreev.Library.Commands
         private static string shortSwitchDelimiter = "-";
         private static char itemSeperator = ';';
         private static Func<string, string> nameGenerator;
-        private static Func<SwitchDescriptor, bool> switchVisible;
-        private static Func<MethodDescriptor, bool> methodVisible;
+        //private static Func<SwitchDescriptor, bool> switchVisible;
+        //private static Func<MethodDescriptor, bool> methodVisible;
 
         public static string SwitchDelimiter
         {
@@ -56,32 +56,31 @@ namespace Ntreev.Library.Commands
             set { nameGenerator = value; }
         }
 
-        public static Func<SwitchDescriptor, bool> SwitchVisible
-        {
-            get { return switchVisible ?? IsSwitchVisible; }
-            set { switchVisible = value; }
-        }
+        //public static Func<SwitchDescriptor, bool> SwitchVisible
+        //{
+        //    get { return switchVisible ?? IsSwitchVisible; }
+        //    set { switchVisible = value; }
+        //}
 
-        public static Func<MethodDescriptor, bool> MethodVisible
-        {
-            get { return methodVisible ?? IsMethodVisible; }
-            set { methodVisible = value; }
-        }
+        //public static Func<MethodDescriptor, bool> MethodVisible
+        //{
+        //    get { return methodVisible ?? IsMethodVisible; }
+        //    set { methodVisible = value; }
+        //}
 
         private static string ToSpinalCase(string text)
         {
             return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
         }
 
-        private static bool IsSwitchVisible(SwitchDescriptor descriptor)
-        {
-            return true;
-        }
+        //private static bool IsSwitchVisible(SwitchDescriptor descriptor)
+        //{
+        //    return true;
+        //}
 
-        private static bool IsMethodVisible(MethodDescriptor descriptor)
-        {
-
-            return true;
-        }
+        //private static bool IsMethodVisible(MethodDescriptor descriptor)
+        //{
+        //    return true;
+        //}
     }
 }

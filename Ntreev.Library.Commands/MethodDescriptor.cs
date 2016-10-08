@@ -18,25 +18,19 @@ namespace Ntreev.Library.Commands
         private readonly string summary;
         private readonly string description;
 
-        internal MethodDescriptor(MethodInfo methodInfo)
-            : this(methodInfo, CommandSettings.NameGenerator(methodInfo.Name))
-        {
-
-        }
-
-        internal MethodDescriptor(MethodInfo methodInfo, string name)
+        internal MethodDescriptor(MethodInfo methodInfo, CommandMethodAttribute attribute)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(methodInfo.DeclaringType);
             this.methodInfo = methodInfo;
             this.originalName = methodInfo.Name;
-            this.name = name;
+            this.name = attribute.Name;
             this.displayName = methodInfo.GetDisplayName();
 
             var switchList = new List<SwitchDescriptor>();
 
             foreach (var item in methodInfo.GetParameters())
             {
-                var switchDescriptor = new SwitchDescriptor(item);
+                var switchDescriptor = new SwitchParameterInfoDescriptor(item);
                 switchList.Add(switchDescriptor);
             }
 
@@ -87,13 +81,29 @@ namespace Ntreev.Library.Commands
             get { return this.description; }
         }
 
-        internal void Invoke(object instance, string arguments)
+        public virtual IEnumerable<Attribute> Attributes
         {
-            var helper = new SwitchHelper(this.switches);
+            get
+            {
+                foreach (Attribute item in this.methodInfo.GetCustomAttributes(true))
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        internal MethodInfo MethodInfo
+        {
+            get { return this.methodInfo; }
+        }
+
+        internal static void Invoke(object instance, string arguments, MethodInfo methodInfo, IEnumerable<SwitchDescriptor> switches)
+        {
+            var helper = new SwitchHelper(switches);
             helper.Parse(instance, arguments);
 
             var values = new ArrayList();
-            var descriptors = this.switches.ToDictionary(item => item.OriginalName);
+            var descriptors = switches.ToDictionary(item => item.DescriptorName);
 
             foreach (var item in methodInfo.GetParameters())
             {
@@ -103,7 +113,7 @@ namespace Ntreev.Library.Commands
                 values.Add(value);
             }
 
-            this.methodInfo.Invoke(instance, values.ToArray());
+            methodInfo.Invoke(instance, values.ToArray());
         }
     }
 }

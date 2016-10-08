@@ -54,26 +54,5 @@ namespace Ntreev.Library.Commands
         {
             get; set;
         }
-
-        private void PrintList(CommandTextWriter writer)
-        {
-            this.commandContext.Parsers[this].PrintUsage();
-
-            writer.WriteLine("AvaliableCommands");
-            writer.Indent++;
-            foreach (var item in this.commandContext.Parsers)
-            {
-                var instance = item.Value.Instance;
-                var summary = instance.GetType().GetSummary();
-                if (item.Key == this)
-                    continue;
-                writer.WriteLine(item.Key);
-                writer.Indent++;
-                writer.WriteMultiline(summary);
-                writer.Indent--;
-            }
-            writer.Indent--;
-            writer.WriteLine();
-        }
     }
 }

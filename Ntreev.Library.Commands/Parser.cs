@@ -35,11 +35,11 @@ namespace Ntreev.Library.Commands
     {
         public static object Parse(SwitchDescriptor descriptor, string arg)
         {
-            if (descriptor.ArgType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(descriptor.ArgType) == true)
+            if (descriptor.SwitchType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(descriptor.SwitchType) == true)
             {
                 return ParseArray(descriptor, arg);
             }
-            else if (descriptor.ArgType == typeof(bool))
+            else if (descriptor.SwitchType == typeof(bool))
             {
                 return ParseBoolean(descriptor, arg);
             }
@@ -51,7 +51,7 @@ namespace Ntreev.Library.Commands
 
         private static object ParseBoolean(SwitchDescriptor descriptor, string arg)
         {
-            if (descriptor.ArgType == typeof(bool) && descriptor.ArgSeperator == null)
+            if (descriptor.SwitchType == typeof(bool) && descriptor.ArgSeperator == null)
             {
                 return true;
             }
@@ -60,14 +60,14 @@ namespace Ntreev.Library.Commands
 
         private static object ParseDefault(SwitchDescriptor descriptor, string arg)
         {
-            var typeConverter = descriptor.Converter;
+            var converter = descriptor.Converter;
 
-            if (typeConverter.CanConvertFrom(typeof(string)) == false)
+            if (converter.CanConvertFrom(typeof(string)) == false)
                 throw new NotSupportedException(Resources.CannotConvertFromString);
 
             try
             {
-                return typeConverter.ConvertFrom(arg);
+                return converter.ConvertFrom(arg);
             }
             catch (Exception e)
             {
@@ -79,16 +79,16 @@ namespace Ntreev.Library.Commands
         {
             System.Collections.IList list;
 
-            if (descriptor.ArgType.IsArray == true)
+            if (descriptor.SwitchType.IsArray == true)
             {
                 list = new System.Collections.ArrayList() as System.Collections.IList;
             }
             else
             {
-                list = TypeDescriptor.CreateInstance(null, descriptor.ArgType, null, null) as System.Collections.IList;
+                list = TypeDescriptor.CreateInstance(null, descriptor.SwitchType, null, null) as System.Collections.IList;
             }
 
-            var itemType = GetItemType(descriptor.ArgType);
+            var itemType = GetItemType(descriptor.SwitchType);
             if (itemType == null)
                 throw new NotSupportedException();
 
@@ -106,7 +106,7 @@ namespace Ntreev.Library.Commands
                     list.Add(element);
                 }
 
-                if (descriptor.ArgType.IsArray == true)
+                if (descriptor.SwitchType.IsArray == true)
                 {
                     var array = Array.CreateInstance(itemType, list.Count);
                     list.CopyTo(array, 0);

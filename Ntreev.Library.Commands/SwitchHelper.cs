@@ -37,11 +37,10 @@ namespace Ntreev.Library.Commands
         private readonly SwitchDescriptor[] switches;
         private readonly Dictionary<SwitchDescriptor, string> args = new Dictionary<SwitchDescriptor, string>();
 
-        public SwitchHelper(object instance)
-        {
-            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance.GetType());
-            this.switches = switchDescriptors.ToArray();
-        }
+        //public SwitchHelper(object instance)
+        //{
+        //    this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
+        //}
 
         public SwitchHelper(IEnumerable<SwitchDescriptor> switches)
         {
@@ -74,7 +73,7 @@ namespace Ntreev.Library.Commands
             {
                 if (item.DefaultValue != DBNull.Value)
                 {
-                    item.SetDefaultValue(instance);
+                    item.SetValue(instance, item.DefaultValue);
                     requiredSwitches.Remove(item);
                 }
             }
@@ -90,7 +89,7 @@ namespace Ntreev.Library.Commands
             {
                 if (item.DefaultValue != DBNull.Value)
                 {
-                    item.SetDefaultValue(instance);
+                    item.SetValue(instance, item.DefaultValue);
                 }
             }
         }
@@ -101,7 +100,8 @@ namespace Ntreev.Library.Commands
             {
                 if (this.args.ContainsKey(item) == false)
                     continue;
-                item.SetValue(instance, this.args[item].Trim('\"'));
+                var value = item.Parse(instance, this.args[item].Trim('\"'));
+                item.SetValue(instance, value);
             }
         }
 

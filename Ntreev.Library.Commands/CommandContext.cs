@@ -14,8 +14,8 @@ namespace Ntreev.Library.Commands
 {
     public abstract class CommandContext
     {
-        private readonly Dictionary<ICommand, CommandLineParser> parsers = new Dictionary<ICommand, CommandLineParser>();
-        private readonly Dictionary<string, ICommand> commands;
+        private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();
+        private readonly CommandCollection commands = new CommandCollection();
         private string name;
         private Version version;
         private TextWriter writer;
@@ -26,18 +26,17 @@ namespace Ntreev.Library.Commands
         {
             this.VerifyName = true;
             this.Out = Console.Out;
-
             foreach (var item in commands)
             {
+                this.commands.Add(item);
                 this.parsers.Add(item, this.CreateInstance(item));
             }
-            this.commands = commands.ToDictionary(item => item.Name);
             this.helpCommand = new HelpCommand(this);
             this.versionCommand = new VersionCommand(this);
             this.parsers.Add(this.helpCommand, this.CreateInstance(this.helpCommand));
             this.parsers.Add(this.versionCommand, this.CreateInstance(this.versionCommand));
 
-            foreach(var item in this.parsers.Values)
+            foreach (var item in this.parsers)
             {
                 item.VersionName = string.Empty;
                 item.HelpName = string.Empty;
@@ -93,12 +92,12 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public IReadOnlyDictionary<string, ICommand> Commands
+        public CommandCollection Commands
         {
             get { return this.commands; }
         }
 
-        public IReadOnlyDictionary<ICommand, CommandLineParser> Parsers
+        public CommandLineParserCollection Parsers
         {
             get { return this.parsers; }
         }
@@ -120,11 +119,6 @@ namespace Ntreev.Library.Commands
             return new CommandLineParser(command.Name, command);
         }
 
-        protected virtual bool IsCommandVisible(ICommand command)
-        {
-            return true;
-        }
-
         private bool Execute(string[] args)
         {
             var commandName = args[0];
@@ -144,7 +138,7 @@ namespace Ntreev.Library.Commands
             {
                 return this.Execute(this.VersionCommand, arguments);
             }
-            else if (this.commands.ContainsKey(commandName) == true)
+            else if (this.commands.Contains(commandName) == true)
             {
                 return this.Execute(this.commands[commandName], arguments);
             }

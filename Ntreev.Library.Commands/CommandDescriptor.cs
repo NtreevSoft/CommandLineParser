@@ -42,8 +42,7 @@ namespace Ntreev.Library.Commands
                     var attr = item.GetCustomAttribute<CommandMethodAttribute>();
                     if (attr == null)
                         continue;
-                    var name = attr.Name != string.Empty ? attr.Name : CommandSettings.NameGenerator(item.Name);
-                    descriptors.Add(new MethodDescriptor(item, name));
+                    descriptors.Add(new MethodDescriptor(item, attr));
                 }
                 typeToMethodDescriptors.Add(type, descriptors);
             }
@@ -85,7 +84,7 @@ namespace Ntreev.Library.Commands
                 if (item.GetBrowsable() == false || item.CanWrite == false)
                     continue;
 
-                switches.Add(new SwitchDescriptor(item));
+                switches.Add(new SwitchPropertyInfoDescriptor(item));
             }
 
             switches.Sort();
@@ -109,7 +108,7 @@ namespace Ntreev.Library.Commands
                 if (item.IsBrowsable == false || item.IsReadOnly == true)
                     continue;
 
-                switches.Add(new SwitchDescriptor(item));
+                switches.Add(new SwitchPropertyDescriptor(item));
             }
 
             switches.Sort();

@@ -31,6 +31,7 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
         [CommandSwitch(Required = true)]
         [DefaultValue("10001")]
         [Description("port")]
+        [Browsable(true)]
         public int Port
         {
             get; set;
@@ -45,7 +46,7 @@ namespace Ntreev.Library.Commands.Test.SingleCommand
 
         [CommandSwitch(Name = "cache-size")]
         [Description("cache size. default is 1024")]
-        [DefaultValue(1025)]
+        [DefaultValue("1024")]
         public int CacheSize
         {
             get; set;

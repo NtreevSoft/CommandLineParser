@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands
             get
             {
                 var query = from item in descriptors
-                            where item.OriginalName == name
+                            where item.DescriptorName == name
                             select item;
 
                 if (query.Count() == 0)
