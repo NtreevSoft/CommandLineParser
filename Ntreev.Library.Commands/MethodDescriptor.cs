@@ -11,19 +11,19 @@ namespace Ntreev.Library.Commands
     public class MethodDescriptor
     {
         private readonly MethodInfo methodInfo;
-        private readonly string originalName;
+        private readonly CommandMethodAttribute attribute;
         private readonly string name;
         private readonly string displayName;
         private readonly SwitchDescriptor[] switches;
         private readonly string summary;
         private readonly string description;
 
-        internal MethodDescriptor(MethodInfo methodInfo, CommandMethodAttribute attribute)
+        internal MethodDescriptor(MethodInfo methodInfo)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(methodInfo.DeclaringType);
             this.methodInfo = methodInfo;
-            this.originalName = methodInfo.Name;
-            this.name = attribute.Name;
+            this.attribute = methodInfo.GetCommandMethodAttribute();
+            this.name = attribute.Name != string.Empty ? attribute.Name : CommandSettings.NameGenerator(methodInfo.Name);
             this.displayName = methodInfo.GetDisplayName();
 
             var switchList = new List<SwitchDescriptor>();
@@ -51,9 +51,9 @@ namespace Ntreev.Library.Commands
             this.description = provider.GetDescription(methodInfo);
         }
 
-        public string OriginalName
+        public string DescriptorName
         {
-            get { return this.originalName; }
+            get { return this.methodInfo.Name; }
         }
 
         public string Name

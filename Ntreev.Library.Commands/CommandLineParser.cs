@@ -76,7 +76,7 @@ namespace Ntreev.Library.Commands
             var name = match.Value.Trim(new char[] { '\"', });
 
             if (File.Exists(name) == true)
-                name = Path.GetFileNameWithoutExtension(name);
+                name = Process.GetCurrentProcess().ProcessName;
 
             if (this.name != name)
                 throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
@@ -118,8 +118,8 @@ namespace Ntreev.Library.Commands
             var match = regex.Match(cmdLine);
             var name = match.Value.Trim(new char[] { '\"', });
 
-            if (File.Exists(this.name) == true)
-                name = Path.GetFileNameWithoutExtension(this.name).ToLower();
+            if (File.Exists(name) == true)
+                name = Process.GetCurrentProcess().ProcessName;
 
             if (this.name != name)
                 throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
@@ -196,7 +196,7 @@ namespace Ntreev.Library.Commands
             if (descriptor == null || this.MethodVisible(descriptor) == false)
                 throw new NotFoundMethodException(methodName);
 
-            var switches = descriptor.Switches.Where(item => this.SwitchVisible(item));
+            var switches = descriptor.Switches.Where(item => this.SwitchVisible(item)).ToArray();
 
             this.methodUsagePrinter.OnPrint(this.Out, descriptor, switches);
         }
@@ -257,7 +257,10 @@ namespace Ntreev.Library.Commands
 
         protected virtual bool MethodVisible(MethodDescriptor descriptor)
         {
-            return true;
+            var attr = descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) as BrowsableAttribute;
+            if (attr == null)
+                return true;
+            return attr.Browsable;
         }
 
         protected virtual bool SwitchVisible(SwitchDescriptor descriptor)

@@ -26,7 +26,13 @@ namespace Ntreev.Library.Commands
 
         public override string DisplayName
         {
-            get { return this.parameterInfo.GetDisplayName(); }
+            get
+            {
+                var displayName = this.parameterInfo.GetDisplayName();
+                if (displayName != string.Empty)
+                    return displayName;
+                return this.Name;
+            }
         }
 
         public override object DefaultValue

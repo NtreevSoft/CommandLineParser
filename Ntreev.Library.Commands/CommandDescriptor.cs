@@ -42,7 +42,7 @@ namespace Ntreev.Library.Commands
                     var attr = item.GetCustomAttribute<CommandMethodAttribute>();
                     if (attr == null)
                         continue;
-                    descriptors.Add(new MethodDescriptor(item, attr));
+                    descriptors.Add(new MethodDescriptor(item));
                 }
                 typeToMethodDescriptors.Add(type, descriptors);
             }
@@ -81,9 +81,6 @@ namespace Ntreev.Library.Commands
                 if (item.CanWrite == false)
                     throw new Exception(string.Format("'{0}'은(는) 쓰기 작업이 불가능하기 때문에 스위치로 설정할 수 없습니다.", item.Name));
 
-                if (item.GetBrowsable() == false || item.CanWrite == false)
-                    continue;
-
                 switches.Add(new SwitchPropertyInfoDescriptor(item));
             }
 
@@ -104,9 +101,6 @@ namespace Ntreev.Library.Commands
 
                 if (item.IsReadOnly == true)
                     throw new Exception(string.Format("'{0}'은(는) 읽기 전용이므로 스위치로 설정할 수 없습니다.", item.Name));
-
-                if (item.IsBrowsable == false || item.IsReadOnly == true)
-                    continue;
 
                 switches.Add(new SwitchPropertyDescriptor(item));
             }

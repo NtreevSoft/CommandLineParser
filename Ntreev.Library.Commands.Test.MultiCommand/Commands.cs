@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,13 @@ namespace Ntreev.Library.Commands.Test.MultiCommand
 
         [CommandMethod]
         [CommandMethodSwitch("Message")]
+        public void Delete(string path)
+        {
+            Console.WriteLine("{0} deleted.", path);
+        }
+
+        [CommandMethod]
+        [CommandMethodSwitch("Message")]
         public void Commit(string path)
         {
             if (this.Message == string.Empty)
@@ -36,6 +44,7 @@ namespace Ntreev.Library.Commands.Test.MultiCommand
         }
 
         [CommandSwitch(ShortName = 'm')]
+        [Browsable(false)]
         public string Message
         {
             get; set;

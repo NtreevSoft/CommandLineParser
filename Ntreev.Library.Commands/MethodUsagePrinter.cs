@@ -161,16 +161,16 @@ namespace Ntreev.Library.Commands
             writer.WriteLine(Resources.Usage);
             writer.Indent++;
 
-            this.PrintMethodUsage(writer, descriptor);
+            this.PrintMethodUsage(writer, descriptor, switches);
 
             writer.Indent--;
             writer.WriteLine();
         }
 
-        private void PrintMethodUsage(CommandTextWriter writer, MethodDescriptor descriptor)
+        private void PrintMethodUsage(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
         {
             var indent = writer.Indent;
-            var query = from item in descriptor.Switches
+            var query = from item in switches
                         orderby item.Required descending
                         select this.GetString(item);
 
@@ -216,7 +216,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintOptions(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
         {
-            var items = descriptor.Switches.Where(i => i.Required == false).ToArray();
+            var items = switches.Where(i => i.Required == false).ToArray();
             if (items.Any() == false)
                 return;
 
