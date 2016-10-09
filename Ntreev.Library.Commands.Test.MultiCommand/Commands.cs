@@ -28,6 +28,7 @@ namespace Ntreev.Library.Commands.Test.MultiCommand
 
         [CommandMethod]
         [CommandMethodSwitch("Message")]
+        [Browsable(false)]
         public void Delete(string path)
         {
             Console.WriteLine("{0} deleted.", path);
@@ -44,7 +45,6 @@ namespace Ntreev.Library.Commands.Test.MultiCommand
         }
 
         [CommandSwitch(ShortName = 'm')]
-        [Browsable(false)]
         public string Message
         {
             get; set;

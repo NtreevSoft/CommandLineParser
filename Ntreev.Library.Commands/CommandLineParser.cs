@@ -45,7 +45,8 @@ namespace Ntreev.Library.Commands
         private readonly string name;
         private readonly object instance;
         private Version version;
-        private CommandUsagePrinter switchUsagePrinter;
+        private TextWriter writer;
+        private SwitchUsagePrinter commandUsagePrinter;
         private MethodUsagePrinter methodUsagePrinter;
 
         public CommandLineParser(object instance)
@@ -60,8 +61,6 @@ namespace Ntreev.Library.Commands
             this.VersionName = "--version";
             this.instance = instance;
             this.name = string.IsNullOrEmpty(name) == true ? Process.GetCurrentProcess().ProcessName : name;
-            this.switchUsagePrinter = this.CreateUsagePrinter(this.name, instance);
-            this.methodUsagePrinter = this.CreateMethodUsagePrinter(this.name, instance);
             this.Out = Console.Out;
         }
 
@@ -95,7 +94,7 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var switches = CommandDescriptor.GetSwitchDescriptors(this.instance.GetType()).Where(item => this.SwitchVisible(item));
+                var switches = CommandDescriptor.GetSwitchDescriptors(this.instance.GetType()).Where(item => this.IsSwitchVisible(item));
                 var helper = new SwitchHelper(switches);
                 helper.Parse(this.instance, arguments);
                 return true;
@@ -151,9 +150,9 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), method);
-                var switches = descriptor.Switches.Where(item => this.SwitchVisible(item));
+                var switches = descriptor.Switches.Where(item => this.IsSwitchVisible(item));
 
-                if (descriptor == null || this.MethodVisible(descriptor) == false)
+                if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new NotFoundMethodException(method);
 
                 Invoke(this.instance, arguments, descriptor.MethodInfo, switches);
@@ -171,9 +170,8 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public virtual void PrintUsage()
         {
-            var switches = CommandDescriptor.GetSwitchDescriptors(this.instance.GetType()).Where(item => this.SwitchVisible(item));
-            this.switchUsagePrinter.Switches = switches.ToArray();
-            this.switchUsagePrinter.Print(this.Out);
+            var switches = CommandDescriptor.GetSwitchDescriptors(this.instance.GetType()).Where(item => this.IsSwitchVisible(item)).ToArray();
+            this.SwitchUsagePrinter.Print(this.Out, switches);
         }
 
         public virtual void PrintVersion()
@@ -185,20 +183,20 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintMethodUsage()
         {
-            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance.GetType()).Where(item => this.MethodVisible(item)).ToArray();
-            this.methodUsagePrinter.OnPrint(this.Out, descriptors);
+            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance.GetType()).Where(item => this.IsMethodVisible(item)).ToArray();
+            this.MethodUsagePrinter.Print(this.Out, descriptors);
         }
 
         public virtual void PrintMethodUsage(string methodName)
         {
-            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance.GetType()).Where(item => this.MethodVisible(item)).ToArray();
+            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance.GetType());
             var descriptor = descriptors.FirstOrDefault(item => item.Name == methodName);
-            if (descriptor == null || this.MethodVisible(descriptor) == false)
+            if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                 throw new NotFoundMethodException(methodName);
 
-            var switches = descriptor.Switches.Where(item => this.SwitchVisible(item)).ToArray();
+            var switches = descriptor.Switches.Where(item => this.IsSwitchVisible(item)).ToArray();
 
-            this.methodUsagePrinter.OnPrint(this.Out, descriptor, switches);
+            this.MethodUsagePrinter.Print(this.Out, descriptor, switches);
         }
 
         public static string[] Split(string commandLine)
@@ -214,10 +212,11 @@ namespace Ntreev.Library.Commands
             return new string[] { name, arguments, };
         }
 
-        /// <summary>
-        /// 분석과정중 생기는 다양한 정보를 출력할 수 있는 처리기를 지정합니다.
-        /// </summary>
-        public TextWriter Out { get; set; }
+        public TextWriter Out
+        {
+            get { return this.writer ?? Console.Out; }
+            set { this.writer = value; }
+        }
 
         public string Name
         {
@@ -255,7 +254,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        protected virtual bool MethodVisible(MethodDescriptor descriptor)
+        protected virtual bool IsMethodVisible(MethodDescriptor descriptor)
         {
             var attr = descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) as BrowsableAttribute;
             if (attr == null)
@@ -263,7 +262,7 @@ namespace Ntreev.Library.Commands
             return attr.Browsable;
         }
 
-        protected virtual bool SwitchVisible(SwitchDescriptor descriptor)
+        protected virtual bool IsSwitchVisible(SwitchDescriptor descriptor)
         {
             var attr = descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) as BrowsableAttribute;
             if (attr == null)
@@ -271,9 +270,9 @@ namespace Ntreev.Library.Commands
             return attr.Browsable;
         }
 
-        protected virtual CommandUsagePrinter CreateUsagePrinter(string name, object instance)
+        protected virtual SwitchUsagePrinter CreateSwitchUsagePrinter(string name, object instance)
         {
-            return new CommandUsagePrinter(name, instance);
+            return new SwitchUsagePrinter(name, instance);
         }
 
         protected virtual MethodUsagePrinter CreateMethodUsagePrinter(string name, object instance)
@@ -298,6 +297,26 @@ namespace Ntreev.Library.Commands
             }
 
             methodInfo.Invoke(instance, values.ToArray());
+        }
+
+        private SwitchUsagePrinter SwitchUsagePrinter
+        {
+            get
+            {
+                if (this.commandUsagePrinter == null)
+                    this.commandUsagePrinter = this.CreateSwitchUsagePrinter(this.name, this.instance);
+                return this.commandUsagePrinter;
+            }
+        }
+
+        private MethodUsagePrinter MethodUsagePrinter
+        {
+            get
+            {
+                if (this.methodUsagePrinter == null)
+                    this.methodUsagePrinter = this.CreateMethodUsagePrinter(this.name, this.instance);
+                return this.methodUsagePrinter;
+            }
         }
     }
 }

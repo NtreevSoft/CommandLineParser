@@ -53,18 +53,12 @@ namespace Ntreev.Library.Commands
             this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : descriptorName;
             this.shortName = this.switchAttribute.ShortNameInternal;
 
-            //this.VerifyName(ref this.name, ref this.shortName, ref this.displayName);
-
             this.name = CommandSettings.NameGenerator(this.name);
             if (this.switchAttribute.ShortNameOnly == true)
             {
                 if (this.shortName == string.Empty)
                     throw new ArgumentException("짧은 이름이 존재하지 않습니다.");
                 this.name = string.Empty;
-            }
-            else
-            {
-
             }
         }
 
@@ -85,11 +79,6 @@ namespace Ntreev.Library.Commands
             get { return this.switchAttribute.GetArgSeperator(); }
         }
 
-        internal string DescriptorName
-        {
-            get { return this.descriptorName; }
-        }
-
         /// <summary>
         /// 스위치의 이름을 가져옵니다.
         /// </summary>
@@ -104,26 +93,6 @@ namespace Ntreev.Library.Commands
         public string ShortName
         {
             get { return this.shortName; }
-        }
-
-        internal string NamePattern
-        {
-            get
-            {
-                if (this.name == string.Empty)
-                    return string.Empty;
-                return CommandSettings.SwitchDelimiter + this.name;
-            }
-        }
-
-        internal string ShortNamePattern
-        {
-            get
-            {
-                if (this.ShortName == string.Empty)
-                    return string.Empty;
-                return CommandSettings.ShortSwitchDelimiter + this.shortName;
-            }
         }
 
         public virtual string DisplayName
@@ -241,6 +210,31 @@ namespace Ntreev.Library.Commands
                 return null;
             parsed = match.Value;
             return match.Groups[SwitchDescriptor.ArgGroupName].Value;
+        }
+
+        internal string DescriptorName
+        {
+            get { return this.descriptorName; }
+        }
+
+        internal string NamePattern
+        {
+            get
+            {
+                if (this.name == string.Empty)
+                    return string.Empty;
+                return CommandSettings.SwitchDelimiter + this.name;
+            }
+        }
+
+        internal string ShortNamePattern
+        {
+            get
+            {
+                if (this.ShortName == string.Empty)
+                    return string.Empty;
+                return CommandSettings.ShortSwitchDelimiter + this.shortName;
+            }
         }
     }
 }

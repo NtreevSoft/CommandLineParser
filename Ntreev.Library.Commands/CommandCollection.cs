@@ -11,7 +11,7 @@ namespace Ntreev.Library.Commands
     {
         private readonly Dictionary<string, ICommand> commands = new Dictionary<string, ICommand>();
 
-        public CommandCollection()
+        internal CommandCollection()
         {
 
         }
@@ -31,6 +31,11 @@ namespace Ntreev.Library.Commands
                     return null;
                 return this.commands[commandName];
             }
+        }
+
+        public int Count
+        {
+            get { return this.commands.Count; }
         }
 
         internal void Add(ICommand command)

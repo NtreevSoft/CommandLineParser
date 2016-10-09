@@ -24,7 +24,7 @@ namespace Ntreev.Library.Commands
             this.description = provider.GetDescription(instance);
         }
 
-        public virtual void OnPrint(TextWriter writer, MethodDescriptor[] descriptors)
+        public virtual void Print(TextWriter writer, MethodDescriptor[] descriptors)
         {
             using (var tw = new CommandTextWriter(writer))
             {
@@ -32,7 +32,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public virtual void OnPrint(TextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        public virtual void Print(TextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             using (var tw = new CommandTextWriter(writer))
             {
@@ -68,7 +68,7 @@ namespace Ntreev.Library.Commands
             this.PrintSubcommands(writer, descriptors);
         }
 
-        private void Print(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        private void Print(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             this.PrintSummary(writer, descriptor, switches);
             this.PrintUsage(writer, descriptor, switches);
@@ -89,7 +89,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintSummary(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        private void PrintSummary(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             if (this.Description == string.Empty)
                 return;
@@ -113,7 +113,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintDescription(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        private void PrintDescription(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             if (descriptor.Description == string.Empty)
                 return;
@@ -156,7 +156,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintUsage(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        private void PrintUsage(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             writer.WriteLine(Resources.Usage);
             writer.Indent++;
@@ -167,7 +167,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintMethodUsage(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        private void PrintMethodUsage(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             var indent = writer.Indent;
             var query = from item in switches
@@ -195,7 +195,7 @@ namespace Ntreev.Library.Commands
             writer.Indent = indent;
         }
 
-        private void PrintRequirements(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        private void PrintRequirements(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             var items = switches.Where(i => i.Required == true).ToArray();
             if (items.Any() == false)
@@ -214,7 +214,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintOptions(CommandTextWriter writer, MethodDescriptor descriptor, IEnumerable<SwitchDescriptor> switches)
+        private void PrintOptions(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor[] switches)
         {
             var items = switches.Where(i => i.Required == false).ToArray();
             if (items.Any() == false)
@@ -292,16 +292,6 @@ namespace Ntreev.Library.Commands
                 var patternText = string.Join(" | ", patternItems.Where(i => i != string.Empty));
                 return string.Format("[{0}]", patternText);
             }
-        }
-
-        internal Func<SwitchDescriptor, bool> SwitchVisible
-        {
-            get; set;
-        }
-
-        internal Func<MethodDescriptor, bool> MethodVisible
-        {
-            get; set;
         }
     }
 }

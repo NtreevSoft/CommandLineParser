@@ -80,6 +80,7 @@
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandSettings.cs" />
+    <Compile Include="CommandShortSwitchAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
     <Compile Include="ResourceUsageDescriptionProvider.cs" />
@@ -107,7 +108,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SwitchDescriptorCollection.cs" />
-    <Compile Include="CommandUsagePrinter.cs" />
+    <Compile Include="SwitchUsagePrinter.cs" />
     <Compile Include="CommandSwitchAttribute.cs" />
     <Compile Include="SwitchDescriptor.cs" />
     <Compile Include="SwitchHelper.cs" />

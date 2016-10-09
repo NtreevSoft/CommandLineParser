@@ -35,6 +35,9 @@ namespace Ntreev.Library.Commands
             else
             {
                 var command = this.commandContext.Commands[this.CommandName];
+                if (this.commandContext.IsCommandVisible(command) == false)
+                    throw new NotFoundMethodException(string.Format("'{0}' 은(는) 존재하지 않는 명령입니다."));
+
                 var parser = this.commandContext.Parsers[command];
                 parser.Out = this.commandContext.Out;
 
@@ -84,6 +87,8 @@ namespace Ntreev.Library.Commands
             writer.Indent++;
             foreach (var item in this.commandContext.Commands)
             {
+                if (this.commandContext.IsCommandVisible(item) == false)
+                    continue;
                 var summary = CommandDescriptor.GetUsageDescriptionProvider(item.GetType()).GetSummary(item);
 
                 writer.WriteLine(item.Name);

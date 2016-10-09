@@ -32,14 +32,14 @@ using System.CodeDom.Compiler;
 
 namespace Ntreev.Library.Commands
 {
-    public class CommandUsagePrinter
+    public class SwitchUsagePrinter
     {
         private readonly string name;
         private readonly object instance;
         private readonly string summary;
         private readonly string description;
 
-        public CommandUsagePrinter(string name, object instance)
+        public SwitchUsagePrinter(string name, object instance)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
             this.name = name;
@@ -48,11 +48,11 @@ namespace Ntreev.Library.Commands
             this.description = provider.GetDescription(instance);
         }
 
-        public virtual void Print(TextWriter writer)
+        public virtual void Print(TextWriter writer, SwitchDescriptor[] switches)
         {
             using (var tw = new CommandTextWriter(writer))
             {
-                this.Print(tw);
+                this.Print(tw, switches);
             }
         }
 
@@ -76,22 +76,16 @@ namespace Ntreev.Library.Commands
             get { return this.description; }
         }
 
-        public SwitchDescriptor[] Switches
+        private void Print(CommandTextWriter writer, SwitchDescriptor[] switches)
         {
-            get;
-            internal set;
+            this.PrintSummary(writer, switches);
+            this.PrintUsage(writer, switches);
+            this.PrintDescription(writer, switches);
+            this.PrintRequirements(writer, switches);
+            this.PrintOptions(writer, switches);
         }
 
-        private void Print(CommandTextWriter writer)
-        {
-            this.PrintSummary(writer);
-            this.PrintUsage(writer);
-            this.PrintDescription(writer);
-            this.PrintRequirements(writer);
-            this.PrintOptions(writer);
-        }
-
-        private void PrintSummary(CommandTextWriter writer)
+        private void PrintSummary(CommandTextWriter writer, SwitchDescriptor[] switches)
         {
             if (this.Summary == string.Empty)
                 return;
@@ -103,9 +97,9 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintUsage(CommandTextWriter writer)
+        private void PrintUsage(CommandTextWriter writer, SwitchDescriptor[] switches)
         {
-            var query = from item in this.Switches
+            var query = from item in switches
                         orderby item.Required descending
                         select this.GetString(item);
 
@@ -134,7 +128,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintDescription(CommandTextWriter writer)
+        private void PrintDescription(CommandTextWriter writer, SwitchDescriptor[] switches)
         {
             if (this.Description == string.Empty)
                 return;
@@ -146,15 +140,15 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintRequirements(CommandTextWriter writer)
+        private void PrintRequirements(CommandTextWriter writer, SwitchDescriptor[] switches)
         {
-            var switches = this.Switches.Where(i => i.Required == true).ToArray();
-            if (switches.Any() == false)
+            var items = switches.Where(i => i.Required == true).ToArray();
+            if (items.Any() == false)
                 return;
 
             writer.WriteLine(Resources.Requirements);
             writer.Indent++;
-            foreach (var item in switches)
+            foreach (var item in items)
             {
                 this.PrintRequirement(writer, item);
             }
@@ -162,15 +156,15 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintOptions(CommandTextWriter writer)
+        private void PrintOptions(CommandTextWriter writer, SwitchDescriptor[] switches)
         {
-            var switches = this.Switches.Where(i => i.Required == false).ToArray();
-            if (switches.Any() == false)
+            var items = switches.Where(i => i.Required == false).ToArray();
+            if (items.Any() == false)
                 return;
 
             writer.WriteLine(Resources.Options);
             writer.Indent++;
-            foreach (var item in switches)
+            foreach (var item in items)
             {
                 this.PrintOption(writer, item);
             }

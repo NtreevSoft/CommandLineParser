@@ -11,7 +11,7 @@ namespace Ntreev.Library.Commands
     {
         private readonly Dictionary<ICommand, CommandLineParser> parsers = new Dictionary<ICommand, CommandLineParser>();
 
-        public CommandLineParserCollection()
+        internal CommandLineParserCollection()
         {
 
         }
@@ -31,6 +31,11 @@ namespace Ntreev.Library.Commands
                     return null;
                 return this.parsers[command];
             }
+        }
+
+        public int Count
+        {
+            get { return this.parsers.Count; }
         }
 
         internal void Add(ICommand command, CommandLineParser parser)

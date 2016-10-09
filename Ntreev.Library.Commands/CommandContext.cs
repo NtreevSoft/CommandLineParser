@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -54,6 +55,14 @@ namespace Ntreev.Library.Commands
                 throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
 
             this.Execute(CommandLineParser.Split(arguments));
+        }
+
+        public virtual bool IsCommandVisible(ICommand command)
+        {
+            var attr = command.GetType().GetCustomAttribute<BrowsableAttribute>();
+            if (attr == null)
+                return true;
+            return attr.Browsable;
         }
 
         public TextWriter Out
@@ -140,7 +149,9 @@ namespace Ntreev.Library.Commands
             }
             else if (this.commands.Contains(commandName) == true)
             {
-                return this.Execute(this.commands[commandName], arguments);
+                var command = this.commands[commandName];
+                if (this.IsCommandVisible(command) == true)
+                    return this.Execute(command, arguments);
             }
 
             throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 명령어입니다", commandName));
