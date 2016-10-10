@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands
             get
             {
                 var query = from item in descriptors
-                            where item.OriginalName == name
+                            where item.DescriptorName == name
                             select item;
 
                 if (query.Count() == 0)
@@ -38,6 +38,18 @@ namespace Ntreev.Library.Commands
         public int Count
         {
             get { return this.descriptors.Count; }
+        }
+
+        internal void Sort()
+        {
+            var query = from item in this.descriptors
+                        orderby item.DefaultValue == DBNull.Value descending
+                        orderby item.Required descending
+                        select item;
+
+            var items = query.ToArray();
+            this.descriptors.Clear();
+            this.descriptors.AddRange(items);
         }
 
         internal void Add(SwitchDescriptor descriptor)
@@ -69,6 +81,8 @@ namespace Ntreev.Library.Commands
         {
             return this.descriptors.GetEnumerator();
         }
+
+        
 
         #endregion
     }

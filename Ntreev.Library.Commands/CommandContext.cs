@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -14,8 +15,8 @@ namespace Ntreev.Library.Commands
 {
     public abstract class CommandContext
     {
-        private readonly Dictionary<ICommand, CommandLineParser> parsers = new Dictionary<ICommand, CommandLineParser>();
-        private readonly Dictionary<string, ICommand> commands;
+        private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();
+        private readonly CommandCollection commands = new CommandCollection();
         private string name;
         private Version version;
         private TextWriter writer;
@@ -26,18 +27,17 @@ namespace Ntreev.Library.Commands
         {
             this.VerifyName = true;
             this.Out = Console.Out;
-
             foreach (var item in commands)
             {
+                this.commands.Add(item);
                 this.parsers.Add(item, this.CreateInstance(item));
             }
-            this.commands = commands.ToDictionary(item => item.Name);
             this.helpCommand = new HelpCommand(this);
             this.versionCommand = new VersionCommand(this);
             this.parsers.Add(this.helpCommand, this.CreateInstance(this.helpCommand));
             this.parsers.Add(this.versionCommand, this.CreateInstance(this.versionCommand));
 
-            foreach(var item in this.parsers.Values)
+            foreach (var item in this.parsers)
             {
                 item.VersionName = string.Empty;
                 item.HelpName = string.Empty;
@@ -55,6 +55,14 @@ namespace Ntreev.Library.Commands
                 throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
 
             this.Execute(CommandLineParser.Split(arguments));
+        }
+
+        public virtual bool IsCommandVisible(ICommand command)
+        {
+            var attr = command.GetType().GetCustomAttribute<BrowsableAttribute>();
+            if (attr == null)
+                return true;
+            return attr.Browsable;
         }
 
         public TextWriter Out
@@ -93,12 +101,12 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public IReadOnlyDictionary<string, ICommand> Commands
+        public CommandCollection Commands
         {
             get { return this.commands; }
         }
 
-        public IReadOnlyDictionary<ICommand, CommandLineParser> Parsers
+        public CommandLineParserCollection Parsers
         {
             get { return this.parsers; }
         }
@@ -139,9 +147,11 @@ namespace Ntreev.Library.Commands
             {
                 return this.Execute(this.VersionCommand, arguments);
             }
-            else if (this.commands.ContainsKey(commandName) == true)
+            else if (this.commands.Contains(commandName) == true)
             {
-                return this.Execute(this.commands[commandName], arguments);
+                var command = this.commands[commandName];
+                if (this.IsCommandVisible(command) == true)
+                    return this.Execute(command, arguments);
             }
 
             throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 명령어입니다", commandName));

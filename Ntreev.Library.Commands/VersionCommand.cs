@@ -49,31 +49,10 @@ namespace Ntreev.Library.Commands
             get { return "--version"; }
         }
 
-        [CommandSwitch(ShortName = 'q', NameType = SwitchNameTypes.ShortName)]
+        [CommandSwitch(ShortName = 'q', ShortNameOnly = true)]
         public bool IsQuiet
         {
             get; set;
-        }
-
-        private void PrintList(CommandTextWriter writer)
-        {
-            this.commandContext.Parsers[this].PrintUsage();
-
-            writer.WriteLine("AvaliableCommands");
-            writer.Indent++;
-            foreach (var item in this.commandContext.Parsers)
-            {
-                var instance = item.Value.Instance;
-                var summary = instance.GetType().GetSummary();
-                if (item.Key == this)
-                    continue;
-                writer.WriteLine(item.Key);
-                writer.Indent++;
-                writer.WriteMultiline(summary);
-                writer.Indent--;
-            }
-            writer.Indent--;
-            writer.WriteLine();
         }
     }
 }

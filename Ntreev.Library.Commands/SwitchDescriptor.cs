@@ -34,82 +34,37 @@ namespace Ntreev.Library.Commands
     /// <summary>
     /// 스위치의 정보를 담고 있는 클래스입니다.
     /// </summary>
-    public sealed class SwitchDescriptor
+    public abstract class SwitchDescriptor
     {
-        public const string SwitchGroupName = "switch";
-        public const string ArgGroupName = "arg";
+        private const string SwitchGroupName = "switch";
+        private const string ArgGroupName = "arg";
 
         private readonly CommandSwitchAttribute switchAttribute;
-        private readonly SwitchTypes switchType;
-        private readonly string originalName;
+        private readonly string descriptorName;
         private readonly string name;
         private readonly string shortName;
-        private readonly string displayName;
-        private readonly Type type;
-        private readonly TypeConverter converter;
-        private readonly string summary;
-        private readonly string description;
-        private readonly object defaultValue = DBNull.Value;
-        private readonly ValueSetter valueSetter;
 
         private string pattern;
 
-        internal SwitchDescriptor(PropertyInfo propertyInfo)
+        protected SwitchDescriptor(CommandSwitchAttribute switchAttribute, string descriptorName)
         {
-            var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyInfo.DeclaringType);
-            this.switchAttribute = propertyInfo.GetCommandSwitchAttribute();
-
-            this.switchType = SwitchTypes.Property;
-            this.originalName = propertyInfo.Name;
-            this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyInfo.Name;
+            this.switchAttribute = switchAttribute;
+            this.descriptorName = descriptorName;
+            this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : descriptorName;
             this.shortName = this.switchAttribute.ShortNameInternal;
-            this.displayName = propertyInfo.GetDisplayName();
-            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
-            this.type = propertyInfo.PropertyType;
-            this.converter = propertyInfo.GetConverter();
-            this.summary = provider.GetSummary(propertyInfo);
-            this.description = provider.GetDescription(propertyInfo);
-            this.defaultValue = propertyInfo.GetDefaultValue();
-            this.valueSetter = new PropertyInfoValueSetter(this, propertyInfo);
+
+            this.name = CommandSettings.NameGenerator(this.name);
+            if (this.switchAttribute.ShortNameOnly == true)
+            {
+                if (this.shortName == string.Empty)
+                    throw new ArgumentException("짧은 이름이 존재하지 않습니다.");
+                this.name = string.Empty;
+            }
         }
 
-        internal SwitchDescriptor(PropertyDescriptor propertyDescriptor)
-        {
-            var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyDescriptor.ComponentType);
-            this.switchAttribute = propertyDescriptor.GetCommandSwitchAttribute();
+        public abstract void SetValue(object instance, object value);
 
-            this.switchType = SwitchTypes.Property;
-            this.originalName = propertyDescriptor.Name;
-            this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : propertyDescriptor.Name;
-            this.shortName = this.switchAttribute.ShortNameInternal;
-            this.displayName = propertyDescriptor.GetDisplayName() != string.Empty ? propertyDescriptor.GetDisplayName() : this.name;
-            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
-            this.type = propertyDescriptor.PropertyType;
-            this.converter = propertyDescriptor.Converter;
-            this.summary = provider.GetSummary(propertyDescriptor);
-            this.description = provider.GetDescription(propertyDescriptor);
-            this.defaultValue = propertyDescriptor.GetDefaultValue();
-            this.valueSetter = new PropertyValueSetter(this, propertyDescriptor);
-        }
-
-        internal SwitchDescriptor(ParameterInfo parameterInfo)
-        {
-            var provider = CommandDescriptor.GetUsageDescriptionProvider(parameterInfo.Member.DeclaringType);
-            this.switchAttribute = new CommandSwitchAttribute() { Required = true, NameType = SwitchNameTypes.Name, };
-
-            this.switchType = SwitchTypes.Parameter;
-            this.originalName = parameterInfo.Name;
-            this.name = parameterInfo.Name.ToSpinalCase();
-            this.shortName = string.Empty;
-            this.displayName = parameterInfo.GetDisplayName();
-            this.VerifyName(ref this.name, ref this.shortName, ref this.displayName, this.switchAttribute.NameType);
-            this.type = parameterInfo.ParameterType;
-            this.converter = parameterInfo.GetConverter();
-            this.summary = provider.GetSummary(parameterInfo);
-            this.description = provider.GetDescription(parameterInfo);
-            this.defaultValue = parameterInfo.DefaultValue;
-            this.valueSetter = new ParameterValueSetter(this, parameterInfo);
-        }
+        public abstract object GetValue(object instance);
 
         /// <summary>
         /// 인자와 스위치가 한 문자열내에 포함되어 있을때 이를 구분하는 문자를 가져옵니다.
@@ -122,11 +77,6 @@ namespace Ntreev.Library.Commands
         public char? ArgSeperator
         {
             get { return this.switchAttribute.GetArgSeperator(); }
-        }
-
-        public string OriginalName
-        {
-            get { return this.originalName; }
         }
 
         /// <summary>
@@ -145,63 +95,30 @@ namespace Ntreev.Library.Commands
             get { return this.shortName; }
         }
 
-        public string NamePattern
+        public virtual string DisplayName
         {
-            get
-            {
-                if (this.name == string.Empty)
-                    return string.Empty;
-                return CommandSwitchAttribute.SwitchDelimiter + this.name;
-            }
-        }
-
-        public string ShortNamePattern
-        {
-            get
-            {
-                if (this.shortName == string.Empty)
-                    return string.Empty;
-                return CommandSwitchAttribute.ShortSwitchDelimiter + this.shortName;
-            }
-        }
-
-        public string DisplayName
-        {
-            get { return this.displayName; }
+            get { return this.Name; }
         }
 
         /// <summary>
         /// 스위치의 부가적인 설명을 가져옵니다.
         /// </summary>
-        public string Summary
+        public virtual string Summary
         {
-            get { return this.summary; }
+            get { return string.Empty; }
         }
 
         /// <summary>
         /// 스위치의 부가적인 설명을 가져옵니다.
         /// </summary>
-        public string Description
+        public virtual string Description
         {
-            get { return this.description; }
+            get { return string.Empty; }
         }
 
-        public object DefaultValue
+        public virtual object DefaultValue
         {
-            get { return this.defaultValue; }
-        }
-
-        public string ArgTypeSummary
-        {
-            get
-            {
-                Type elementType = ListParser.GetItemType(this.type);
-                if (elementType != null)
-                {
-                    return elementType.GetSimpleName() + ", ...";
-                }
-                return this.ArgType.GetSimpleName();
-            }
+            get { return DBNull.Value; }
         }
 
         /// <summary>
@@ -215,19 +132,19 @@ namespace Ntreev.Library.Commands
         /// <summary>
         /// 해당 스위치가 가지고 있는 인자의 타입을 가져옵니다.
         /// </summary>
-        public Type ArgType
+        public abstract Type SwitchType
         {
-            get { return this.type; }
+            get;// { return this.type; }
         }
 
-        public TypeConverter Converter
+        public virtual TypeConverter Converter
         {
-            get { return this.converter; }
+            get { return TypeDescriptor.GetConverter(this.SwitchType); }
         }
 
-        public SwitchTypes SwitchType
+        public virtual IEnumerable<Attribute> Attributes
         {
-            get { return this.switchType; }
+            get { yield break; }
         }
 
         private string BuildPattern()
@@ -238,19 +155,19 @@ namespace Ntreev.Library.Commands
             var pattern = string.Empty;
             if (this.Name != string.Empty && this.ShortName != string.Empty)
             {
-                pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
+                pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSettings.SwitchDelimiter, this.Name, CommandSettings.ShortSwitchDelimiter, this.ShortName);
             }
             else if (this.Name != string.Empty)
             {
-                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.SwitchDelimiter, this.Name);
+                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.SwitchDelimiter, this.Name);
             }
             else if (this.ShortName != string.Empty)
             {
-                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSwitchAttribute.ShortSwitchDelimiter, this.ShortName);
+                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.ShortSwitchDelimiter, this.ShortName);
             }
 
             var argSeperator = this.switchAttribute.GetArgSeperator();
-            if (this.ArgType != typeof(bool) || argSeperator != null)
+            if (this.SwitchType != typeof(bool) || argSeperator != null)
             {
                 if (argSeperator == null)
                 {
@@ -271,28 +188,6 @@ namespace Ntreev.Library.Commands
             return pattern;
         }
 
-        private void VerifyName(ref string name, ref string shortName, ref string displayName, SwitchNameTypes nameType)
-        {
-            name = name.ToSpinalCase();
-            if (this.switchAttribute.NameType == SwitchNameTypes.Name)
-            {
-                shortName = string.Empty;
-            }
-            else if (this.switchAttribute.NameType == SwitchNameTypes.ShortName)
-            {
-                if (shortName == string.Empty)
-                    throw new ArgumentException("짧은 이름이 존재하지 않습니다.");
-                name = string.Empty;
-            }
-            else
-            {
-
-            }
-
-            if (displayName == string.Empty)
-                displayName = name;
-        }
-
         private string Pattern
         {
             get
@@ -303,14 +198,9 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        internal void SetValue(object instance, string arg)
+        internal object Parse(object instance, string arg)
         {
-            this.valueSetter.SetValue(instance, arg);
-        }
-
-        internal object GetVaue(object instance)
-        {
-            return this.valueSetter.GetValue(instance);
+            return Parser.Parse(this, arg);
         }
 
         internal string TryMatch(string switchLine, ref string parsed)
@@ -322,99 +212,29 @@ namespace Ntreev.Library.Commands
             return match.Groups[SwitchDescriptor.ArgGroupName].Value;
         }
 
-        #region setters
-
-        abstract class ValueSetter
+        internal string DescriptorName
         {
-            public abstract void SetValue(object instance, string arg);
-
-            public abstract object GetValue(object instance);
+            get { return this.descriptorName; }
         }
 
-        class PropertyValueSetter : ValueSetter
+        internal string NamePattern
         {
-            private readonly PropertyDescriptor propertyDescriptor;
-            private readonly SwitchDescriptor switchDescriptor;
-
-            public PropertyValueSetter(SwitchDescriptor switchDescriptor, PropertyDescriptor propertyDescriptor)
+            get
             {
-                this.switchDescriptor = switchDescriptor;
-                this.propertyDescriptor = propertyDescriptor;
-            }
-
-            public override void SetValue(object instance, string arg)
-            {
-                var value = this.propertyDescriptor.GetValue(instance);
-
-                var parser = Parser.GetParser(this.propertyDescriptor);
-                var newValue = parser.Parse(this.switchDescriptor, arg, value);
-
-                if (value != newValue && this.propertyDescriptor.IsReadOnly == false)
-                    this.propertyDescriptor.SetValue(instance, newValue);
-            }
-
-            public override object GetValue(object instance)
-            {
-                return this.propertyDescriptor.GetValue(instance);
+                if (this.name == string.Empty)
+                    return string.Empty;
+                return CommandSettings.SwitchDelimiter + this.name;
             }
         }
 
-        class PropertyInfoValueSetter : ValueSetter
+        internal string ShortNamePattern
         {
-            private readonly PropertyInfo propertyInfo;
-            private readonly SwitchDescriptor switchDescriptor;
-
-            public PropertyInfoValueSetter(SwitchDescriptor switchDescriptor, PropertyInfo propertyInfo)
+            get
             {
-                this.switchDescriptor = switchDescriptor;
-                this.propertyInfo = propertyInfo;
-            }
-
-            public override void SetValue(object instance, string arg)
-            {
-                var value = this.propertyInfo.GetValue(instance, null);
-
-                var parser = Parser.GetParser(this.propertyInfo);
-                var newValue = parser.Parse(this.switchDescriptor, arg, value);
-
-                if (value != newValue && this.propertyInfo.CanWrite == true)
-                    this.propertyInfo.SetValue(instance, newValue, null);
-            }
-
-            public override object GetValue(object instance)
-            {
-                return this.propertyInfo.GetValue(instance, null);
+                if (this.ShortName == string.Empty)
+                    return string.Empty;
+                return CommandSettings.ShortSwitchDelimiter + this.shortName;
             }
         }
-
-        class ParameterValueSetter : ValueSetter
-        {
-            private readonly ParameterInfo parameterInfo;
-            private readonly SwitchDescriptor switchDescriptor;
-            private object value = DBNull.Value;
-
-            public ParameterValueSetter(SwitchDescriptor switchDescriptor, ParameterInfo parameterInfo)
-            {
-                this.switchDescriptor = switchDescriptor;
-                this.parameterInfo = parameterInfo;
-            }
-
-            public override void SetValue(object instance, string arg)
-            {
-                var parser = Parser.GetParser(this.parameterInfo);
-                this.value = parser.Parse(this.switchDescriptor, arg, value);
-            }
-
-            public override object GetValue(object instance)
-            {
-                if (this.value == DBNull.Value)
-                {
-                    return this.parameterInfo.DefaultValue;
-                }
-                return this.value;
-            }
-        }
-
-        #endregion
     }
 }

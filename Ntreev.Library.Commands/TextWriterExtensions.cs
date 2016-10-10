@@ -28,8 +28,6 @@ namespace Ntreev.Library.Commands
 
 
             }
-
-
         }
 
         public static void WriteLine(this TextWriter writer, string[][] itemsArray, bool hasHeader)

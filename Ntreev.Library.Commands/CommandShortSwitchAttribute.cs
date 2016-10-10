@@ -25,39 +25,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
+using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
     /// <summary>
-    /// 스위치에 사용할 파서의 타입을 지정합니다.
+    /// 스위치의 속성을 지정합니다.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class CommandParserAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class CommandShortSwitchAttribute : CommandSwitchAttribute
     {
-        readonly Type parserType;
-
-        /// <summary>
-        /// <seealso cref="CommandParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
-        /// </summary>
-        public CommandParserAttribute()
+        public CommandShortSwitchAttribute(char shortName)
         {
-            this.parserType = typeof(Parser);
-        }
-
-        /// <summary>
-        /// 파서의 타입을 가지고 <seealso cref="CommandParserAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
-        /// </summary>
-        public CommandParserAttribute(Type parserType)
-        {
-            this.parserType = parserType;
-        }
-
-        /// <summary>
-        /// 파서의 타입을 나타냅니다.
-        /// </summary>
-        public Type ParserType
-        {
-            get { return this.parserType; }
+            this.ShortName = shortName;
+            this.ShortNameOnly = true;
         }
     }
 }

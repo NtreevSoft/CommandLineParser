@@ -42,8 +42,7 @@ namespace Ntreev.Library.Commands
                     var attr = item.GetCustomAttribute<CommandMethodAttribute>();
                     if (attr == null)
                         continue;
-                    var name = attr.Name != string.Empty ? attr.Name : item.Name.ToSpinalCase();
-                    descriptors.Add(new MethodDescriptor(item, name));
+                    descriptors.Add(new MethodDescriptor(item));
                 }
                 typeToMethodDescriptors.Add(type, descriptors);
             }
@@ -76,19 +75,16 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in properties)
             {
-                if (item.GetBrowsable() == false || item.CanWrite == false)
-                    continue;
-
-                var parser = Parser.GetParser(item);
-
-                if (parser == null)
-                    continue;
-
                 if (item.GetCommandSwitchAttribute() == null)
                     continue;
 
-                switches.Add(new SwitchDescriptor(item));
+                if (item.CanWrite == false)
+                    throw new Exception(string.Format("'{0}'은(는) 쓰기 작업이 불가능하기 때문에 스위치로 설정할 수 없습니다.", item.Name));
+
+                switches.Add(new SwitchPropertyInfoDescriptor(item));
             }
+
+            switches.Sort();
 
             return switches;
         }
@@ -100,19 +96,16 @@ namespace Ntreev.Library.Commands
 
             foreach (PropertyDescriptor item in properties)
             {
-                if (item.IsBrowsable == false || item.IsReadOnly == true)
-                    continue;
-
-                var parser = Parser.GetParser(item);
-
-                if (parser == null)
-                    continue;
-
                 if (item.GetCommandSwitchAttribute() == null)
                     continue;
 
-                switches.Add(new SwitchDescriptor(item));
+                if (item.IsReadOnly == true)
+                    throw new Exception(string.Format("'{0}'은(는) 읽기 전용이므로 스위치로 설정할 수 없습니다.", item.Name));
+
+                switches.Add(new SwitchPropertyDescriptor(item));
             }
+
+            switches.Sort();
 
             return switches;
         }

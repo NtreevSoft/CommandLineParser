@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,14 @@ namespace Ntreev.Library.Commands.Test.MultiCommand
         public void Update(string path)
         {
             Console.WriteLine("{0} updated.", path);
+        }
+
+        [CommandMethod]
+        [CommandMethodSwitch("Message")]
+        [Browsable(false)]
+        public void Delete(string path)
+        {
+            Console.WriteLine("{0} deleted.", path);
         }
 
         [CommandMethod]
