@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands
         {
             if (this.commands.ContainsKey(commandName) == false)
                 return false;
-            return false;
+            return true;
         }
 
         public ICommand this[string commandName]

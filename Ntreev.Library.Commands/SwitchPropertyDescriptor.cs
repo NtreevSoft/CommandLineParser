@@ -27,6 +27,16 @@ namespace Ntreev.Library.Commands
             get { return this.propertyDescriptor.DisplayName; }
         }
 
+        public override string Summary
+        {
+            get { return this.summary; }
+        }
+
+        public override string Description
+        {
+            get { return this.description; }
+        }
+
         public override Type SwitchType
         {
             get { return this.propertyDescriptor.PropertyType; }
