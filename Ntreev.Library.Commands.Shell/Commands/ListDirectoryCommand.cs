@@ -7,26 +7,22 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test.Commands
+namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class ListDirectoryCommand : ICommand
+    class ListDirectoryCommand : Command
     {
         [Import]
         private Lazy<CommandContext> commandContext = null;
 
-        public string Name
+        public ListDirectoryCommand()
+            : base("ls", CommandTypes.AllowEmptyArgument)
         {
-            get { return "ls"; }
+
         }
 
-        public CommandTypes Types
-        {
-            get { return CommandTypes.None | CommandTypes.AllowEmptyArgument; }
-        }
-
-        public void Execute()
+        public override void Execute()
         {
             var dir = Directory.GetCurrentDirectory();
             this.PrintItems(dir);

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test
+namespace Ntreev.Library.Commands.Shell
 {
     static class Container
     {

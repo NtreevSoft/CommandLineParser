@@ -1,4 +1,4 @@
-﻿using Ntreev.Library.Commands.Test.Properties;
+﻿using Ntreev.Library.Commands.Shell.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test
+namespace Ntreev.Library.Commands.Shell
 {
     [AttributeUsage(AttributeTargets.All)]
     class ShellDescriptionAttribute : DescriptionAttribute

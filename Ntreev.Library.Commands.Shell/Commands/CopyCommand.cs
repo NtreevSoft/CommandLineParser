@@ -6,23 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test.Commands
+namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class CopyCommand : ICommand
+    class CopyCommand : Command
     {
-        public string Name
+        public CopyCommand()
+            : base("copy")
         {
-            get { return "copy"; }
+
         }
 
-        public CommandTypes Types
-        {
-            get { return CommandTypes.None; }
-        }
-
-        public void Execute()
+        public override void Execute()
         {
             File.Copy(this.SourcePath, this.TargetPath, this.OverWrite);
         }

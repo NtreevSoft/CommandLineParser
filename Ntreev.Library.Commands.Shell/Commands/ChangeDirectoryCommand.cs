@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test.Commands
+namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class ChangeDirectoryCommand : ICommand
+    class ChangeDirectoryCommand : Command
     {
         [Import]
         private Lazy<IShell> shell = null;
@@ -18,16 +18,12 @@ namespace Ntreev.Library.Commands.Test.Commands
         private Lazy<CommandContext> commandContext = null;
 
         public ChangeDirectoryCommand()
+            : base("cd", CommandTypes.AllowEmptyArgument)
         {
             this.DirectoryName = string.Empty;
         }
 
-        public CommandTypes Types
-        {
-            get { return CommandTypes.None | CommandTypes.AllowEmptyArgument; }
-        }
-
-        public void Execute()
+        public override void Execute()
         {
             var shell = this.shell.Value;
             if (this.DirectoryName == string.Empty)
@@ -50,11 +46,6 @@ namespace Ntreev.Library.Commands.Test.Commands
             {
                 throw new DirectoryNotFoundException(string.Format("'{0}'은(는) 존재하지 않는 경로입니다.", this.DirectoryName));
             }
-        }
-
-        public string Name
-        {
-            get { return "cd"; }
         }
 
         [CommandSwitch(Name = "dir", Required = true)]

@@ -7,23 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test.Commands
+namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class StashCommand : ICommand
+    class StashCommand : Command
     {
-        public CommandTypes Types
-        {
-            get { return CommandTypes.HasSubCommand; }
-        }
-
-        public string Name
-        {
-            get { return "stash"; }
-        }
-
-        public void Execute()
+        public StashCommand()
+            : base("stash", CommandTypes.HasSubCommand)
         {
 
         }

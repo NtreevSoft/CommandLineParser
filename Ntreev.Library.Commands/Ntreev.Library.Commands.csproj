@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="CharWidth.cs" />
     <Compile Include="ClassExtension.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="CommandLineParserCollection.cs" />
     <Compile Include="CommandCollection.cs" />
     <Compile Include="CommandContext.cs" />

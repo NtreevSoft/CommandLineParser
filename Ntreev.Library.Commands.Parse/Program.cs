@@ -3,7 +3,7 @@ using Ntreev.Library.Commands;
 using System.ComponentModel;
 using System.IO;
 
-namespace Ntreev.Library.Commands.Test.SingleCommand
+namespace Ntreev.Library.Commands.Parse
 {
 
 

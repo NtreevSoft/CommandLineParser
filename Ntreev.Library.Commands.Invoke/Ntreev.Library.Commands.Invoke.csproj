@@ -7,8 +7,8 @@
     <ProjectGuid>{2BA6D207-B745-4F34-8819-5BA84AF90C83}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ntreev.Library.Commands.Test.MultiCommand</RootNamespace>
-    <AssemblyName>mc</AssemblyName>
+    <RootNamespace>Ntreev.Library.Commands.Invoke</RootNamespace>
+    <AssemblyName>invoke</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

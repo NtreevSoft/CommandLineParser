@@ -30,13 +30,13 @@ using System.IO;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Ntreev.Library.Commands.Test.Properties;
+using Ntreev.Library.Commands.Shell.Properties;
 using System.Resources;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Ntreev.Library.Commands.Test
+namespace Ntreev.Library.Commands.Shell
 {
     class Program
     {

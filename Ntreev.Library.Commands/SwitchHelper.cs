@@ -37,11 +37,6 @@ namespace Ntreev.Library.Commands
         private readonly SwitchDescriptor[] switches;
         private readonly Dictionary<SwitchDescriptor, string> args = new Dictionary<SwitchDescriptor, string>();
 
-        //public SwitchHelper(object instance)
-        //{
-        //    this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
-        //}
-
         public SwitchHelper(IEnumerable<SwitchDescriptor> switches)
         {
             this.switches = switches.ToArray();

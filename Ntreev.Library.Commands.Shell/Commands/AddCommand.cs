@@ -7,32 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test.Commands
+namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [ShellSummary("AddSummary")]
     [ShellDescription("AddDescription")]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class AddCommand : ICommand
+    class AddCommand : Command
     {
         public AddCommand()
+            : base("add", CommandTypes.None)
         {
             this.Path = string.Empty;
-        }
-
-        public CommandTypes Types
-        {
-            get { return CommandTypes.None; }
-        }
-
-        public string Name
-        {
-            get { return "add"; }
-        }
-
-        public void Execute()
-        {
-            
         }
 
         [CommandSwitch(Required = true)]

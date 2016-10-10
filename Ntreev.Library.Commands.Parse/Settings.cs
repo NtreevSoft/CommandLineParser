@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test.SingleCommand
-{
+namespace Ntreev.Library.Commands.Parse
+{ 
     class Settings
     {
         public Settings()

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Test
+namespace Ntreev.Library.Commands.Shell
 {
     [Export(typeof(CommandContext))]
     class ShellCommandContext : CommandContext
