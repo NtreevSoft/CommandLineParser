@@ -35,6 +35,16 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public override string Summary
+        {
+            get { return this.summary; }
+        }
+
+        public override string Description
+        {
+            get { return this.description; }
+        }
+
         public override object DefaultValue
         {
             get { return this.parameterInfo.DefaultValue; }

@@ -25,33 +25,40 @@ namespace Ntreev.Library.Commands
 
         public void Execute()
         {
-            if (this.CommandName == string.Empty)
+            try
             {
-                using (var writer = new CommandTextWriter(this.commandContext.Out))
+                if (this.CommandName == string.Empty)
                 {
-                    this.PrintList(writer);
-                }
-            }
-            else
-            {
-                var command = this.commandContext.Commands[this.CommandName];
-                if (this.commandContext.IsCommandVisible(command) == false)
-                    throw new NotFoundMethodException(string.Format("'{0}' 은(는) 존재하지 않는 명령입니다."));
-
-                var parser = this.commandContext.Parsers[command];
-                parser.Out = this.commandContext.Out;
-
-                if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
-                {
-                    if (this.SubCommandName != string.Empty)
-                        parser.PrintMethodUsage(this.SubCommandName);
-                    else
-                        parser.PrintMethodUsage();
+                    using (var writer = new CommandTextWriter(this.commandContext.Out))
+                    {
+                        this.PrintList(writer);
+                    }
                 }
                 else
                 {
-                    parser.PrintUsage();
+                    var command = this.commandContext.Commands[this.CommandName];
+                    if (this.commandContext.IsCommandVisible(command) == false)
+                        throw new NotFoundMethodException(string.Format("'{0}' 은(는) 존재하지 않는 명령입니다."));
+
+                    var parser = this.commandContext.Parsers[command];
+                    parser.Out = this.commandContext.Out;
+
+                    if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+                    {
+                        if (this.SubCommandName != string.Empty)
+                            parser.PrintMethodUsage(this.SubCommandName);
+                        else
+                            parser.PrintMethodUsage();
+                    }
+                    else
+                    {
+                        parser.PrintUsage();
+                    }
                 }
+            }
+            finally
+            {
+                this.CommandName = string.Empty;
             }
         }
 
@@ -73,7 +80,7 @@ namespace Ntreev.Library.Commands
         }
 
         [CommandSwitch(Name = "sub-command", Required = true)]
-        [DefaultValue(null)]
+        [DefaultValue("")]
         public string SubCommandName
         {
             get; set;
@@ -97,7 +104,6 @@ namespace Ntreev.Library.Commands
                 writer.Indent--;
             }
             writer.Indent--;
-            writer.WriteLine();
         }
     }
 }
