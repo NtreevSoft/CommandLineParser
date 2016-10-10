@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test.Commands
 {
     [Export(typeof(ICommand))]
-    [GitSummary("StashSummary")]
-    [GitDescription("StashDescription")]
+    [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class StashCommand : ICommand
     {
         public CommandTypes Types
@@ -30,7 +29,6 @@ namespace Ntreev.Library.Commands.Test.Commands
         }
 
         [CommandMethod("list")]
-        [GitDescription("ListDescription_StashCommand")]
         public void List(string options)
         {
 
@@ -47,7 +45,7 @@ namespace Ntreev.Library.Commands.Test.Commands
 
         [CommandMethod("save")]
         [CommandMethodSwitch("Patch", "KeepIndex", "IncludeUntracked", "All", "Quit")]
-        [GitDescription("SaveDescription_StashCommand")]
+        [ShellDescription("SaveDescription_StashCommand")]
         public void Save(string message)
         {
 
@@ -55,7 +53,7 @@ namespace Ntreev.Library.Commands.Test.Commands
         }
 
         [CommandSwitch(ShortName = 'p')]
-        [GitDescription("PatchDescription_StashCommand")]
+        [ShellDescription("PatchDescription_StashCommand")]
         public bool Patch
         {
             get; set;

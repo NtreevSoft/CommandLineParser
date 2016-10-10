@@ -31,114 +31,118 @@ using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
-    /// <summary>
-    /// 문자열을 분석하여 데이터로 변환할 수 있는 방법을 제공합니다.
-    /// </summary>
-    public class Parser
+    static class Parser
     {
-        static readonly internal Parser DefaultBooleanParser = new BooleanParser();
-        static readonly internal Parser DefaultParser = new Parser();
-        static readonly internal Parser DefaultListParser = new ListParser();
-
-        /// <summary>
-        /// <seealso cref="Parser"/> 클래스의 새 인스턴스를 초기화합니다.
-        /// </summary>
-        public Parser()
+        public static object Parse(SwitchDescriptor descriptor, string arg)
         {
-
+            if (descriptor.SwitchType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(descriptor.SwitchType) == true)
+            {
+                return ParseArray(descriptor, arg);
+            }
+            else if (descriptor.SwitchType == typeof(bool))
+            {
+                return ParseBoolean(descriptor, arg);
+            }
+            else 
+            {
+                return ParseDefault(descriptor, arg);
+            }
         }
 
-        /// <summary>
-        /// 문자열을 분석하여 데이터로 변환합니다.
-        /// </summary>
-        /// <param name="switchDescriptor">분석할 스위치의 정보를 담고 있는<seealso cref="SwitchDescriptor"/>의 인스턴스입니다.</param>
-        /// <param name="arg">분석할 문자열을 나타냅니다.</param>
-        /// <param name="value">분석할 스위치와 연결되어 있는 데이터의 원본값 입니다.</param>
-        /// <returns>문자열을 데이터로 변환한 값 입니다.</returns>
-        /// <exception cref="NotSupportedException">문자열을 데이터로 변환할 수 없을때</exception>
-        virtual public object Parse(SwitchDescriptor switchDescriptor, string arg, object value)
+        private static object ParseBoolean(SwitchDescriptor descriptor, string arg)
         {
-            var typeConverter = switchDescriptor.Converter;
+            if (descriptor.SwitchType == typeof(bool) && descriptor.ArgSeperator == null)
+            {
+                return true;
+            }
+            return ParseDefault(descriptor, arg);
+        }
 
-            if (typeConverter.CanConvertFrom(typeof(string)) == false)
+        private static object ParseDefault(SwitchDescriptor descriptor, string arg)
+        {
+            var converter = descriptor.Converter;
+
+            if (converter.CanConvertFrom(typeof(string)) == false)
                 throw new NotSupportedException(Resources.CannotConvertFromString);
 
             try
             {
-                value = typeConverter.ConvertFrom(arg);
+                return converter.ConvertFrom(arg);
             }
             catch (Exception e)
             {
-                throw new ArgumentException(Resources.InvalidArgumentType, switchDescriptor.Name, e);
+                throw new ArgumentException(Resources.InvalidArgumentType, descriptor.Name, e);
             }
-            return value;
         }
 
-        internal static Parser GetParser(PropertyDescriptor propertyDescriptor)
+        private static object ParseArray(SwitchDescriptor descriptor, string arg)
         {
-            var parserAttribute = propertyDescriptor.Attributes[typeof(CommandParserAttribute)] as CommandParserAttribute;
+            System.Collections.IList list;
 
-            if (parserAttribute != null)
+            if (descriptor.SwitchType.IsArray == true)
             {
-                return TypeDescriptor.CreateInstance(null, parserAttribute.ParserType, null, null) as Parser;
+                list = new System.Collections.ArrayList() as System.Collections.IList;
+            }
+            else
+            {
+                list = TypeDescriptor.CreateInstance(null, descriptor.SwitchType, null, null) as System.Collections.IList;
             }
 
-            //object value = propertyDescriptor.GetValue(instance);
+            var itemType = GetItemType(descriptor.SwitchType);
+            if (itemType == null)
+                throw new NotSupportedException();
 
-            if (propertyDescriptor.PropertyType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(propertyDescriptor.PropertyType) == true)
-            {
-                return Parser.DefaultListParser;
-            }
-            else if (propertyDescriptor.PropertyType == typeof(bool))
-            {
-                return Parser.DefaultBooleanParser;
-            }
-            else if (propertyDescriptor.PropertyType.IsValueType == true)
-            {
-                return Parser.DefaultParser;
-            }
+            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
 
-            if (propertyDescriptor.Converter.CanConvertFrom(typeof(string)) == true)
-                return Parser.DefaultParser;
+            try
+            {
+                var converter = TypeDescriptor.GetConverter(itemType);
+                foreach (var item in segments)
+                {
+                    var s = item.Trim();
+                    if (s.Length == 0)
+                        continue;
+                    var element = converter.ConvertFromString(s);
+                    list.Add(element);
+                }
+
+                if (descriptor.SwitchType.IsArray == true)
+                {
+                    var array = Array.CreateInstance(itemType, list.Count);
+                    list.CopyTo(array, 0);
+                    list = array as System.Collections.IList;
+                }
+                else
+                {
+
+                }
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException(Resources.InvalidArgumentType, descriptor.Name, e);
+            }
+            return list;   
+        }
+
+        public static Type GetItemType(Type propertyType)
+        {
+            if (propertyType.IsArray == true)
+            {
+                return propertyType.GetElementType();
+            }
+            else
+            {
+                var properties = TypeDescriptor.GetReflectionType(propertyType).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                foreach (var item in properties)
+                {
+                    if (item.Name.Equals("Item") || item.Name.Equals("Items"))
+                    {
+                        return item.PropertyType;
+                    }
+                }
+            }
             return null;
-        }
-
-        internal static Parser GetParser(ICustomAttributeProvider customAttributeProvider, Type type)
-        {
-            var attribute = customAttributeProvider.GetCustomAttribute<CommandParserAttribute>();
-
-            if (attribute != null)
-            {
-                return TypeDescriptor.CreateInstance(null, attribute.ParserType, null, null) as Parser;
-            }
-
-            var converter = customAttributeProvider.GetConverter(type);
-            if (type.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(type) == true)
-            {
-                return Parser.DefaultListParser;
-            }
-            else if (type == typeof(bool))
-            {
-                return Parser.DefaultBooleanParser;
-            }
-            else if (type.IsValueType == true)
-            {
-                return Parser.DefaultParser;
-            }
-
-            if (converter.CanConvertFrom(typeof(string)) == true)
-                return Parser.DefaultParser;
-            return null;
-        }
-
-        internal static Parser GetParser(ParameterInfo parameterInfo)
-        {
-            return Parser.GetParser(parameterInfo, parameterInfo.ParameterType);
-        }
-
-        internal static Parser GetParser(PropertyInfo propertyInfo)
-        {
-            return Parser.GetParser(propertyInfo, propertyInfo.PropertyType);
         }
     }
 }

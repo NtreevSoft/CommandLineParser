@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test
 {
     [Export(typeof(CommandContext))]
-    class GitCommandContext : CommandContext
+    class ShellCommandContext : CommandContext
     {
         [ImportingConstructor]
-        public GitCommandContext([ImportMany]IEnumerable<ICommand> commands)
+        public ShellCommandContext([ImportMany]IEnumerable<ICommand> commands)
             : base(commands)
         {
 
@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands.Test
 
         protected override CommandLineParser CreateInstance(ICommand command)
         {
-            return new GitCommandLineParser(command.Name, command);
+            return new ShellCommandLineParser(command.Name, command);
         }
     }
 }

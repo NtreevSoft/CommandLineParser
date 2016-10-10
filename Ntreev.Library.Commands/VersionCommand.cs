@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    [SRSummary("VersionSummary")]
+    [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class VersionCommand : ICommand
     {
         private readonly CommandContext commandContext;
@@ -29,7 +29,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.IsQuiet == false)
                 {
-                    writer.WriteLine("{0} {1}", this.commandContext.Name, this.commandContext.Version);
+                    writer.WriteLine(string.Join(" ", this.commandContext.Name, this.commandContext.Version).Trim());
                     writer.WriteLine(info.LegalCopyright);
                 }
                 else
@@ -49,32 +49,10 @@ namespace Ntreev.Library.Commands
             get { return "--version"; }
         }
 
-        [CommandSwitch(ShortName = 'q', NameType = SwitchNameTypes.ShortName)]
-        [Description("버전만 표시합니다.")]
+        [CommandSwitch(ShortName = 'q', ShortNameOnly = true)]
         public bool IsQuiet
         {
             get; set;
-        }
-
-        private void PrintList(CommandTextWriter writer)
-        {
-            this.commandContext.Parsers[this].PrintUsage();
-
-            writer.WriteLine("AvaliableCommands");
-            writer.Indent++;
-            foreach (var item in this.commandContext.Parsers)
-            {
-                var instance = item.Value.Instance;
-                var summary = instance.GetType().GetSummary();
-                if (item.Key == this)
-                    continue;
-                writer.WriteLine(item.Key);
-                writer.Indent++;
-                writer.WriteMultiline(summary);
-                writer.Indent--;
-            }
-            writer.Indent--;
-            writer.WriteLine();
         }
     }
 }

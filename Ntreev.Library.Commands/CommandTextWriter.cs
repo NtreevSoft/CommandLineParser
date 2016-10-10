@@ -57,7 +57,7 @@ namespace Ntreev.Library.Commands
                         continue;
                 }
                 this.Write(item);
-                x++;
+                x += CharWidth.mk_wcwidth_cjk(item);
                 if (x == this.width || Console.CursorLeft == 0)
                 {
                     x = 0;

@@ -37,11 +37,10 @@ namespace Ntreev.Library.Commands
         private readonly SwitchDescriptor[] switches;
         private readonly Dictionary<SwitchDescriptor, string> args = new Dictionary<SwitchDescriptor, string>();
 
-        public SwitchHelper(object instance)
-        {
-            var switchDescriptors = CommandDescriptor.GetSwitchDescriptors(instance.GetType());
-            this.switches = switchDescriptors.ToArray();
-        }
+        //public SwitchHelper(object instance)
+        //{
+        //    this.switches = CommandDescriptor.GetSwitchDescriptors(instance.GetType()).ToArray();
+        //}
 
         public SwitchHelper(IEnumerable<SwitchDescriptor> switches)
         {
@@ -55,7 +54,7 @@ namespace Ntreev.Library.Commands
             var line = arguments;
             while (string.IsNullOrEmpty(line) == false)
             {
-                if (line.StartsWith(CommandSwitchAttribute.SwitchDelimiter) == true || line.StartsWith(CommandSwitchAttribute.ShortSwitchDelimiter))
+                if (line.StartsWith(CommandSettings.SwitchDelimiter) == true || line.StartsWith(CommandSettings.ShortSwitchDelimiter))
                 {
                     var descriptor = this.ParseOption(instance, ref line);
                     if (descriptor.Required == true)
@@ -72,36 +71,28 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in requiredSwitches.ToArray())
             {
-                if (item.GetVaue(instance) != DBNull.Value)
+                if (item.DefaultValue != DBNull.Value)
                 {
+                    item.SetValue(instance, item.DefaultValue);
                     requiredSwitches.Remove(item);
                 }
             }
 
             if (requiredSwitches.Count > 0)
             {
-                throw new ArgumentException("필수 인자가 빠져있습니다", requiredSwitches.First().Name);
+                throw new ArgumentException(string.Format("필수 인자 {0}가 빠져있습니다", requiredSwitches.First().Name));
             }
 
             this.SetValues(instance);
+
+            foreach (var item in this.switches.Where(item => item.Required == false))
+            {
+                if (item.DefaultValue != DBNull.Value)
+                {
+                    item.SetValue(instance, item.DefaultValue);
+                }
+            }
         }
-
-        //public void Parse(object instance, string[] switchLines)
-        //{
-        //    this.args.Clear();
-        //    this.AssertValidation();
-
-        //    foreach (string switchLine in switchLines)
-        //    {
-        //        var parsed = string.Empty;
-        //        var descriptor = this.DoMatch(switchLine, ref parsed);
-        //        if (descriptor == null)
-        //            throw new ArgumentException(Resources.NotFoundMatchedSwitch, switchLine);
-        //    }
-
-        //    this.AssertRequired();
-        //    this.SetValues(instance);
-        //}
 
         public void SetValues(object instance)
         {
@@ -109,14 +100,15 @@ namespace Ntreev.Library.Commands
             {
                 if (this.args.ContainsKey(item) == false)
                     continue;
-                item.SetValue(instance, this.args[item].Trim('\"'));
+                var value = item.Parse(instance, this.args[item].Trim('\"'));
+                item.SetValue(instance, value);
             }
         }
 
         private SwitchDescriptor ParseOption(object instance, ref string arguments)
         {
-            var pattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.SwitchDelimiter);
-            var shortPattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSwitchAttribute.ShortSwitchDelimiter);
+            var pattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSettings.SwitchDelimiter);
+            var shortPattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSettings.ShortSwitchDelimiter);
 
             var match = Regex.Match(arguments, pattern);
             var parsed = string.Empty;
