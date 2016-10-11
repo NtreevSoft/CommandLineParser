@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands
 {
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class HelpCommand : ICommand
+    public class HelpCommand : ICommand
     {
         private readonly CommandContext commandContext;
 
@@ -23,7 +23,7 @@ namespace Ntreev.Library.Commands
             this.SubCommandName = string.Empty;
         }
 
-        public void Execute()
+        public virtual void Execute()
         {
             try
             {
@@ -42,18 +42,7 @@ namespace Ntreev.Library.Commands
 
                     var parser = this.commandContext.Parsers[command];
                     parser.Out = this.commandContext.Out;
-
-                    if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
-                    {
-                        if (this.SubCommandName != string.Empty)
-                            parser.PrintMethodUsage(this.SubCommandName);
-                        else
-                            parser.PrintMethodUsage();
-                    }
-                    else
-                    {
-                        parser.PrintUsage();
-                    }
+                    this.PrintUsage(command, parser);
                 }
             }
             finally
@@ -84,6 +73,21 @@ namespace Ntreev.Library.Commands
         public string SubCommandName
         {
             get; set;
+        }
+
+        protected virtual void PrintUsage(ICommand command, CommandLineParser parser)
+        {
+            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+            {
+                if (this.SubCommandName != string.Empty)
+                    parser.PrintMethodUsage(this.SubCommandName);
+                else
+                    parser.PrintMethodUsage();
+            }
+            else
+            {
+                parser.PrintUsage();
+            }
         }
 
         private void PrintList(CommandTextWriter writer)
