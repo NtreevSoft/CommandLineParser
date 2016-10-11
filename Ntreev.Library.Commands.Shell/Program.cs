@@ -25,18 +25,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ntreev.Library;
+using System.IO;
 using System.ComponentModel;
-using Ntreev.Library.Commands.Properties;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using Ntreev.Library.Commands.Shell.Properties;
+using System.Resources;
+using System.Drawing;
+using System.Globalization;
+using System.Runtime.InteropServices;
 
-namespace Ntreev.Library.Commands
+namespace Ntreev.Library.Commands.Shell
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class CommandShortSwitchAttribute : CommandSwitchAttribute
+    class Program
     {
-        public CommandShortSwitchAttribute(char shortName)
+        static void Main(string[] args)
         {
-            this.ShortName = shortName;
-            this.ShortNameOnly = true;
+            var shell = Container.GetService<IShell>();
+            shell.Prompt = Directory.GetCurrentDirectory();
+            shell.Start();
         }
     }
 }
