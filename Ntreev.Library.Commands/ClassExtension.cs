@@ -75,6 +75,8 @@ namespace Ntreev.Library.Commands
             if (value.GetType() == propertyInfo.PropertyType)
                 return value;
 
+            if (propertyInfo.PropertyType.IsArray == true)
+                return Parser.ParseArray(propertyInfo.PropertyType, value.ToString()); 
             return propertyInfo.GetConverter().ConvertFrom(value);
         }
 

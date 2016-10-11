@@ -57,6 +57,10 @@ namespace Ntreev.Library.Commands
 
         public virtual bool IsCommandVisible(ICommand command)
         {
+            if (this.HelpCommand == command)
+                return false;
+            if (this.VersionCommand == command)
+                return false;
             var attr = command.GetType().GetCustomAttribute<BrowsableAttribute>();
             if (attr == null)
                 return true;
@@ -153,7 +157,7 @@ namespace Ntreev.Library.Commands
                         return false;
                     }
                 }
-                else if (parser.Invoke(command.Name + " " + arguments) == false)
+                else if (parser.Invoke(parser.Name + " " + arguments) == false)
                 {
                     return false;
                 }
@@ -190,8 +194,8 @@ namespace Ntreev.Library.Commands
 
             if (commandName == string.Empty)
             {
-                this.Out.WriteLine("type '{0} {1}' for usage.", this.name, this.HelpCommand.Name);
-                this.Out.WriteLine("type '{0} {1}' to see the version.", this.name, this.VersionCommand.Name);
+                this.Out.WriteLine("type '{0}' for usage.", string.Join(" ",  new string[] { this.Name, this.HelpCommand.Name }.Where(i => i != string.Empty)));
+                this.Out.WriteLine("type '{0}' to see the version.", string.Join(" ", new string[] { this.Name, this.VersionCommand.Name }.Where(i => i != string.Empty)));
                 return false;
             }
             else if (commandName == this.HelpCommand.Name)

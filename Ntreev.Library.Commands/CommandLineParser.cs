@@ -142,7 +142,7 @@ namespace Ntreev.Library.Commands
                     this.PrintMethodUsage(arguments);
                 return false;
             }
-            else if (arguments == this.VersionName)
+            else if (method == this.VersionName)
             {
                 this.PrintVersion();
                 return false;

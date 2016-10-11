@@ -45,6 +45,7 @@ namespace Ntreev.Library.Commands
         public void Parse(object instance, string arguments)
         {
             var requiredSwitches = this.switches.Where(item => item.Required == true).ToList();
+            var optionSwitches = this.switches.Where(item => item.Required == false).ToList();
 
             var line = arguments;
             while (string.IsNullOrEmpty(line) == false)
@@ -54,6 +55,8 @@ namespace Ntreev.Library.Commands
                     var descriptor = this.ParseOption(instance, ref line);
                     if (descriptor.Required == true)
                         requiredSwitches.Remove(descriptor);
+                    else
+                        optionSwitches.Remove(descriptor);
                 }
                 else
                 {
@@ -80,7 +83,7 @@ namespace Ntreev.Library.Commands
 
             this.SetValues(instance);
 
-            foreach (var item in this.switches.Where(item => item.Required == false))
+            foreach (var item in optionSwitches)
             {
                 if (item.DefaultValue != DBNull.Value)
                 {

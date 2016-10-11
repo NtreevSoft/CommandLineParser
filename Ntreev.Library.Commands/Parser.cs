@@ -75,6 +75,48 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public static object ParseArray(Type propertyType, string arg)
+        {
+            System.Collections.IList list;
+
+            if (propertyType.IsArray == true)
+            {
+                list = new System.Collections.ArrayList() as System.Collections.IList;
+            }
+            else
+            {
+                list = TypeDescriptor.CreateInstance(null, propertyType, null, null) as System.Collections.IList;
+            }
+
+            var itemType = GetItemType(propertyType);
+            if (itemType == null)
+                throw new NotSupportedException();
+
+            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
+
+            var converter = TypeDescriptor.GetConverter(itemType);
+            foreach (var item in segments)
+            {
+                var s = item.Trim();
+                if (s.Length == 0)
+                    continue;
+                var element = converter.ConvertFromString(s);
+                list.Add(element);
+            }
+
+            if (propertyType.IsArray == true)
+            {
+                var array = Array.CreateInstance(itemType, list.Count);
+                list.CopyTo(array, 0);
+                list = array as System.Collections.IList;
+            }
+            else
+            {
+
+            }
+            return list;
+        }
+
         private static object ParseArray(SwitchDescriptor descriptor, string arg)
         {
             System.Collections.IList list;
