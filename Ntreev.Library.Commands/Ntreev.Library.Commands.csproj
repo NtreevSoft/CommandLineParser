@@ -89,6 +89,7 @@
     <Compile Include="SwitchParameterInfoDescriptor.cs" />
     <Compile Include="SwitchPropertyDescriptor.cs" />
     <Compile Include="SwitchPropertyInfoDescriptor.cs" />
+    <Compile Include="TableDataBuilder.cs" />
     <Compile Include="UsageDescriptionProvider.cs" />
     <Compile Include="IUsageDescriptionProvider.cs" />
     <Compile Include="UsageDescriptionProviderAttribute.cs" />
