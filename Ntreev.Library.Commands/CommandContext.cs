@@ -32,10 +32,8 @@ namespace Ntreev.Library.Commands
                 this.commands.Add(item);
                 this.parsers.Add(item, this.CreateInstance(item));
             }
-            this.helpCommand = new HelpCommand(this);
-            this.versionCommand = new VersionCommand(this);
-            this.parsers.Add(this.helpCommand, this.CreateInstance(this.helpCommand));
-            this.parsers.Add(this.versionCommand, this.CreateInstance(this.versionCommand));
+            this.parsers.Add(this.HelpCommand, this.CreateInstance(this.HelpCommand));
+            this.parsers.Add(this.VersionCommand, this.CreateInstance(this.versionCommand));
 
             foreach (var item in this.parsers)
             {
@@ -59,6 +57,10 @@ namespace Ntreev.Library.Commands
 
         public virtual bool IsCommandVisible(ICommand command)
         {
+            if (this.HelpCommand == command)
+                return false;
+            if (this.VersionCommand == command)
+                return false;
             var attr = command.GetType().GetCustomAttribute<BrowsableAttribute>();
             if (attr == null)
                 return true;
@@ -113,12 +115,22 @@ namespace Ntreev.Library.Commands
 
         public virtual ICommand HelpCommand
         {
-            get { return this.helpCommand; }
+            get
+            {
+                if (this.helpCommand == null)
+                    this.helpCommand = new HelpCommand(this);
+                return this.helpCommand;
+            }
         }
 
         public virtual ICommand VersionCommand
         {
-            get { return this.versionCommand; }
+            get
+            {
+                if (this.versionCommand == null)
+                    this.versionCommand = new VersionCommand(this);
+                return this.versionCommand;
+            }
         }
 
         public bool VerifyName { get; set; }
@@ -128,36 +140,7 @@ namespace Ntreev.Library.Commands
             return new CommandLineParser(command.Name, command);
         }
 
-        private bool Execute(string[] args)
-        {
-            var commandName = args[0];
-            var arguments = args[1];
-
-            if (commandName == string.Empty)
-            {
-                this.Out.WriteLine("type '{0} {1}' for usage.", this.name, this.HelpCommand.Name);
-                this.Out.WriteLine("type '{0} {1}' to see the version.", this.name, this.VersionCommand.Name);
-                return false;
-            }
-            else if (commandName == this.HelpCommand.Name)
-            {
-                return this.Execute(this.HelpCommand, arguments);
-            }
-            else if (commandName == this.VersionCommand.Name)
-            {
-                return this.Execute(this.VersionCommand, arguments);
-            }
-            else if (this.commands.Contains(commandName) == true)
-            {
-                var command = this.commands[commandName];
-                if (this.IsCommandVisible(command) == true)
-                    return this.Execute(command, arguments);
-            }
-
-            throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 명령어입니다", commandName));
-        }
-
-        private bool Execute(ICommand command, string arguments)
+        protected virtual bool OnExecute(ICommand command, string arguments)
         {
             var parser = this.parsers[command];
             if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
@@ -174,7 +157,7 @@ namespace Ntreev.Library.Commands
                         return false;
                     }
                 }
-                else if (parser.Invoke(command.Name + " " + arguments) == false)
+                else if (parser.Invoke(parser.Name + " " + arguments) == false)
                 {
                     return false;
                 }
@@ -202,6 +185,35 @@ namespace Ntreev.Library.Commands
                 command.Execute();
             }
             return true;
+        }
+
+        private bool Execute(string[] args)
+        {
+            var commandName = args[0];
+            var arguments = args[1];
+
+            if (commandName == string.Empty)
+            {
+                this.Out.WriteLine("type '{0}' for usage.", string.Join(" ",  new string[] { this.Name, this.HelpCommand.Name }.Where(i => i != string.Empty)));
+                this.Out.WriteLine("type '{0}' to see the version.", string.Join(" ", new string[] { this.Name, this.VersionCommand.Name }.Where(i => i != string.Empty)));
+                return false;
+            }
+            else if (commandName == this.HelpCommand.Name)
+            {
+                return this.OnExecute(this.HelpCommand, arguments);
+            }
+            else if (commandName == this.VersionCommand.Name)
+            {
+                return this.OnExecute(this.VersionCommand, arguments);
+            }
+            else if (this.commands.Contains(commandName) == true)
+            {
+                var command = this.commands[commandName];
+                if (this.IsCommandVisible(command) == true)
+                    return this.OnExecute(command, arguments);
+            }
+
+            throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 명령어입니다", commandName));
         }
     }
 }
