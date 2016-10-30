@@ -117,16 +117,58 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="@HelpCommand" xml:space="preserve">
-    <value>123</value>
+  <data name="ArgSeperatorMustBeAPunctuation" xml:space="preserve">
+    <value>ArgSeperator must be a Punctuation.</value>
   </data>
-  <data name="CommandName" xml:space="preserve">
-    <value>123니다. 사용 가능한 명령의 목록은 AvaliableCommands에 표시됩니다.</value>
+  <data name="AvaliableCommands" xml:space="preserve">
+    <value>Available commands</value>
   </data>
-  <data name="HelpCommand" xml:space="preserve">
-    <value>123</value>
+  <data name="CannotConvert_Format" xml:space="preserve">
+    <value>Cannot convert '{0}'</value>
   </data>
-  <data name="SubCommandName" xml:space="preserve">
-    <value>123</value>
+  <data name="CommandNotFound" xml:space="preserve">
+    <value>명령을 찾을 수 없습니다.</value>
+  </data>
+  <data name="CommandNotFound_Format" xml:space="preserve">
+    <value>'{0}' 명령을 찾을 수 없습니다.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>설명</value>
+  </data>
+  <data name="InvalidArgumentType" xml:space="preserve">
+    <value>Invalid argument type.</value>
+  </data>
+  <data name="InvalidCommandName_Format" xml:space="preserve">
+    <value>'{0}' is invalid command name.</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>선택 인자</value>
+  </data>
+  <data name="Requirements" xml:space="preserve">
+    <value>필수 인자</value>
+  </data>
+  <data name="ShortNameDoesNotExist" xml:space="preserve">
+    <value>짧은 이름이 존재하지 않습니다.</value>
+  </data>
+  <data name="SubCommands" xml:space="preserve">
+    <value>하위 명령들</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>요약</value>
+  </data>
+  <data name="SwitchDelimiterMustBePunctuation" xml:space="preserve">
+    <value>SwitchDelimiter must be a Punctuation.</value>
+  </data>
+  <data name="SwitchIsMissing" xml:space="preserve">
+    <value>Switch is missing.</value>
+  </data>
+  <data name="SwitchWasAlreadyRegistered" xml:space="preserve">
+    <value>Switch is already registered.</value>
+  </data>
+  <data name="TypeForUsage_Format" xml:space="preserve">
+    <value>type '{0}' for usage.</value>
+  </data>
+  <data name="Usage" xml:space="preserve">
+    <value>사용법</value>
   </data>
 </root>

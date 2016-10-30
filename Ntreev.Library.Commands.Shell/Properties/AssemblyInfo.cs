@@ -57,5 +57,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.0.4461.33698")]
 [assembly: AssemblyFileVersion("2.0.4461.33699")]
-[assembly: NeutralResourcesLanguage("")]
+[assembly: NeutralResourcesLanguage("ko-KR")]
 

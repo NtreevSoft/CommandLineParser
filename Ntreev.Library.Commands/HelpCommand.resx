@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="@HelpCommand" xml:space="preserve">
-    <value>"사용할 수 있는 명령을 나열하고 사용법을 알려줍니다."</value>
+    <value>Diplay available commands and usage.</value>
   </data>
   <data name="CommandName" xml:space="preserve">
     <value>사용법을 표시할 명령의 이름을 나타냅니다. 사용 가능한 명령의 목록은 AvaliableCommands에 표시됩니다.</value>

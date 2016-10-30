@@ -63,7 +63,7 @@ namespace Ntreev.Library.Commands
             var converter = descriptor.Converter;
 
             if (converter.CanConvertFrom(typeof(string)) == false)
-                throw new NotSupportedException(Resources.CannotConvertFromString);
+                throw new NotSupportedException(string.Format(Resources.CannotConvert_Format, arg));
 
             try
             {
