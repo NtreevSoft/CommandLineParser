@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="@VersionCommand" xml:space="preserve">
-    <value>프로그램의 버전 및 저작권 내용을 표시합니다.</value>
+    <value>Display version and copyright.</value>
   </data>
   <data name="IsQuiet" xml:space="preserve">
-    <value>버전만 표시합니다.</value>
+    <value>display only version.</value>
   </data>
 </root>

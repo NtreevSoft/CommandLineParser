@@ -37,6 +37,19 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public string TabString
+        {
+            get { return IndentedTextWriter.DefaultTabString; }
+        }
+
+        public int Width
+        {
+            get
+            {
+                return this.width;
+            }
+        }
+
         private void WriteMultilineCore(string s)
         {
             var indent = this.Indent;
@@ -66,19 +79,6 @@ namespace Ntreev.Library.Commands
             }
             this.WriteLine();
             this.Indent = indent;
-        }
-
-        public string TabString
-        {
-            get { return IndentedTextWriter.DefaultTabString; }
-        }
-
-        public int Width
-        {
-            get
-            {
-                return this.width;
-            }
         }
     }
 }

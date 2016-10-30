@@ -5,13 +5,14 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
     public class ResourceUsageDescriptionProvider : IUsageDescriptionProvider
     {
-        private readonly static Dictionary<Type, ResourceSet> resourceSets = new Dictionary<Type, ResourceSet>();
+        private readonly static Dictionary<Type, ResourceManager> resourceSets = new Dictionary<Type, ResourceManager>();
 
         static ResourceUsageDescriptionProvider()
         {
@@ -119,17 +120,17 @@ namespace Ntreev.Library.Commands
             return resourceSet.GetString("@" + name);
         }
 
-        private static ResourceSet GetResourceSet(Type type)
+        private static ResourceManager GetResourceSet(Type type)
         {
             var resourceNames = type.Assembly.GetManifestResourceNames();
+            var resourceName = type.FullName + ".resources";
+
+            if (resourceNames.Contains(resourceName) == false)
+                return null;
+
             if (resourceSets.ContainsKey(type) == false)
             {
-                var stream = type.Assembly.GetManifestResourceStream(type.FullName + ".resources");
-
-                if (stream == null)
-                    return null;
-                resourceSets.Add(type, new ResourceSet(stream));
-                stream.Dispose();
+                resourceSets.Add(type, new ResourceManager(type.FullName, type.Assembly));
             }
 
             return resourceSets[type];

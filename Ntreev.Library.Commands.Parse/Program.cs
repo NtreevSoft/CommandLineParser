@@ -5,8 +5,6 @@ using System.IO;
 
 namespace Ntreev.Library.Commands.Parse
 {
-
-
     class Program
     {
         static void Main(string[] args)

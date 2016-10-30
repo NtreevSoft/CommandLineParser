@@ -1,4 +1,5 @@
-﻿#region License
+﻿using System.Resources;
+#region License
 //Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
@@ -19,7 +20,6 @@
 //COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
 //OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -57,3 +57,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.0.4461.33698")]
 [assembly: AssemblyFileVersion("2.0.4461.33699")]
+[assembly: NeutralResourcesLanguage("")]
+

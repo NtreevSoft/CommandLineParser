@@ -38,7 +38,7 @@ namespace Ntreev.Library.Commands
                 {
                     var command = this.commandContext.Commands[this.CommandName];
                     if (this.commandContext.IsCommandVisible(command) == false)
-                        throw new NotFoundMethodException(string.Format("'{0}' 은(는) 존재하지 않는 명령입니다."));
+                        throw new CommandNotFoundException(string.Format(Resources.CommandNotFound_Format, command));
 
                     var parser = this.commandContext.Parsers[command];
                     parser.Out = this.commandContext.Out;

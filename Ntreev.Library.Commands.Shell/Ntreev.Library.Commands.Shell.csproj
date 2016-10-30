@@ -8,7 +8,7 @@
     <ProjectGuid>{B28150A9-B0E4-4B84-A6BB-120117C06FA9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ntreev.Library.Commands.Test</RootNamespace>
+    <RootNamespace>Ntreev.Library.Commands.Shell</RootNamespace>
     <AssemblyName>ncmd</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>

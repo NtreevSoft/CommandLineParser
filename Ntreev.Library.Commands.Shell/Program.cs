@@ -42,6 +42,11 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
+            //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+
+            var t1 = System.Threading.Thread.CurrentThread.CurrentUICulture;
+
             var shell = Container.GetService<IShell>();
             shell.Prompt = Directory.GetCurrentDirectory();
             shell.Start();

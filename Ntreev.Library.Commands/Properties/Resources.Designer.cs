@@ -97,6 +97,24 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   command not found.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string CommandNotFound {
+            get {
+                return ResourceManager.GetString("CommandNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &apos;{0}&apos; command not found.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string CommandNotFound_Format {
+            get {
+                return ResourceManager.GetString("CommandNotFound_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   설명과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Description {
@@ -111,6 +129,15 @@ namespace Ntreev.Library.Commands.Properties {
         internal static string InvalidArgumentType {
             get {
                 return ResourceManager.GetString("InvalidArgumentType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &apos;{0}&apos; is invalid command name.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string InvalidCommandName_Format {
+            get {
+                return ResourceManager.GetString("InvalidCommandName_Format", resourceCulture);
             }
         }
         
@@ -205,6 +232,15 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   short name does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string ShortNameDoesNotExist {
+            get {
+                return ResourceManager.GetString("ShortNameDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   하위 명령들과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string SubCommands {
@@ -246,6 +282,15 @@ namespace Ntreev.Library.Commands.Properties {
         internal static string SwitchWasAlreadyRegistered {
             get {
                 return ResourceManager.GetString("SwitchWasAlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   type &apos;{0}&apos; for usage.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string TypeForUsage_Format {
+            get {
+                return ResourceManager.GetString("TypeForUsage_Format", resourceCulture);
             }
         }
         
