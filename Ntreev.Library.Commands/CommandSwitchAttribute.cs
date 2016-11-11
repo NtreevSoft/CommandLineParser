@@ -38,7 +38,7 @@ namespace Ntreev.Library.Commands
     {
         private string name = string.Empty;
         private char shortName;
-        private char? argSeperator = null;
+        private char? argSeparator = null;
         private bool required;
 
         /// <summary>
@@ -82,32 +82,32 @@ namespace Ntreev.Library.Commands
         /// <remarks>
         /// /Level6 처럼 스위치와 인자의 구분이 필요가 없다면 <seealso cref="char.MinValue"/>를 설정하세요.
         /// </remarks>
-        public char ArgSeperator
+        public char ArgSeparator
         {
             get
             {
-                if (this.argSeperator == null)
+                if (this.argSeparator == null)
                     return char.MinValue;
-                return (char)this.argSeperator; 
+                return (char)this.argSeparator; 
             }
             set 
             {
                 if (value != char.MinValue)
                 {
                     if (char.IsPunctuation(value) == false)
-                        throw new Exception(Resources.ArgSeperatorMustBeAPunctuation);
+                        throw new Exception(Resources.ArgSeparatorMustBeAPunctuation);
                     //if (value.ToString() == CommandSettings.SwitchDelimiter || value.ToString() == CommandSettings.ShortSwitchDelimiter)
-                    //    throw new Exception(Resources.ArgSeperatorAndSwitchDelimiterCannotBeTheSame);
+                    //    throw new Exception(Resources.ArgSeparatorAndSwitchDelimiterCannotBeTheSame);
                 }
-                this.argSeperator = (char)value; 
+                this.argSeparator = (char)value; 
             }
         }
 
         public bool ShortNameOnly { get; set; }
 
-        internal char? GetArgSeperator()
+        internal char? GetArgSeparator()
         {
-            return this.argSeperator;
+            return this.argSeparator;
         }
 
         internal string ShortNameInternal

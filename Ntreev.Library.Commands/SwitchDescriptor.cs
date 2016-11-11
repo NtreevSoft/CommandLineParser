@@ -74,9 +74,9 @@ namespace Ntreev.Library.Commands
         /// <seealso cref="Char.MinValue"/>일 경우에는 스위치와 인자가 하나의 단어로 이루어져 있는 상태입니다.
         /// 그외에는 <see cref="Char.IsPunctuation"/>의 값이 true인 문자로 구분되어집니다.
         /// </remarks>
-        public char? ArgSeperator
+        public char? ArgSeparator
         {
-            get { return this.switchAttribute.GetArgSeperator(); }
+            get { return this.switchAttribute.GetArgSeparator(); }
         }
 
         /// <summary>
@@ -166,17 +166,17 @@ namespace Ntreev.Library.Commands
                 pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.ShortSwitchDelimiter, this.ShortName);
             }
 
-            var argSeperator = this.switchAttribute.GetArgSeperator();
-            if (this.SwitchType != typeof(bool) || argSeperator != null)
+            var argSeparator = this.switchAttribute.GetArgSeparator();
+            if (this.SwitchType != typeof(bool) || argSeparator != null)
             {
-                if (argSeperator == null)
+                if (argSeparator == null)
                 {
                     pattern += string.Format(@"(((\s+)({0}|{1}))|($))", quotes, normal);
                 }
                 else
                 {
-                    if (argSeperator != char.MinValue)
-                        pattern += argSeperator;
+                    if (argSeparator != char.MinValue)
+                        pattern += argSeparator;
                     pattern += string.Format(@"(({0}|{1})|$)", quotes, normal);
                 }
             }

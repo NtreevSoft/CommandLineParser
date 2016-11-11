@@ -61,20 +61,20 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   ArgSeperator는 SwitchDelimiter과 다른 문자여야 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   ArgSeparator는 SwitchDelimiter과 다른 문자여야 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string ArgSeperatorAndSwitchDelimiterCannotBeTheSame {
+        internal static string ArgSeparatorAndSwitchDelimiterCannotBeTheSame {
             get {
-                return ResourceManager.GetString("ArgSeperatorAndSwitchDelimiterCannotBeTheSame", resourceCulture);
+                return ResourceManager.GetString("ArgSeparatorAndSwitchDelimiterCannotBeTheSame", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   ArgSeperator는 문장부호여야만 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   ArgSeparator는 문장부호여야만 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string ArgSeperatorMustBeAPunctuation {
+        internal static string ArgSeparatorMustBeAPunctuation {
             get {
-                return ResourceManager.GetString("ArgSeperatorMustBeAPunctuation", resourceCulture);
+                return ResourceManager.GetString("ArgSeparatorMustBeAPunctuation", resourceCulture);
             }
         }
         
