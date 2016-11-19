@@ -104,7 +104,6 @@
     <Compile Include="TextWriterExtensions.cs" />
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="MethodDescriptorCollection.cs" />
-    <Compile Include="MethodInvokeException.cs" />
     <Compile Include="MethodUsagePrinter.cs" />
     <Compile Include="CommandNotFoundException.cs" />
     <Compile Include="Parser.cs" />

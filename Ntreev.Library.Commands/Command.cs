@@ -14,7 +14,7 @@ namespace Ntreev.Library.Commands
         protected Command(string name)
             : this(name, CommandTypes.None)
         {
-            
+
         }
 
         protected Command(string name, CommandTypes types)

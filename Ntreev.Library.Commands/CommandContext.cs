@@ -195,7 +195,7 @@ namespace Ntreev.Library.Commands
 
             if (commandName == string.Empty)
             {
-                this.Out.WriteLine("type '{0}' for usage.", string.Join(" ",  new string[] { this.Name, this.HelpCommand.Name }.Where(i => i != string.Empty)));
+                this.Out.WriteLine("type '{0}' for usage.", string.Join(" ", new string[] { this.Name, this.HelpCommand.Name }.Where(i => i != string.Empty)));
                 this.Out.WriteLine("type '{0}' to see the version.", string.Join(" ", new string[] { this.Name, this.VersionCommand.Name }.Where(i => i != string.Empty)));
                 return false;
             }

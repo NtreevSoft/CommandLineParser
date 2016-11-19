@@ -54,9 +54,9 @@ namespace Ntreev.Library.Commands
 
         internal void Add(SwitchDescriptor descriptor)
         {
-            foreach(var item in this.descriptors)
+            foreach (var item in this.descriptors)
             {
-                if(item.Name != string.Empty && descriptor.Name != string.Empty && descriptor.Name == item.Name)
+                if (item.Name != string.Empty && descriptor.Name != string.Empty && descriptor.Name == item.Name)
                 {
                     throw new ArgumentException(string.Format("{0} 은(는) 이미 존재하는 이름입니다.", descriptor.Name));
                 }
@@ -82,7 +82,7 @@ namespace Ntreev.Library.Commands
             return this.descriptors.GetEnumerator();
         }
 
-        
+
 
         #endregion
     }

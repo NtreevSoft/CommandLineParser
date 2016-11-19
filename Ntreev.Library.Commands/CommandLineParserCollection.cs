@@ -47,7 +47,7 @@ namespace Ntreev.Library.Commands
 
         IEnumerator<CommandLineParser> IEnumerable<CommandLineParser>.GetEnumerator()
         {
-            foreach(var item in this.parsers)
+            foreach (var item in this.parsers)
             {
                 yield return item.Value;
             }

@@ -66,7 +66,7 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                foreach(Attribute item in this.propertyDescriptor.Attributes)
+                foreach (Attribute item in this.propertyDescriptor.Attributes)
                 {
                     yield return item;
                 }

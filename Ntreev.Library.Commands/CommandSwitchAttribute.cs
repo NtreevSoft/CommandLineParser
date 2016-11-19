@@ -43,7 +43,7 @@ namespace Ntreev.Library.Commands
 
         public CommandSwitchAttribute()
         {
-            
+
         }
 
         public string Name
@@ -70,16 +70,16 @@ namespace Ntreev.Library.Commands
             {
                 if (this.argSeperator == null)
                     return char.MinValue;
-                return (char)this.argSeperator; 
+                return (char)this.argSeperator;
             }
-            set 
+            set
             {
                 if (value != char.MinValue)
                 {
                     if (char.IsPunctuation(value) == false)
                         throw new Exception(Resources.ArgSeperatorMustBeAPunctuation);
                 }
-                this.argSeperator = (char)value; 
+                this.argSeperator = (char)value;
             }
         }
 

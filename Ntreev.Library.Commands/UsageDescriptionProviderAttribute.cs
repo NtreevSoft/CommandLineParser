@@ -15,7 +15,7 @@ namespace Ntreev.Library.Commands
         public UsageDescriptionProviderAttribute(string typeName)
             : this(Type.GetType(typeName))
         {
-            
+
         }
 
         public UsageDescriptionProviderAttribute(Type type)

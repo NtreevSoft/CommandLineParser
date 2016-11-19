@@ -46,7 +46,6 @@ namespace Ntreev.Library.Commands
                 lengths[x] = len + (4 - (len % 4));
             }
 
-            
             for (var y = 0; y < itemsArray.Length; y++)
             {
                 for (var x = 0; x < itemsArray[y].Length; x++)
