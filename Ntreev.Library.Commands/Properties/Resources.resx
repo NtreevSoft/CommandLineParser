@@ -117,70 +117,58 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgSeparatorAndSwitchDelimiterCannotBeTheSame" xml:space="preserve">
-    <value>ArgSeparator는 SwitchDelimiter과 다른 문자여야 합니다.</value>
-  </data>
   <data name="ArgSeparatorMustBeAPunctuation" xml:space="preserve">
-    <value>ArgSeparator는 문장부호여야만 합니다.</value>
+    <value>ArgSeparator must be a Punctuation.</value>
   </data>
   <data name="AvaliableCommands" xml:space="preserve">
-    <value>사용 가능한 명령들</value>
+    <value>Available commands</value>
   </data>
-  <data name="CannotConvertFromString" xml:space="preserve">
-    <value>타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.</value>
+  <data name="CannotConvert_Format" xml:space="preserve">
+    <value>Cannot convert '{0}'</value>
+  </data>
+  <data name="CommandNotFound" xml:space="preserve">
+    <value>command not found.</value>
+  </data>
+  <data name="CommandNotFound_Format" xml:space="preserve">
+    <value>'{0}' command not found.</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>설명</value>
+    <value>Description</value>
   </data>
   <data name="InvalidArgumentType" xml:space="preserve">
-    <value>잘못된 인수 형식입니다.</value>
+    <value>Invalid argument type.</value>
   </data>
-  <data name="InvalidSwitchName" xml:space="preserve">
-    <value>스위치의 이름은 문자 또는 숫자여야만 합니다.</value>
-  </data>
-  <data name="InvalidSwitchWasIncluded" xml:space="preserve">
-    <value>유효하지 않은 스위치가 포함되어 있습니다.</value>
-  </data>
-  <data name="License" xml:space="preserve">
-    <value>the MIT License http://www.opensource.org/licenses/mit-license.php.</value>
-  </data>
-  <data name="MustBeStaticClass" xml:space="preserve">
-    <value>타입이 정적 클래스이여야만 합니다.</value>
-  </data>
-  <data name="MutuallyExclusiveException" xml:space="preserve">
-    <value>MutuallyExclusive가 같은 스위치는 Required 속성값이 모두 true거나 false여야 합니다.</value>
-  </data>
-  <data name="MutuallyExclusiveSwitchIsAlreadySet" xml:space="preserve">
-    <value>같은 값의 상호배타적 스위치가 이미 설정되었습니다.</value>
-  </data>
-  <data name="NoArguments" xml:space="preserve">
-    <value>전달인자가 한개도 포함되어 있지 않습니다.</value>
-  </data>
-  <data name="NotFoundMatchedSwitch" xml:space="preserve">
-    <value>해당 스위치를 찾을 수가 없거나 잘못된 인자 형식입니다.</value>
+  <data name="InvalidCommandName_Format" xml:space="preserve">
+    <value>'{0}' is invalid command name.</value>
   </data>
   <data name="Options" xml:space="preserve">
-    <value>선택 인수</value>
+    <value>Options</value>
   </data>
   <data name="Requirements" xml:space="preserve">
-    <value>필수 인수</value>
+    <value>Requirements</value>
+  </data>
+  <data name="ShortNameDoesNotExist" xml:space="preserve">
+    <value>short name does not exist.</value>
   </data>
   <data name="SubCommands" xml:space="preserve">
-    <value>하위 명령들</value>
+    <value>SubCommands</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>요약</value>
+    <value>Summary</value>
   </data>
   <data name="SwitchDelimiterMustBePunctuation" xml:space="preserve">
-    <value>SwitchDelimiter 는 문장부호여야만 합니다.</value>
+    <value>SwitchDelimiter must be a Punctuation.</value>
   </data>
   <data name="SwitchIsMissing" xml:space="preserve">
-    <value>필요한 스위치가 빠져있습니다.</value>
+    <value>Switch is missing.</value>
   </data>
   <data name="SwitchWasAlreadyRegistered" xml:space="preserve">
-    <value>스위치가 이미 등록되어 있습니다. 중복여부를 확인하세요.</value>
+    <value>Switch is already registered.</value>
+  </data>
+  <data name="TypeForUsage_Format" xml:space="preserve">
+    <value>type '{0}' for usage.</value>
   </data>
   <data name="Usage" xml:space="preserve">
-    <value>사용 방법</value>
+    <value>Usage</value>
   </data>
 </root>

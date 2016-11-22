@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ntreev.Library.Commands.Properties;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,7 +51,7 @@ namespace Ntreev.Library.Commands
             var arguments = segments[1];
 
             if (this.VerifyName == true && this.Name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
+                throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
             this.Execute(CommandLineParser.Split(arguments));
         }
@@ -153,7 +154,7 @@ namespace Ntreev.Library.Commands
                     }
                     else
                     {
-                        this.Out.WriteLine("type '{0}' for usage.", string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
+                        this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
                         return false;
                     }
                 }
@@ -173,7 +174,7 @@ namespace Ntreev.Library.Commands
                     }
                     else
                     {
-                        this.Out.WriteLine("type '{0}' for usage.", string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
+                        this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
                         return false;
                     }
                 }
@@ -194,7 +195,7 @@ namespace Ntreev.Library.Commands
 
             if (commandName == string.Empty)
             {
-                this.Out.WriteLine("type '{0}' for usage.", string.Join(" ",  new string[] { this.Name, this.HelpCommand.Name }.Where(i => i != string.Empty)));
+                this.Out.WriteLine("type '{0}' for usage.", string.Join(" ", new string[] { this.Name, this.HelpCommand.Name }.Where(i => i != string.Empty)));
                 this.Out.WriteLine("type '{0}' to see the version.", string.Join(" ", new string[] { this.Name, this.VersionCommand.Name }.Where(i => i != string.Empty)));
                 return false;
             }
@@ -213,7 +214,7 @@ namespace Ntreev.Library.Commands
                     return this.OnExecute(command, arguments);
             }
 
-            throw new ArgumentException(string.Format("{0} 은(는) 존재하지 않는 명령어입니다", commandName));
+            throw new ArgumentException(string.Format("'{0}' does not exsited command.", commandName));
         }
     }
 }

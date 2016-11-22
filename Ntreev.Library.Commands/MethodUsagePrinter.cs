@@ -135,7 +135,7 @@ namespace Ntreev.Library.Commands
                 writer.WriteLine(item.Name);
                 writer.Indent++;
                 if (item.Summary == string.Empty)
-                    writer.WriteMultiline("*요약이 정의되지 않았습니다.*");
+                    writer.WriteMultiline("*<empty>*");
                 else
                     writer.WriteMultiline(item.Summary);
                 writer.Indent--;

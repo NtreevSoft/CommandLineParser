@@ -61,16 +61,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   ArgSeparator는 SwitchDelimiter과 다른 문자여야 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string ArgSeparatorAndSwitchDelimiterCannotBeTheSame {
-            get {
-                return ResourceManager.GetString("ArgSeparatorAndSwitchDelimiterCannotBeTheSame", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   ArgSeparator는 문장부호여야만 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   ArgSeparator must be a Punctuation.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string ArgSeparatorMustBeAPunctuation {
             get {
@@ -79,7 +70,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   사용 가능한 명령들과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Available commands과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string AvaliableCommands {
             get {
@@ -88,16 +79,34 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   타입컨버터에서 문자열에 의한 변환이 지원되질 않습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Cannot convert &apos;{0}&apos;과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string CannotConvertFromString {
+        internal static string CannotConvert_Format {
             get {
-                return ResourceManager.GetString("CannotConvertFromString", resourceCulture);
+                return ResourceManager.GetString("CannotConvert_Format", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   설명과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   command not found.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string CommandNotFound {
+            get {
+                return ResourceManager.GetString("CommandNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &apos;{0}&apos; command not found.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string CommandNotFound_Format {
+            get {
+                return ResourceManager.GetString("CommandNotFound_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Description과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Description {
             get {
@@ -106,7 +115,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   잘못된 인수 형식입니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Invalid argument type.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string InvalidArgumentType {
             get {
@@ -115,79 +124,16 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   스위치의 이름은 문자 또는 숫자여야만 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   &apos;{0}&apos; is invalid command name.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string InvalidSwitchName {
+        internal static string InvalidCommandName_Format {
             get {
-                return ResourceManager.GetString("InvalidSwitchName", resourceCulture);
+                return ResourceManager.GetString("InvalidCommandName_Format", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   유효하지 않은 스위치가 포함되어 있습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string InvalidSwitchWasIncluded {
-            get {
-                return ResourceManager.GetString("InvalidSwitchWasIncluded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   the MIT License http://www.opensource.org/licenses/mit-license.php.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string License {
-            get {
-                return ResourceManager.GetString("License", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   타입이 정적 클래스이여야만 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string MustBeStaticClass {
-            get {
-                return ResourceManager.GetString("MustBeStaticClass", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   MutuallyExclusive가 같은 스위치는 Required 속성값이 모두 true거나 false여야 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string MutuallyExclusiveException {
-            get {
-                return ResourceManager.GetString("MutuallyExclusiveException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   같은 값의 상호배타적 스위치가 이미 설정되었습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string MutuallyExclusiveSwitchIsAlreadySet {
-            get {
-                return ResourceManager.GetString("MutuallyExclusiveSwitchIsAlreadySet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   전달인자가 한개도 포함되어 있지 않습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string NoArguments {
-            get {
-                return ResourceManager.GetString("NoArguments", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   해당 스위치를 찾을 수가 없거나 잘못된 인자 형식입니다.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string NotFoundMatchedSwitch {
-            get {
-                return ResourceManager.GetString("NotFoundMatchedSwitch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   선택 인수과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Options과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Options {
             get {
@@ -196,7 +142,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   필수 인수과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Requirements과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Requirements {
             get {
@@ -205,7 +151,16 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   하위 명령들과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   short name does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string ShortNameDoesNotExist {
+            get {
+                return ResourceManager.GetString("ShortNameDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   SubCommands과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string SubCommands {
             get {
@@ -214,7 +169,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   요약과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Summary과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Summary {
             get {
@@ -223,7 +178,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   SwitchDelimiter 는 문장부호여야만 합니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   SwitchDelimiter must be a Punctuation.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string SwitchDelimiterMustBePunctuation {
             get {
@@ -232,7 +187,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   필요한 스위치가 빠져있습니다.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Switch is missing.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string SwitchIsMissing {
             get {
@@ -241,7 +196,7 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   스위치가 이미 등록되어 있습니다. 중복여부를 확인하세요.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Switch is already registered.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string SwitchWasAlreadyRegistered {
             get {
@@ -250,7 +205,16 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   사용 방법과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   type &apos;{0}&apos; for usage.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string TypeForUsage_Format {
+            get {
+                return ResourceManager.GetString("TypeForUsage_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Usage과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Usage {
             get {

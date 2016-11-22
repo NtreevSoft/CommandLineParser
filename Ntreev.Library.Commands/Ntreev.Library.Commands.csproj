@@ -85,6 +85,11 @@
     <Compile Include="CommandShortSwitchAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ResourceUsageDescriptionProvider.cs" />
     <Compile Include="SwitchParameterInfoDescriptor.cs" />
     <Compile Include="SwitchPropertyDescriptor.cs" />
@@ -100,16 +105,10 @@
     <Compile Include="TextWriterExtensions.cs" />
     <Compile Include="MethodDescriptor.cs" />
     <Compile Include="MethodDescriptorCollection.cs" />
-    <Compile Include="MethodInvokeException.cs" />
     <Compile Include="MethodUsagePrinter.cs" />
-    <Compile Include="NotFoundMethodException.cs" />
+    <Compile Include="CommandNotFoundException.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="CommandLineParser.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="SwitchDescriptorCollection.cs" />
     <Compile Include="SwitchUsagePrinter.cs" />
     <Compile Include="CommandSwitchAttribute.cs" />
@@ -135,6 +134,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="HelpCommand.ko-KR.resx">
+      <DependentUpon>HelpCommand.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="HelpCommand.resx">
       <DependentUpon>HelpCommand.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -143,6 +145,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.ko-KR.resx" />
     <EmbeddedResource Include="VersionCommand.resx">
       <DependentUpon>VersionCommand.cs</DependentUpon>
     </EmbeddedResource>

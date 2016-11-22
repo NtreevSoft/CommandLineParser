@@ -23,7 +23,7 @@ namespace Ntreev.Library.Commands
             this.description = provider.GetDescription(propertyInfo);
         }
 
-          public override string DisplayName
+        public override string DisplayName
         {
             get { return this.propertyInfo.GetDisplayName(); }
         }

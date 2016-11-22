@@ -43,7 +43,7 @@ namespace Ntreev.Library.Commands
             {
                 return ParseBoolean(descriptor, arg);
             }
-            else 
+            else
             {
                 return ParseDefault(descriptor, arg);
             }
@@ -63,7 +63,7 @@ namespace Ntreev.Library.Commands
             var converter = descriptor.Converter;
 
             if (converter.CanConvertFrom(typeof(string)) == false)
-                throw new NotSupportedException(Resources.CannotConvertFromString);
+                throw new NotSupportedException(string.Format(Resources.CannotConvert_Format, arg));
 
             try
             {
@@ -163,7 +163,7 @@ namespace Ntreev.Library.Commands
             {
                 throw new ArgumentException(Resources.InvalidArgumentType, descriptor.Name, e);
             }
-            return list;   
+            return list;
         }
 
         public static Type GetItemType(Type propertyType)

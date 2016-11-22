@@ -79,7 +79,7 @@ namespace Ntreev.Library.Commands
                     continue;
 
                 if (item.CanWrite == false)
-                    throw new Exception(string.Format("'{0}'은(는) 쓰기 작업이 불가능하기 때문에 스위치로 설정할 수 없습니다.", item.Name));
+                    throw new Exception(string.Format("'{0}' is not available because it cannot write.", item.Name));
 
                 switches.Add(new SwitchPropertyInfoDescriptor(item));
             }
@@ -100,7 +100,7 @@ namespace Ntreev.Library.Commands
                     continue;
 
                 if (item.IsReadOnly == true)
-                    throw new Exception(string.Format("'{0}'은(는) 읽기 전용이므로 스위치로 설정할 수 없습니다.", item.Name));
+                    throw new Exception(string.Format("'{0}' is not available because it is read-only.", item.Name));
 
                 switches.Add(new SwitchPropertyDescriptor(item));
             }

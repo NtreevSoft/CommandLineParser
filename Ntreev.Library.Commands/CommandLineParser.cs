@@ -28,8 +28,6 @@ using System.Text;
 using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
-
-using Trace = System.Diagnostics.Trace;
 using Ntreev.Library.Commands.Properties;
 using System.Reflection;
 using System.Diagnostics;
@@ -37,9 +35,6 @@ using System.Collections;
 
 namespace Ntreev.Library.Commands
 {
-    /// <summary>
-    /// 커맨드 라인을 분석할 수 있는 방법을 제공합니다.
-    /// </summary>
     public partial class CommandLineParser
     {
         private readonly string name;
@@ -64,11 +59,6 @@ namespace Ntreev.Library.Commands
             this.Out = Console.Out;
         }
 
-        /// <summary>
-        /// 문자열을 분석하여 해당 인스턴스에 적절한 값을 설정합니다. 만약 <see cref="DefaultCommandAttribute"/> 로 설정된 메소드가 있을때는 메소드 기준으로 값을 읽어들입니다.
-        /// </summary>
-        /// <param name="commandLine"></param>
-        /// <returns></returns>
         public bool Parse(string commandLine)
         {
             var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
@@ -78,7 +68,7 @@ namespace Ntreev.Library.Commands
                 name = Process.GetCurrentProcess().ProcessName;
 
             if (this.name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
+                throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
             var arguments = commandLine.Substring(match.Length).Trim();
 
@@ -101,14 +91,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="commandLine">
-        /// command subcommand arguments
-        /// </param>
-        /// <param name="instance"></param>
-        /// <param name="parsingOptions"></param>
         public bool Invoke(string commandLine)
         {
             var cmdLine = commandLine;
@@ -121,7 +103,7 @@ namespace Ntreev.Library.Commands
                 name = Process.GetCurrentProcess().ProcessName;
 
             if (this.name != name)
-                throw new ArgumentException(string.Format("'{0}' 은 잘못된 명령입니다.", name));
+                throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
             cmdLine = cmdLine.Substring(match.Length).Trim();
             match = regex.Match(cmdLine);
@@ -152,7 +134,7 @@ namespace Ntreev.Library.Commands
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), method);
                 
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
-                    throw new NotFoundMethodException(method);
+                    throw new CommandNotFoundException(method);
 
                 var switches = descriptor.Switches.Where(item => this.IsSwitchVisible(item));
 
@@ -166,9 +148,6 @@ namespace Ntreev.Library.Commands
             this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
         }
 
-        /// <summary>
-        /// 모든 스위치의 사용법을 출력합니다.
-        /// </summary>
         public virtual void PrintUsage()
         {
             var switches = CommandDescriptor.GetSwitchDescriptors(this.instance.GetType()).Where(item => this.IsSwitchVisible(item)).ToArray();
@@ -193,7 +172,7 @@ namespace Ntreev.Library.Commands
             var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance.GetType());
             var descriptor = descriptors.FirstOrDefault(item => item.Name == methodName);
             if (descriptor == null || this.IsMethodVisible(descriptor) == false)
-                throw new NotFoundMethodException(methodName);
+                throw new CommandNotFoundException(methodName);
 
             var switches = descriptor.Switches.Where(item => this.IsSwitchVisible(item)).ToArray();
 

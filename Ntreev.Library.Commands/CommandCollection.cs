@@ -47,7 +47,7 @@ namespace Ntreev.Library.Commands
 
         IEnumerator<ICommand> IEnumerable<ICommand>.GetEnumerator()
         {
-            foreach(var item in this.commands)
+            foreach (var item in this.commands)
             {
                 yield return item.Value;
             }

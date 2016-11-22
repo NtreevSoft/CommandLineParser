@@ -41,65 +41,45 @@ namespace Ntreev.Library.Commands
         private char? argSeparator = null;
         private bool required;
 
-        /// <summary>
-        /// <seealso cref="CommandSwitchAttribute"/> 클래스의 새 인스턴스를 초기화합니다.
-        /// </summary>
         public CommandSwitchAttribute()
         {
-            
+
         }
 
-        /// <summary>
-        /// 해당 스위치의 이름을 설정하거나 가져옵니다.
-        /// </summary>
         public string Name
         {
             get { return this.name ?? string.Empty; }
             set { this.name = value; }
         }
 
-        /// <summary>
-        /// 해당 스위치의 짧은 이름을 설정하거나 가져옵니다.
-        /// </summary>
         public char ShortName
         {
             get { return this.shortName; }
             set { this.shortName = value; }
         }
 
-        /// <summary>
-        /// 해당 스위치가 꼭 필요한지의 여부를 설정하거나 가져옵니다.
-        /// </summary>
         public bool Required
         {
             get { return this.required; }
             set { this.required = value; }
         }
 
-        /// <summary>
-        /// 인자가 스위치에 포함되어 있을때 인자와 스위치를 구분하기 위한 문자를 설정하거나 가져옵니다.
-        /// </summary>
-        /// <remarks>
-        /// /Level6 처럼 스위치와 인자의 구분이 필요가 없다면 <seealso cref="char.MinValue"/>를 설정하세요.
-        /// </remarks>
         public char ArgSeparator
         {
             get
             {
                 if (this.argSeparator == null)
                     return char.MinValue;
-                return (char)this.argSeparator; 
+                return (char)this.argSeparator;
             }
-            set 
+            set
             {
                 if (value != char.MinValue)
                 {
                     if (char.IsPunctuation(value) == false)
                         throw new Exception(Resources.ArgSeparatorMustBeAPunctuation);
-                    //if (value.ToString() == CommandSettings.SwitchDelimiter || value.ToString() == CommandSettings.ShortSwitchDelimiter)
-                    //    throw new Exception(Resources.ArgSeparatorAndSwitchDelimiterCannotBeTheSame);
                 }
-                this.argSeparator = (char)value; 
+                this.argSeparator = (char)value;
             }
         }
 
