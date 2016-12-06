@@ -74,10 +74,10 @@
   <ItemGroup>
     <Compile Include="CharWidth.cs" />
     <Compile Include="ClassExtension.cs" />
-    <Compile Include="Command.cs" />
+    <Compile Include="CommandBase.cs" />
     <Compile Include="CommandLineParserCollection.cs" />
     <Compile Include="CommandCollection.cs" />
-    <Compile Include="CommandContext.cs" />
+    <Compile Include="CommandContextBase.cs" />
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodSwitchAttribute.cs" />

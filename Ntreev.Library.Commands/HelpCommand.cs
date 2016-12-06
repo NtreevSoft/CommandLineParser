@@ -14,9 +14,9 @@ namespace Ntreev.Library.Commands
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     public class HelpCommand : ICommand
     {
-        private readonly CommandContext commandContext;
+        private readonly CommandContextBase commandContext;
 
-        public HelpCommand(CommandContext commandContext)
+        public HelpCommand(CommandContextBase commandContext)
         {
             this.commandContext = commandContext;
             this.CommandName = string.Empty;

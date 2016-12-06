@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    public abstract class CommandContext
+    public abstract class CommandContextBase
     {
         private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();
         private readonly CommandCollection commands = new CommandCollection();
@@ -24,7 +24,7 @@ namespace Ntreev.Library.Commands
         private ICommand helpCommand;
         private ICommand versionCommand;
 
-        protected CommandContext(IEnumerable<ICommand> commands)
+        protected CommandContextBase(IEnumerable<ICommand> commands)
         {
             this.VerifyName = true;
             this.Out = Console.Out;

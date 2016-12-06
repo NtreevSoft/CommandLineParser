@@ -121,7 +121,7 @@
     <value>ArgSeparator must be a Punctuation.</value>
   </data>
   <data name="AvaliableCommands" xml:space="preserve">
-    <value>Available commands</value>
+    <value>사용 가능한 명령들</value>
   </data>
   <data name="CannotConvert_Format" xml:space="preserve">
     <value>Cannot convert '{0}'</value>
