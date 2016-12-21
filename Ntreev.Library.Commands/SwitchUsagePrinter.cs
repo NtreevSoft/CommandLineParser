@@ -174,7 +174,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintRequirement(CommandTextWriter writer, SwitchDescriptor descriptor)
         {
-            writer.WriteLine(descriptor.DisplayName);
+            writer.WriteLine(descriptor.Name);
             if (descriptor.Description != string.Empty)
             {
                 writer.Indent++;
@@ -201,10 +201,10 @@ namespace Ntreev.Library.Commands
         {
             if (descriptor.Required == true)
             {
-                var text = descriptor.DisplayName;
+                var text = descriptor.Name;
                 if (descriptor.DefaultValue == DBNull.Value)
                     return string.Format("<{0}>", text);
-                return string.Format("<{0}={1}>", text, descriptor.DefaultValue ?? "null");
+                return string.Format("<{0}='{1}'>", text, descriptor.DefaultValue ?? "null");
             }
             else
             {
