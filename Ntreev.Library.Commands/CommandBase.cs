@@ -33,9 +33,15 @@ namespace Ntreev.Library.Commands
             get { return this.types; }
         }
 
-        public virtual void Execute()
-        {
+        protected abstract void OnExecute();
 
+        #region ICommand
+
+        void ICommand.Execute()
+        {
+            this.OnExecute();
         }
+
+        #endregion
     }
 }
