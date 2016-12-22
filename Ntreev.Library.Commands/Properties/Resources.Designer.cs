@@ -61,11 +61,11 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   ArgSeperator must be a Punctuation.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   ArgSeparator must be a Punctuation.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string ArgSeperatorMustBeAPunctuation {
+        internal static string ArgSeparatorMustBeAPunctuation {
             get {
-                return ResourceManager.GetString("ArgSeperatorMustBeAPunctuation", resourceCulture);
+                return ResourceManager.GetString("ArgSeparatorMustBeAPunctuation", resourceCulture);
             }
         }
         

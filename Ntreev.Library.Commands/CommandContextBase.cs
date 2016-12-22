@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    public abstract class CommandContext
+    public abstract class CommandContextBase
     {
         private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();
         private readonly CommandCollection commands = new CommandCollection();
@@ -24,7 +24,7 @@ namespace Ntreev.Library.Commands
         private ICommand helpCommand;
         private ICommand versionCommand;
 
-        protected CommandContext(IEnumerable<ICommand> commands)
+        protected CommandContextBase(IEnumerable<ICommand> commands)
         {
             this.VerifyName = true;
             this.Out = Console.Out;
@@ -71,7 +71,14 @@ namespace Ntreev.Library.Commands
         public TextWriter Out
         {
             get { return this.writer ?? Console.Out; }
-            set { this.writer = value; }
+            set
+            {
+                this.writer = value;
+                foreach (var item in this.parsers)
+                {
+                    item.Out = value;
+                }
+            }
         }
 
         public string Name
@@ -138,7 +145,7 @@ namespace Ntreev.Library.Commands
 
         protected virtual CommandLineParser CreateInstance(ICommand command)
         {
-            return new CommandLineParser(command.Name, command);
+            return new CommandLineParser(command.Name, command) { Out = this.Out, };
         }
 
         protected virtual bool OnExecute(ICommand command, string arguments)

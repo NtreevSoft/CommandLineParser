@@ -132,10 +132,11 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), method);
-                var switches = descriptor.Switches.Where(item => this.IsSwitchVisible(item));
-
+                
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
+
+                var switches = descriptor.Switches.Where(item => this.IsSwitchVisible(item));
 
                 Invoke(this.instance, arguments, descriptor.MethodInfo, switches);
                 return true;

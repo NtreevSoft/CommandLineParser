@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,23 +12,26 @@ namespace Ntreev.Library.Commands
 {
     public static class TextWriterExtensions
     {
-        public static void WriteLine<T>(this TextWriter writer, IEnumerable<T> items)
+        public static void WriteItems<T>(this TextWriter writer, IEnumerable<T> items)
         {
-            var properties = typeof(T).GetProperties(System.Reflection.BindingFlags.Public);
+            var properties = typeof(T).GetProperties();
 
-            var query = from property in properties
-                        from item in items
-                        group property.GetValue(item).ToString() by property into g
-                        select g;
+            var query = from item in properties
+                        where item.PropertyType.IsArray == false
+                        select item;
 
-            var texts = new List<string>(items.Count());
+            var headers = from item in query
+                          let displayName = item.GetDisplayName()
+                          select displayName != string.Empty ? displayName : item.Name;
 
-            foreach (var item in query)
+            var dataBuilder = new TableDataBuilder(headers.ToArray());
+
+            foreach (var item in items)
             {
-                var length = item.Select(i => CharWidth.mk_wcswidth_cjk(i)).Max(i => i + (4 - (i % 4)));
-
-
+                dataBuilder.Add(query.Select(i => i.GetValue(item)).ToArray());
             }
+
+            writer.WriteLine(dataBuilder.Data, true);
         }
 
         public static void WriteLine(this TextWriter writer, string[][] itemsArray, bool hasHeader)

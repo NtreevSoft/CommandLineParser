@@ -38,7 +38,7 @@ namespace Ntreev.Library.Commands
     {
         private string name = string.Empty;
         private char shortName;
-        private char? argSeperator = null;
+        private char? argSeparator = null;
         private bool required;
 
         public CommandSwitchAttribute()
@@ -64,30 +64,30 @@ namespace Ntreev.Library.Commands
             set { this.required = value; }
         }
 
-        public char ArgSeperator
+        public char ArgSeparator
         {
             get
             {
-                if (this.argSeperator == null)
+                if (this.argSeparator == null)
                     return char.MinValue;
-                return (char)this.argSeperator;
+                return (char)this.argSeparator;
             }
             set
             {
                 if (value != char.MinValue)
                 {
                     if (char.IsPunctuation(value) == false)
-                        throw new Exception(Resources.ArgSeperatorMustBeAPunctuation);
+                        throw new Exception(Resources.ArgSeparatorMustBeAPunctuation);
                 }
-                this.argSeperator = (char)value;
+                this.argSeparator = (char)value;
             }
         }
 
         public bool ShortNameOnly { get; set; }
 
-        internal char? GetArgSeperator()
+        internal char? GetArgSeparator()
         {
-            return this.argSeperator;
+            return this.argSeparator;
         }
 
         internal string ShortNameInternal

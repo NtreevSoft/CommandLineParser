@@ -64,9 +64,9 @@ namespace Ntreev.Library.Commands
 
         public abstract object GetValue(object instance);
 
-        public char? ArgSeperator
+        public char? ArgSeparator
         {
-            get { return this.switchAttribute.GetArgSeperator(); }
+            get { return this.switchAttribute.GetArgSeparator(); }
         }
 
         public string Name
@@ -138,17 +138,17 @@ namespace Ntreev.Library.Commands
                 pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.ShortSwitchDelimiter, this.ShortName);
             }
 
-            var argSeperator = this.switchAttribute.GetArgSeperator();
-            if (this.SwitchType != typeof(bool) || argSeperator != null)
+            var argSeparator = this.switchAttribute.GetArgSeparator();
+            if (this.SwitchType != typeof(bool) || argSeparator != null)
             {
-                if (argSeperator == null)
+                if (argSeparator == null)
                 {
                     pattern += string.Format(@"(((\s+)({0}|{1}))|($))", quotes, normal);
                 }
                 else
                 {
-                    if (argSeperator != char.MinValue)
-                        pattern += argSeperator;
+                    if (argSeparator != char.MinValue)
+                        pattern += argSeparator;
                     pattern += string.Format(@"(({0}|{1})|$)", quotes, normal);
                 }
             }

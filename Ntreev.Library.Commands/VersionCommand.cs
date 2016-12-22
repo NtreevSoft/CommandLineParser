@@ -15,9 +15,9 @@ namespace Ntreev.Library.Commands
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     class VersionCommand : ICommand
     {
-        private readonly CommandContext commandContext;
+        private readonly CommandContextBase commandContext;
 
-        public VersionCommand(CommandContext commandContext)
+        public VersionCommand(CommandContextBase commandContext)
         {
             this.commandContext = commandContext;
         }

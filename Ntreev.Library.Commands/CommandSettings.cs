@@ -12,7 +12,7 @@ namespace Ntreev.Library.Commands
     {
         private static string switchDelimiter = "--";
         private static string shortSwitchDelimiter = "-";
-        private static char itemSeperator = ';';
+        private static char itemSeparator = ';';
         private static Func<string, string> nameGenerator;
 
         public static string SwitchDelimiter
@@ -39,12 +39,12 @@ namespace Ntreev.Library.Commands
 
         public static char ItemSperator
         {
-            get { return itemSeperator; }
+            get { return itemSeparator; }
             set
             {
                 if (char.IsPunctuation(value) == false)
                     throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
-                itemSeperator = value;
+                itemSeparator = value;
             }
         }
 
