@@ -10,11 +10,11 @@ namespace Ntreev.Library.Commands.Shell
     [Export(typeof(IShell))]
     class Shell : Mono.Terminal.LineEditor, IShell
     {
-        private readonly CommandContext commandContext;
+        private readonly CommandContextBase commandContext;
         private bool isCancellationRequested;
 
         [ImportingConstructor]
-        public Shell(CommandContext commandContext)
+        public Shell(CommandContextBase commandContext)
             : base("shell")
         {
             this.commandContext = commandContext;

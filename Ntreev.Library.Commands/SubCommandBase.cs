@@ -6,21 +6,23 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    public abstract class CommandBase : ICommand
+    public abstract class SubCommandBase : ICommand
     {
         private readonly string name;
         private readonly CommandTypes types;
 
-        protected CommandBase(string name)
+        protected SubCommandBase(string name)
             : this(name, false)
         {
 
         }
 
-        protected CommandBase(string name, bool allowEmptyArguments)
+        protected SubCommandBase(string name, bool allowEmptyArgument)
         {
             this.name = name;
-            this.types = allowEmptyArguments == true ? CommandTypes.AllowEmptyArgument : CommandTypes.None;
+            this.types = CommandTypes.HasSubCommand;
+            if (allowEmptyArgument)
+                this.types |= CommandTypes.AllowEmptyArgument;
         }
 
         public string Name
@@ -28,7 +30,10 @@ namespace Ntreev.Library.Commands
             get { return this.name; }
         }
 
-        protected abstract void OnExecute();
+        protected virtual void OnExecute()
+        {
+
+        }
 
         #region ICommand
 

@@ -91,6 +91,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ResourceUsageDescriptionProvider.cs" />
+    <Compile Include="SubCommandBase.cs" />
     <Compile Include="SwitchParameterInfoDescriptor.cs" />
     <Compile Include="SwitchPropertyDescriptor.cs" />
     <Compile Include="SwitchPropertyInfoDescriptor.cs" />

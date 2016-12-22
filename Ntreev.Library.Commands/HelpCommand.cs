@@ -12,18 +12,33 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands
 {
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    public class HelpCommand : ICommand
+    public class HelpCommand : CommandBase
     {
         private readonly CommandContextBase commandContext;
 
         public HelpCommand(CommandContextBase commandContext)
+            : base("help", true)
         {
             this.commandContext = commandContext;
             this.CommandName = string.Empty;
             this.SubCommandName = string.Empty;
         }
 
-        public virtual void Execute()
+        [CommandSwitch(Name = "CommandName", Required = true)]
+        [DisplayName("command")]
+        public string CommandName
+        {
+            get; set;
+        }
+
+        [CommandSwitch(Name = "sub-command", Required = true)]
+        [DefaultValue("")]
+        public string SubCommandName
+        {
+            get; set;
+        }
+
+        protected override void OnExecute()
         {
             try
             {
@@ -49,30 +64,6 @@ namespace Ntreev.Library.Commands
             {
                 this.CommandName = string.Empty;
             }
-        }
-
-        public CommandTypes Types
-        {
-            get { return CommandTypes.AllowEmptyArgument; }
-        }
-
-        public string Name
-        {
-            get { return "help"; }
-        }
-
-        [CommandSwitch(Name = "CommandName", Required = true)]
-        [DisplayName("command")]
-        public string CommandName
-        {
-            get; set;
-        }
-
-        [CommandSwitch(Name = "sub-command", Required = true)]
-        [DefaultValue("")]
-        public string SubCommandName
-        {
-            get; set;
         }
 
         protected virtual void PrintUsage(ICommand command, CommandLineParser parser)
