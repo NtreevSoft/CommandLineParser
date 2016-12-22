@@ -10,17 +10,12 @@ namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class CopyCommand : Command
+    class CopyCommand : CommandBase
     {
         public CopyCommand()
             : base("copy")
         {
 
-        }
-
-        public override void Execute()
-        {
-            File.Copy(this.SourcePath, this.TargetPath, this.OverWrite);
         }
 
         [CommandSwitch(Required = true)]
@@ -39,6 +34,11 @@ namespace Ntreev.Library.Commands.Shell.Commands
         public bool OverWrite
         {
             get; set;
+        }
+
+        protected override void OnExecute()
+        {
+            File.Copy(this.SourcePath, this.TargetPath, this.OverWrite);
         }
     }
 }

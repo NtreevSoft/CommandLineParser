@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
+    [InheritedExport(typeof(CommandContextBase))]
     public abstract class CommandContextBase
     {
         private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();

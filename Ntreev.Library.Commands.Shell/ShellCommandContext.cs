@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands.Shell
 {
-    [Export(typeof(CommandContext))]
-    class ShellCommandContext : CommandContext
+    [Export(typeof(ShellCommandContext))]
+    class ShellCommandContext : CommandContextBase
     {
         [ImportingConstructor]
         public ShellCommandContext([ImportMany]IEnumerable<ICommand> commands)

@@ -10,20 +10,31 @@ namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class ChangeDirectoryCommand : Command
+    class ChangeDirectoryCommand : CommandBase
     {
         [Import]
         private Lazy<IShell> shell = null;
         [Import]
-        private Lazy<CommandContext> commandContext = null;
+        private Lazy<CommandContextBase> commandContext = null;
 
         public ChangeDirectoryCommand()
-            : base("cd", CommandTypes.AllowEmptyArgument)
+            : base("cd", true)
         {
             this.DirectoryName = string.Empty;
         }
 
-        public override void Execute()
+        [CommandSwitch(Name = "dir", Required = true)]
+        public string DirectoryName
+        {
+            get; set;
+        }
+
+        public TextWriter Out
+        {
+            get { return this.commandContext.Value.Out; }
+        }
+
+        protected override void OnExecute()
         {
             var shell = this.shell.Value;
             if (this.DirectoryName == string.Empty)
@@ -36,7 +47,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
                 Directory.SetCurrentDirectory(dir);
                 shell.Prompt = dir;
             }
-            else if(Directory.Exists(this.DirectoryName) == true)
+            else if (Directory.Exists(this.DirectoryName) == true)
             {
                 var dir = new DirectoryInfo(this.DirectoryName).FullName;
                 Directory.SetCurrentDirectory(dir);
@@ -46,17 +57,6 @@ namespace Ntreev.Library.Commands.Shell.Commands
             {
                 throw new DirectoryNotFoundException(string.Format("'{0}'은(는) 존재하지 않는 경로입니다.", this.DirectoryName));
             }
-        }
-
-        [CommandSwitch(Name = "dir", Required = true)]
-        public string DirectoryName
-        {
-            get; set;
-        }
-
-        public TextWriter Out
-        {
-            get { return this.commandContext.Value.Out; }
         }
     }
 }

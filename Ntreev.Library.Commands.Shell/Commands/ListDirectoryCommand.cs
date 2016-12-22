@@ -11,18 +11,18 @@ namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class ListDirectoryCommand : Command
+    class ListDirectoryCommand : CommandBase
     {
         [Import]
-        private Lazy<CommandContext> commandContext = null;
+        private Lazy<CommandContextBase> commandContext = null;
 
         public ListDirectoryCommand()
-            : base("ls", CommandTypes.AllowEmptyArgument)
+            : base("ls", true)
         {
 
         }
 
-        public override void Execute()
+        protected override void OnExecute()
         {
             var dir = Directory.GetCurrentDirectory();
             this.PrintItems(dir);

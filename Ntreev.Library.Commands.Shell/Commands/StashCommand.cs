@@ -11,10 +11,10 @@ namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class StashCommand : Command
+    class StashCommand : SubCommandBase
     {
         public StashCommand()
-            : base("stash", CommandTypes.HasSubCommand)
+            : base("stash")
         {
 
         }
@@ -41,6 +41,11 @@ namespace Ntreev.Library.Commands.Shell.Commands
         {
 
 
+        }
+
+        protected override void OnExecute()
+        {
+            throw new NotImplementedException();
         }
 
         [CommandSwitch(ShortName = 'p')]

@@ -13,10 +13,10 @@ namespace Ntreev.Library.Commands.Shell.Commands
     [ShellSummary("AddSummary")]
     [ShellDescription("AddDescription")]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class AddCommand : Command
+    class AddCommand : CommandBase
     {
         public AddCommand()
-            : base("add", CommandTypes.None)
+            : base("add")
         {
             this.Path = string.Empty;
         }
@@ -35,7 +35,6 @@ namespace Ntreev.Library.Commands.Shell.Commands
         }
 
         [CommandSwitch(ShortName = 'v')]
-
         public bool Verbose
         {
             get; set;
@@ -57,6 +56,11 @@ namespace Ntreev.Library.Commands.Shell.Commands
         public bool Patch
         {
             get;set;
+        }
+
+        protected override void OnExecute()
+        {
+            throw new NotImplementedException();
         }
     }
 }

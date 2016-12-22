@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
-    class ExitCommand : Command
+    class ExitCommand : CommandBase
     {
         [Import]
         private Lazy<IShell> shell = null;
 
         public ExitCommand()
-            : base("exit", CommandTypes.AllowEmptyArgument)
+            : base("exit", true)
         {
 
         }
 
-        public override void Execute()
+        protected override void OnExecute()
         {
             this.shell.Value.Cancel();
         }

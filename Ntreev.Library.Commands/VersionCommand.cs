@@ -13,16 +13,23 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands
 {
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class VersionCommand : ICommand
+    class VersionCommand : CommandBase
     {
         private readonly CommandContextBase commandContext;
 
         public VersionCommand(CommandContextBase commandContext)
+            : base("--version", true)
         {
             this.commandContext = commandContext;
         }
 
-        public void Execute()
+        [CommandSwitch(ShortName = 'q', ShortNameOnly = true)]
+        public bool IsQuiet
+        {
+            get; set;
+        }
+
+        protected override void OnExecute()
         {
             var info = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
             using (var writer = new CommandTextWriter(this.commandContext.Out))
@@ -37,22 +44,6 @@ namespace Ntreev.Library.Commands
                     writer.WriteLine(this.commandContext.Version);
                 }
             }
-        }
-
-        public CommandTypes Types
-        {
-            get { return CommandTypes.AllowEmptyArgument; }
-        }
-
-        public string Name
-        {
-            get { return "--version"; }
-        }
-
-        [CommandSwitch(ShortName = 'q', ShortNameOnly = true)]
-        public bool IsQuiet
-        {
-            get; set;
         }
     }
 }
