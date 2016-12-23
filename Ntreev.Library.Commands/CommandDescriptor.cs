@@ -12,6 +12,7 @@ namespace Ntreev.Library.Commands
         private static Dictionary<Type, SwitchDescriptorCollection> typeToSwitchDescriptors = new Dictionary<Type, SwitchDescriptorCollection>();
         private static Dictionary<Type, MethodDescriptorCollection> typeToMethodDescriptors = new Dictionary<Type, MethodDescriptorCollection>();
         private static Dictionary<Type, SwitchDescriptorCollection> typeToMethodSwitchDescriptors = new Dictionary<Type, SwitchDescriptorCollection>();
+        private static Dictionary<ICustomAttributeProvider, SwitchDescriptorCollection> providerToSwitchDescriptors = new Dictionary<ICustomAttributeProvider, SwitchDescriptorCollection>();
         private static Dictionary<Type, IUsageDescriptionProvider> typeToUsageDescriptionProvider = new Dictionary<Type, IUsageDescriptionProvider>();
 
         public static IUsageDescriptionProvider GetUsageDescriptionProvider(Type type)
@@ -35,40 +36,74 @@ namespace Ntreev.Library.Commands
         {
             if (typeToMethodDescriptors.ContainsKey(type) == false)
             {
-                var descriptors = new MethodDescriptorCollection();
-
-                foreach (var item in type.GetMethods())
-                {
-                    var attr = item.GetCustomAttribute<CommandMethodAttribute>();
-                    if (attr == null)
-                        continue;
-                    descriptors.Add(new MethodDescriptor(item));
-                }
-                typeToMethodDescriptors.Add(type, descriptors);
+                typeToMethodDescriptors.Add(type, CreateMethodDescriptors(type));
             }
             return typeToMethodDescriptors[type];
         }
 
-        public static SwitchDescriptorCollection GetSwitchDescriptors(Type type)
+        public static SwitchDescriptorCollection GetPropertyDescriptors(Type type)
         {
             if (typeToSwitchDescriptors.ContainsKey(type) == false)
             {
-                typeToSwitchDescriptors.Add(type, CreateSwitches(type));
+                typeToSwitchDescriptors.Add(type, CreatePropertyDescriptors(type));
             }
             return typeToSwitchDescriptors[type];
         }
 
-        public static SwitchDescriptorCollection GetMethodSwitchDescriptors(Type type)
+        public static SwitchDescriptorCollection GetStaticPropertyInfoDescriptors(ICustomAttributeProvider provider)
+        {
+            if (providerToSwitchDescriptors.ContainsKey(provider) == false)
+            {
+                providerToSwitchDescriptors.Add(provider, CreateStaticPropertyInfoDescriptors(provider));
+            }
+
+            return providerToSwitchDescriptors[provider];
+        }
+        
+
+        public static SwitchDescriptorCollection GetPropertyInfoDescriptors(Type type)
         {
             if (typeToMethodSwitchDescriptors.ContainsKey(type) == false)
             {
-                typeToMethodSwitchDescriptors.Add(type, CreateMethodSwitches(type));
+                typeToMethodSwitchDescriptors.Add(type, CreatePropertyInfoDescriptors(type));
             }
 
             return typeToMethodSwitchDescriptors[type];
         }
 
-        private static SwitchDescriptorCollection CreateMethodSwitches(Type type)
+        public static SwitchDescriptorCollection CreateStaticPropertyInfoDescriptors(ICustomAttributeProvider provider)
+        {
+            var switches = new SwitchDescriptorCollection();
+            var attrs = provider.GetCustomAttributes(typeof(CommandStaticSwitchAttribute), true);
+
+            foreach (var item in attrs)
+            {
+                if (item is CommandStaticSwitchAttribute == false)
+                    continue;
+                var attr = item as CommandStaticSwitchAttribute;
+
+                switches.AddRange(CommandDescriptor.GetPropertyInfoDescriptors(attr.StaticType));
+            }
+
+            return switches;
+        }
+
+        public static MethodDescriptorCollection CreateMethodDescriptors(Type type)
+        {
+            var descriptors = new MethodDescriptorCollection();
+
+            foreach (var item in type.GetMethods())
+            {
+                var attr = item.GetCustomAttribute<CommandMethodAttribute>();
+                if (attr == null)
+                    continue;
+                descriptors.Add(new MethodDescriptor(item));
+            }
+
+            return descriptors;
+        }
+
+        private static SwitchDescriptorCollection CreatePropertyInfoDescriptors(Type type)
         {
             var switches = new SwitchDescriptorCollection();
             var properties = type.GetProperties();
@@ -89,7 +124,7 @@ namespace Ntreev.Library.Commands
             return switches;
         }
 
-        private static SwitchDescriptorCollection CreateSwitches(Type type)
+        private static SwitchDescriptorCollection CreatePropertyDescriptors(Type type)
         {
             var switches = new SwitchDescriptorCollection();
             var properties = TypeDescriptor.GetProperties(type);

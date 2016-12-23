@@ -34,19 +34,26 @@ namespace Ntreev.Library.Commands
                 switchList.Add(switchDescriptor);
             }
 
-            var attr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
-            if (attr != null)
+            var switchAttr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
+            if (switchAttr != null)
             {
-                foreach (var item in attr.PropertyNames)
+                foreach (var item in switchAttr.PropertyNames)
                 {
-                    var switchDescriptor = CommandDescriptor.GetMethodSwitchDescriptors(methodInfo.DeclaringType)[item];
+                    var switchDescriptor = CommandDescriptor.GetPropertyInfoDescriptors(methodInfo.DeclaringType)[item];
                     if (switchDescriptor == null)
                         throw new ArgumentException(string.Format("'{0}' attribute does not existed .", item));
                     switchList.Add(switchDescriptor);
                 }
             }
 
-            this.switches = switchList.ToArray();
+            var staticAttrs = this.methodInfo.GetCustomAttributes<CommandStaticSwitchAttribute>();
+            foreach (var item in staticAttrs)
+            {
+                var switches = CommandDescriptor.GetPropertyInfoDescriptors(item.StaticType);
+                switchList.AddRange(switches);
+            }
+
+            this.switches = switchList.Distinct().ToArray();
             this.summary = provider.GetSummary(methodInfo);
             this.description = provider.GetDescription(methodInfo);
         }

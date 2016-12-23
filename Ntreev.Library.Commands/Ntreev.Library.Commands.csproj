@@ -83,6 +83,7 @@
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandSettings.cs" />
     <Compile Include="CommandShortSwitchAttribute.cs" />
+    <Compile Include="CommandStaticSwitchAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

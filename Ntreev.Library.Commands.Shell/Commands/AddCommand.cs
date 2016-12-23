@@ -13,6 +13,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
     [ShellSummary("AddSummary")]
     [ShellDescription("AddDescription")]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
+    [CommandStaticSwitch(typeof(GlobalSettings))]
     class AddCommand : CommandBase
     {
         public AddCommand()

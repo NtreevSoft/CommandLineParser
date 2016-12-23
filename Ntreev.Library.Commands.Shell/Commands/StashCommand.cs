@@ -20,9 +20,9 @@ namespace Ntreev.Library.Commands.Shell.Commands
         }
 
         [CommandMethod("list")]
+        [CommandStaticSwitch(typeof(GlobalSettings))]
         public void List(string options)
         {
-
 
         }
 

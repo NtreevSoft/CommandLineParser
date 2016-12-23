@@ -70,6 +70,14 @@ namespace Ntreev.Library.Commands
             this.descriptors.Add(descriptor);
         }
 
+        internal void AddRange(IEnumerable<SwitchDescriptor> descriptors)
+        {
+            foreach(var item in descriptors)
+            {
+                this.Add(item);
+            }
+        }
+
         #region IEnumerable
 
         IEnumerator<SwitchDescriptor> IEnumerable<SwitchDescriptor>.GetEnumerator()

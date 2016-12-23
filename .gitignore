@@ -6,4 +6,4 @@ obj/
 Debug/
 Release/
 bin/Debug/
-/Ntreev.Library.Commands.Test/*.user
+packages/

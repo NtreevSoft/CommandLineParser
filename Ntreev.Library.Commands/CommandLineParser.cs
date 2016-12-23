@@ -84,7 +84,9 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var switches = CommandDescriptor.GetSwitchDescriptors(this.instance.GetType()).Where(item => this.IsSwitchVisible(item));
+                var switches1 = CommandDescriptor.GetPropertyDescriptors(this.instance.GetType());
+                var switches2 = CommandDescriptor.GetStaticPropertyInfoDescriptors(this.instance.GetType());
+                var switches = switches1.Concat(switches2).Where(item => this.IsSwitchVisible(item));
                 var helper = new SwitchHelper(switches);
                 helper.Parse(this.instance, arguments);
                 return true;
@@ -150,8 +152,11 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintUsage()
         {
-            var switches = CommandDescriptor.GetSwitchDescriptors(this.instance.GetType()).Where(item => this.IsSwitchVisible(item)).ToArray();
-            this.SwitchUsagePrinter.Print(this.Out, switches);
+            var switches1 = CommandDescriptor.GetPropertyDescriptors(this.instance.GetType());
+            var switches2 = CommandDescriptor.GetStaticPropertyInfoDescriptors(this.instance.GetType());
+            var switches = switches1.Concat(switches2).Where(item => this.IsSwitchVisible(item));
+            //var switches = CommandDescriptor.GetPropertyDescriptors(this.instance.GetType()).Where(item => this.IsSwitchVisible(item)).ToArray();
+            this.SwitchUsagePrinter.Print(this.Out, switches.ToArray());
         }
 
         public virtual void PrintVersion()
