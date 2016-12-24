@@ -84,8 +84,8 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var switches = CommandDescriptor.GetSwitchDescriptors(this.instance).Where(item => this.IsSwitchVisible(item));
-                var helper = new SwitchHelper(switches);
+                var descriptors = CommandDescriptor.GetSwitchDescriptors(this.instance).Where(item => this.IsSwitchVisible(item));
+                var helper = new SwitchHelper(descriptors);
                 helper.Parse(this.instance, arguments);
                 return true;
             }
@@ -163,9 +163,7 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintMethodUsage()
         {
-            var descriptors1 = CommandDescriptor.GetMethodDescriptors(this.instance);
-            var descriptors2 = CommandDescriptor.GetStaticMethodDescriptors(this.instance.GetType());
-            var descriptors = descriptors1.Concat(descriptors2).Where(item => this.IsMethodVisible(item));
+            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance).Where(item => this.IsMethodVisible(item));
             this.MethodUsagePrinter.Print(this.Out, descriptors.ToArray());
         }
 

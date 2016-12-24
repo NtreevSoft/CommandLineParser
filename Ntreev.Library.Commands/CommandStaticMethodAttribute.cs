@@ -34,6 +34,7 @@ namespace Ntreev.Library.Commands
             {
                 throw new InvalidOperationException("type is not static class.");
             }
+            this.methodNames = methodNames;
         }
 
         public string TypeName

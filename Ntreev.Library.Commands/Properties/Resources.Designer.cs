@@ -133,6 +133,15 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   method &apos;{0}&apos; does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string MethodDoesNotExist_Format {
+            get {
+                return ResourceManager.GetString("MethodDoesNotExist_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Options과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string Options {

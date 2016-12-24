@@ -94,7 +94,7 @@ namespace Ntreev.Library.Commands
         public static MethodDescriptorCollection CreateStaticMethodDescriptors(ICustomAttributeProvider provider)
         {
             var descriptors = new MethodDescriptorCollection();
-            var attrs = provider.GetCustomAttributes(typeof(CommandStaticSwitchAttribute), true);
+            var attrs = provider.GetCustomAttributes(typeof(CommandStaticMethodAttribute), true);
 
             foreach (var item in attrs)
             {
@@ -102,7 +102,8 @@ namespace Ntreev.Library.Commands
                     continue;
                 var attr = item as CommandStaticMethodAttribute;
 
-                descriptors.AddRange(CommandDescriptor.GetMethodDescriptors(attr.StaticType));
+                var staticDescriptors = CommandDescriptor.GetMethodDescriptors(attr.StaticType);
+                descriptors.AddRange(Filter(staticDescriptors, attr.MethodNames));
             }
 
             return descriptors;
@@ -118,6 +119,11 @@ namespace Ntreev.Library.Commands
                 if (attr == null)
                     continue;
                 descriptors.Add(new MethodDescriptor(item));
+            }
+
+            foreach (var item in GetStaticMethodDescriptors(type))
+            {
+                descriptors.Add(item);
             }
 
             return descriptors;
@@ -161,6 +167,24 @@ namespace Ntreev.Library.Commands
             else
             {
                 foreach (var item in propertyNames)
+                {
+                    yield return descriptors[item];
+                }
+            }
+        }
+
+        private static IEnumerable<MethodDescriptor> Filter(MethodDescriptorCollection descriptors, params string[] methodNames)
+        {
+            if (methodNames.Any() == false)
+            {
+                foreach (var item in descriptors)
+                {
+                    yield return item;
+                }
+            }
+            else
+            {
+                foreach (var item in methodNames)
                 {
                     yield return descriptors[item];
                 }

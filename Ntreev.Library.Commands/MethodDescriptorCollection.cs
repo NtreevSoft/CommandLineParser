@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ntreev.Library.Commands.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,8 +23,8 @@ namespace Ntreev.Library.Commands
                             where item.Name == name
                             select item;
 
-                if (query.Count() == 0)
-                    return null;
+                if (query.Any() == false)
+                    throw new KeyNotFoundException(string.Format(Resources.MethodDoesNotExist_Format, name));
 
                 return query.First();
             }

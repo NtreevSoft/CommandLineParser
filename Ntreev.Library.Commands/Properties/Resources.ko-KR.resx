@@ -141,6 +141,9 @@
   <data name="InvalidCommandName_Format" xml:space="preserve">
     <value>'{0}' is invalid command name.</value>
   </data>
+  <data name="MethodDoesNotExist_Format" xml:space="preserve">
+    <value>method '{0}' does not exist.</value>
+  </data>
   <data name="Options" xml:space="preserve">
     <value>선택 인자</value>
   </data>
