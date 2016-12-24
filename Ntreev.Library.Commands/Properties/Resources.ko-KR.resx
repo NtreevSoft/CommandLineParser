@@ -159,6 +159,9 @@
   <data name="SwitchDelimiterMustBePunctuation" xml:space="preserve">
     <value>SwitchDelimiter must be a Punctuation.</value>
   </data>
+  <data name="SwitchDoesNotExist_Format" xml:space="preserve">
+    <value>switch '{0}' does not exist.</value>
+  </data>
   <data name="SwitchIsMissing" xml:space="preserve">
     <value>Switch is missing.</value>
   </data>

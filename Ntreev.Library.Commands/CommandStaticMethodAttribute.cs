@@ -8,23 +8,22 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands
 {
     /// <summary>
-    /// 클래스 또는 메소드에 추가적으로 사용할 스위치가 정의되어 있는 static class 타입을 설정합니다.
-    /// 속성의 이름을 설정하지 않을 경우에는 static class 내에 CommandSwitch 특성을 갖고 있는 public 모든 속성이 추가됩니다.
+    /// SubCommand로 사용할 클래스에 추가로 사용될 CommandMethodAttribute가 정의되어 있는 static class 타입을 설정합니다.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-    public class CommandStaticSwitchAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class CommandStaticMethodAttribute : Attribute
     {
         private readonly string typeName;
         private readonly Type type;
-        private readonly string[] propertyNames;
+        private readonly string[] methodNames;
 
-        public CommandStaticSwitchAttribute(string typeName, params string[] propertyNames)
-            : this(Type.GetType(typeName), propertyNames)
+        public CommandStaticMethodAttribute(string typeName, params string[] methodNames)
+            : this(Type.GetType(typeName), methodNames)
         {
-            
+
         }
 
-        public CommandStaticSwitchAttribute(Type type, params string[] propertyNames)
+        public CommandStaticMethodAttribute(Type type, params string[] methodNames)
         {
             if (type.GetConstructor(Type.EmptyTypes) == null && type.IsAbstract && type.IsSealed)
             {
@@ -35,7 +34,6 @@ namespace Ntreev.Library.Commands
             {
                 throw new InvalidOperationException("type is not static class.");
             }
-            this.propertyNames = propertyNames;
         }
 
         public string TypeName
@@ -43,9 +41,9 @@ namespace Ntreev.Library.Commands
             get { return this.typeName; }
         }
 
-        public string[] PropertyNames
+        public string[] MethodNames
         {
-            get { return this.propertyNames; }
+            get { return this.methodNames; }
         }
 
         internal Type StaticType

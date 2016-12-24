@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands.Invoke
 {
+    [CommandStaticMethod(typeof(StaticCommand))]
     class Commands
     {
         public Commands()

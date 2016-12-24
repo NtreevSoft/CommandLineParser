@@ -117,61 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgSeparatorMustBeAPunctuation" xml:space="preserve">
-    <value>ArgSeparator must be a Punctuation.</value>
+  <data name="@ID" xml:space="preserve">
+    <value>123</value>
   </data>
-  <data name="AvaliableCommands" xml:space="preserve">
-    <value>Available commands</value>
-  </data>
-  <data name="CannotConvert_Format" xml:space="preserve">
-    <value>Cannot convert '{0}'</value>
-  </data>
-  <data name="CommandNotFound" xml:space="preserve">
-    <value>command not found.</value>
-  </data>
-  <data name="CommandNotFound_Format" xml:space="preserve">
-    <value>'{0}' command not found.</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="InvalidArgumentType" xml:space="preserve">
-    <value>Invalid argument type.</value>
-  </data>
-  <data name="InvalidCommandName_Format" xml:space="preserve">
-    <value>'{0}' is invalid command name.</value>
-  </data>
-  <data name="Options" xml:space="preserve">
-    <value>Options</value>
-  </data>
-  <data name="Requirements" xml:space="preserve">
-    <value>Requirements</value>
-  </data>
-  <data name="ShortNameDoesNotExist" xml:space="preserve">
-    <value>short name does not exist.</value>
-  </data>
-  <data name="SubCommands" xml:space="preserve">
-    <value>SubCommands</value>
-  </data>
-  <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
-  </data>
-  <data name="SwitchDelimiterMustBePunctuation" xml:space="preserve">
-    <value>SwitchDelimiter must be a Punctuation.</value>
-  </data>
-  <data name="SwitchDoesNotExist_Format" xml:space="preserve">
-    <value>switch '{0}' does not exist.</value>
-  </data>
-  <data name="SwitchIsMissing" xml:space="preserve">
-    <value>Switch is missing.</value>
-  </data>
-  <data name="SwitchWasAlreadyRegistered" xml:space="preserve">
-    <value>Switch is already registered.</value>
-  </data>
-  <data name="TypeForUsage_Format" xml:space="preserve">
-    <value>type '{0}' for usage.</value>
-  </data>
-  <data name="Usage" xml:space="preserve">
-    <value>Usage</value>
+  <data name="ID" xml:space="preserve">
+    <value>234</value>
   </data>
 </root>

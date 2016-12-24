@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands.Parse
 {
+    [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     static class GlobalSettings
     {
         [CommandSwitch]

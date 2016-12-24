@@ -84,9 +84,7 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var switches1 = CommandDescriptor.GetPropertyDescriptors(this.instance.GetType());
-                var switches2 = CommandDescriptor.GetStaticPropertyInfoDescriptors(this.instance.GetType());
-                var switches = switches1.Concat(switches2).Where(item => this.IsSwitchVisible(item));
+                var switches = CommandDescriptor.GetSwitchDescriptors(this.instance).Where(item => this.IsSwitchVisible(item));
                 var helper = new SwitchHelper(switches);
                 helper.Parse(this.instance, arguments);
                 return true;
@@ -133,7 +131,7 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance.GetType(), method);
+                var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
                 
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
@@ -152,10 +150,7 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintUsage()
         {
-            var switches1 = CommandDescriptor.GetPropertyDescriptors(this.instance.GetType());
-            var switches2 = CommandDescriptor.GetStaticPropertyInfoDescriptors(this.instance.GetType());
-            var switches = switches1.Concat(switches2).Where(item => this.IsSwitchVisible(item));
-            //var switches = CommandDescriptor.GetPropertyDescriptors(this.instance.GetType()).Where(item => this.IsSwitchVisible(item)).ToArray();
+            var switches = CommandDescriptor.GetSwitchDescriptors(this.instance).Where(item => this.IsSwitchVisible(item));
             this.SwitchUsagePrinter.Print(this.Out, switches.ToArray());
         }
 
@@ -168,13 +163,15 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintMethodUsage()
         {
-            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance.GetType()).Where(item => this.IsMethodVisible(item)).ToArray();
-            this.MethodUsagePrinter.Print(this.Out, descriptors);
+            var descriptors1 = CommandDescriptor.GetMethodDescriptors(this.instance);
+            var descriptors2 = CommandDescriptor.GetStaticMethodDescriptors(this.instance.GetType());
+            var descriptors = descriptors1.Concat(descriptors2).Where(item => this.IsMethodVisible(item));
+            this.MethodUsagePrinter.Print(this.Out, descriptors.ToArray());
         }
 
         public virtual void PrintMethodUsage(string methodName)
         {
-            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance.GetType());
+            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance);
             var descriptor = descriptors.FirstOrDefault(item => item.Name == methodName);
             if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                 throw new CommandNotFoundException(methodName);

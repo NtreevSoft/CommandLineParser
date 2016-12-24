@@ -44,6 +44,14 @@ namespace Ntreev.Library.Commands
             this.descriptors.Add(item);
         }
 
+        internal void AddRange(IEnumerable<MethodDescriptor> descriptors)
+        {
+            foreach (var item in descriptors)
+            {
+                this.Add(item);
+            }
+        }
+
         #region IEnumerable
 
         IEnumerator<MethodDescriptor> IEnumerable<MethodDescriptor>.GetEnumerator()

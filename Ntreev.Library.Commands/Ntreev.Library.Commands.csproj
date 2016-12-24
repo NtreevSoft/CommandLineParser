@@ -83,6 +83,7 @@
     <Compile Include="CommandMethodSwitchAttribute.cs" />
     <Compile Include="CommandSettings.cs" />
     <Compile Include="CommandShortSwitchAttribute.cs" />
+    <Compile Include="CommandStaticMethodAttribute.cs" />
     <Compile Include="CommandStaticSwitchAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="ResourceUsageDescriptionProvider.cs" />
     <Compile Include="SubCommandBase.cs" />
     <Compile Include="SwitchParameterInfoDescriptor.cs" />
-    <Compile Include="SwitchPropertyDescriptor.cs" />
     <Compile Include="SwitchPropertyInfoDescriptor.cs" />
     <Compile Include="TableDataBuilder.cs" />
     <Compile Include="UsageDescriptionProvider.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
@@ -23,8 +24,8 @@ namespace Ntreev.Library.Commands
                             where item.DescriptorName == name
                             select item;
 
-                if (query.Count() == 0)
-                    return null;
+                if (query.Any() == false)
+                    throw new KeyNotFoundException(string.Format(Resources.SwitchDoesNotExist_Format, name));
 
                 return query.First();
             }

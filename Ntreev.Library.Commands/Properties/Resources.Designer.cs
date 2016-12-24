@@ -187,6 +187,15 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   switch &apos;{0}&apos; does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string SwitchDoesNotExist_Format {
+            get {
+                return ResourceManager.GetString("SwitchDoesNotExist_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Switch is missing.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string SwitchIsMissing {

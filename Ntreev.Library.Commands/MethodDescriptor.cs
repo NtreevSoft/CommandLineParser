@@ -12,9 +12,9 @@ namespace Ntreev.Library.Commands
     {
         private readonly MethodInfo methodInfo;
         private readonly CommandMethodAttribute attribute;
+        private readonly SwitchDescriptor[] switches;
         private readonly string name;
         private readonly string displayName;
-        private readonly SwitchDescriptor[] switches;
         private readonly string summary;
         private readonly string description;
 
@@ -39,7 +39,7 @@ namespace Ntreev.Library.Commands
             {
                 foreach (var item in switchAttr.PropertyNames)
                 {
-                    var switchDescriptor = CommandDescriptor.GetPropertyInfoDescriptors(methodInfo.DeclaringType)[item];
+                    var switchDescriptor = CommandDescriptor.GetSwitchDescriptors(methodInfo.DeclaringType)[item];
                     if (switchDescriptor == null)
                         throw new ArgumentException(string.Format("'{0}' attribute does not existed .", item));
                     switchList.Add(switchDescriptor);
@@ -49,7 +49,7 @@ namespace Ntreev.Library.Commands
             var staticAttrs = this.methodInfo.GetCustomAttributes<CommandStaticSwitchAttribute>();
             foreach (var item in staticAttrs)
             {
-                var switches = CommandDescriptor.GetPropertyInfoDescriptors(item.StaticType);
+                var switches = CommandDescriptor.GetSwitchDescriptors(item.StaticType);
                 switchList.AddRange(switches);
             }
 
