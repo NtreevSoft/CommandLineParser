@@ -16,6 +16,7 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandMethod("init")]
+        [CommandStaticSwitch(typeof(GlobalSettings))]
         public void Initialize(string path)
         {
             Console.WriteLine("{0} initialized.", path);
