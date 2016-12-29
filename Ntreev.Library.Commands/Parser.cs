@@ -43,6 +43,10 @@ namespace Ntreev.Library.Commands
             {
                 return ParseBoolean(descriptor, arg);
             }
+            else if (descriptor.SwitchType.IsEnum)
+            {
+                return ParseEnum(descriptor, arg);
+            }
             else
             {
                 return ParseDefault(descriptor, arg);
@@ -56,6 +60,22 @@ namespace Ntreev.Library.Commands
                 return true;
             }
             return ParseDefault(descriptor, arg);
+        }
+
+        private static object ParseEnum(SwitchDescriptor descriptor, string arg)
+        {
+            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
+            var names = Enum.GetNames(descriptor.SwitchType).ToDictionary(item => CommandSettings.NameGenerator(item), item => item);
+            var nameList = new List<string>(segments.Length);
+            foreach (var item in segments)
+            {
+                if (names.ContainsKey(item) == false)
+                    throw new InvalidOperationException("    ");
+
+                nameList.Add(names[item]);
+            }
+
+            return Enum.Parse(descriptor.SwitchType, string.Join(", ", nameList));
         }
 
         private static object ParseDefault(SwitchDescriptor descriptor, string arg)
