@@ -71,13 +71,17 @@ namespace Ntreev.Library.Commands
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
             var arguments = commandLine.Substring(match.Length).Trim();
+            var items = CommandLineParser.Split(arguments);
 
-            if (arguments == this.HelpName)
+            if (items[0] == this.HelpName)
             {
-                this.PrintUsage();
+                if(items[1] == string.Empty)
+                    this.PrintUsage();
+                else
+                    this.PrintUsage(items[1]);
                 return false;
             }
-            else if (arguments == this.VersionName)
+            else if (items[0] == this.VersionName)
             {
                 this.PrintVersion();
                 return false;
@@ -152,6 +156,16 @@ namespace Ntreev.Library.Commands
         {
             var switches = CommandDescriptor.GetSwitchDescriptors(this.instance).Where(item => this.IsSwitchVisible(item));
             this.SwitchUsagePrinter.Print(this.Out, switches.ToArray());
+        }
+
+        public virtual void PrintUsage(string switchName)
+        {
+            var descriptor = CommandDescriptor.GetSwitchDescriptors(this.instance)
+                                              .Where(item => this.IsSwitchVisible(item))
+                                              .FirstOrDefault(item => switchName == item.NamePattern || switchName == item.ShortNamePattern);
+            if (descriptor == null)
+                throw new InvalidOperationException(string.Format(Resources.SwitchDoesNotExist_Format, switchName));
+            this.SwitchUsagePrinter.Print(this.Out, descriptor);
         }
 
         public virtual void PrintVersion()

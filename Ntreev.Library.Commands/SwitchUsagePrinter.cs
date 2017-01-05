@@ -56,6 +56,14 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public virtual void Print(TextWriter writer, SwitchDescriptor descriptor)
+        {
+            using (var tw = new CommandTextWriter(writer))
+            {
+                this.PrintOption(tw, descriptor);
+            }
+        }
+
         public string Name
         {
             get { return this.name; }
