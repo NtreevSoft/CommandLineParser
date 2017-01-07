@@ -75,7 +75,7 @@ namespace Ntreev.Library.Commands
 
             if (items[0] == this.HelpName)
             {
-                if(items[1] == string.Empty)
+                if (items[1] == string.Empty)
                     this.PrintUsage();
                 else
                     this.PrintUsage(items[1]);
@@ -136,7 +136,7 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
-                
+
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
 
@@ -162,7 +162,7 @@ namespace Ntreev.Library.Commands
         {
             var descriptor = CommandDescriptor.GetSwitchDescriptors(this.instance)
                                               .Where(item => this.IsSwitchVisible(item))
-                                              .FirstOrDefault(item => switchName == item.NamePattern || switchName == item.ShortNamePattern);
+                                              .FirstOrDefault(item => (item.Required == true && switchName == item.Name) || switchName == item.NamePattern || switchName == item.ShortNamePattern);
             if (descriptor == null)
                 throw new InvalidOperationException(string.Format(Resources.SwitchDoesNotExist_Format, switchName));
             this.SwitchUsagePrinter.Print(this.Out, descriptor);
