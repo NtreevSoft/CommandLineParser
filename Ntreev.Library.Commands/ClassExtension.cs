@@ -10,9 +10,9 @@ namespace Ntreev.Library.Commands
 {
     static class ClassExtension
     {
-        public static CommandSwitchAttribute GetCommandSwitchAttribute(this PropertyDescriptor propertyDescriptor)
+        public static CommandPropertyAttribute GetCommandSwitchAttribute(this PropertyDescriptor propertyDescriptor)
         {
-            return propertyDescriptor.Attributes[typeof(CommandSwitchAttribute)] as CommandSwitchAttribute;
+            return propertyDescriptor.Attributes[typeof(CommandPropertyAttribute)] as CommandPropertyAttribute;
         }
 
         public static string GetSummary(this PropertyDescriptor propertyDescriptor)
@@ -53,9 +53,9 @@ namespace Ntreev.Library.Commands
             return attr.DisplayName;
         }
 
-        public static CommandSwitchAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
+        public static CommandPropertyAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
         {
-            return customAttributeProvider.GetCustomAttribute<CommandSwitchAttribute>();
+            return customAttributeProvider.GetCustomAttribute<CommandPropertyAttribute>();
         }
 
         public static object GetDefaultValue(this PropertyInfo propertyInfo)

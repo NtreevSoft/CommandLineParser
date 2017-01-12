@@ -30,13 +30,23 @@ using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
+    /// <summary>
+    /// 스위치의 속성을 지정합니다.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class CommandShortSwitchAttribute : CommandSwitchAttribute
+    public class CommandPropertiesAttribute : Attribute
     {
-        public CommandShortSwitchAttribute(char shortName)
+        private string name = string.Empty;
+
+        public CommandPropertiesAttribute()
         {
-            this.ShortName = shortName;
-            this.ShortNameOnly = true;
+
+        }
+
+        public string Name
+        {
+            get { return this.name ?? string.Empty; }
+            set { this.name = value; }
         }
     }
 }

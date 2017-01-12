@@ -24,14 +24,14 @@ namespace Ntreev.Library.Commands
             this.SubCommandName = string.Empty;
         }
 
-        [CommandSwitch(Name = "CommandName", Required = true)]
+        [CommandProperty(Name = "CommandName", Required = true)]
         [DisplayName("command")]
         public string CommandName
         {
             get; set;
         }
 
-        [CommandSwitch(Name = "sub-command", Required = true)]
+        [CommandProperty(Name = "sub-command", Required = true)]
         [DefaultValue("")]
         public string SubCommandName
         {

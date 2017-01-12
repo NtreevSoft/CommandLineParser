@@ -33,7 +33,7 @@ namespace Ntreev.Library.Commands
 {
     static class Parser
     {
-        public static object Parse(SwitchDescriptor descriptor, string arg)
+        public static object Parse(CommandMemberDescriptor descriptor, string arg)
         {
             if (descriptor.SwitchType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(descriptor.SwitchType) == true)
             {
@@ -53,7 +53,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        private static object ParseBoolean(SwitchDescriptor descriptor, string arg)
+        private static object ParseBoolean(CommandMemberDescriptor descriptor, string arg)
         {
             if (descriptor.SwitchType == typeof(bool) && descriptor.ArgSeparator == null)
             {
@@ -62,7 +62,7 @@ namespace Ntreev.Library.Commands
             return ParseDefault(descriptor, arg);
         }
 
-        private static object ParseEnum(SwitchDescriptor descriptor, string arg)
+        private static object ParseEnum(CommandMemberDescriptor descriptor, string arg)
         {
             var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
             var names = Enum.GetNames(descriptor.SwitchType).ToDictionary(item => CommandSettings.NameGenerator(item), item => item);
@@ -78,7 +78,7 @@ namespace Ntreev.Library.Commands
             return Enum.Parse(descriptor.SwitchType, string.Join(", ", nameList));
         }
 
-        private static object ParseDefault(SwitchDescriptor descriptor, string arg)
+        private static object ParseDefault(CommandMemberDescriptor descriptor, string arg)
         {
             var converter = descriptor.Converter;
 
@@ -137,7 +137,7 @@ namespace Ntreev.Library.Commands
             return list;
         }
 
-        private static object ParseArray(SwitchDescriptor descriptor, string arg)
+        private static object ParseArray(CommandMemberDescriptor descriptor, string arg)
         {
             System.Collections.IList list;
 

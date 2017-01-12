@@ -34,10 +34,10 @@ namespace Ntreev.Library.Commands
 {
     class SwitchHelper
     {
-        private readonly SwitchDescriptor[] switches;
-        private readonly Dictionary<SwitchDescriptor, string> args = new Dictionary<SwitchDescriptor, string>();
+        private readonly CommandMemberDescriptor[] switches;
+        private readonly Dictionary<CommandMemberDescriptor, string> args = new Dictionary<CommandMemberDescriptor, string>();
 
-        public SwitchHelper(IEnumerable<SwitchDescriptor> switches)
+        public SwitchHelper(IEnumerable<CommandMemberDescriptor> switches)
         {
             this.switches = switches.ToArray();
         }
@@ -103,7 +103,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        private SwitchDescriptor ParseOption(object instance, ref string arguments)
+        private CommandMemberDescriptor ParseOption(object instance, ref string arguments)
         {
             var pattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSettings.SwitchDelimiter);
             var shortPattern = string.Format(@"^{0}\S+((\s+""[^""]*"")|(\s+[\S-[{0}]][\S]*)|(\s*))", CommandSettings.ShortSwitchDelimiter);
@@ -136,7 +136,7 @@ namespace Ntreev.Library.Commands
             throw new ArgumentException("확인할 수 없는 인자가 포함되어 있습니다.");
         }
 
-        private void ParseRequired(SwitchDescriptor switchDescriptor, ref string arguments)
+        private void ParseRequired(CommandMemberDescriptor switchDescriptor, ref string arguments)
         {
             var normalPattern = @"^((""[^""]*"")|(\S+))";
 
@@ -152,7 +152,7 @@ namespace Ntreev.Library.Commands
             throw new Exception();
         }
 
-        private SwitchDescriptor DoMatch(string switchLine, ref string parsed)
+        private CommandMemberDescriptor DoMatch(string switchLine, ref string parsed)
         {
             foreach (var item in this.switches)
             {
