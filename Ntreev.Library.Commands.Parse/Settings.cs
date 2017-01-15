@@ -53,17 +53,11 @@ namespace Ntreev.Library.Commands.Parse
             get; set;
         }
 
-        [CommandProperty(Name = "libs")]
+        [CommandPropertyArray]
         [Description("library paths.")]
         public string[] Libraries
         {
             get; set;
-        }
-
-        [CommandPropertyArray]
-        public string[] Paths
-        {
-            get;set;
         }
     }
 }

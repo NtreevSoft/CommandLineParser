@@ -26,43 +26,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
+using System.Reflection;
 using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class CommandPropertyArrayAttribute : CommandPropertyAttribute
+    public abstract class CommandMemberArrayDescriptor : CommandMemberDescriptor
     {
-        public CommandPropertyArrayAttribute()
+        protected CommandMemberArrayDescriptor(CommandPropertyAttribute attribute, string descriptorName)
+            : base(attribute, descriptorName)
         {
 
         }
 
-        public override char ShortName
-        {
-            get { return base.ShortName; }
-            set
-            {
-                throw new InvalidOperationException("cannot be set");
-            }
-        }
-
-        public override bool Required
-        {
-            get { return false; }
-            set
-            {
-                throw new InvalidOperationException("cannot be set");
-            }
-        }
-
-        public override bool ShortNameOnly
-        {
-            get { return base.ShortNameOnly; }
-            set
-            {
-                throw new InvalidOperationException("cannot be set");
-            }
-        }
     }
 }

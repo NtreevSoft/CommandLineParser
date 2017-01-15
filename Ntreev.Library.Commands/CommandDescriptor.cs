@@ -10,8 +10,8 @@ namespace Ntreev.Library.Commands
     public static class CommandDescriptor
     {
         private static Dictionary<Type, CommandMethodDescriptorCollection> typeToMethodDescriptors = new Dictionary<Type, CommandMethodDescriptorCollection>();
-        private static Dictionary<Type, CommandMemberDescriptorCollection> typeToswitchDescriptors = new Dictionary<Type, CommandMemberDescriptorCollection>();
-        private static Dictionary<ICustomAttributeProvider, CommandMemberDescriptorCollection> providerToSwitchDescriptors = new Dictionary<ICustomAttributeProvider, CommandMemberDescriptorCollection>();
+        private static Dictionary<Type, CommandMemberDescriptorCollection> typeToMemberDescriptors = new Dictionary<Type, CommandMemberDescriptorCollection>();
+        private static Dictionary<ICustomAttributeProvider, CommandMemberDescriptorCollection> providerToMemberDescriptors = new Dictionary<ICustomAttributeProvider, CommandMemberDescriptorCollection>();
         private static Dictionary<ICustomAttributeProvider, CommandMethodDescriptorCollection> providerToMethodDescriptors = new Dictionary<ICustomAttributeProvider, CommandMethodDescriptorCollection>();
         private static Dictionary<Type, IUsageDescriptionProvider> typeToUsageDescriptionProvider = new Dictionary<Type, IUsageDescriptionProvider>();
 
@@ -52,28 +52,28 @@ namespace Ntreev.Library.Commands
             return providerToMethodDescriptors[provider];
         }
 
-        public static CommandMemberDescriptorCollection GetStaticSwitchDescriptors(ICustomAttributeProvider provider)
+        public static CommandMemberDescriptorCollection GetStaticMemberDescriptors(ICustomAttributeProvider provider)
         {
-            if (providerToSwitchDescriptors.ContainsKey(provider) == false)
+            if (providerToMemberDescriptors.ContainsKey(provider) == false)
             {
-                providerToSwitchDescriptors.Add(provider, CreateStaticSwitchDescriptors(provider));
+                providerToMemberDescriptors.Add(provider, CreateStaticMemberDescriptors(provider));
             }
 
-            return providerToSwitchDescriptors[provider];
+            return providerToMemberDescriptors[provider];
         }
 
-        public static CommandMemberDescriptorCollection GetSwitchDescriptors(object instance)
+        public static CommandMemberDescriptorCollection GetMemberDescriptors(object instance)
         {
             var type = instance is Type ? (Type)instance : instance.GetType();
-            if (typeToswitchDescriptors.ContainsKey(type) == false)
+            if (typeToMemberDescriptors.ContainsKey(type) == false)
             {
-                typeToswitchDescriptors.Add(type, CreateSwitchDescriptors(type));
+                typeToMemberDescriptors.Add(type, CreateMemberDescriptors(type));
             }
 
-            return typeToswitchDescriptors[type];
+            return typeToMemberDescriptors[type];
         }
 
-        public static CommandMemberDescriptorCollection CreateStaticSwitchDescriptors(ICustomAttributeProvider provider)
+        public static CommandMemberDescriptorCollection CreateStaticMemberDescriptors(ICustomAttributeProvider provider)
         {
             var descriptors = new CommandMemberDescriptorCollection();
             var attrs = provider.GetCustomAttributes(typeof(CommandStaticPropertyAttribute), true);
@@ -84,7 +84,7 @@ namespace Ntreev.Library.Commands
                     continue;
                 var attr = item as CommandStaticPropertyAttribute;
 
-                var staticDescriptors = CommandDescriptor.GetSwitchDescriptors(attr.StaticType);
+                var staticDescriptors = CommandDescriptor.GetMemberDescriptors(attr.StaticType);
                 descriptors.AddRange(Filter(staticDescriptors, attr.PropertyNames));
             }
 
@@ -129,14 +129,14 @@ namespace Ntreev.Library.Commands
             return descriptors;
         }
 
-        private static CommandMemberDescriptorCollection CreateSwitchDescriptors(Type type)
+        private static CommandMemberDescriptorCollection CreateMemberDescriptors(Type type)
         {
             var descriptors = new CommandMemberDescriptorCollection();
             var properties = type.GetProperties();
 
             foreach (var item in properties)
             {
-                var attr = item.GetCommandSwitchAttribute();
+                var attr = item.GetCommandPropertyAttribute();
                 if (attr == null)
                     continue;
 
@@ -149,12 +149,12 @@ namespace Ntreev.Library.Commands
                     descriptors.Add(new CommandPropertyDescriptor(item));
             }
 
-            foreach(var item in GetStaticSwitchDescriptors(type))
+            foreach(var item in GetStaticMemberDescriptors(type))
             {
                 descriptors.Add(item);
             }
 
-            if (descriptors.Where(item => item is CommandPropertyArrayDescriptor).Count() > 1)
+            if (descriptors.Where(item => item is CommandMemberArrayDescriptor).Count() > 1)
                 throw new InvalidOperationException("CommandPropertyArrayDescriptor is can be used only once.");
 
             descriptors.Sort();

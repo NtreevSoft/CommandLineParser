@@ -35,15 +35,15 @@ namespace Ntreev.Library.Commands
     {
         public static object Parse(CommandMemberDescriptor descriptor, string arg)
         {
-            if (descriptor.SwitchType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(descriptor.SwitchType) == true)
+            if (descriptor.MemberType.IsArray == true || typeof(System.Collections.IList).IsAssignableFrom(descriptor.MemberType) == true)
             {
                 return ParseArray(descriptor, arg);
             }
-            else if (descriptor.SwitchType == typeof(bool))
+            else if (descriptor.MemberType == typeof(bool))
             {
                 return ParseBoolean(descriptor, arg);
             }
-            else if (descriptor.SwitchType.IsEnum)
+            else if (descriptor.MemberType.IsEnum)
             {
                 return ParseEnum(descriptor, arg);
             }
@@ -53,49 +53,18 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        private static object ParseBoolean(CommandMemberDescriptor descriptor, string arg)
+        public static object ParseArray(CommandMemberDescriptor descriptor, IEnumerable<string> args)
         {
-            if (descriptor.SwitchType == typeof(bool))
-            {
-                return true;
-            }
-            return ParseDefault(descriptor, arg);
-        }
-
-        private static object ParseEnum(CommandMemberDescriptor descriptor, string arg)
-        {
-            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
-            var names = Enum.GetNames(descriptor.SwitchType).ToDictionary(item => CommandSettings.NameGenerator(item), item => item);
-            var nameList = new List<string>(segments.Length);
-            foreach (var item in segments)
-            {
-                if (names.ContainsKey(item) == false)
-                    throw new InvalidOperationException("    ");
-
-                nameList.Add(names[item]);
-            }
-
-            return Enum.Parse(descriptor.SwitchType, string.Join(", ", nameList));
-        }
-
-        private static object ParseDefault(CommandMemberDescriptor descriptor, string arg)
-        {
-            var converter = descriptor.Converter;
-
-            if (converter.CanConvertFrom(typeof(string)) == false)
-                throw new NotSupportedException(string.Format(Resources.CannotConvert_Format, arg));
-
-            try
-            {
-                return converter.ConvertFrom(arg);
-            }
-            catch (Exception e)
-            {
-                throw new ArgumentException(Resources.InvalidArgumentType, descriptor.Name, e);
-            }
+            return ParseArray(descriptor.MemberType, args);
         }
 
         public static object ParseArray(Type propertyType, string arg)
+        {
+            var args = arg.Split(new char[] { CommandSettings.ItemSperator, });
+            return ParseArray(propertyType, args);
+        }
+
+        public static object ParseArray(Type propertyType, IEnumerable<string> args)
         {
             System.Collections.IList list;
 
@@ -112,10 +81,8 @@ namespace Ntreev.Library.Commands
             if (itemType == null)
                 throw new NotSupportedException();
 
-            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
-
             var converter = TypeDescriptor.GetConverter(itemType);
-            foreach (var item in segments)
+            foreach (var item in args)
             {
                 var s = item.Trim();
                 if (s.Length == 0)
@@ -141,16 +108,16 @@ namespace Ntreev.Library.Commands
         {
             System.Collections.IList list;
 
-            if (descriptor.SwitchType.IsArray == true)
+            if (descriptor.MemberType.IsArray == true)
             {
                 list = new System.Collections.ArrayList() as System.Collections.IList;
             }
             else
             {
-                list = TypeDescriptor.CreateInstance(null, descriptor.SwitchType, null, null) as System.Collections.IList;
+                list = TypeDescriptor.CreateInstance(null, descriptor.MemberType, null, null) as System.Collections.IList;
             }
 
-            var itemType = GetItemType(descriptor.SwitchType);
+            var itemType = GetItemType(descriptor.MemberType);
             if (itemType == null)
                 throw new NotSupportedException();
 
@@ -168,7 +135,7 @@ namespace Ntreev.Library.Commands
                     list.Add(element);
                 }
 
-                if (descriptor.SwitchType.IsArray == true)
+                if (descriptor.MemberType.IsArray == true)
                 {
                     var array = Array.CreateInstance(itemType, list.Count);
                     list.CopyTo(array, 0);
@@ -186,7 +153,49 @@ namespace Ntreev.Library.Commands
             return list;
         }
 
-        public static Type GetItemType(Type propertyType)
+        private static object ParseBoolean(CommandMemberDescriptor descriptor, string arg)
+        {
+            if (descriptor.MemberType == typeof(bool))
+            {
+                return true;
+            }
+            return ParseDefault(descriptor, arg);
+        }
+
+        private static object ParseEnum(CommandMemberDescriptor descriptor, string arg)
+        {
+            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
+            var names = Enum.GetNames(descriptor.MemberType).ToDictionary(item => CommandSettings.NameGenerator(item), item => item);
+            var nameList = new List<string>(segments.Length);
+            foreach (var item in segments)
+            {
+                if (names.ContainsKey(item) == false)
+                    throw new InvalidOperationException("    ");
+
+                nameList.Add(names[item]);
+            }
+
+            return Enum.Parse(descriptor.MemberType, string.Join(", ", nameList));
+        }
+
+        private static object ParseDefault(CommandMemberDescriptor descriptor, string arg)
+        {
+            var converter = descriptor.Converter;
+
+            if (converter.CanConvertFrom(typeof(string)) == false)
+                throw new NotSupportedException(string.Format(Resources.CannotConvert_Format, arg));
+
+            try
+            {
+                return converter.ConvertFrom(arg);
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException(Resources.InvalidArgumentType, descriptor.Name, e);
+            }
+        }
+
+        private static Type GetItemType(Type propertyType)
         {
             if (propertyType.IsArray == true)
             {

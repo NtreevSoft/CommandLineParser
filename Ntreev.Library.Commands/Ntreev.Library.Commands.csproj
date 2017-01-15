@@ -79,8 +79,10 @@
     <Compile Include="CommandCollection.cs" />
     <Compile Include="CommandContextBase.cs" />
     <Compile Include="CommandDescriptor.cs" />
+    <Compile Include="CommandMemberArrayDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodPropertyAttribute.cs" />
+    <Compile Include="CommandParameterArrayDescriptor.cs" />
     <Compile Include="CommandPropertyArrayAttribute.cs" />
     <Compile Include="CommandPropertyArrayDescriptor.cs" />
     <Compile Include="CommandSettings.cs" />
@@ -114,10 +116,10 @@
     <Compile Include="Parser.cs" />
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="CommandMemberDescriptorCollection.cs" />
-    <Compile Include="CommandPropertyUsagePrinter.cs" />
+    <Compile Include="CommandMemberUsagePrinter.cs" />
     <Compile Include="CommandPropertyAttribute.cs" />
     <Compile Include="CommandMemberDescriptor.cs" />
-    <Compile Include="SwitchHelper.cs" />
+    <Compile Include="ParseDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +150,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ko-KR.resx" />
     <EmbeddedResource Include="VersionCommand.resx">

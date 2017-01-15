@@ -25,7 +25,7 @@ namespace Ntreev.Library.Commands
                             select item;
 
                 if (query.Any() == false)
-                    throw new KeyNotFoundException(string.Format(Resources.SwitchDoesNotExist_Format, name));
+                    throw new KeyNotFoundException(string.Format(Resources.MemberDoesNotExist_Format, name));
 
                 return query.First();
             }
@@ -46,7 +46,7 @@ namespace Ntreev.Library.Commands
             var query = from item in this.descriptors
                         orderby item.DefaultValue == DBNull.Value descending
                         orderby item.Required descending
-                        orderby item is CommandPropertyArrayDescriptor
+                        orderby item is CommandMemberArrayDescriptor
                         select item;
 
             var items = query.ToArray();

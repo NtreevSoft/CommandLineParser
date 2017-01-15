@@ -10,52 +10,14 @@ namespace Ntreev.Library.Commands
 {
     static class ClassExtension
     {
-        public static CommandPropertyAttribute GetCommandSwitchAttribute(this PropertyDescriptor propertyDescriptor)
-        {
-            return propertyDescriptor.Attributes[typeof(CommandPropertyAttribute)] as CommandPropertyAttribute;
-        }
-
-        public static string GetSummary(this PropertyDescriptor propertyDescriptor)
-        {
-            var attr = propertyDescriptor.Attributes[typeof(SummaryAttribute)] as SummaryAttribute;
-            if (attr == null)
-                return string.Empty;
-
-            return attr.Summary;
-        }
-
-        public static object GetDefaultValue(this PropertyDescriptor propertyDescriptor)
-        {
-            var attr = propertyDescriptor.Attributes[typeof(DefaultValueAttribute)] as DefaultValueAttribute;
-            if (attr == null)
-                return DBNull.Value;
-
-            var value = attr.Value;
-            if (value == null)
-            {
-                if (propertyDescriptor.PropertyType.IsClass == false)
-                    return DBNull.Value;
-                return null;
-            }
-
-            if (value.GetType() == propertyDescriptor.PropertyType)
-                return value;
-
-            return propertyDescriptor.Converter.ConvertFrom(value);
-        }
-
-        public static string GetDisplayName(this PropertyDescriptor propertyDescriptor)
-        {
-            var attr = propertyDescriptor.Attributes[typeof(DisplayNameAttribute)] as DisplayNameAttribute;
-            if (attr == null)
-                return string.Empty;
-
-            return attr.DisplayName;
-        }
-
-        public static CommandPropertyAttribute GetCommandSwitchAttribute(this ICustomAttributeProvider customAttributeProvider)
+        public static CommandPropertyAttribute GetCommandPropertyAttribute(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttribute<CommandPropertyAttribute>();
+        }
+
+        public static CommandMethodAttribute GetCommandMethodAttribute(this ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider.GetCustomAttribute<CommandMethodAttribute>();
         }
 
         public static object GetDefaultValue(this PropertyInfo propertyInfo)
@@ -149,33 +111,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public static bool IsCommandMethod(this MethodInfo methodInfo)
-        {
-            return methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false).Any();
-        }
-
-        public static CommandMethodAttribute GetCommandMethodAttribute(this MethodInfo methodInfo)
-        {
-            return methodInfo.GetCustomAttributes(typeof(CommandMethodAttribute), false).FirstOrDefault() as CommandMethodAttribute;
-        }
-
-        public static object GetValue(this ParameterInfo parameterInfo, string arg)
-        {
-            var converter = TypeDescriptor.GetConverter(parameterInfo.ParameterType);
-            return converter.ConvertFromString(arg);
-        }
-
-        public static bool TryGetDefaultValue(this ParameterInfo parameterInfo, out object value)
-        {
-            value = null;
-            var attrs = parameterInfo.GetCustomAttributes(typeof(DefaultValueAttribute), true);
-            if (attrs.Any() == false)
-                return false;
-            var attr = attrs.First() as DefaultValueAttribute;
-            value = attr.Value;
-            return true;
-        }
-
         public static string GetSimpleName(this Type type)
         {
             if (type == typeof(bool))
@@ -208,10 +143,5 @@ namespace Ntreev.Library.Commands
                 return "decimal";
             return type.Name;
         }
-
-        //public static string ToSpinalCase(this string text)
-        //{
-        //    return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
-        //}
     }
 }

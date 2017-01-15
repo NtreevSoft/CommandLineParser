@@ -51,7 +51,7 @@ namespace Ntreev.Library.Commands
             get { return this.parameterInfo.DefaultValue; }
         }
 
-        public override Type SwitchType
+        public override Type MemberType
         {
             get { return this.parameterInfo.ParameterType; }
         }

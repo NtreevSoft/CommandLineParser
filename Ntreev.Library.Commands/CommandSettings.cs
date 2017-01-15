@@ -10,30 +10,30 @@ namespace Ntreev.Library.Commands
 {
     public static class CommandSettings
     {
-        private static string switchDelimiter = "--";
-        private static string shortSwitchDelimiter = "-";
+        private static string delimiter = "--";
+        private static string shortDelimiter = "-";
         private static char itemSeparator = ';';
         private static Func<string, string> nameGenerator;
 
-        public static string SwitchDelimiter
+        public static string Delimiter
         {
-            get { return switchDelimiter; }
+            get { return delimiter; }
             set
             {
                 if (value.Any(item => char.IsPunctuation(item)) == false)
-                    throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
-                switchDelimiter = value;
+                    throw new Exception(Resources.DelimiterMustBePunctuation);
+                delimiter = value;
             }
         }
 
-        public static string ShortSwitchDelimiter
+        public static string ShortDelimiter
         {
-            get { return shortSwitchDelimiter; }
+            get { return shortDelimiter; }
             set
             {
                 if (value.Any(item => char.IsPunctuation(item)) == false)
-                    throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
-                shortSwitchDelimiter = value;
+                    throw new Exception(Resources.DelimiterMustBePunctuation);
+                shortDelimiter = value;
             }
         }
 
@@ -43,7 +43,7 @@ namespace Ntreev.Library.Commands
             set
             {
                 if (char.IsPunctuation(value) == false)
-                    throw new Exception(Resources.SwitchDelimiterMustBePunctuation);
+                    throw new Exception(Resources.DelimiterMustBePunctuation);
                 itemSeparator = value;
             }
         }
@@ -62,7 +62,7 @@ namespace Ntreev.Library.Commands
         internal static void ValidateIdentifier(string name)
         {
             if (Regex.IsMatch(name, "^[_a-zA-Z][_a-zA-Z0-9]*") == false)
-                throw new ArgumentException(string.Format("{0} is a invalid switch name"));
+                throw new ArgumentException(string.Format("{0} is a invalid member name"));
         }
     }
 }

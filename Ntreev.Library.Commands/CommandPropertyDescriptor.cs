@@ -15,7 +15,7 @@ namespace Ntreev.Library.Commands
         private readonly string description;
 
         public CommandPropertyDescriptor(PropertyInfo propertyInfo)
-            : base(propertyInfo.GetCommandSwitchAttribute(), propertyInfo.Name)
+            : base(propertyInfo.GetCommandPropertyAttribute(), propertyInfo.Name)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyInfo.DeclaringType);
             this.propertyInfo = propertyInfo;
@@ -28,7 +28,7 @@ namespace Ntreev.Library.Commands
             get { return this.propertyInfo.GetDisplayName(); }
         }
 
-        public override Type SwitchType
+        public override Type MemberType
         {
             get { return this.propertyInfo.PropertyType; }
         }
