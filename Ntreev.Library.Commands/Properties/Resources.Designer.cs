@@ -239,5 +239,14 @@ namespace Ntreev.Library.Commands.Properties {
                 return ResourceManager.GetString("Usage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Variables과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Variables {
+            get {
+                return ResourceManager.GetString("Variables", resourceCulture);
+            }
+        }
     }
 }

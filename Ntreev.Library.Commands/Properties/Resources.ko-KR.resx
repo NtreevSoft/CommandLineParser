@@ -177,4 +177,7 @@
   <data name="Usage" xml:space="preserve">
     <value>사용법</value>
   </data>
+  <data name="Variables" xml:space="preserve">
+    <value>가변 인자</value>
+  </data>
 </root>

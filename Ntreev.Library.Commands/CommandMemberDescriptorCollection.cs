@@ -46,6 +46,7 @@ namespace Ntreev.Library.Commands
             var query = from item in this.descriptors
                         orderby item.DefaultValue == DBNull.Value descending
                         orderby item.Required descending
+                        orderby item is CommandPropertyArrayDescriptor
                         select item;
 
             var items = query.ToArray();

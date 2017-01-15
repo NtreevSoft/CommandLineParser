@@ -229,6 +229,22 @@ namespace Ntreev.Library.Commands
             return new string[] { name, arguments, };
         }
 
+        internal static List<string> SplitAll(string commandLine)
+        {
+            var pattern = @"^((""[^""]*"")|(\S+))";
+            var match = Regex.Match(commandLine, pattern);
+            var argList = new List<string>();
+
+            while (match.Success)
+            {
+                commandLine = commandLine.Substring(match.Length).Trim();
+                argList.Add(match.Value);
+                match = Regex.Match(commandLine, pattern);
+            }
+
+            return argList;
+        }
+
         public TextWriter Out
         {
             get { return this.writer ?? Console.Out; }

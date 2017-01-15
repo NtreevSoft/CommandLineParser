@@ -34,56 +34,86 @@ namespace Ntreev.Library.Commands
 {
     class SwitchHelper
     {
-        private readonly CommandMemberDescriptor[] switches;
+        private readonly CommandMemberDescriptor[] members;
         private readonly Dictionary<CommandMemberDescriptor, string> args = new Dictionary<CommandMemberDescriptor, string>();
+        private readonly Dictionary<string, CommandMemberDescriptor> descriptors = new Dictionary<string, CommandMemberDescriptor>();
 
-        public SwitchHelper(IEnumerable<CommandMemberDescriptor> switches)
+        public SwitchHelper(IEnumerable<CommandMemberDescriptor> members)
         {
-            this.switches = switches.ToArray();
+            this.members = members.ToArray();
+            foreach (var item in this.members)
+            {
+                if (item.Required == true)
+                    continue;
+                if (item.NamePattern != string.Empty)
+                    descriptors.Add(item.NamePattern, item);
+                if (item.ShortNamePattern != string.Empty)
+                    descriptors.Add(item.ShortNamePattern, item);
+            }
         }
 
-        public void Parse(object instance, string arguments)
+        public void Parse(object instance, string commandLine)
         {
-            var requiredSwitches = this.switches.Where(item => item.Required == true).ToList();
-            var optionSwitches = this.switches.Where(item => item.Required == false).ToList();
+            var requirements = this.members.Where(item => item.Required == true).ToList();
+            var options = this.members.Where(item => item.Required == false).ToList();
+            var variables = this.members.Where(item => item is CommandPropertyArrayDescriptor).FirstOrDefault();
+            var variableList = new List<string>();
 
-            var line = arguments;
-            while (string.IsNullOrEmpty(line) == false)
+            var ss1 = CommandLineParser.SplitAll(commandLine);
+
+            var line = commandLine;
+            while (ss1.Any())
             {
-                if (line.StartsWith(CommandSettings.SwitchDelimiter) == true || line.StartsWith(CommandSettings.ShortSwitchDelimiter))
+                var nam = ss1.First();
+
+                if (descriptors.ContainsKey(nam) == true)
                 {
-                    var descriptor = this.ParseOption(instance, ref line);
-                    if (descriptor.Required == true)
-                        requiredSwitches.Remove(descriptor);
-                    else
-                        optionSwitches.Remove(descriptor);
+                    var descriptor = descriptors[nam];
+                    ss1.RemoveAt(0);
+                    descriptor.Parse(instance, ss1);
                 }
                 else
                 {
-                    if (requiredSwitches.Count == 0)
-                        throw new ArgumentException("필수 인자가 너무 많이 포함되어 있습니다.");
-                    this.ParseRequired(requiredSwitches.First(), ref line);
-                    requiredSwitches.RemoveAt(0);
+                    var descriptor = requirements.First();
+                    descriptor.Parse(instance, ss1);
+                    requirements.RemoveAt(0);
                 }
+                //if (line.StartsWith(CommandSettings.SwitchDelimiter) == true || line.StartsWith(CommandSettings.ShortSwitchDelimiter))
+                //{
+                //    var descriptor = this.ParseOption(instance, ref line);
+                //    if (descriptor.Required == true)
+                //        requirements.Remove(descriptor);
+                //    else
+                //        options.Remove(descriptor);
+                //}
+                //else
+                //{
+                //    if (requirements.Count == 0 && variables == null)
+                //    {
+                //        throw new ArgumentException("필수 인자가 너무 많이 포함되어 있습니다.");
+                //    }
+                //    line = this.ParseArguments(requirements.First(), line);
+                //    requirements.RemoveAt(0);
+                //}
             }
 
-            foreach (var item in requiredSwitches.ToArray())
+            foreach (var item in requirements.ToArray())
             {
                 if (item.DefaultValue != DBNull.Value)
                 {
                     item.SetValue(instance, item.DefaultValue);
-                    requiredSwitches.Remove(item);
+                    requirements.Remove(item);
                 }
             }
 
-            if (requiredSwitches.Count > 0)
+            if (requirements.Count > 0)
             {
-                throw new ArgumentException(string.Format("필수 인자 {0}가 빠져있습니다", requiredSwitches.First().Name));
+                throw new ArgumentException(string.Format("필수 인자 {0}가 빠져있습니다", requirements.First().Name));
             }
 
             this.SetValues(instance);
 
-            foreach (var item in optionSwitches)
+            foreach (var item in options)
             {
                 if (item.DefaultValue != DBNull.Value)
                 {
@@ -94,7 +124,7 @@ namespace Ntreev.Library.Commands
 
         public void SetValues(object instance)
         {
-            foreach (var item in this.switches)
+            foreach (var item in this.members)
             {
                 if (this.args.ContainsKey(item) == false)
                     continue;
@@ -136,27 +166,26 @@ namespace Ntreev.Library.Commands
             throw new ArgumentException("확인할 수 없는 인자가 포함되어 있습니다.");
         }
 
-        private void ParseRequired(CommandMemberDescriptor switchDescriptor, ref string arguments)
+        private string ParseArguments(CommandMemberDescriptor descriptor, string arguments)
         {
-            var normalPattern = @"^((""[^""]*"")|(\S+))";
+            var pattern = @"^((""[^""]*"")|(\S+))";
 
-            var match = Regex.Match(arguments, normalPattern);
+            var match = Regex.Match(arguments, pattern);
 
             if (match.Success == true)
             {
-                this.args.Add(switchDescriptor, match.Value);
-                arguments = arguments.Substring(match.Length).Trim();
-                return;
+                this.args.Add(descriptor, match.Value);
+                return arguments.Substring(match.Length).Trim();
             }
 
             throw new Exception();
         }
 
-        private CommandMemberDescriptor DoMatch(string switchLine, ref string parsed)
+        private CommandMemberDescriptor DoMatch(string line, ref string parsed)
         {
-            foreach (var item in this.switches)
+            foreach (var item in this.members)
             {
-                var arg = item.TryMatch(switchLine, ref parsed);
+                var arg = item.TryMatch(line, ref parsed);
                 if (arg != null)
                 {
                     if (this.args.ContainsKey(item) == true)
@@ -171,7 +200,7 @@ namespace Ntreev.Library.Commands
 
         private void AssertRequired()
         {
-            foreach (var item in this.switches)
+            foreach (var item in this.members)
             {
                 if (item.Required == true && this.args.ContainsKey(item) == false)
                     throw new ArgumentException(Resources.SwitchIsMissing, item.Name);
@@ -182,12 +211,12 @@ namespace Ntreev.Library.Commands
         {
             var hashSet = new HashSet<string>();
 
-            foreach (var item in this.switches)
+            foreach (var item in this.members)
             {
                 hashSet.Add(item.Name);
             }
 
-            foreach (var item in this.switches)
+            foreach (var item in this.members)
             {
                 var shortName = item.ShortName;
                 if (shortName == string.Empty)

@@ -136,19 +136,26 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in properties)
             {
-                if (item.GetCommandSwitchAttribute() == null)
+                var attr = item.GetCommandSwitchAttribute();
+                if (attr == null)
                     continue;
 
                 if (item.CanWrite == false)
                     throw new Exception(string.Format("'{0}' is not available because it cannot write.", item.Name));
 
-                descriptors.Add(new CommandPropertyDescriptor(item));
+                if (attr is CommandPropertyArrayAttribute == true)
+                    descriptors.Add(new CommandPropertyArrayDescriptor(item));
+                else
+                    descriptors.Add(new CommandPropertyDescriptor(item));
             }
 
             foreach(var item in GetStaticSwitchDescriptors(type))
             {
                 descriptors.Add(item);
             }
+
+            if (descriptors.Where(item => item is CommandPropertyArrayDescriptor).Count() > 1)
+                throw new InvalidOperationException("CommandPropertyArrayDescriptor is can be used only once.");
 
             descriptors.Sort();
 

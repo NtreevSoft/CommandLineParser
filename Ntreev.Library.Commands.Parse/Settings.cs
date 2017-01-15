@@ -59,5 +59,11 @@ namespace Ntreev.Library.Commands.Parse
         {
             get; set;
         }
+
+        [CommandPropertyArray]
+        public string[] Paths
+        {
+            get;set;
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace Ntreev.Library.Commands
     {
         private string name = string.Empty;
         private char shortName;
-        private char? argSeparator = null;
+        //private char? argSeparator = null;
         private bool required;
 
         public CommandPropertyAttribute()
@@ -52,43 +52,43 @@ namespace Ntreev.Library.Commands
             set { this.name = value; }
         }
 
-        public char ShortName
+        public virtual char ShortName
         {
             get { return this.shortName; }
             set { this.shortName = value; }
         }
 
-        public bool Required
+        public virtual bool Required
         {
             get { return this.required; }
             set { this.required = value; }
         }
 
-        public char ArgSeparator
-        {
-            get
-            {
-                if (this.argSeparator == null)
-                    return char.MinValue;
-                return (char)this.argSeparator;
-            }
-            set
-            {
-                if (value != char.MinValue)
-                {
-                    if (char.IsPunctuation(value) == false)
-                        throw new Exception(Resources.ArgSeparatorMustBeAPunctuation);
-                }
-                this.argSeparator = (char)value;
-            }
-        }
+        //public virtual char ArgSeparator
+        //{
+        //    get
+        //    {
+        //        if (this.argSeparator == null)
+        //            return char.MinValue;
+        //        return (char)this.argSeparator;
+        //    }
+        //    set
+        //    {
+        //        if (value != char.MinValue)
+        //        {
+        //            if (char.IsPunctuation(value) == false)
+        //                throw new Exception(Resources.ArgSeparatorMustBeAPunctuation);
+        //        }
+        //        this.argSeparator = (char)value;
+        //    }
+        //}
 
-        public bool ShortNameOnly { get; set; }
+        public virtual bool ShortNameOnly { get; set; }
 
-        internal char? GetArgSeparator()
-        {
-            return this.argSeparator;
-        }
+        //internal char? GetArgSeparator()
+        //{
+        //    return this.argSeparator;
+        //}
 
         internal string ShortNameInternal
         {

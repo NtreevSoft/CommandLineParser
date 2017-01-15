@@ -63,10 +63,10 @@ namespace Ntreev.Library.Commands
 
         public abstract object GetValue(object instance);
 
-        public char? ArgSeparator
-        {
-            get { return this.switchAttribute.GetArgSeparator(); }
-        }
+        //public char? ArgSeparator
+        //{
+        //    get { return this.switchAttribute.GetArgSeparator(); }
+        //}
 
         public string Name
         {
@@ -137,24 +137,23 @@ namespace Ntreev.Library.Commands
                 pattern = string.Format(@"^(?<{0}>{1}{2})", CommandMemberDescriptor.SwitchGroupName, CommandSettings.ShortSwitchDelimiter, this.ShortName);
             }
 
-            var argSeparator = this.switchAttribute.GetArgSeparator();
-            if (this.SwitchType != typeof(bool) || argSeparator != null)
-            {
-                if (argSeparator == null)
-                {
-                    pattern += string.Format(@"(((\s+)({0}|{1}))|($))", quotes, normal);
-                }
-                else
-                {
-                    if (argSeparator != char.MinValue)
-                        pattern += argSeparator;
-                    pattern += string.Format(@"(({0}|{1})|$)", quotes, normal);
-                }
-            }
-            else
-            {
-                pattern += @"((\s+)|$)";
-            }
+            //if (this.SwitchType != typeof(bool)l)
+            //{
+            //    if (argSeparator == null)
+            //    {
+            //        pattern += string.Format(@"(((\s+)({0}|{1}))|($))", quotes, normal);
+            //    }
+            //    else
+            //    {
+            //        if (argSeparator != char.MinValue)
+            //            pattern += argSeparator;
+            //        pattern += string.Format(@"(({0}|{1})|$)", quotes, normal);
+            //    }
+            //}
+            //else
+            //{
+            //    pattern += @"((\s+)|$)";
+            //}
 
             return pattern;
         }
@@ -174,9 +173,24 @@ namespace Ntreev.Library.Commands
             return Parser.Parse(this, arg);
         }
 
-        internal string TryMatch(string switchLine, ref string parsed)
+        internal void Parse(object instance, List<string> arguments)
         {
-            var match = Regex.Match(switchLine, this.Pattern, RegexOptions.ExplicitCapture);
+            if (this.SwitchType == typeof(bool))
+            {
+                this.SetValue(instance, true);
+            }
+            else
+            {
+                var arg = arguments.First();
+                var value = Parser.Parse(this, arg);
+                this.SetValue(instance, value);
+                arguments.RemoveAt(0);
+            }
+        }
+
+        internal string TryMatch(string arguments, ref string parsed)
+        {
+            var match = Regex.Match(arguments, this.Pattern, RegexOptions.ExplicitCapture);
             if (match.Success == false)
                 return null;
             parsed = match.Value;

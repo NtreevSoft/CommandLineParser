@@ -81,7 +81,8 @@
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandMethodPropertyAttribute.cs" />
-    <Compile Include="CommandPropertiesAttribute.cs" />
+    <Compile Include="CommandPropertyArrayAttribute.cs" />
+    <Compile Include="CommandPropertyArrayDescriptor.cs" />
     <Compile Include="CommandSettings.cs" />
     <Compile Include="CommandShortPropertyAttribute.cs" />
     <Compile Include="CommandStaticMethodAttribute.cs" />

@@ -55,7 +55,7 @@ namespace Ntreev.Library.Commands
 
         private static object ParseBoolean(CommandMemberDescriptor descriptor, string arg)
         {
-            if (descriptor.SwitchType == typeof(bool) && descriptor.ArgSeparator == null)
+            if (descriptor.SwitchType == typeof(bool))
             {
                 return true;
             }
