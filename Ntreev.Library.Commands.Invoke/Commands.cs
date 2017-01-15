@@ -16,7 +16,7 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandMethod("init")]
-        [CommandStaticProperty(typeof(GlobalSettings))]
+        [CommandStaticSwitch(typeof(GlobalSettings))]
         public void Initialize(string path)
         {
             Console.WriteLine("{0} initialized.", path);
@@ -29,7 +29,7 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandMethod]
-        [CommandMethodProperty("Message")]
+        [CommandMethodSwitch("Message")]
         [Browsable(false)]
         public void Delete(string path)
         {
@@ -37,7 +37,7 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandMethod]
-        [CommandMethodProperty("Message")]
+        [CommandMethodSwitch("Message")]
         public void Commit(string path)
         {
             if (this.Message == string.Empty)
@@ -46,14 +46,7 @@ namespace Ntreev.Library.Commands.Invoke
                 Console.WriteLine("{0} committed. : {1}", path, this.Message);
         }
 
-        [CommandMethod]
-        [CommandMethodProperty("Message")]
-        public void Add(params string[] items)
-        {
-            
-        }
-
-        [CommandProperty(ShortName = 'm')]
+        [CommandSwitch(ShortName = 'm')]
         public string Message
         {
             get; set;

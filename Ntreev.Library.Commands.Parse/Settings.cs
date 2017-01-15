@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands.Parse
 {
-    [CommandStaticProperty(typeof(GlobalSettings))]
+    [CommandStaticSwitch(typeof(GlobalSettings))]
     class Settings
     {
         public Settings()
@@ -15,21 +15,21 @@ namespace Ntreev.Library.Commands.Parse
             this.Libraries = new string[] { };
         }
 
-        [CommandProperty(Required = true)]
+        [CommandSwitch(Required = true)]
         [Description("service name")]
         public string ServiceName
         {
             get; set;
         }
 
-        [CommandProperty(Name = "path", Required = true)]
+        [CommandSwitch(Name = "path", Required = true)]
         [Description("path to work")]
         public string WorkingPath
         {
             get; set;
         }
 
-        [CommandProperty(Required = true)]
+        [CommandSwitch(Required = true)]
         [DefaultValue("10001")]
         [Description("port")]
         [Browsable(true)]
@@ -38,14 +38,14 @@ namespace Ntreev.Library.Commands.Parse
             get; set;
         }
 
-        [CommandProperty(ShortName = 'c', ShortNameOnly = true)]
+        [CommandSwitch(ShortName = 'c', ShortNameOnly = true)]
         [Description("use cache")]
         public bool UseCache
         {
             get; set;
         }
 
-        [CommandProperty(Name = "cache-size")]
+        [CommandSwitch(Name = "cache-size")]
         [Description("cache size. default is 1024")]
         [DefaultValue("1024")]
         public int CacheSize
@@ -53,7 +53,7 @@ namespace Ntreev.Library.Commands.Parse
             get; set;
         }
 
-        [CommandProperty(Name = "libs")]
+        [CommandSwitch(Name = "libs")]
         [Description("library paths.")]
         public string[] Libraries
         {

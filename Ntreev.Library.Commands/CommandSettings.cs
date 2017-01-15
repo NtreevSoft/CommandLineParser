@@ -58,11 +58,5 @@ namespace Ntreev.Library.Commands
         {
             return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
         }
-
-        internal static void ValidateIdentifier(string name)
-        {
-            if (Regex.IsMatch(name, "^[_a-zA-Z][_a-zA-Z0-9]*") == false)
-                throw new ArgumentException(string.Format("{0} is a invalid switch name"));
-        }
     }
 }

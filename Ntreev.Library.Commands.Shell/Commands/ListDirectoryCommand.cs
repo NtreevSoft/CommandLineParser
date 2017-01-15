@@ -75,7 +75,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
             }
         }
 
-        [CommandProperty(ShortName = 's', ShortNameOnly = true)]
+        [CommandSwitch(ShortName = 's', ShortNameOnly = true)]
         public bool IsRecursive
         {
             get; set;

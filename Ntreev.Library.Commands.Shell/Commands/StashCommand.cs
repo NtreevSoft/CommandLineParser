@@ -20,14 +20,14 @@ namespace Ntreev.Library.Commands.Shell.Commands
         }
 
         [CommandMethod("list")]
-        [CommandStaticProperty(typeof(GlobalSettings))]
+        [CommandStaticSwitch(typeof(GlobalSettings))]
         public void List(string options)
         {
 
         }
 
         [CommandMethod("show")]
-        [CommandMethodProperty("Path", "Port")]
+        [CommandMethodSwitch("Path", "Port")]
         public void Show(int value, int test = 0)
         {
             Console.WriteLine("value : {0}", value);
@@ -35,7 +35,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
         }
 
         [CommandMethod("save")]
-        [CommandMethodProperty("Patch", "KeepIndex", "IncludeUntracked", "All", "Quit")]
+        [CommandMethodSwitch("Patch", "KeepIndex", "IncludeUntracked", "All", "Quit")]
         [ShellDescription("SaveDescription_StashCommand")]
         public void Save(string message)
         {
@@ -48,44 +48,44 @@ namespace Ntreev.Library.Commands.Shell.Commands
             throw new NotImplementedException();
         }
 
-        [CommandProperty(ShortName = 'p')]
+        [CommandSwitch(ShortName = 'p')]
         [ShellDescription("PatchDescription_StashCommand")]
         public bool Patch
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'k')]
+        [CommandSwitch(ShortName = 'k')]
         public bool KeepIndex
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'u')]
+        [CommandSwitch(ShortName = 'u')]
         public bool IncludeUntracked
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'a')]
+        [CommandSwitch(ShortName = 'a')]
         public bool All
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'q')]
+        [CommandSwitch(ShortName = 'q')]
         public bool Quit
         {
             get; set;
         }
 
-        [CommandProperty]
+        [CommandSwitch]
         public int Path
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 't', Required = true)]
+        [CommandSwitch(ShortName = 't', Required = true)]
         public int Port
         {
             get; set;

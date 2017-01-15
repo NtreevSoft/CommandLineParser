@@ -8,13 +8,13 @@ namespace Ntreev.Library.Commands.Shell.Commands
 {
     static class GlobalSettings
     {
-        [CommandProperty]
+        [CommandSwitch]
         public static string ID
         {
             get; set;
         }
 
-        [CommandProperty]
+        [CommandSwitch]
         public static string Password
         {
             get; set;
