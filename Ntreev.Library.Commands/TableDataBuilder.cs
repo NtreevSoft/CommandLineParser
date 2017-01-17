@@ -22,7 +22,7 @@ namespace Ntreev.Library.Commands
             if (this.headers != null && this.headers.Length != items.Length)
                 throw new ArgumentOutOfRangeException();
 
-            this.rows.Add(items.Select(item => item.ToString()).ToArray());
+            this.rows.Add(items.Select(item => item == null ? string.Empty : item.ToString().Replace(Environment.NewLine, string.Empty)).ToArray());
         }
 
         public string[][] Data
