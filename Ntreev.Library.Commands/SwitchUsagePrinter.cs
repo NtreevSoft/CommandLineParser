@@ -56,6 +56,14 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public virtual void Print(TextWriter writer, SwitchDescriptor descriptor)
+        {
+            using (var tw = new CommandTextWriter(writer))
+            {
+                this.Print(tw, descriptor);
+            }
+        }
+
         public string Name
         {
             get { return this.name; }
@@ -168,6 +176,40 @@ namespace Ntreev.Library.Commands
             {
                 this.PrintOption(writer, item);
             }
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private void Print(CommandTextWriter writer, SwitchDescriptor descriptor)
+        {
+            this.PrintSummary(writer, descriptor);
+            this.PrintUsage(writer, descriptor);
+            this.PrintDescription(writer, descriptor);
+        }
+
+        private void PrintSummary(CommandTextWriter writer, SwitchDescriptor descriptor)
+        {
+            writer.WriteLine(Resources.Summary);
+            writer.Indent++;
+            writer.WriteLine(descriptor.Summary);
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private void PrintUsage(CommandTextWriter writer, SwitchDescriptor descriptor)
+        {
+            writer.WriteLine(Resources.Usage);
+            writer.Indent++;
+            writer.WriteLine(this.GetString(descriptor));
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private void PrintDescription(CommandTextWriter writer, SwitchDescriptor descriptor)
+        {
+            writer.WriteLine(Resources.Description);
+            writer.Indent++;
+            writer.WriteLine(descriptor.Description);
             writer.Indent--;
             writer.WriteLine();
         }

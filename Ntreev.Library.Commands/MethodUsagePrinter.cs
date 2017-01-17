@@ -40,6 +40,14 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public virtual void Print(TextWriter writer, MethodDescriptor descriptor, SwitchDescriptor switchDescriptor)
+        {
+            using (var tw = new CommandTextWriter(writer))
+            {
+                this.Print(tw, descriptor, switchDescriptor);
+            }
+        }
+
         public string Name
         {
             get { return this.name; }
@@ -77,6 +85,13 @@ namespace Ntreev.Library.Commands
             this.PrintOptions(writer, descriptor, switches);
         }
 
+        private void Print(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor switchDescriptor)
+        {
+            this.PrintSummary(writer, descriptor, switchDescriptor);
+            this.PrintUsage(writer, descriptor, switchDescriptor);
+            this.PrintDescription(writer, descriptor, switchDescriptor);
+        }
+
         private void PrintSummary(CommandTextWriter writer, MethodDescriptor[] descriptors)
         {
             if (this.Summary == string.Empty)
@@ -101,6 +116,15 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
+        private void PrintSummary(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor switchDescriptor)
+        {
+            writer.WriteLine(Resources.Summary);
+            writer.Indent++;
+            writer.WriteLine(switchDescriptor.Summary);
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
         private void PrintDescription(CommandTextWriter writer, MethodDescriptor[] descriptors)
         {
             if (this.Description == string.Empty)
@@ -121,6 +145,15 @@ namespace Ntreev.Library.Commands
             writer.WriteLine(Resources.Description);
             writer.Indent++;
             writer.WriteMultiline(descriptor.Description);
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private void PrintDescription(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor switchDescriptor)
+        {
+            writer.WriteLine(Resources.Description);
+            writer.Indent++;
+            writer.WriteMultiline(switchDescriptor.Description);
             writer.Indent--;
             writer.WriteLine();
         }
@@ -162,6 +195,17 @@ namespace Ntreev.Library.Commands
             writer.Indent++;
 
             this.PrintMethodUsage(writer, descriptor, switches);
+
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private void PrintUsage(CommandTextWriter writer, MethodDescriptor descriptor, SwitchDescriptor switchDescriptor)
+        {
+            writer.WriteLine(Resources.Usage);
+            writer.Indent++;
+
+            this.PrintOption(writer, switchDescriptor);
 
             writer.Indent--;
             writer.WriteLine();

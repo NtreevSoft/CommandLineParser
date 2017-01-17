@@ -71,13 +71,17 @@ namespace Ntreev.Library.Commands
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
             var arguments = commandLine.Substring(match.Length).Trim();
+            var items = CommandLineParser.Split(arguments);
 
-            if (arguments == this.HelpName)
+            if (items[0] == this.HelpName)
             {
-                this.PrintUsage();
+                if (items[1] == string.Empty)
+                    this.PrintUsage();
+                else
+                    this.PrintUsage(items[1]);
                 return false;
             }
-            else if (arguments == this.VersionName)
+            else if (items[0] == this.VersionName)
             {
                 this.PrintVersion();
                 return false;
@@ -110,6 +114,7 @@ namespace Ntreev.Library.Commands
             var method = match.Value;
 
             var arguments = cmdLine.Substring(match.Length).Trim();
+            var items = CommandLineParser.Split(arguments);
 
             if (string.IsNullOrEmpty(method) == true)
             {
@@ -120,8 +125,10 @@ namespace Ntreev.Library.Commands
             {
                 if (arguments == string.Empty)
                     this.PrintMethodUsage();
-                else
+                else if(items[1] == string.Empty)
                     this.PrintMethodUsage(arguments);
+                else 
+                    this.PrintMethodUsage(items[0], items[1]);
                 return false;
             }
             else if (method == this.VersionName)
@@ -132,7 +139,7 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
-                
+
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
 
@@ -152,6 +159,18 @@ namespace Ntreev.Library.Commands
         {
             var switches = CommandDescriptor.GetSwitchDescriptors(this.instance).Where(item => this.IsSwitchVisible(item));
             this.SwitchUsagePrinter.Print(this.Out, switches.ToArray());
+        }
+
+        public virtual void PrintUsage(string switchName)
+        {
+            var descriptor = CommandDescriptor.GetSwitchDescriptors(this.instance)
+                                              .Where(item => this.IsSwitchVisible(item))
+                                              .FirstOrDefault(item => (item.Required == true && switchName == item.Name) || 
+                                                                       switchName == item.NamePattern || 
+                                                                       switchName == item.ShortNamePattern);
+            if (descriptor == null)
+                throw new InvalidOperationException(string.Format(Resources.SwitchDoesNotExist_Format, switchName));
+            this.SwitchUsagePrinter.Print(this.Out, descriptor);
         }
 
         public virtual void PrintVersion()
@@ -177,6 +196,24 @@ namespace Ntreev.Library.Commands
             var switches = descriptor.Switches.Where(item => this.IsSwitchVisible(item)).ToArray();
 
             this.MethodUsagePrinter.Print(this.Out, descriptor, switches);
+        }
+
+        public virtual void PrintMethodUsage(string methodName, string switchName)
+        {
+            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance);
+            var descriptor = descriptors.FirstOrDefault(item => item.Name == methodName);
+            if (descriptor == null || this.IsMethodVisible(descriptor) == false)
+                throw new CommandNotFoundException(methodName);
+
+            var switchDescriptor = descriptor.Switches.Where(item => this.IsSwitchVisible(item))
+                                                      .FirstOrDefault(item => (item.Required == true && switchName == item.Name) ||
+                                                                               switchName == item.NamePattern ||
+                                                                               switchName == item.ShortNamePattern);
+
+            if (switchDescriptor == null)
+                throw new InvalidOperationException(string.Format(Resources.SwitchDoesNotExist_Format, switchName));
+
+            this.MethodUsagePrinter.Print(this.Out, descriptor, switchDescriptor);
         }
 
         public static string[] Split(string commandLine)
