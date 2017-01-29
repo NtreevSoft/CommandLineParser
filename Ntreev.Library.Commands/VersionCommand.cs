@@ -18,7 +18,7 @@ namespace Ntreev.Library.Commands
         private readonly CommandContextBase commandContext;
 
         public VersionCommand(CommandContextBase commandContext)
-            : base("--version", true)
+            : base("--version")
         {
             this.commandContext = commandContext;
         }

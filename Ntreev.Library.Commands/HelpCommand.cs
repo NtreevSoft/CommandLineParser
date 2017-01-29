@@ -17,7 +17,7 @@ namespace Ntreev.Library.Commands
         private readonly CommandContextBase commandContext;
 
         public HelpCommand(CommandContextBase commandContext)
-            : base("help", true)
+            : base("help")
         {
             this.commandContext = commandContext;
             this.CommandName = string.Empty;
@@ -26,6 +26,7 @@ namespace Ntreev.Library.Commands
 
         [CommandProperty(Name = "CommandName", Required = true)]
         [DisplayName("command")]
+        [DefaultValue("")]
         public string CommandName
         {
             get; set;

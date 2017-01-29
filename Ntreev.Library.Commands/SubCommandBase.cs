@@ -12,17 +12,9 @@ namespace Ntreev.Library.Commands
         private readonly CommandTypes types;
 
         protected SubCommandBase(string name)
-            : this(name, false)
-        {
-
-        }
-
-        protected SubCommandBase(string name, bool allowEmptyArgument)
         {
             this.name = name;
             this.types = CommandTypes.HasSubCommand;
-            if (allowEmptyArgument)
-                this.types |= CommandTypes.AllowEmptyArgument;
         }
 
         public string Name

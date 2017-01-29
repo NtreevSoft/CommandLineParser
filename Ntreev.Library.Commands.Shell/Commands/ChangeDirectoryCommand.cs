@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -18,12 +19,13 @@ namespace Ntreev.Library.Commands.Shell.Commands
         private Lazy<CommandContextBase> commandContext = null;
 
         public ChangeDirectoryCommand()
-            : base("cd", true)
+            : base("cd")
         {
             this.DirectoryName = string.Empty;
         }
 
         [CommandProperty(Name = "dir", Required = true)]
+        [DefaultValue("")]
         public string DirectoryName
         {
             get; set;
