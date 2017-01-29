@@ -360,6 +360,10 @@ namespace Ntreev.Library.Commands
             {
                 var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
                 var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
+                if (descriptor is CommandParameterArrayDescriptor == true)
+                {
+                    patternText += " ...";
+                }
                 return string.Format("[{0}]", patternText);
             }
         }

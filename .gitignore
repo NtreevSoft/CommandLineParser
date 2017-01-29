@@ -8,3 +8,5 @@ Debug/
 Release/
 bin/Debug/
 packages/
+
+*.user
