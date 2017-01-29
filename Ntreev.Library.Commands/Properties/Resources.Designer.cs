@@ -88,20 +88,11 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   command not found.과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   Delimiter must be a Punctuation.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string CommandNotFound {
+        internal static string DelimiterMustBePunctuation {
             get {
-                return ResourceManager.GetString("CommandNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   &apos;{0}&apos; command not found.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string CommandNotFound_Format {
-            get {
-                return ResourceManager.GetString("CommandNotFound_Format", resourceCulture);
+                return ResourceManager.GetString("DelimiterMustBePunctuation", resourceCulture);
             }
         }
         
@@ -129,6 +120,33 @@ namespace Ntreev.Library.Commands.Properties {
         internal static string InvalidCommandName_Format {
             get {
                 return ResourceManager.GetString("InvalidCommandName_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   member &apos;{0}&apos; does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string MemberDoesNotExist_Format {
+            get {
+                return ResourceManager.GetString("MemberDoesNotExist_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   member is missing.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string MemberIsMissing {
+            get {
+                return ResourceManager.GetString("MemberIsMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   member is already registered.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string MemberWasAlreadyRegistered {
+            get {
+                return ResourceManager.GetString("MemberWasAlreadyRegistered", resourceCulture);
             }
         }
         
@@ -187,42 +205,6 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   SwitchDelimiter must be a Punctuation.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string SwitchDelimiterMustBePunctuation {
-            get {
-                return ResourceManager.GetString("SwitchDelimiterMustBePunctuation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   switch &apos;{0}&apos; does not exist.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string SwitchDoesNotExist_Format {
-            get {
-                return ResourceManager.GetString("SwitchDoesNotExist_Format", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Switch is missing.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string SwitchIsMissing {
-            get {
-                return ResourceManager.GetString("SwitchIsMissing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Switch is already registered.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string SwitchWasAlreadyRegistered {
-            get {
-                return ResourceManager.GetString("SwitchWasAlreadyRegistered", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   type &apos;{0}&apos; for usage.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string TypeForUsage_Format {
@@ -237,6 +219,15 @@ namespace Ntreev.Library.Commands.Properties {
         internal static string Usage {
             get {
                 return ResourceManager.GetString("Usage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Variables과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string Variables {
+            get {
+                return ResourceManager.GetString("Variables", resourceCulture);
             }
         }
     }

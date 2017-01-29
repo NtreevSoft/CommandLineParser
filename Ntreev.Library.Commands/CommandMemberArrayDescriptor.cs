@@ -1,5 +1,4 @@
-﻿using System.Resources;
-#region License
+﻿#region License
 //Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
@@ -21,25 +20,25 @@
 //OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using Ntreev.Library.Commands.Properties;
 
-[assembly: AssemblyTitle("CommandLineParser")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("NtreevSoft")]
-[assembly: AssemblyProduct("CommandLineParser")]
-[assembly: AssemblyCopyright("Copyright © NtreevSoft 2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+namespace Ntreev.Library.Commands
+{
+    public abstract class CommandMemberArrayDescriptor : CommandMemberDescriptor
+    {
+        protected CommandMemberArrayDescriptor(CommandPropertyAttribute attribute, string descriptorName)
+            : base(attribute, descriptorName)
+        {
 
-[assembly: ComVisible(false)]
+        }
 
-[assembly: Guid("f5997259-909e-4747-a011-b47c30522bfd")]
-
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.16231.0042")]
-[assembly: AssemblyInformationalVersion("3.0.16231.0042")]
-[assembly: NeutralResourcesLanguage("")]
-
+    }
+}

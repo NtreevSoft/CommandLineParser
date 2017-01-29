@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    class SwitchPropertyInfoDescriptor : SwitchDescriptor
+    class CommandPropertyArrayDescriptor : CommandMemberArrayDescriptor
     {
         private readonly PropertyInfo propertyInfo;
         private readonly string summary;
         private readonly string description;
 
-        public SwitchPropertyInfoDescriptor(PropertyInfo propertyInfo)
-            : base(propertyInfo.GetCommandSwitchAttribute(), propertyInfo.Name)
+        public CommandPropertyArrayDescriptor(PropertyInfo propertyInfo)
+            : base(propertyInfo.GetCommandPropertyAttribute(), propertyInfo.Name)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(propertyInfo.DeclaringType);
             this.propertyInfo = propertyInfo;
@@ -28,7 +28,7 @@ namespace Ntreev.Library.Commands
             get { return this.propertyInfo.GetDisplayName(); }
         }
 
-        public override Type SwitchType
+        public override Type MemberType
         {
             get { return this.propertyInfo.PropertyType; }
         }

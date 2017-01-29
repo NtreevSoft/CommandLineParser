@@ -10,7 +10,7 @@ namespace Ntreev.Library.Commands.Parse
         static void Main(string[] args)
         {
             var settings = new Settings();
-            var parser = new CommandLineParser(typeof(Settings));
+            var parser = new CommandLineParser(settings);
 
             try
             {

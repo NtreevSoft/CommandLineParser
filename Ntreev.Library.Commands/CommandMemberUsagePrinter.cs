@@ -32,14 +32,14 @@ using System.CodeDom.Compiler;
 
 namespace Ntreev.Library.Commands
 {
-    public class SwitchUsagePrinter
+    public class CommandMemberUsagePrinter
     {
         private readonly string name;
         private readonly object instance;
         private readonly string summary;
         private readonly string description;
 
-        public SwitchUsagePrinter(string name, object instance)
+        public CommandMemberUsagePrinter(string name, object instance)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(instance.GetType());
             this.name = name;
@@ -48,15 +48,15 @@ namespace Ntreev.Library.Commands
             this.description = provider.GetDescription(instance);
         }
 
-        public virtual void Print(TextWriter writer, SwitchDescriptor[] switches)
+        public virtual void Print(TextWriter writer, CommandMemberDescriptor[] descriptors)
         {
             using (var tw = new CommandTextWriter(writer))
             {
-                this.Print(tw, switches);
+                this.Print(tw, descriptors);
             }
         }
 
-        public virtual void Print(TextWriter writer, SwitchDescriptor descriptor)
+        public virtual void Print(TextWriter writer, CommandMemberDescriptor descriptor)
         {
             using (var tw = new CommandTextWriter(writer))
             {
@@ -84,16 +84,17 @@ namespace Ntreev.Library.Commands
             get { return this.description; }
         }
 
-        private void Print(CommandTextWriter writer, SwitchDescriptor[] switches)
+        private void Print(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
         {
-            this.PrintSummary(writer, switches);
-            this.PrintUsage(writer, switches);
-            this.PrintDescription(writer, switches);
-            this.PrintRequirements(writer, switches);
-            this.PrintOptions(writer, switches);
+            this.PrintSummary(writer, descriptors);
+            this.PrintUsage(writer, descriptors);
+            this.PrintDescription(writer, descriptors);
+            this.PrintRequirements(writer, descriptors);
+            this.PrintVariables(writer, descriptors);
+            this.PrintOptions(writer, descriptors);
         }
 
-        private void PrintSummary(CommandTextWriter writer, SwitchDescriptor[] switches)
+        private void PrintSummary(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
         {
             if (this.Summary == string.Empty)
                 return;
@@ -105,9 +106,9 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintUsage(CommandTextWriter writer, SwitchDescriptor[] switches)
+        private void PrintUsage(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
         {
-            var query = from item in switches
+            var query = from item in descriptors
                         orderby item.Required descending
                         select this.GetString(item);
 
@@ -136,7 +137,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintDescription(CommandTextWriter writer, SwitchDescriptor[] switches)
+        private void PrintDescription(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
         {
             if (this.Description == string.Empty)
                 return;
@@ -148,9 +149,11 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintRequirements(CommandTextWriter writer, SwitchDescriptor[] switches)
+        private void PrintRequirements(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
         {
-            var items = switches.Where(i => i.Required == true).ToArray();
+            var items = descriptors.Where(item => item.GetType() == typeof(CommandPropertyDescriptor))
+                                   .Where(item => item.Required == true)
+                                   .ToArray();
             if (items.Any() == false)
                 return;
 
@@ -164,9 +167,24 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintOptions(CommandTextWriter writer, SwitchDescriptor[] switches)
+        private void PrintVariables(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
         {
-            var items = switches.Where(i => i.Required == false).ToArray();
+            var descriptor = descriptors.FirstOrDefault(item => item is CommandMemberArrayDescriptor);
+            if (descriptor == null)
+                return;
+
+            writer.WriteLine(Resources.Variables);
+            writer.Indent++;
+            this.PrintVariables(writer, descriptor);
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private void PrintOptions(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
+        {
+            var items = descriptors.Where(item => item.GetType() == typeof(CommandPropertyDescriptor))
+                                   .Where(item => item.Required == false)
+                                   .ToArray();
             if (items.Any() == false)
                 return;
 
@@ -180,14 +198,14 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void Print(CommandTextWriter writer, SwitchDescriptor descriptor)
+        private void Print(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
             this.PrintSummary(writer, descriptor);
             this.PrintUsage(writer, descriptor);
             this.PrintDescription(writer, descriptor);
         }
 
-        private void PrintSummary(CommandTextWriter writer, SwitchDescriptor descriptor)
+        private void PrintSummary(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
             writer.WriteLine(Resources.Summary);
             writer.Indent++;
@@ -196,7 +214,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintUsage(CommandTextWriter writer, SwitchDescriptor descriptor)
+        private void PrintUsage(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
             writer.WriteLine(Resources.Usage);
             writer.Indent++;
@@ -205,7 +223,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintDescription(CommandTextWriter writer, SwitchDescriptor descriptor)
+        private void PrintDescription(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
             writer.WriteLine(Resources.Description);
             writer.Indent++;
@@ -214,7 +232,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintRequirement(CommandTextWriter writer, SwitchDescriptor descriptor)
+        private void PrintRequirement(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
             writer.WriteLine(descriptor.Name);
             if (descriptor.Description != string.Empty)
@@ -226,7 +244,17 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private void PrintOption(CommandTextWriter writer, SwitchDescriptor descriptor)
+        private void PrintVariables(CommandTextWriter writer, CommandMemberDescriptor descriptor)
+        {
+            writer.WriteLine(descriptor.Name + " ...");
+
+            writer.Indent++;
+            writer.WriteMultiline(descriptor.Description);
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        private void PrintOption(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
             if (descriptor.ShortNamePattern != string.Empty)
                 writer.WriteLine(descriptor.ShortNamePattern);
@@ -239,7 +267,7 @@ namespace Ntreev.Library.Commands
             writer.WriteLine();
         }
 
-        private string GetString(SwitchDescriptor descriptor)
+        private string GetString(CommandMemberDescriptor descriptor)
         {
             if (descriptor.Required == true)
             {
@@ -248,10 +276,14 @@ namespace Ntreev.Library.Commands
                     return string.Format("<{0}>", text);
                 return string.Format("<{0}='{1}'>", text, descriptor.DefaultValue ?? "null");
             }
+            else if(descriptor is CommandMemberArrayDescriptor)
+            {
+                return string.Format("[{0} ...]", descriptor.Name);
+            }
             else
             {
                 var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
-                var patternText = string.Join(" | ", patternItems.Where(i => i != string.Empty));
+                var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
                 return string.Format("[{0}]", patternText);
             }
         }

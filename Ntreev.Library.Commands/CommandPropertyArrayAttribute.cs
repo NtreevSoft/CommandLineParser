@@ -30,69 +30,39 @@ using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
-    /// <summary>
-    /// 스위치의 속성을 지정합니다.
-    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class CommandSwitchAttribute : Attribute
+    public class CommandPropertyArrayAttribute : CommandPropertyAttribute
     {
-        private string name = string.Empty;
-        private char shortName;
-        private char? argSeparator = null;
-        private bool required;
-
-        public CommandSwitchAttribute()
+        public CommandPropertyArrayAttribute()
         {
 
         }
 
-        public string Name
+        public override char ShortName
         {
-            get { return this.name ?? string.Empty; }
-            set { this.name = value; }
-        }
-
-        public char ShortName
-        {
-            get { return this.shortName; }
-            set { this.shortName = value; }
-        }
-
-        public bool Required
-        {
-            get { return this.required; }
-            set { this.required = value; }
-        }
-
-        public char ArgSeparator
-        {
-            get
-            {
-                if (this.argSeparator == null)
-                    return char.MinValue;
-                return (char)this.argSeparator;
-            }
+            get { return base.ShortName; }
             set
             {
-                if (value != char.MinValue)
-                {
-                    if (char.IsPunctuation(value) == false)
-                        throw new Exception(Resources.ArgSeparatorMustBeAPunctuation);
-                }
-                this.argSeparator = (char)value;
+                throw new InvalidOperationException("cannot be set");
             }
         }
 
-        public bool ShortNameOnly { get; set; }
-
-        internal char? GetArgSeparator()
+        public override bool Required
         {
-            return this.argSeparator;
+            get { return false; }
+            set
+            {
+                throw new InvalidOperationException("cannot be set");
+            }
         }
 
-        internal string ShortNameInternal
+        public override bool ShortNameOnly
         {
-            get { return this.shortName == char.MinValue ? string.Empty : this.shortName.ToString(); }
+            get { return base.ShortNameOnly; }
+            set
+            {
+                throw new InvalidOperationException("cannot be set");
+            }
         }
     }
 }

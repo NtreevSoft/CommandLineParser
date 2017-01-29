@@ -79,12 +79,16 @@
     <Compile Include="CommandCollection.cs" />
     <Compile Include="CommandContextBase.cs" />
     <Compile Include="CommandDescriptor.cs" />
+    <Compile Include="CommandMemberArrayDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
-    <Compile Include="CommandMethodSwitchAttribute.cs" />
+    <Compile Include="CommandMethodPropertyAttribute.cs" />
+    <Compile Include="CommandParameterArrayDescriptor.cs" />
+    <Compile Include="CommandPropertyArrayAttribute.cs" />
+    <Compile Include="CommandPropertyArrayDescriptor.cs" />
     <Compile Include="CommandSettings.cs" />
-    <Compile Include="CommandShortSwitchAttribute.cs" />
+    <Compile Include="CommandShortPropertyAttribute.cs" />
     <Compile Include="CommandStaticMethodAttribute.cs" />
-    <Compile Include="CommandStaticSwitchAttribute.cs" />
+    <Compile Include="CommandStaticPropertyAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -94,8 +98,8 @@
     </Compile>
     <Compile Include="ResourceUsageDescriptionProvider.cs" />
     <Compile Include="SubCommandBase.cs" />
-    <Compile Include="SwitchParameterInfoDescriptor.cs" />
-    <Compile Include="SwitchPropertyInfoDescriptor.cs" />
+    <Compile Include="CommandParameterDescriptor.cs" />
+    <Compile Include="CommandPropertyDescriptor.cs" />
     <Compile Include="TableDataBuilder.cs" />
     <Compile Include="UsageDescriptionProvider.cs" />
     <Compile Include="IUsageDescriptionProvider.cs" />
@@ -105,17 +109,17 @@
     <Compile Include="SummaryAttribute.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="TextWriterExtensions.cs" />
-    <Compile Include="MethodDescriptor.cs" />
-    <Compile Include="MethodDescriptorCollection.cs" />
-    <Compile Include="MethodUsagePrinter.cs" />
+    <Compile Include="CommandMethodDescriptor.cs" />
+    <Compile Include="CommandMethodDescriptorCollection.cs" />
+    <Compile Include="CommandMethodUsagePrinter.cs" />
     <Compile Include="CommandNotFoundException.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="CommandLineParser.cs" />
-    <Compile Include="SwitchDescriptorCollection.cs" />
-    <Compile Include="SwitchUsagePrinter.cs" />
-    <Compile Include="CommandSwitchAttribute.cs" />
-    <Compile Include="SwitchDescriptor.cs" />
-    <Compile Include="SwitchHelper.cs" />
+    <Compile Include="CommandMemberDescriptorCollection.cs" />
+    <Compile Include="CommandMemberUsagePrinter.cs" />
+    <Compile Include="CommandPropertyAttribute.cs" />
+    <Compile Include="CommandMemberDescriptor.cs" />
+    <Compile Include="ParseDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +150,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ko-KR.resx" />
     <EmbeddedResource Include="VersionCommand.resx">

@@ -23,7 +23,7 @@ namespace Ntreev.Library.Commands
             this.commandContext = commandContext;
         }
 
-        [CommandSwitch(ShortName = 'q', ShortNameOnly = true)]
+        [CommandProperty(ShortName = 'q', ShortNameOnly = true)]
         public bool IsQuiet
         {
             get; set;

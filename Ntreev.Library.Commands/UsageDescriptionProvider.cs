@@ -10,11 +10,6 @@ namespace Ntreev.Library.Commands
 {
     public class UsageDescriptionProvider : IUsageDescriptionProvider
     {
-        public string GetDescription(PropertyDescriptor descriptor)
-        {
-            return descriptor.Description;
-        }
-
         public string GetDescription(PropertyInfo propertyInfo)
         {
             return propertyInfo.GetDescription();
@@ -43,11 +38,6 @@ namespace Ntreev.Library.Commands
         public string GetSummary(ParameterInfo parameterInfo)
         {
             return parameterInfo.GetSummary();
-        }
-
-        public string GetSummary(PropertyDescriptor descriptor)
-        {
-            return descriptor.GetSummary();
         }
 
         public string GetSummary(object instance)

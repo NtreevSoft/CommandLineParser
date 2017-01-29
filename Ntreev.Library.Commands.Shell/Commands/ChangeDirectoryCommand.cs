@@ -23,7 +23,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
             this.DirectoryName = string.Empty;
         }
 
-        [CommandSwitch(Name = "dir", Required = true)]
+        [CommandProperty(Name = "dir", Required = true)]
         public string DirectoryName
         {
             get; set;
