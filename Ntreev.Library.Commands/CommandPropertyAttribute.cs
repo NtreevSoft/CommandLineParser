@@ -34,14 +34,13 @@ namespace Ntreev.Library.Commands
     /// 스위치의 속성을 지정합니다.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class CommandSwitchAttribute : Attribute
+    public class CommandPropertyAttribute : Attribute
     {
         private string name = string.Empty;
         private char shortName;
-        private char? argSeparator = null;
         private bool required;
 
-        public CommandSwitchAttribute()
+        public CommandPropertyAttribute()
         {
 
         }
@@ -52,43 +51,19 @@ namespace Ntreev.Library.Commands
             set { this.name = value; }
         }
 
-        public char ShortName
+        public virtual char ShortName
         {
             get { return this.shortName; }
             set { this.shortName = value; }
         }
 
-        public bool Required
+        public virtual bool Required
         {
             get { return this.required; }
             set { this.required = value; }
         }
 
-        public char ArgSeparator
-        {
-            get
-            {
-                if (this.argSeparator == null)
-                    return char.MinValue;
-                return (char)this.argSeparator;
-            }
-            set
-            {
-                if (value != char.MinValue)
-                {
-                    if (char.IsPunctuation(value) == false)
-                        throw new Exception(Resources.ArgSeparatorMustBeAPunctuation);
-                }
-                this.argSeparator = (char)value;
-            }
-        }
-
-        public bool ShortNameOnly { get; set; }
-
-        internal char? GetArgSeparator()
-        {
-            return this.argSeparator;
-        }
+        public virtual bool ShortNameOnly { get; set; }
 
         internal string ShortNameInternal
         {

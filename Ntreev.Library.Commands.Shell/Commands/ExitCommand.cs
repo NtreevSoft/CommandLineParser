@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,16 @@ namespace Ntreev.Library.Commands.Shell.Commands
         private Lazy<IShell> shell = null;
 
         public ExitCommand()
-            : base("exit", true)
+            : base("exit")
         {
 
+        }
+
+        [CommandProperty(Required = true)]
+        [DefaultValue(0)]
+        public int ExitCode
+        {
+            get; set;
         }
 
         protected override void OnExecute()

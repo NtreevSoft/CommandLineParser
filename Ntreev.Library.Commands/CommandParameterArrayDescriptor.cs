@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    class SwitchParameterInfoDescriptor : SwitchDescriptor
+    class CommandParameterArrayDescriptor : CommandMemberArrayDescriptor
     {
         private readonly ParameterInfo parameterInfo;
         private readonly string summary;
         private readonly string description;
         private object value;
 
-        public SwitchParameterInfoDescriptor(ParameterInfo parameterInfo)
-            : base(new CommandSwitchAttribute() { Required = true, }, parameterInfo.Name)
+        public CommandParameterArrayDescriptor(ParameterInfo parameterInfo)
+            : base(new CommandPropertyAttribute(), parameterInfo.Name)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(parameterInfo.Member.DeclaringType);
+            var paramAttr = parameterInfo.GetCustomAttribute<ParamArrayAttribute>();
             this.parameterInfo = parameterInfo;
             this.summary = provider.GetSummary(parameterInfo);
             this.description = provider.GetDescription(parameterInfo);
@@ -50,7 +51,7 @@ namespace Ntreev.Library.Commands
             get { return this.parameterInfo.DefaultValue; }
         }
 
-        public override Type SwitchType
+        public override Type MemberType
         {
             get { return this.parameterInfo.ParameterType; }
         }

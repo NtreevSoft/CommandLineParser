@@ -1,5 +1,4 @@
-﻿using System.Resources;
-#region License
+﻿#region License
 //Ntreev CommandLineParser for .Net 1.0.4548.25168
 //https://github.com/NtreevSoft/CommandLineParser
 
@@ -21,25 +20,23 @@
 //OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("CommandLineParser")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("NtreevSoft")]
-[assembly: AssemblyProduct("CommandLineParser")]
-[assembly: AssemblyCopyright("Copyright © NtreevSoft 2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.ComponentModel;
+using Ntreev.Library.Commands.Properties;
 
-[assembly: ComVisible(false)]
-
-[assembly: Guid("f5997259-909e-4747-a011-b47c30522bfd")]
-
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.16231.0042")]
-[assembly: AssemblyInformationalVersion("3.0.16231.0042")]
-[assembly: NeutralResourcesLanguage("")]
-
+namespace Ntreev.Library.Commands
+{
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class CommandShortPropertyAttribute : CommandPropertyAttribute
+    {
+        public CommandShortPropertyAttribute(char shortName)
+        {
+            this.ShortName = shortName;
+            this.ShortNameOnly = true;
+        }
+    }
+}

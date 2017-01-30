@@ -18,12 +18,12 @@ namespace Ntreev.Library.Commands
         private readonly CommandContextBase commandContext;
 
         public VersionCommand(CommandContextBase commandContext)
-            : base("--version", true)
+            : base("--version")
         {
             this.commandContext = commandContext;
         }
 
-        [CommandSwitch(ShortName = 'q', ShortNameOnly = true)]
+        [CommandProperty(ShortName = 'q', ShortNameOnly = true)]
         public bool IsQuiet
         {
             get; set;

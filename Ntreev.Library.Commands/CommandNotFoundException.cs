@@ -8,14 +8,8 @@ namespace Ntreev.Library.Commands
 {
     public class CommandNotFoundException : Exception
     {
-        public CommandNotFoundException(string command)
-            : base(string.Format(Resources.CommandNotFound_Format, command))
-        {
-
-        }
-
-        public CommandNotFoundException()
-            : base(Resources.CommandNotFound)
+        public CommandNotFoundException(string methodName)
+            : base(string.Format(Resources.MethodDoesNotExist_Format, methodName))
         {
 
         }

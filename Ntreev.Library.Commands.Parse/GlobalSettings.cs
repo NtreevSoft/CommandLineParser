@@ -9,13 +9,13 @@ namespace Ntreev.Library.Commands.Parse
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
     static class GlobalSettings
     {
-        [CommandSwitch]
+        [CommandProperty]
         public static string ID
         {
             get; set;
         }
 
-        [CommandSwitch]
+        [CommandProperty]
         public static string Password
         {
             get; set;

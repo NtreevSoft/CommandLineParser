@@ -17,9 +17,20 @@ namespace Ntreev.Library.Commands.Shell.Commands
         private Lazy<CommandContextBase> commandContext = null;
 
         public ListDirectoryCommand()
-            : base("ls", true)
+            : base("ls")
         {
 
+        }
+
+        [CommandProperty(ShortName = 's', ShortNameOnly = true)]
+        public bool IsRecursive
+        {
+            get; set;
+        }
+
+        public TextWriter Out
+        {
+            get { return this.commandContext.Value.Out; }
         }
 
         protected override void OnExecute()
@@ -73,17 +84,6 @@ namespace Ntreev.Library.Commands.Shell.Commands
                     this.PrintItems(item);
                 }
             }
-        }
-
-        [CommandSwitch(ShortName = 's', ShortNameOnly = true)]
-        public bool IsRecursive
-        {
-            get; set;
-        }
-
-        public TextWriter Out
-        {
-            get { return this.commandContext.Value.Out; }
         }
     }
 }

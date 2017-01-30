@@ -17,21 +17,22 @@ namespace Ntreev.Library.Commands
         private readonly CommandContextBase commandContext;
 
         public HelpCommand(CommandContextBase commandContext)
-            : base("help", true)
+            : base("help")
         {
             this.commandContext = commandContext;
             this.CommandName = string.Empty;
             this.SubCommandName = string.Empty;
         }
 
-        [CommandSwitch(Name = "CommandName", Required = true)]
+        [CommandProperty(Name = "CommandName", Required = true)]
         [DisplayName("command")]
+        [DefaultValue("")]
         public string CommandName
         {
             get; set;
         }
 
-        [CommandSwitch(Name = "sub-command", Required = true)]
+        [CommandProperty(Name = "sub-command", Required = true)]
         [DefaultValue("")]
         public string SubCommandName
         {
@@ -53,7 +54,7 @@ namespace Ntreev.Library.Commands
                 {
                     var command = this.commandContext.Commands[this.CommandName];
                     if (this.commandContext.IsCommandVisible(command) == false)
-                        throw new CommandNotFoundException(string.Format(Resources.CommandNotFound_Format, command));
+                        throw new CommandNotFoundException(this.CommandName);
 
                     var parser = this.commandContext.Parsers[command];
                     parser.Out = this.commandContext.Out;

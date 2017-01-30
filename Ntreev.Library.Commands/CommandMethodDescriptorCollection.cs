@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Ntreev.Library.Commands
 {
-    public class MethodDescriptorCollection : IReadOnlyList<MethodDescriptor>
+    public class CommandMethodDescriptorCollection : IReadOnlyList<CommandMethodDescriptor>
     {
-        private readonly List<MethodDescriptor> descriptors = new List<MethodDescriptor>();
+        private readonly List<CommandMethodDescriptor> descriptors = new List<CommandMethodDescriptor>();
 
-        internal MethodDescriptorCollection()
+        internal CommandMethodDescriptorCollection()
         {
 
         }
 
-        public MethodDescriptor this[string name]
+        public CommandMethodDescriptor this[string name]
         {
             get
             {
@@ -30,7 +30,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public MethodDescriptor this[int index]
+        public CommandMethodDescriptor this[int index]
         {
             get { return this.descriptors[index]; }
         }
@@ -40,12 +40,12 @@ namespace Ntreev.Library.Commands
             get { return this.descriptors.Count; }
         }
 
-        internal void Add(MethodDescriptor item)
+        internal void Add(CommandMethodDescriptor item)
         {
             this.descriptors.Add(item);
         }
 
-        internal void AddRange(IEnumerable<MethodDescriptor> descriptors)
+        internal void AddRange(IEnumerable<CommandMethodDescriptor> descriptors)
         {
             foreach (var item in descriptors)
             {
@@ -55,7 +55,7 @@ namespace Ntreev.Library.Commands
 
         #region IEnumerable
 
-        IEnumerator<MethodDescriptor> IEnumerable<MethodDescriptor>.GetEnumerator()
+        IEnumerator<CommandMethodDescriptor> IEnumerable<CommandMethodDescriptor>.GetEnumerator()
         {
             return this.descriptors.GetEnumerator();
         }

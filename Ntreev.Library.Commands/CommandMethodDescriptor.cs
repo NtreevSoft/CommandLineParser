@@ -8,17 +8,17 @@ using System.Collections;
 
 namespace Ntreev.Library.Commands
 {
-    public class MethodDescriptor
+    public class CommandMethodDescriptor
     {
         private readonly MethodInfo methodInfo;
         private readonly CommandMethodAttribute attribute;
-        private readonly SwitchDescriptor[] switches;
+        private readonly CommandMemberDescriptor[] members;
         private readonly string name;
         private readonly string displayName;
         private readonly string summary;
         private readonly string description;
 
-        internal MethodDescriptor(MethodInfo methodInfo)
+        internal CommandMethodDescriptor(MethodInfo methodInfo)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(methodInfo.DeclaringType);
             this.methodInfo = methodInfo;
@@ -26,34 +26,40 @@ namespace Ntreev.Library.Commands
             this.name = attribute.Name != string.Empty ? attribute.Name : CommandSettings.NameGenerator(methodInfo.Name);
             this.displayName = methodInfo.GetDisplayName();
 
-            var switchList = new List<SwitchDescriptor>();
+            var memberList = new List<CommandMemberDescriptor>();
 
             foreach (var item in methodInfo.GetParameters())
             {
-                var switchDescriptor = new SwitchParameterInfoDescriptor(item);
-                switchList.Add(switchDescriptor);
-            }
-
-            var switchAttr = this.methodInfo.GetCustomAttribute<CommandMethodSwitchAttribute>();
-            if (switchAttr != null)
-            {
-                foreach (var item in switchAttr.PropertyNames)
+                if(item.GetCustomAttribute<ParamArrayAttribute>() != null)
                 {
-                    var switchDescriptor = CommandDescriptor.GetSwitchDescriptors(methodInfo.DeclaringType)[item];
-                    if (switchDescriptor == null)
-                        throw new ArgumentException(string.Format("'{0}' attribute does not existed .", item));
-                    switchList.Add(switchDescriptor);
+                    memberList.Add(new CommandParameterArrayDescriptor(item));
+                }
+                    else
+                {
+                    memberList.Add(new CommandParameterDescriptor(item));
                 }
             }
 
-            var staticAttrs = this.methodInfo.GetCustomAttributes<CommandStaticSwitchAttribute>();
-            foreach (var item in staticAttrs)
+            var methodAttr = this.methodInfo.GetCustomAttribute<CommandMethodPropertyAttribute>();
+            if (methodAttr != null)
             {
-                var switches = CommandDescriptor.GetSwitchDescriptors(item.StaticType);
-                switchList.AddRange(switches);
+                foreach (var item in methodAttr.PropertyNames)
+                {
+                    var memberDescriptor = CommandDescriptor.GetMemberDescriptors(methodInfo.DeclaringType)[item];
+                    if (memberDescriptor == null)
+                        throw new ArgumentException(string.Format("'{0}' attribute does not existed .", item));
+                    memberList.Add(memberDescriptor);
+                }
             }
 
-            this.switches = switchList.Distinct().ToArray();
+            var staticAttrs = this.methodInfo.GetCustomAttributes<CommandStaticPropertyAttribute>();
+            foreach (var item in staticAttrs)
+            {
+                var memberDescriptors = CommandDescriptor.GetMemberDescriptors(item.StaticType);
+                memberList.AddRange(memberDescriptors);
+            }
+
+            this.members = memberList.OrderBy(item => item is CommandMemberArrayDescriptor).ToArray();
             this.summary = provider.GetSummary(methodInfo);
             this.description = provider.GetDescription(methodInfo);
         }
@@ -73,9 +79,9 @@ namespace Ntreev.Library.Commands
             get { return this.displayName; }
         }
 
-        public SwitchDescriptor[] Switches
+        public CommandMemberDescriptor[] Members
         {
-            get { return this.switches.ToArray(); }
+            get { return this.members.ToArray(); }
         }
 
         public string Summary
@@ -104,13 +110,13 @@ namespace Ntreev.Library.Commands
             get { return this.methodInfo; }
         }
 
-        internal static void Invoke(object instance, string arguments, MethodInfo methodInfo, IEnumerable<SwitchDescriptor> switches)
+        internal static void Invoke(object instance, string arguments, MethodInfo methodInfo, IEnumerable<CommandMemberDescriptor> memberDescriptors)
         {
-            var helper = new SwitchHelper(switches);
+            var helper = new ParseDescriptor(memberDescriptors);
             helper.Parse(instance, arguments);
 
             var values = new ArrayList();
-            var descriptors = switches.ToDictionary(item => item.DescriptorName);
+            var descriptors = memberDescriptors.ToDictionary(item => item.DescriptorName);
 
             foreach (var item in methodInfo.GetParameters())
             {

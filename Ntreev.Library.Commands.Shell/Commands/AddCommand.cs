@@ -13,7 +13,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
     [ShellSummary("AddSummary")]
     [ShellDescription("AddDescription")]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    [CommandStaticSwitch(typeof(GlobalSettings))]
+    [CommandStaticProperty(typeof(GlobalSettings))]
     class AddCommand : CommandBase
     {
         public AddCommand()
@@ -22,38 +22,38 @@ namespace Ntreev.Library.Commands.Shell.Commands
             this.Path = string.Empty;
         }
 
-        [CommandSwitch(Required = true)]
+        [CommandProperty(Required = true)]
         [DisplayName("<pathspec>...")]
         public string Path
         {
             get; set;
         }
 
-        [CommandSwitch(ShortName = 'n')]
+        [CommandProperty(ShortName = 'n')]
         public bool DryRun
         {
             get; set;
         }
 
-        [CommandSwitch(ShortName = 'v')]
+        [CommandProperty(ShortName = 'v')]
         public bool Verbose
         {
             get; set;
         }
 
-        [CommandSwitch(ShortName = 'f')]
+        [CommandProperty(ShortName = 'f')]
         public bool Force
         {
             get; set;
         }
 
-        [CommandSwitch(ShortName = 'i')]
+        [CommandProperty(ShortName = 'i')]
         public bool Interactive
         {
             get; set;
         }
 
-        [CommandSwitch(ShortName = 'P')]
+        [CommandProperty(ShortName = 'P')]
         public bool Patch
         {
             get;set;

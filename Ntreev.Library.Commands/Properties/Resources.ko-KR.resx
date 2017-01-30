@@ -126,11 +126,8 @@
   <data name="CannotConvert_Format" xml:space="preserve">
     <value>Cannot convert '{0}'</value>
   </data>
-  <data name="CommandNotFound" xml:space="preserve">
-    <value>명령을 찾을 수 없습니다.</value>
-  </data>
-  <data name="CommandNotFound_Format" xml:space="preserve">
-    <value>'{0}' 명령을 찾을 수 없습니다.</value>
+  <data name="DelimiterMustBePunctuation" xml:space="preserve">
+    <value>Delimiter must be a Punctuation.</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>설명</value>
@@ -140,6 +137,15 @@
   </data>
   <data name="InvalidCommandName_Format" xml:space="preserve">
     <value>'{0}' is invalid command name.</value>
+  </data>
+  <data name="MemberDoesNotExist_Format" xml:space="preserve">
+    <value>member '{0}' does not exist.</value>
+  </data>
+  <data name="MemberIsMissing" xml:space="preserve">
+    <value>member is missing.</value>
+  </data>
+  <data name="MemberWasAlreadyRegistered" xml:space="preserve">
+    <value>member is already registered.</value>
   </data>
   <data name="MethodDoesNotExist_Format" xml:space="preserve">
     <value>method '{0}' does not exist.</value>
@@ -159,22 +165,13 @@
   <data name="Summary" xml:space="preserve">
     <value>요약</value>
   </data>
-  <data name="SwitchDelimiterMustBePunctuation" xml:space="preserve">
-    <value>SwitchDelimiter must be a Punctuation.</value>
-  </data>
-  <data name="SwitchDoesNotExist_Format" xml:space="preserve">
-    <value>switch '{0}' does not exist.</value>
-  </data>
-  <data name="SwitchIsMissing" xml:space="preserve">
-    <value>Switch is missing.</value>
-  </data>
-  <data name="SwitchWasAlreadyRegistered" xml:space="preserve">
-    <value>Switch is already registered.</value>
-  </data>
   <data name="TypeForUsage_Format" xml:space="preserve">
     <value>type '{0}' for usage.</value>
   </data>
   <data name="Usage" xml:space="preserve">
     <value>사용법</value>
+  </data>
+  <data name="Variables" xml:space="preserve">
+    <value>가변 인자</value>
   </data>
 </root>

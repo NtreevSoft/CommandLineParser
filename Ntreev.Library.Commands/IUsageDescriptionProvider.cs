@@ -14,10 +14,6 @@ namespace Ntreev.Library.Commands
 
         string GetSummary(object instance);
 
-        string GetDescription(PropertyDescriptor descriptor);
-
-        string GetSummary(PropertyDescriptor descriptor);
-
         string GetDescription(PropertyInfo propertyInfo);
 
         string GetSummary(PropertyInfo propertyInfo);

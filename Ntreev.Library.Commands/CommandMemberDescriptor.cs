@@ -32,27 +32,26 @@ using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
-    public abstract class SwitchDescriptor
+    public abstract class CommandMemberDescriptor
     {
-        private const string SwitchGroupName = "switch";
-        private const string ArgGroupName = "arg";
+        private const string keyName = "key";
+        private const string valueName = "value";
 
-        private readonly CommandSwitchAttribute switchAttribute;
+        private readonly CommandPropertyAttribute attribute;
         private readonly string descriptorName;
         private readonly string name;
         private readonly string shortName;
 
-        private string pattern;
+        //private string pattern;
 
-        protected SwitchDescriptor(CommandSwitchAttribute switchAttribute, string descriptorName)
+        protected CommandMemberDescriptor(CommandPropertyAttribute attribute, string descriptorName)
         {
-            this.switchAttribute = switchAttribute;
+            this.attribute = attribute;
             this.descriptorName = descriptorName;
-            this.name = this.switchAttribute.Name != string.Empty ? this.switchAttribute.Name : descriptorName;
-            this.shortName = this.switchAttribute.ShortNameInternal;
-
+            this.name = this.attribute.Name != string.Empty ? this.attribute.Name : descriptorName;
+            this.shortName = this.attribute.ShortNameInternal;
             this.name = CommandSettings.NameGenerator(this.name);
-            if (this.switchAttribute.ShortNameOnly == true)
+            if (this.attribute.ShortNameOnly == true)
             {
                 if (this.shortName == string.Empty)
                     throw new ArgumentException(Resources.ShortNameDoesNotExist);
@@ -63,11 +62,6 @@ namespace Ntreev.Library.Commands
         public abstract void SetValue(object instance, object value);
 
         public abstract object GetValue(object instance);
-
-        public char? ArgSeparator
-        {
-            get { return this.switchAttribute.GetArgSeparator(); }
-        }
 
         public string Name
         {
@@ -101,17 +95,17 @@ namespace Ntreev.Library.Commands
 
         public bool Required
         {
-            get { return this.switchAttribute.Required; }
+            get { return this.attribute.Required; }
         }
 
-        public abstract Type SwitchType
+        public abstract Type MemberType
         {
             get;
         }
 
         public virtual TypeConverter Converter
         {
-            get { return TypeDescriptor.GetConverter(this.SwitchType); }
+            get { return TypeDescriptor.GetConverter(this.MemberType); }
         }
 
         public virtual IEnumerable<Attribute> Attributes
@@ -119,70 +113,66 @@ namespace Ntreev.Library.Commands
             get { yield break; }
         }
 
-        private string BuildPattern()
-        {
-            var quotes = string.Format(@"(""(?<{0}>.*)"")", SwitchDescriptor.ArgGroupName);
-            var normal = string.Format(@"(?<{0}>(\S)+)", SwitchDescriptor.ArgGroupName);
+        //private string BuildPattern()
+        //{
+        //    var quotes = string.Format(@"(""(?<{0}>.*)"")", CommandMemberDescriptor.valueName);
+        //    var normal = string.Format(@"(?<{0}>(\S)+)", CommandMemberDescriptor.valueName);
 
-            var pattern = string.Empty;
-            if (this.Name != string.Empty && this.ShortName != string.Empty)
-            {
-                pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", SwitchDescriptor.SwitchGroupName, CommandSettings.SwitchDelimiter, this.Name, CommandSettings.ShortSwitchDelimiter, this.ShortName);
-            }
-            else if (this.Name != string.Empty)
-            {
-                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.SwitchDelimiter, this.Name);
-            }
-            else if (this.ShortName != string.Empty)
-            {
-                pattern = string.Format(@"^(?<{0}>{1}{2})", SwitchDescriptor.SwitchGroupName, CommandSettings.ShortSwitchDelimiter, this.ShortName);
-            }
+        //    var pattern = string.Empty;
+        //    if (this.Name != string.Empty && this.ShortName != string.Empty)
+        //    {
+        //        pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", CommandMemberDescriptor.keyName, CommandSettings.Delimiter, this.Name, CommandSettings.ShortDelimiter, this.ShortName);
+        //    }
+        //    else if (this.Name != string.Empty)
+        //    {
+        //        pattern = string.Format(@"^(?<{0}>{1}{2})", CommandMemberDescriptor.keyName, CommandSettings.Delimiter, this.Name);
+        //    }
+        //    else if (this.ShortName != string.Empty)
+        //    {
+        //        pattern = string.Format(@"^(?<{0}>{1}{2})", CommandMemberDescriptor.keyName, CommandSettings.ShortDelimiter, this.ShortName);
+        //    }
 
-            var argSeparator = this.switchAttribute.GetArgSeparator();
-            if (this.SwitchType != typeof(bool) || argSeparator != null)
-            {
-                if (argSeparator == null)
-                {
-                    pattern += string.Format(@"(((\s+)({0}|{1}))|($))", quotes, normal);
-                }
-                else
-                {
-                    if (argSeparator != char.MinValue)
-                        pattern += argSeparator;
-                    pattern += string.Format(@"(({0}|{1})|$)", quotes, normal);
-                }
-            }
-            else
-            {
-                pattern += @"((\s+)|$)";
-            }
+        //    return pattern;
+        //}
 
-            return pattern;
-        }
-
-        private string Pattern
-        {
-            get
-            {
-                if (this.pattern == null)
-                    this.pattern = this.BuildPattern();
-                return this.pattern;
-            }
-        }
+        //private string Pattern
+        //{
+        //    get
+        //    {
+        //        if (this.pattern == null)
+        //            this.pattern = this.BuildPattern();
+        //        return this.pattern;
+        //    }
+        //}
 
         internal object Parse(object instance, string arg)
         {
             return Parser.Parse(this, arg);
         }
 
-        internal string TryMatch(string switchLine, ref string parsed)
+        internal void Parse(object instance, List<string> arguments)
         {
-            var match = Regex.Match(switchLine, this.Pattern, RegexOptions.ExplicitCapture);
-            if (match.Success == false)
-                return null;
-            parsed = match.Value;
-            return match.Groups[SwitchDescriptor.ArgGroupName].Value;
+            if (this.MemberType == typeof(bool))
+            {
+                this.SetValue(instance, true);
+            }
+            else
+            {
+                var arg = arguments.First();
+                var value = Parser.Parse(this, arg);
+                this.SetValue(instance, value);
+                arguments.RemoveAt(0);
+            }
         }
+
+        //internal string TryMatch(string arguments, ref string parsed)
+        //{
+        //    var match = Regex.Match(arguments, this.Pattern, RegexOptions.ExplicitCapture);
+        //    if (match.Success == false)
+        //        return null;
+        //    parsed = match.Value;
+        //    return match.Groups[CommandMemberDescriptor.valueName].Value;
+        //}
 
         internal string DescriptorName
         {
@@ -195,7 +185,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.name == string.Empty)
                     return string.Empty;
-                return CommandSettings.SwitchDelimiter + this.name;
+                return CommandSettings.Delimiter + this.name;
             }
         }
 
@@ -205,7 +195,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.ShortName == string.Empty)
                     return string.Empty;
-                return CommandSettings.ShortSwitchDelimiter + this.shortName;
+                return CommandSettings.ShortDelimiter + this.shortName;
             }
         }
     }

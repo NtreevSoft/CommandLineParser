@@ -7,16 +7,16 @@ using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
-    public class SwitchDescriptorCollection : IReadOnlyList<SwitchDescriptor>
+    public class CommandMemberDescriptorCollection : IReadOnlyList<CommandMemberDescriptor>
     {
-        private readonly List<SwitchDescriptor> descriptors = new List<SwitchDescriptor>();
+        private readonly List<CommandMemberDescriptor> descriptors = new List<CommandMemberDescriptor>();
 
-        internal SwitchDescriptorCollection()
+        internal CommandMemberDescriptorCollection()
         {
 
         }
 
-        public SwitchDescriptor this[string name]
+        public CommandMemberDescriptor this[string name]
         {
             get
             {
@@ -25,13 +25,13 @@ namespace Ntreev.Library.Commands
                             select item;
 
                 if (query.Any() == false)
-                    throw new KeyNotFoundException(string.Format(Resources.SwitchDoesNotExist_Format, name));
+                    throw new KeyNotFoundException(string.Format(Resources.MemberDoesNotExist_Format, name));
 
                 return query.First();
             }
         }
 
-        public SwitchDescriptor this[int index]
+        public CommandMemberDescriptor this[int index]
         {
             get { return this.descriptors[index]; }
         }
@@ -46,6 +46,7 @@ namespace Ntreev.Library.Commands
             var query = from item in this.descriptors
                         orderby item.DefaultValue == DBNull.Value descending
                         orderby item.Required descending
+                        orderby item is CommandMemberArrayDescriptor
                         select item;
 
             var items = query.ToArray();
@@ -53,7 +54,7 @@ namespace Ntreev.Library.Commands
             this.descriptors.AddRange(items);
         }
 
-        internal void Add(SwitchDescriptor descriptor)
+        internal void Add(CommandMemberDescriptor descriptor)
         {
             foreach (var item in this.descriptors)
             {
@@ -71,7 +72,7 @@ namespace Ntreev.Library.Commands
             this.descriptors.Add(descriptor);
         }
 
-        internal void AddRange(IEnumerable<SwitchDescriptor> descriptors)
+        internal void AddRange(IEnumerable<CommandMemberDescriptor> descriptors)
         {
             foreach(var item in descriptors)
             {
@@ -81,7 +82,7 @@ namespace Ntreev.Library.Commands
 
         #region IEnumerable
 
-        IEnumerator<SwitchDescriptor> IEnumerable<SwitchDescriptor>.GetEnumerator()
+        IEnumerator<CommandMemberDescriptor> IEnumerable<CommandMemberDescriptor>.GetEnumerator()
         {
             return this.descriptors.GetEnumerator();
         }

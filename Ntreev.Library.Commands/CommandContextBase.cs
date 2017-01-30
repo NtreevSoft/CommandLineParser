@@ -39,8 +39,8 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in this.parsers)
             {
-                item.VersionName = string.Empty;
-                item.HelpName = string.Empty;
+                item.VersionName = null;
+                item.HelpName = null;
             }
         }
 
@@ -154,39 +154,24 @@ namespace Ntreev.Library.Commands
             var parser = this.parsers[command];
             if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
             {
-                if (arguments == string.Empty)
-                {
-                    if (command.Types.HasFlag(CommandTypes.AllowEmptyArgument) == true)
-                    {
-                        command.Execute();
-                    }
-                    else
-                    {
-                        this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
-                        return false;
-                    }
-                }
-                else if (parser.Invoke(parser.Name + " " + arguments) == false)
+                //if (arguments == string.Empty)
+                //{
+                //    this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
+                //    return false;
+                //}
+                if (parser.Invoke(parser.Name + " " + arguments) == false)
                 {
                     return false;
                 }
             }
             else
             {
-                if (arguments == string.Empty)
-                {
-                    if (command.Types.HasFlag(CommandTypes.AllowEmptyArgument) == true)
-                    {
-                        command.Execute();
-                        return false;
-                    }
-                    else
-                    {
-                        this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
-                        return false;
-                    }
-                }
-                else if (parser.Parse(command.Name + " " + arguments) == false)
+                //if (arguments == string.Empty)
+                //{
+                //    this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
+                //    return false;
+                //}
+                if (parser.Parse(command.Name + " " + arguments) == false)
                 {
                     return false;
                 }

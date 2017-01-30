@@ -9,13 +9,13 @@ namespace Ntreev.Library.Commands.Invoke
     static class StaticCommand
     {
         [CommandMethod]
-        [CommandMethodSwitch("Value")]
+        [CommandMethodProperty("Value")]
         public static void List()
         {
 
         }
 
-        [CommandSwitch]
+        [CommandProperty]
         public static int Value
         {
             get; set;
