@@ -102,7 +102,7 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            foreach (var item in options)
+            foreach (var item in options.ToArray())
             {
                 if (item.DefaultValue != DBNull.Value)
                 {
