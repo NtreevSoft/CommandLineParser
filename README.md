@@ -13,28 +13,28 @@ Single Command
     {
         class Settings
         {
-            [CommandSwitch(Name = "param1", Required = true)]
+            [CommandProperty(Name = "param1", Required = true)]
             [Description("parameter1 description")]
             public string Parameter1
             {
                 get; set;
             }
 
-            [CommandSwitch(Name = "param2", Required = true)]
+            [CommandProperty(Name = "param2", Required = true)]
             [Description("parameter2 description")]
             public int Parameter2
             {
                 get; set;
             }
 
-            [CommandSwitch(ShortName = 'o', NameType = SwitchNameTypes.ShortName)]
+            [CommandProperty(ShortName = 'o', NameType = SwitchNameTypes.ShortName)]
             [Description("option1 description")]
             public bool Option1
             {
                 get; set;
             }
 
-            [CommandSwitch("text-option"]
+            [CommandProperty("text-option"]
             [Description("option2 description")]
             public string Option2
             {

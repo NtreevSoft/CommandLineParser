@@ -238,11 +238,21 @@ namespace Ntreev.Library.Commands
             while (match.Success)
             {
                 commandLine = commandLine.Substring(match.Length).Trim();
-                argList.Enqueue(match.Value);
+                argList.Enqueue(TrimQuot(match.Value));
                 match = Regex.Match(commandLine, pattern);
             }
 
             return argList;
+        }
+
+        internal static string TrimQuot(string text)
+        {
+            if (text.StartsWith("\"") == true && text.EndsWith("\"") == true)
+            {
+                text = text.Substring(1);
+                text = text.Remove(text.Length - 1);
+            }
+            return text;
         }
 
         public TextWriter Out
