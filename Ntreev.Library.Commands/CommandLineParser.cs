@@ -221,8 +221,16 @@ namespace Ntreev.Library.Commands
             var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
             var name = match.Value.Trim(new char[] { '\"', });
 
-            if (File.Exists(name) == true)
-                name = Path.GetFileNameWithoutExtension(name);
+
+            try
+            {
+                if (File.Exists(name) == true)
+                    name = Path.GetFileNameWithoutExtension(name);
+            }
+            catch
+            {
+
+            }
 
             var arguments = commandLine.Substring(match.Length).Trim();
 
