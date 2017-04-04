@@ -8,25 +8,16 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Shell
 {
     [Export(typeof(IShell))]
-    class Shell : Mono.Terminal.LineEditor, IShell
+    class Shell : Terminal, IShell
     {
         private readonly CommandContextBase commandContext;
         private bool isCancellationRequested;
 
         [ImportingConstructor]
         public Shell(CommandContextBase commandContext)
-            : base("shell")
         {
             this.commandContext = commandContext;
             this.commandContext.Name = string.Empty;
-            this.HeuristicsMode = "csharp";
-            this.AutoCompleteEvent += delegate (string a, int pos)
-            {
-                string prefix = "";
-                //var completions = new string[] { "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten" };
-                var completions = new string[] { };
-                return new Mono.Terminal.LineEditor.Completion(prefix, completions);
-            };
             this.Prompt = "shell";
         }
 
@@ -44,7 +35,7 @@ namespace Ntreev.Library.Commands.Shell
         {
             string line;
 
-            while ((line = this.Edit(this.Prompt + "> ", "")) != null)
+            while ((line = this.ReadLine(this.Prompt + ">")) != null)
             {
                 try
                 {
@@ -62,6 +53,44 @@ namespace Ntreev.Library.Commands.Shell
         public bool IsCancellationRequested
         {
             get { return this.isCancellationRequested; }
+        }
+
+        protected override string OnCompletion()
+        {
+            var ss = CommandLineParser.SplitAll(this.Text);
+
+            if (ss.Length == 1 && this.Text != string.Empty)
+            {
+                var commandName = ss.First();
+                var commandNames = this.commandContext.Commands.Select(item => item.Name)
+                                                               .OrderBy(item => item, StringComparer.CurrentCultureIgnoreCase)
+                                                               .ToArray();
+
+                if (commandNames.Contains(commandName, StringComparer.CurrentCultureIgnoreCase) == true)
+                {
+                    for (var i = 0; i < commandNames.Length; i++)
+                    {
+                        var r = string.Compare(commandName, commandNames[i], true);
+                        if (r == 0 && i+1 !=commandNames.Length)
+                        {
+                            return commandNames[i + 1];
+                        }
+                    }
+                }
+                else
+                { 
+                    for (var i =0; i < commandNames.Length; i++)
+                    {
+                        var r = string.Compare(commandName, commandNames[i], true);
+                        if (r < 0)
+                        {
+                            return commandNames[i];
+                        }
+                    }
+                }
+            }
+
+            return this.Text;
         }
     }
 }

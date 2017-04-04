@@ -221,10 +221,9 @@ namespace Ntreev.Library.Commands
             var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
             var name = match.Value.Trim(new char[] { '\"', });
 
-
             try
             {
-                if (File.Exists(name) == true)
+                if (Path.HasExtension(name) == true)
                     name = Path.GetFileNameWithoutExtension(name);
             }
             catch
@@ -237,20 +236,20 @@ namespace Ntreev.Library.Commands
             return new string[] { name, arguments, };
         }
 
-        internal static Queue<string> SplitAll(string commandLine)
+        public static string[] SplitAll(string commandLine)
         {
             var pattern = @"^((""[^""]*"")|(\S+))";
             var match = Regex.Match(commandLine, pattern);
-            var argList = new Queue<string>();
+            var argList = new List<string>();
 
             while (match.Success)
             {
                 commandLine = commandLine.Substring(match.Length).Trim();
-                argList.Enqueue(TrimQuot(match.Value));
+                argList.Add(TrimQuot(match.Value));
                 match = Regex.Match(commandLine, pattern);
             }
 
-            return argList;
+            return argList.ToArray();
         }
 
         internal static string TrimQuot(string text)

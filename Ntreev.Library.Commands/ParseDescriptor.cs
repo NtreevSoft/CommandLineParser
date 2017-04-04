@@ -59,7 +59,7 @@ namespace Ntreev.Library.Commands
             var variables = this.members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
 
             var variableList = new List<string>();
-            var arguments = CommandLineParser.SplitAll(commandLine);
+            var arguments = new Queue<string>(CommandLineParser.SplitAll(commandLine));
 
             while (arguments.Any())
             {

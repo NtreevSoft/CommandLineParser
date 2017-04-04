@@ -42,10 +42,18 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
-            //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
-            //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            var ss = new List<string>() { "a", "B", "belp", "c", "D", };
 
-            var t1 = System.Threading.Thread.CurrentThread.CurrentUICulture;
+            for (var i = 0; i < ss.Count; i++)
+            {
+                var r = string.Compare("be", ss[i], true);
+                if (r <= 0)
+                {
+                    ss.Insert(i, "be");
+                    break;
+                }
+            }
+
 
             var shell = Container.GetService<IShell>();
             shell.Prompt = Directory.GetCurrentDirectory();
