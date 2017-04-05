@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands.Shell
@@ -55,42 +56,146 @@ namespace Ntreev.Library.Commands.Shell
             get { return this.isCancellationRequested; }
         }
 
-        protected override string OnCompletion()
+        protected override string OnNextCompletion(string[] items, string text, string find)
         {
-            var ss = CommandLineParser.SplitAll(this.Text);
-
-            if (ss.Length == 1 && this.Text != string.Empty)
+            if (items.Length == 0)
             {
-                var commandName = ss.First();
                 var commandNames = this.commandContext.Commands.Select(item => item.Name)
-                                                               .OrderBy(item => item, StringComparer.CurrentCultureIgnoreCase)
+                                                               .Where(item => item.StartsWith(find))
+                                                               .OrderBy(item => item)
                                                                .ToArray();
-
-                if (commandNames.Contains(commandName, StringComparer.CurrentCultureIgnoreCase) == true)
+                return this.NextCompletion(commandNames, text);
+                //return this.commandContext.Commands.Select(item => item.Name).OrderBy(item => item).FirstOrDefault();
+            }
+            else if (items.Length == 1)
+            {
+                var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
+                if (commandNames.Contains(items[0]) == true)
                 {
-                    for (var i = 0; i < commandNames.Length; i++)
+                    var command = this.commandContext.Commands[items[0]];
+                    if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true && this.commandContext.IsCommandVisible(command) == true)
                     {
-                        var r = string.Compare(commandName, commandNames[i], true);
-                        if (r == 0 && i+1 !=commandNames.Length)
-                        {
-                            return commandNames[i + 1];
-                        }
-                    }
-                }
-                else
-                { 
-                    for (var i =0; i < commandNames.Length; i++)
-                    {
-                        var r = string.Compare(commandName, commandNames[i], true);
-                        if (r < 0)
-                        {
-                            return commandNames[i];
-                        }
+                        var methodNames = CommandDescriptor.GetMethodDescriptors(command).Select(item => item.Name)
+                                                                                         .Where(item => item.StartsWith(find))
+                                                                                         .OrderBy(item => item)
+                                                                                         .ToArray();
+                        return this.NextCompletion(methodNames, text);
                     }
                 }
             }
 
-            return this.Text;
+            return null;
+        }
+
+        protected override string OnPrevCompletion(string[] items, string text, string find)
+        {
+            if (items.Length == 0)
+            {
+                var commandNames = this.commandContext.Commands.Select(item => item.Name)
+                                                               .Where(item => item.StartsWith(find))
+                                                               .OrderBy(item => item)
+                                                               .ToArray();
+                return this.PrevCompletion(commandNames, text);
+                //return this.commandContext.Commands.Select(item => item.Name).OrderBy(item => item).FirstOrDefault();
+            }
+            else if (items.Length == 1)
+            {
+                var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
+                if (commandNames.Contains(items[0]) == true)
+                {
+                    var command = this.commandContext.Commands[items[0]];
+                    if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true && this.commandContext.IsCommandVisible(command) == true)
+                    {
+                        var methodNames = CommandDescriptor.GetMethodDescriptors(command).Select(item => item.Name)
+                                                                                         .Where(item => item.StartsWith(find))
+                                                                                         .OrderBy(item => item)
+                                                                                         .ToArray();
+                        return this.PrevCompletion(methodNames, text);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static string[] SplitAll(string text)
+        {
+            var pattern = @"^((""[^""]*"")|(\S+))";
+            var match = Regex.Match(text, pattern);
+            var argList = new List<string>();
+
+            while (match.Success)
+            {
+                text = text.Substring(match.Length).Trim();
+                argList.Add(match.Value);
+                match = Regex.Match(text, pattern);
+            }
+
+            return argList.ToArray();
+        }
+
+        private string NextCompletion(string[] items, string text)
+        {
+            items = items.OrderBy(item => item)
+                         .ToArray();
+            if (items.Contains(text) == true)
+            {
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r == 0)
+                    {
+                        if (i + 1 < items.Length)
+                            return items[i + 1];
+                        else
+                            return items.First();
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r < 0)
+                    {
+                        return items[i];
+                    }
+                }
+            }
+            return text;
+        }
+
+        private string PrevCompletion(string[] items, string text)
+        {
+            items = items.OrderBy(item => item)
+                         .ToArray();
+            if (items.Contains(text) == true)
+            {
+                for (var i = items.Length - 1; i >= 0; i--)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r == 0)
+                    {
+                        if (i - 1 >= 0)
+                            return items[i - 1];
+                        else
+                            return items.Last();
+                    }
+                }
+            }
+            else
+            {
+                for (var i = items.Length - 1; i >= 0; i--)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r < 0)
+                    {
+                        return items[i];
+                    }
+                }
+            }
+            return text;
         }
     }
 }

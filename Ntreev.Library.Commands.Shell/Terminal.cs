@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands.Shell
@@ -11,19 +13,34 @@ namespace Ntreev.Library.Commands.Shell
     {
         private static object lockobj = new object();
 
+        private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
+        private readonly List<ConsoleChar> chars = new List<ConsoleChar>();
+
         private List<string> histories = new List<string>();
-        private int currentHistory = -1;
 
         private int y = 0;
         private int height = 1;
-        private List<ConsoleChar> chars = new List<ConsoleChar>();
         private int index;
         private int start = 0;
         private bool isHidden;
+        private string inputText;
+        private int historyIndex;
 
         public Terminal()
         {
-
+            this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.Escape, false, false, false), this.Clear);
+            this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Delete, false, false, false), this.Delete);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, false), this.Home);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, true), this.DeleteToHome);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.End, false, false, false), this.End);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.End, false, false, true), this.DeleteToEnd);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.UpArrow, false, false, false), this.PrevHistory);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false), this.NextHistory);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.LeftArrow, false, false, false), this.Left);
+            this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.RightArrow, false, false, false), this.Right);
+            this.actionMaps.Add(new ConsoleKeyInfo('\t', ConsoleKey.Tab, false, false, false), this.NextCompletion);
+            this.actionMaps.Add(new ConsoleKeyInfo('\t', ConsoleKey.Tab, true, false, false), this.PrevCompletion);
         }
 
         public string ReadLine(string prompt)
@@ -43,111 +60,45 @@ namespace Ntreev.Library.Commands.Shell
 
         public string ReadLine(string prompt, string defaultText, bool isHidden)
         {
-            var cout = Console.Out;
+            var oldOut = Console.Out;
+            var oldTreatControlCAsInput = Console.TreatControlCAsInput;
+            Console.TreatControlCAsInput = true;
             Console.SetOut(new ConsoleTextWriter(Console.Out, this));
 
-            this.y = Console.CursorTop;
-            this.Insert(prompt);
-            this.start = this.Index;
-            this.isHidden = isHidden;
-            this.Insert(defaultText);
-            while (true)
+            try
             {
-                var key = Console.ReadKey(true);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.Enter:
-                        {
-                            var text = this.Text;
-                            var space = this.Space;
-                            this.Index = this.start;
-                            this.chars.Clear();
-                            this.start = 0;
-                            this.index = 0;
-                            Console.SetOut(cout);
-                            Console.WriteLine();
-
-                            if (this.histories.LastOrDefault() != text)
-                                this.histories.Add(text);
-                            return text;
-                        }
-                    case ConsoleKey.Escape:
-                        {
-                            this.Clear();
-                        }
-                        break;
-                    case ConsoleKey.Backspace:
-                        {
-                            this.Backspace();
-                        }
-                        break;
-                    case ConsoleKey.Delete:
-                        {
-                            this.Delete();
-                        }
-                        break;
-                    case ConsoleKey.Home:
-                        {
-                            this.Home();
-                        }
-                        break;
-                    case ConsoleKey.End:
-                        {
-                            this.End();
-                        }
-                        break;
-                    case ConsoleKey.UpArrow:
-                        {
-                            this.PrevHistory();
-                        }
-                        break;
-                    case ConsoleKey.DownArrow:
-                        {
-                            this.NextHistory();
-                        }
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        {
-                            this.Left();
-                        }
-                        break;
-
-                    case ConsoleKey.RightArrow:
-                        {
-                            this.Right();
-                        }
-                        break;
-                    case ConsoleKey.Tab:
-                        {
-                            var text = this.OnCompletion();
-                            if (text != null)
-                            {
-                                Console.CursorVisible = false;
-                                this.Clear();
-                                this.Insert(text);
-                                Console.CursorVisible = true;
-                            }
-                        }
-                        break;
-                    default:
-                        {
-                            if (key.KeyChar != '\0')
-                                this.Insert(key.KeyChar);
-                        }
-                        break;
-                }
+                return ReadLineImpl(prompt, defaultText, isHidden);
+            }
+            finally
+            {
+                Console.TreatControlCAsInput = oldTreatControlCAsInput;
+                Console.SetOut(oldOut);
+                Console.WriteLine();
             }
         }
 
         public void NextHistory()
         {
-
+            if (this.historyIndex + 1 < this.histories.Count)
+            {
+                var text = this.histories[this.historyIndex + 1];
+                this.ClearText();
+                this.InsertText(text);
+                this.inputText = this.LeftText;
+                this.historyIndex++;
+            }
         }
 
         public void PrevHistory()
         {
-
+            if (this.historyIndex > 0)
+            {
+                var text = this.histories[this.historyIndex - 1];
+                this.ClearText();
+                this.InsertText(text);
+                this.inputText = this.LeftText;
+                this.historyIndex--;
+            }
         }
 
         public IList<string> Histories
@@ -155,25 +106,15 @@ namespace Ntreev.Library.Commands.Shell
             get { return this.histories; }
         }
 
-        public void Enter()
-        {
-
-        }
-
         public void Clear()
         {
             lock (lockobj)
             {
-                var space = this.Space;
-                this.Index = this.start;
-                this.Replace(space);
-                while (this.Length > this.start)
-                {
-                    this.chars.RemoveAt(this.Length - 1);
-                }
+                this.ClearText();
+                this.inputText = this.LeftText;
             }
         }
-
+        
         public void Delete()
         {
             lock (lockobj)
@@ -184,6 +125,7 @@ namespace Ntreev.Library.Commands.Shell
                     this.Backspace();
                 }
             }
+            this.inputText = this.LeftText;
         }
 
         public void Home()
@@ -207,7 +149,10 @@ namespace Ntreev.Library.Commands.Shell
             lock (lockobj)
             {
                 if (this.Index > this.start)
+                {
                     this.Index--;
+                    this.inputText = this.LeftText;
+                }
             }
         }
 
@@ -216,6 +161,7 @@ namespace Ntreev.Library.Commands.Shell
             lock (lockobj)
             {
                 this.Index++;
+                this.inputText = this.LeftText;
             }
         }
 
@@ -228,30 +174,84 @@ namespace Ntreev.Library.Commands.Shell
                     var text = this.RightText;
                     this.Index--;
                     var space = this.RightSpace;
-                    this.Replace(space);
+                    this.ReplaceText(space);
                     this.chars.RemoveAt(this.Index);
-                    this.Replace(text);
+                    this.ReplaceText(text);
+                    this.inputText = this.LeftText;
                 }
             }
         }
 
         public void DeleteToEnd()
         {
-            var sapce = this.RightSpace;
-            this.Replace(sapce);
-            var index = this.Index;
-            while (this.chars.Count > index)
+            lock (lockobj)
             {
-                this.chars.RemoveAt(this.chars.Count - 1);
+                var sapce = this.RightSpace;
+                this.ReplaceText(sapce);
+                this.chars.RemoveRange(this.Index, this.Length - this.Index);
+                this.inputText = this.LeftText;
             }
         }
 
         public void DeleteToHome()
         {
-
+            lock (lockobj)
+            {
+                var text = this.RightText;
+                this.ClearText();
+                this.InsertText(text);
+                this.Index = start;
+            }
         }
 
-        protected virtual string OnCompletion()
+        public void NextCompletion()
+        {
+            lock (lockobj)
+            {
+                var inputArgs = SplitAll(this.inputText);
+                var args = SplitAll(this.LeftText);
+                var find = (inputArgs.LastOrDefault() ?? string.Empty).Trim();
+                var leftText = this.inputText.Substring(0, this.inputText.Length - find.Length);
+                var text = args.LastOrDefault() ?? string.Empty;
+                var items = SplitAll(leftText).Select(i => i.Trim()).Where(i => i != string.Empty).ToArray();
+                var result = this.OnNextCompletion(items, text, find);
+                if (result != null)
+                {
+                    Console.CursorVisible = false;
+                    this.ClearText();
+                    this.InsertText(leftText + result);
+                    Console.CursorVisible = true;
+                }
+            }
+        }
+
+        public void PrevCompletion()
+        {
+            lock (lockobj)
+            {
+                var inputArgs = SplitAll(this.inputText);
+                var args = SplitAll(this.LeftText);
+                var find = (inputArgs.LastOrDefault() ?? string.Empty).Trim();
+                var leftText = this.inputText.Substring(0, this.inputText.Length - find.Length);
+                var text = args.LastOrDefault() ?? string.Empty;
+                var items = SplitAll(leftText).Select(i => i.Trim()).Where(i => i != string.Empty).ToArray();
+                var result = this.OnPrevCompletion(items, text, find);
+                if (result != null)
+                {
+                    Console.CursorVisible = false;
+                    this.ClearText();
+                    this.InsertText(leftText + result);
+                    Console.CursorVisible = true;
+                }
+            }
+        }
+
+        protected virtual string OnNextCompletion(string[] items, string text, string find)
+        {
+            return null;
+        }
+
+        protected virtual string OnPrevCompletion(string[] items, string text, string find)
         {
             return null;
         }
@@ -263,13 +263,13 @@ namespace Ntreev.Library.Commands.Shell
             this.Index = this.Length;
         }
 
-        public int Index
+        private int Index
         {
             get
             {
                 return this.index;
             }
-            private set
+            set
             {
                 if (value < 0 || value > this.Length)
                     return;
@@ -278,8 +278,7 @@ namespace Ntreev.Library.Commands.Shell
                 {
                     x += this.chars[i].Slot;
                 }
-                Console.CursorLeft = x % Console.BufferWidth;
-                Console.CursorTop = x / Console.BufferWidth + y;
+                Console.SetCursorPosition(x % Console.BufferWidth, x / Console.BufferWidth + y);
                 this.index = value;
             }
         }
@@ -295,6 +294,19 @@ namespace Ntreev.Library.Commands.Shell
             {
                 var text = string.Empty;
                 for (var i = this.index; i < this.Length; i++)
+                {
+                    text += this.chars[i].Char;
+                }
+                return text;
+            }
+        }
+
+        private string LeftText
+        {
+            get
+            {
+                var text = string.Empty;
+                for (var i = this.start; i < this.index; i++)
                 {
                     text += this.chars[i].Char;
                 }
@@ -345,7 +357,18 @@ namespace Ntreev.Library.Commands.Shell
             }
         }
 
-        private void Replace(string text)
+        private void ClearText()
+        {
+            var space = this.Space;
+            this.Index = this.start;
+            this.ReplaceText(space);
+            while (this.Length > this.start)
+            {
+                this.chars.RemoveAt(this.Length - 1);
+            }
+        }
+
+        private void ReplaceText(string text)
         {
             var index = this.Index;
             using (var stream = Console.OpenStandardOutput())
@@ -356,26 +379,23 @@ namespace Ntreev.Library.Commands.Shell
             this.Index = index;
         }
 
-        private void Insert(string text)
+        private void InsertText(string text)
         {
-            lock (lockobj)
+            var rightText = this.RightText;
+            foreach (var item in text)
             {
-                var rightText = this.RightText;
-                foreach (var item in text)
-                {
-                    this.InsertChar(item);
-                }
-                this.Replace(rightText);
+                this.InsertChar(item);
             }
+            this.ReplaceText(rightText);
         }
 
-        private void Insert(char ch)
+        private void InsertText(char ch)
         {
             lock (lockobj)
             {
                 var rightText = this.RightText;
                 this.InsertChar(ch);
-                this.Replace(rightText);
+                this.ReplaceText(rightText);
             }
         }
 
@@ -423,7 +443,6 @@ namespace Ntreev.Library.Commands.Shell
                     Char = ch,
                 });
             }
-
         }
 
         private System.Tuple<int, int> Insert(int x, int y, string text)
@@ -469,7 +488,6 @@ namespace Ntreev.Library.Commands.Shell
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
 
-
             if (y == this.y)
             {
                 if (this.y + this.height == Console.BufferHeight)
@@ -482,13 +500,11 @@ namespace Ntreev.Library.Commands.Shell
                     var x2 = Console.CursorLeft;
                     var y2 = Console.CursorTop;
                     this.ShiftDown();
-                    Console.CursorLeft = x2;
-                    Console.CursorTop = y2;
+                    Console.SetCursorPosition(x2, y2);
                 }
             }
 
-            Console.CursorLeft = x;
-            Console.CursorTop = y;
+            Console.SetCursorPosition(x, y);
             this.WriteToStream(ch);
 
             return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
@@ -501,6 +517,78 @@ namespace Ntreev.Library.Commands.Shell
                 var bytes = Console.OutputEncoding.GetBytes(ch.ToString());
                 stream.Write(bytes, 0, bytes.Length);
             }
+        }
+
+        private string ReadLineImpl(string prompt, string defaultText, bool isHidden)
+        {
+            lock (lockobj)
+            {
+                this.y = Console.CursorTop;
+                this.InsertText(prompt);
+                this.start = this.Index;
+                this.isHidden = isHidden;
+                this.InsertText(defaultText);
+                this.inputText = string.Empty;
+            }
+
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+
+                if (this.actionMaps.ContainsKey(key) == true)
+                {
+                    this.actionMaps[key]();
+
+                }
+                else if (key.Key == ConsoleKey.Enter)
+                {
+                    var text = this.Text;
+                    this.Index = this.start;
+                    this.chars.Clear();
+                    this.start = 0;
+                    this.index = 0;
+
+                    if (this.isHidden == false && text != string.Empty)
+                    {
+                        if (this.histories.LastOrDefault() != text)
+                            this.histories.Add(text);
+                        if (this.historyIndex != this.histories.Count)
+                            this.historyIndex++;
+                    }
+                    return text;
+                }
+                else if (key.KeyChar != '\0')
+                {
+                    this.InsertText(key.KeyChar);
+                    this.inputText = this.LeftText;
+                }
+            }
+        }
+
+        private static IList<string> SplitAll(string text)
+        {
+            var pattern = @"^((""[^""]*"")|(\S+)|(\s+))";
+            var match = Regex.Match(text, pattern);
+            var argList = new List<string>();
+
+            while (match.Success)
+            {
+                text = text.Substring(match.Length);
+                argList.Add(match.Value);
+                match = Regex.Match(text, pattern);
+            }
+
+            return argList;
+        }
+
+        private static string TrimQuot(string text)
+        {
+            if (text.StartsWith("\"") == true && text.EndsWith("\"") == true)
+            {
+                text = text.Substring(1);
+                text = text.Remove(text.Length - 1);
+            }
+            return text;
         }
 
         #region classes
@@ -565,6 +653,13 @@ namespace Ntreev.Library.Commands.Shell
                     Console.CursorVisible = true;
                 }
             }
+        }
+
+        enum CompletionState
+        {
+            None,
+
+            Completed,
         }
 
         #endregion

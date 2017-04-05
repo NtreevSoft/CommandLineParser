@@ -75,7 +75,6 @@ namespace Ntreev.Library.Commands
                 {
                     x = 0;
                 }
-
             }
             this.WriteLine();
             this.Indent = indent;

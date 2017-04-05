@@ -42,19 +42,6 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
-            var ss = new List<string>() { "a", "B", "belp", "c", "D", };
-
-            for (var i = 0; i < ss.Count; i++)
-            {
-                var r = string.Compare("be", ss[i], true);
-                if (r <= 0)
-                {
-                    ss.Insert(i, "be");
-                    break;
-                }
-            }
-
-
             var shell = Container.GetService<IShell>();
             shell.Prompt = Directory.GetCurrentDirectory();
             shell.Start();
