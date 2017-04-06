@@ -31,7 +31,10 @@ namespace Ntreev.Library.Commands.Shell
 			if (Console.IsInputRedirected == true)
 				throw new Exception ("Terminal cannot use. Console.IsInputRedirected must be false");
             this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.Escape, false, false, false), this.Clear);
-            this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
+			if(Environment.OSVersion.Platform == PlatformID.Unix)
+                this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Backspace, false, false, false), this.Backspace);
+			else
+				this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Delete, false, false, false), this.Delete);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, false), this.Home);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, true), this.DeleteToHome);
@@ -176,10 +179,13 @@ namespace Ntreev.Library.Commands.Shell
                 if (this.Index > this.start)
                 {
                     var text = this.RightText;
-                    this.Index--;
+					var index = this.Index;
+					this.Index = this.Length;
                     var space = this.RightSpace;
-                    this.ReplaceText(space);
-                    this.chars.RemoveAt(this.Index);
+                    //this.ReplaceText(space);
+					this.w.Write('\b');
+					this.chars.RemoveAt(index);
+					this.index--;
                     this.ReplaceText(text);
                     this.inputText = this.LeftText;
                 }
@@ -375,11 +381,12 @@ namespace Ntreev.Library.Commands.Shell
         private void ReplaceText(string text)
         {
             var index = this.Index;
-            using (var stream = Console.OpenStandardOutput())
-            {
-                var bytes = Console.OutputEncoding.GetBytes(text);
-                stream.Write(bytes, 0, bytes.Length);
-            }
+            //using (var stream = Console.OpenStandardOutput())
+            //{
+            //    var bytes = Console.OutputEncoding.GetBytes(text);
+            //    stream.Write(bytes, 0, bytes.Length);
+            //}
+			this.w.Write(text);
             this.Index = index;
         }
 
@@ -410,11 +417,6 @@ namespace Ntreev.Library.Commands.Shell
 
             if (this.isHidden == false)
             {
-                //using (var stream = Console.OpenStandardOutput())
-                //{
-                //    var bytes = Console.OutputEncoding.GetBytes(ch.ToString());
-                //    stream.Write(bytes, 0, bytes.Length);
-                //}
                 this.w.Write(ch);
             }
 
