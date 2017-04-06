@@ -38,17 +38,13 @@ using System.Runtime.InteropServices;
 
 namespace Ntreev.Library.Commands.Shell
 {
-	class Program
-	{
-		static void Main(string[] args)
-		{
-            var ss = "123".Remove(1);
-			//Console.Write(123);
-			//Console.SetCursorPosition(1, 0);
-			//Console.Write("\b");
-			var shell = Container.GetService<IShell>();
-			shell.Prompt = Directory.GetCurrentDirectory();
-			shell.Start();
-		}
-	}
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var shell = Container.GetService<IShell>();
+            shell.Prompt = Directory.GetCurrentDirectory();
+            shell.Start();
+        }
+    }
 }

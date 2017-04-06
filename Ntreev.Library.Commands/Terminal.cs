@@ -7,9 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Shell
+namespace Ntreev.Library.Commands
 {
-    class Terminal
+    public class Terminal
     {
         private static object lockobj = new object();
 
@@ -29,13 +29,13 @@ namespace Ntreev.Library.Commands.Shell
 
         public Terminal()
         {
-			if (Console.IsInputRedirected == true)
-				throw new Exception ("Terminal cannot use. Console.IsInputRedirected must be false");
+            if (Console.IsInputRedirected == true)
+                throw new Exception("Terminal cannot use. Console.IsInputRedirected must be false");
             this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.Escape, false, false, false), this.Clear);
-			if(Environment.OSVersion.Platform == PlatformID.Unix)
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
                 this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Backspace, false, false, false), this.Backspace);
-			else
-				this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
+            else
+                this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Delete, false, false, false), this.Delete);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, false), this.Home);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, true), this.DeleteToHome);
@@ -49,22 +49,22 @@ namespace Ntreev.Library.Commands.Shell
             this.actionMaps.Add(new ConsoleKeyInfo('\t', ConsoleKey.Tab, true, false, false), this.PrevCompletion);
         }
 
-        public string ReadLine(string prompt)
+        public string ReadString(string prompt)
         {
-            return ReadLine(prompt, string.Empty);
+            return ReadString(prompt, string.Empty);
         }
 
-        public string ReadLine(string prompt, bool isHidden)
+        public string ReadString(string prompt, bool isHidden)
         {
-            return this.ReadLine(prompt, string.Empty, isHidden);
+            return this.ReadString(prompt, string.Empty, isHidden);
         }
 
-        public string ReadLine(string prompt, string defaultText)
+        public string ReadString(string prompt, string defaultText)
         {
-            return this.ReadLine(prompt, defaultText, false);
+            return this.ReadString(prompt, defaultText, false);
         }
-        
-        public string ReadLine(string prompt, string defaultText, bool isHidden)
+
+        public string ReadString(string prompt, string defaultText, bool isHidden)
         {
             this.writer = Console.Out;
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
@@ -84,6 +84,17 @@ namespace Ntreev.Library.Commands.Shell
             }
         }
 
+        public SecureString ReadSecureString(string prompt)
+        {
+            var text = this.ReadString(prompt, true);
+            var secureString = new SecureString();
+            foreach (var item in text)
+            {
+                secureString.AppendChar(item);
+            }
+            return secureString;
+        }
+
         public void NextHistory()
         {
             if (this.historyIndex + 1 < this.histories.Count)
@@ -91,7 +102,7 @@ namespace Ntreev.Library.Commands.Shell
                 var text = this.histories[this.historyIndex + 1];
                 this.ClearText();
                 this.InsertText(text);
-                this.inputText = this.Text.Remove(this.Index);
+                this.inputText = this.LeftText;
                 this.historyIndex++;
             }
         }
@@ -117,36 +128,39 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
-                Console.CursorVisible = false;
-                this.ClearText();
-                this.inputText = this.LeftText;
-                Console.CursorVisible = true;
+                using (ConsoleVisible.Set(false))
+                {
+                    this.ClearText();
+                    this.inputText = this.LeftText;
+                }
             }
         }
-        
+
         public void Delete()
         {
             lock (lockobj)
             {
                 if (this.Index < this.Length)
                 {
-                    Console.CursorVisible = false;
-                    this.Index++;
-                    this.Backspace();
-                    this.inputText = this.LeftText;
-                    Console.CursorVisible = true;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        this.Index++;
+                        this.Backspace();
+                        this.inputText = this.LeftText;
+                    }
                 }
             }
-            
+
         }
 
         public void Home()
         {
             lock (lockobj)
             {
-                Console.CursorVisible = false;
-                this.Index = 0;
-                Console.CursorVisible = true;
+                using (ConsoleVisible.Set(false))
+                {
+                    this.Index = 0;
+                }
             }
         }
 
@@ -154,9 +168,10 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
-                Console.CursorVisible = false;
-                this.Index = this.Length;
-                Console.CursorVisible = true;
+                using (ConsoleVisible.Set(false))
+                {
+                    this.Index = this.Length;
+                }
             }
         }
 
@@ -166,10 +181,11 @@ namespace Ntreev.Library.Commands.Shell
             {
                 if (this.Index > 0)
                 {
-                    Console.CursorVisible = false;
-                    this.Index--;
-                    this.inputText = this.LeftText;
-                    Console.CursorVisible = true;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        this.Index--;
+                        this.inputText = this.LeftText;
+                    }
                 }
             }
         }
@@ -180,10 +196,11 @@ namespace Ntreev.Library.Commands.Shell
             {
                 if (this.Index + 1 < this.Length)
                 {
-                    Console.CursorVisible = false;
-                    this.Index++;
-                    this.inputText = this.LeftText;
-                    Console.CursorVisible = true;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        this.Index++;
+                        this.inputText = this.LeftText;
+                    }
                 }
             }
         }
@@ -194,27 +211,29 @@ namespace Ntreev.Library.Commands.Shell
             {
                 if (this.Index > 0)
                 {
-                    Console.CursorVisible = false;
-                    this.BackspaceImpl();
-                    this.inputText = this.LeftText;
-                    Console.CursorVisible = true;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        this.BackspaceImpl();
+                        this.inputText = this.LeftText;
+                    }
                 }
             }
         }
-        
+
         public void DeleteToEnd()
         {
             lock (lockobj)
             {
-                Console.CursorVisible = false;
-                var index = this.Index;
-                this.Index = this.Length;
-                while (this.Index > index)
+                using (ConsoleVisible.Set(false))
                 {
-                    this.BackspaceImpl();
+                    var index = this.Index;
+                    this.Index = this.Length;
+                    while (this.Index > index)
+                    {
+                        this.BackspaceImpl();
+                    }
+                    this.inputText = this.LeftText;
                 }
-                this.inputText = this.LeftText;
-                Console.CursorVisible = true;
             }
         }
 
@@ -222,13 +241,14 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
-                Console.CursorVisible = false;
-                while (this.Index > 0)
+                using (ConsoleVisible.Set(false))
                 {
-                    this.BackspaceImpl();
+                    while (this.Index > 0)
+                    {
+                        this.BackspaceImpl();
+                    }
+                    this.inputText = this.LeftText;
                 }
-                this.inputText = this.LeftText;
-                Console.CursorVisible = true;
             }
         }
 
@@ -245,10 +265,11 @@ namespace Ntreev.Library.Commands.Shell
                 var result = this.OnNextCompletion(items, text, find);
                 if (result != null)
                 {
-                    Console.CursorVisible = false;
-                    this.ClearText();
-                    this.InsertText(leftText + result);
-                    Console.CursorVisible = true;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        this.ClearText();
+                        this.InsertText(leftText + result);
+                    }
                 }
             }
         }
@@ -266,10 +287,11 @@ namespace Ntreev.Library.Commands.Shell
                 var result = this.OnPrevCompletion(items, text, find);
                 if (result != null)
                 {
-                    Console.CursorVisible = false;
-                    this.ClearText();
-                    this.InsertText(leftText + result);
-                    Console.CursorVisible = true;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        this.ClearText();
+                        this.InsertText(leftText + result);
+                    }
                 }
             }
         }
@@ -307,6 +329,70 @@ namespace Ntreev.Library.Commands.Shell
             }
         }
 
+        public static string NextCompletion(string[] items, string text)
+        {
+            items = items.OrderBy(item => item)
+                         .ToArray();
+            if (items.Contains(text) == true)
+            {
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r == 0)
+                    {
+                        if (i + 1 < items.Length)
+                            return items[i + 1];
+                        else
+                            return items.First();
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r < 0)
+                    {
+                        return items[i];
+                    }
+                }
+            }
+            return text;
+        }
+
+        public static string PrevCompletion(string[] items, string text)
+        {
+            items = items.OrderBy(item => item)
+                         .ToArray();
+            if (items.Contains(text) == true)
+            {
+                for (var i = items.Length - 1; i >= 0; i--)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r == 0)
+                    {
+                        if (i - 1 >= 0)
+                            return items[i - 1];
+                        else
+                            return items.Last();
+                    }
+                }
+            }
+            else
+            {
+                for (var i = items.Length - 1; i >= 0; i--)
+                {
+                    var r = string.Compare(text, items[i], true);
+                    if (r < 0)
+                    {
+                        return items[i];
+                    }
+                }
+            }
+            return text;
+        }
+
         protected virtual string OnNextCompletion(string[] items, string text, string find)
         {
             return null;
@@ -340,7 +426,7 @@ namespace Ntreev.Library.Commands.Shell
         private void ClearText()
         {
             this.Index = this.Length;
-            while(this.Index > 0)
+            while (this.Index > 0)
             {
                 this.BackspaceImpl();
             }
@@ -349,7 +435,7 @@ namespace Ntreev.Library.Commands.Shell
         private void ReplaceText(string text)
         {
             var index = this.Index;
-			this.writer.Write(text);
+            this.writer.Write(text);
             this.Index = index;
         }
 
@@ -535,21 +621,22 @@ namespace Ntreev.Library.Commands.Shell
             {
                 lock (lockobj)
                 {
-                    Console.CursorVisible = false;
-                    var oldIndex = this.prompter.Index;
-
-                    try
+                    using (ConsoleVisible.Set(false))
                     {
-                        this.WriteToStream(value);
-                    }
-                    finally
-                    {
-                        this.prompter.Index = oldIndex;
-                    }
+                        var oldIndex = this.prompter.Index;
 
-                    this.x = Console.CursorLeft;
-                    this.y = Console.CursorTop;
-                    Console.CursorVisible = true;
+                        try
+                        {
+                            this.WriteToStream(value);
+                        }
+                        finally
+                        {
+                            this.prompter.Index = oldIndex;
+                        }
+
+                        this.x = Console.CursorLeft;
+                        this.y = Console.CursorTop;
+                    }
                 }
             }
 
@@ -557,23 +644,24 @@ namespace Ntreev.Library.Commands.Shell
             {
                 lock (lockobj)
                 {
-                    Console.CursorVisible = false;
-                    var oldIndex = this.prompter.Index;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        var oldIndex = this.prompter.Index;
 
-                    try
-                    {
-                        foreach (var item in value)
+                        try
                         {
-                            this.WriteToStream(item);
+                            foreach (var item in value)
+                            {
+                                this.WriteToStream(item);
+                            }
                         }
+                        finally
+                        {
+                            this.prompter.Index = oldIndex;
+                        }
+                        this.x = Console.CursorLeft;
+                        this.y = Console.CursorTop;
                     }
-                    finally
-                    {
-                        this.prompter.Index = oldIndex;
-                    }
-                    this.x = Console.CursorLeft;
-                    this.y = Console.CursorTop;
-                    Console.CursorVisible = true;
                 }
             }
 
@@ -581,24 +669,25 @@ namespace Ntreev.Library.Commands.Shell
             {
                 lock (lockobj)
                 {
-                    Console.CursorVisible = false;
-                    var oldIndex = this.prompter.Index;
+                    using (ConsoleVisible.Set(false))
+                    {
+                        var oldIndex = this.prompter.Index;
 
-                    try
-                    {
-                        var text = value + Environment.NewLine;
-                        foreach (var item in text)
+                        try
                         {
-                            this.WriteToStream(item);
+                            var text = value + Environment.NewLine;
+                            foreach (var item in text)
+                            {
+                                this.WriteToStream(item);
+                            }
                         }
+                        finally
+                        {
+                            this.prompter.Index = oldIndex;
+                        }
+                        this.x = Console.CursorLeft;
+                        this.y = Console.CursorTop;
                     }
-                    finally
-                    {
-                        this.prompter.Index = oldIndex;
-                    }
-                    this.x = Console.CursorLeft;
-                    this.y = Console.CursorTop;
-                    Console.CursorVisible = true;
                 }
             }
 
@@ -628,17 +717,28 @@ namespace Ntreev.Library.Commands.Shell
             }
         }
 
-        static class ConsoleCursor
+        class ConsoleVisible : IDisposable
         {
-            public static void Push()
+            private readonly Stack<bool> stack = new Stack<bool>();
+
+            private ConsoleVisible()
             {
 
             }
 
-            public static void Pop()
+            public void Dispose()
             {
-
+                Console.CursorVisible = this.stack.Pop();
             }
+
+            public static ConsoleVisible Set(bool visible)
+            {
+                Default.stack.Push(Console.CursorVisible);
+                Console.CursorVisible = visible;
+                return Default;
+            }
+
+            private static ConsoleVisible Default = new ConsoleVisible();
         }
 
         #endregion

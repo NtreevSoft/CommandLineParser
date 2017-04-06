@@ -60,7 +60,6 @@
     <Compile Include="ShellDescriptionAttribute.cs" />
     <Compile Include="IShell.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Terminal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\AddCommand.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

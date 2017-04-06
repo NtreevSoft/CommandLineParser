@@ -75,6 +75,7 @@
     <Compile Include="CharWidth.cs" />
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandBase.cs" />
+    <Compile Include="CommandContextTerminal.cs" />
     <Compile Include="CommandLineParserCollection.cs" />
     <Compile Include="CommandCollection.cs" />
     <Compile Include="CommandContextBase.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="CommandParameterDescriptor.cs" />
     <Compile Include="CommandPropertyDescriptor.cs" />
     <Compile Include="TableDataBuilder.cs" />
+    <Compile Include="Terminal.cs" />
     <Compile Include="UsageDescriptionProvider.cs" />
     <Compile Include="IUsageDescriptionProvider.cs" />
     <Compile Include="UsageDescriptionProviderAttribute.cs" />

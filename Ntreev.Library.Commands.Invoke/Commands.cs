@@ -17,6 +17,7 @@ namespace Ntreev.Library.Commands.Invoke
 
         [CommandMethod("init")]
         [CommandStaticProperty(typeof(GlobalSettings))]
+        [CommandMethodProperty("Message", nameof(Message1))]
         public void Initialize(string path)
         {
             Console.WriteLine("{0} initialized.", path);
@@ -55,6 +56,12 @@ namespace Ntreev.Library.Commands.Invoke
 
         [CommandProperty(ShortName = 'm')]
         public string Message
+        {
+            get; set;
+        }
+
+        [CommandProperty(ShortName = 'q')]
+        public string Message1
         {
             get; set;
         }
