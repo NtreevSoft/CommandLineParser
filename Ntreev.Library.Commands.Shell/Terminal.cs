@@ -28,6 +28,8 @@ namespace Ntreev.Library.Commands.Shell
 
         public Terminal()
         {
+			if (Console.IsInputRedirected == true)
+				throw new Exception ("Terminal cannot use. Console.IsInputRedirected must be false");
             this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.Escape, false, false, false), this.Clear);
             this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Delete, false, false, false), this.Delete);
