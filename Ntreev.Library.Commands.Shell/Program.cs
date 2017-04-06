@@ -42,6 +42,7 @@ namespace Ntreev.Library.Commands.Shell
 	{
 		static void Main(string[] args)
 		{
+            var ss = "123".Remove(1);
 			//Console.Write(123);
 			//Console.SetCursorPosition(1, 0);
 			//Console.Write("\b");

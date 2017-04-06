@@ -22,9 +22,10 @@ namespace Ntreev.Library.Commands.Shell
         private int height = 1;
         private int index;
         private int start = 0;
+        private int historyIndex;
         private bool isHidden;
         private string inputText;
-        private int historyIndex;
+        private TextWriter writer;
 
         public Terminal()
         {
@@ -62,12 +63,10 @@ namespace Ntreev.Library.Commands.Shell
         {
             return this.ReadLine(prompt, defaultText, false);
         }
-
-        private TextWriter w;
+        
         public string ReadLine(string prompt, string defaultText, bool isHidden)
         {
-            var oldOut = Console.Out;
-            this.w = oldOut;
+            this.writer = Console.Out;
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
             Console.SetOut(new ConsoleTextWriter(Console.Out, this));
@@ -79,8 +78,9 @@ namespace Ntreev.Library.Commands.Shell
             finally
             {
                 Console.TreatControlCAsInput = oldTreatControlCAsInput;
-                Console.SetOut(oldOut);
+                Console.SetOut(this.writer);
                 Console.WriteLine();
+                this.writer = null;
             }
         }
 
@@ -91,7 +91,7 @@ namespace Ntreev.Library.Commands.Shell
                 var text = this.histories[this.historyIndex + 1];
                 this.ClearText();
                 this.InsertText(text);
-                this.inputText = this.LeftText;
+                this.inputText = this.Text.Remove(this.Index);
                 this.historyIndex++;
             }
         }
@@ -117,8 +117,10 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
+                Console.CursorVisible = false;
                 this.ClearText();
                 this.inputText = this.LeftText;
+                Console.CursorVisible = true;
             }
         }
         
@@ -128,18 +130,23 @@ namespace Ntreev.Library.Commands.Shell
             {
                 if (this.Index < this.Length)
                 {
+                    Console.CursorVisible = false;
                     this.Index++;
                     this.Backspace();
+                    this.inputText = this.LeftText;
+                    Console.CursorVisible = true;
                 }
             }
-            this.inputText = this.LeftText;
+            
         }
 
         public void Home()
         {
             lock (lockobj)
             {
-                this.Index = this.start;
+                Console.CursorVisible = false;
+                this.Index = 0;
+                Console.CursorVisible = true;
             }
         }
 
@@ -147,7 +154,9 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
+                Console.CursorVisible = false;
                 this.Index = this.Length;
+                Console.CursorVisible = true;
             }
         }
 
@@ -155,10 +164,12 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
-                if (this.Index > this.start)
+                if (this.Index > 0)
                 {
+                    Console.CursorVisible = false;
                     this.Index--;
                     this.inputText = this.LeftText;
+                    Console.CursorVisible = true;
                 }
             }
         }
@@ -167,8 +178,13 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
-                this.Index++;
-                this.inputText = this.LeftText;
+                if (this.Index + 1 < this.Length)
+                {
+                    Console.CursorVisible = false;
+                    this.Index++;
+                    this.inputText = this.LeftText;
+                    Console.CursorVisible = true;
+                }
             }
         }
 
@@ -176,30 +192,29 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
-                if (this.Index > this.start)
+                if (this.Index > 0)
                 {
-                    var text = this.RightText;
-					var index = this.Index;
-					this.Index = this.Length;
-                    var space = this.RightSpace;
-                    //this.ReplaceText(space);
-					this.w.Write('\b');
-					this.chars.RemoveAt(index);
-					this.index--;
-                    this.ReplaceText(text);
+                    Console.CursorVisible = false;
+                    this.BackspaceImpl();
                     this.inputText = this.LeftText;
+                    Console.CursorVisible = true;
                 }
             }
         }
-
+        
         public void DeleteToEnd()
         {
             lock (lockobj)
             {
-                var sapce = this.RightSpace;
-                this.ReplaceText(sapce);
-                this.chars.RemoveRange(this.Index, this.Length - this.Index);
+                Console.CursorVisible = false;
+                var index = this.Index;
+                this.Index = this.Length;
+                while (this.Index > index)
+                {
+                    this.BackspaceImpl();
+                }
                 this.inputText = this.LeftText;
+                Console.CursorVisible = true;
             }
         }
 
@@ -207,10 +222,13 @@ namespace Ntreev.Library.Commands.Shell
         {
             lock (lockobj)
             {
-                var text = this.RightText;
-                this.ClearText();
-                this.InsertText(text);
-                this.Index = start;
+                Console.CursorVisible = false;
+                while (this.Index > 0)
+                {
+                    this.BackspaceImpl();
+                }
+                this.inputText = this.LeftText;
+                Console.CursorVisible = true;
             }
         }
 
@@ -256,6 +274,39 @@ namespace Ntreev.Library.Commands.Shell
             }
         }
 
+        public int Index
+        {
+            get
+            {
+                return this.index - this.start;
+            }
+            set
+            {
+                if (value < 0 || value > this.Length)
+                    return;
+                var x = 0;
+                for (var i = 0; i < value + this.start; i++)
+                {
+                    x += this.chars[i].Slot;
+                }
+                Console.SetCursorPosition(x % Console.BufferWidth, x / Console.BufferWidth + y);
+                this.index = value + this.start;
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
+                var text = string.Empty;
+                for (var i = 0; i < this.Length; i++)
+                {
+                    text += this.chars[i + this.start].Char;
+                }
+                return text;
+            }
+        }
+
         protected virtual string OnNextCompletion(string[] items, string text, string find)
         {
             return null;
@@ -273,140 +324,52 @@ namespace Ntreev.Library.Commands.Shell
             this.Index = this.Length;
         }
 
-        private int Index
-        {
-            get
-            {
-                return this.index;
-            }
-            set
-            {
-                if (value < 0 || value > this.Length)
-                    return;
-                var x = 0;
-                for (var i = 0; i < value; i++)
-                {
-                    x += this.chars[i].Slot;
-                }
-                Console.SetCursorPosition(x % Console.BufferWidth, x / Console.BufferWidth + y);
-                this.index = value;
-            }
-        }
-
         private int Length
         {
-            get { return this.chars.Count; }
-        }
-
-        private string RightText
-        {
-            get
-            {
-                var text = string.Empty;
-                for (var i = this.index; i < this.Length; i++)
-                {
-                    text += this.chars[i].Char;
-                }
-                return text;
-            }
+            get { return this.chars.Count - this.start; }
         }
 
         private string LeftText
         {
             get
             {
-                var text = string.Empty;
-                for (var i = this.start; i < this.index; i++)
-                {
-                    text += this.chars[i].Char;
-                }
-                return text;
-            }
-        }
-
-        public string Text
-        {
-            get
-            {
-                var text = string.Empty;
-                for (var i = this.start; i < this.Length; i++)
-                {
-                    text += this.chars[i].Char;
-                }
-                return text;
-            }
-        }
-
-        private string RightSpace
-        {
-            get
-            {
-                var count = 0;
-                for (var i = this.index; i < this.Length; i++)
-                {
-                    count += this.chars[i].Slot;
-                }
-                if (count == 0)
-                    return string.Empty;
-                return "\0".PadRight(count);
-            }
-        }
-
-        private string Space
-        {
-            get
-            {
-                var count = 0;
-                for (var i = 0; i < this.Length; i++)
-                {
-                    count += this.chars[i].Slot;
-                }
-                if (count == 0)
-                    return string.Empty;
-                return "\0".PadRight(count);
+                return this.Text.Remove(this.Index, this.Text.Length - this.Index);
             }
         }
 
         private void ClearText()
         {
-            var space = this.Space;
-            this.Index = this.start;
-            this.ReplaceText(space);
-            while (this.Length > this.start)
+            this.Index = this.Length;
+            while(this.Index > 0)
             {
-                this.chars.RemoveAt(this.Length - 1);
+                this.BackspaceImpl();
             }
         }
 
         private void ReplaceText(string text)
         {
             var index = this.Index;
-            //using (var stream = Console.OpenStandardOutput())
-            //{
-            //    var bytes = Console.OutputEncoding.GetBytes(text);
-            //    stream.Write(bytes, 0, bytes.Length);
-            //}
-			this.w.Write(text);
+			this.writer.Write(text);
             this.Index = index;
         }
 
         private void InsertText(string text)
         {
-            var rightText = this.RightText;
+            var text2 = this.Text.Substring(this.Index);
             foreach (var item in text)
             {
                 this.InsertChar(item);
             }
-            this.ReplaceText(rightText);
+            this.ReplaceText(text2);
         }
 
         private void InsertText(char ch)
         {
             lock (lockobj)
             {
-                var rightText = this.RightText;
+                var text = this.Text.Substring(this.Index);
                 this.InsertChar(ch);
-                this.ReplaceText(rightText);
+                this.ReplaceText(text);
             }
         }
 
@@ -417,7 +380,7 @@ namespace Ntreev.Library.Commands.Shell
 
             if (this.isHidden == false)
             {
-                this.w.Write(ch);
+                this.writer.Write(ch);
             }
 
             var x2 = Console.CursorLeft;
@@ -451,7 +414,19 @@ namespace Ntreev.Library.Commands.Shell
                 });
             }
         }
-        
+
+        private void BackspaceImpl()
+        {
+            var text = this.Text.Substring(this.Index);
+            var inputIndex = this.Index;
+            this.Index = this.Length;
+            this.writer.Write("\b\0");
+            this.Index = inputIndex;
+            this.Index--;
+            this.chars.RemoveAt(this.index);
+            this.ReplaceText(text);
+        }
+
         private string ReadLineImpl(string prompt, string defaultText, bool isHidden)
         {
             lock (lockobj)
@@ -626,49 +601,6 @@ namespace Ntreev.Library.Commands.Shell
                     Console.CursorVisible = true;
                 }
             }
-
-            //private void WriteImpl(char ch)
-            //{
-            //    this.writer.Write(ch);
-            //}
-
-            //private System.Tuple<int, int> Insert(int x, int y, string text, TextWriter writer)
-            //{
-            //    var oldIndex = this.prompter.Index;
-
-            //    foreach (var item in text)
-            //    {
-            //        var re = this.WriteToStream(x, y, item, writer);
-            //        x = re.Item1;
-            //        y = re.Item2;
-            //    }
-
-            //    try
-            //    {
-            //        return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
-            //    }
-            //    finally
-            //    {
-            //        this.prompter.Index = oldIndex;
-            //    }
-            //}
-
-            //private System.Tuple<int, int> Insert(int x, int y, char ch, TextWriter writer)
-            //{
-            //    var oldIndex = this.prompter.Index;
-
-            //    var re = this.WriteToStream(x, y, ch, writer);
-            //    x = re.Item1;
-            //    y = re.Item2;
-            //    try
-            //    {
-            //        return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
-            //    }
-            //    finally
-            //    {
-            //        this.prompter.Index = oldIndex;
-            //    }
-            //}
 
             private void WriteToStream(char ch)
             {
