@@ -58,9 +58,11 @@ namespace Ntreev.Library.Commands.Shell
             return this.ReadLine(prompt, defaultText, false);
         }
 
+        private TextWriter w;
         public string ReadLine(string prompt, string defaultText, bool isHidden)
         {
             var oldOut = Console.Out;
+            this.w = oldOut;
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
             Console.SetOut(new ConsoleTextWriter(Console.Out, this));
@@ -338,7 +340,7 @@ namespace Ntreev.Library.Commands.Shell
                 }
                 if (count == 0)
                     return string.Empty;
-                return " ".PadRight(count);
+                return "\0".PadRight(count);
             }
         }
 
@@ -353,7 +355,7 @@ namespace Ntreev.Library.Commands.Shell
                 }
                 if (count == 0)
                     return string.Empty;
-                return " ".PadRight(count);
+                return "\0".PadRight(count);
             }
         }
 
@@ -406,11 +408,12 @@ namespace Ntreev.Library.Commands.Shell
 
             if (this.isHidden == false)
             {
-                using (var stream = Console.OpenStandardOutput())
-                {
-                    var bytes = Console.OutputEncoding.GetBytes(ch.ToString());
-                    stream.Write(bytes, 0, bytes.Length);
-                }
+                //using (var stream = Console.OpenStandardOutput())
+                //{
+                //    var bytes = Console.OutputEncoding.GetBytes(ch.ToString());
+                //    stream.Write(bytes, 0, bytes.Length);
+                //}
+                this.w.Write(ch);
             }
 
             var x2 = Console.CursorLeft;
@@ -444,81 +447,7 @@ namespace Ntreev.Library.Commands.Shell
                 });
             }
         }
-
-        private System.Tuple<int, int> Insert(int x, int y, string text)
-        {
-            var oldIndex = this.Index;
-
-            foreach (var item in text)
-            {
-                var re = this.WriteToStream(x, y, item);
-                x = re.Item1;
-                y = re.Item2;
-            }
-
-            try
-            {
-                return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
-            }
-            finally
-            {
-                this.Index = oldIndex;
-            }
-        }
-
-        private System.Tuple<int, int> Insert(int x, int y, char ch)
-        {
-            var oldIndex = this.Index;
-
-            var re = this.WriteToStream(x, y, ch);
-            x = re.Item1;
-            y = re.Item2;
-            try
-            {
-                return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
-            }
-            finally
-            {
-                this.Index = oldIndex;
-            }
-        }
-
-        private System.Tuple<int, int> WriteToStream(int x, int y, char ch)
-        {
-            var x1 = Console.CursorLeft;
-            var y1 = Console.CursorTop;
-
-            if (y == this.y)
-            {
-                if (this.y + this.height == Console.BufferHeight)
-                {
-                    Console.MoveBufferArea(0, 1, Console.BufferWidth, this.y - 1, 0, 0);
-                    y -= this.height;
-                }
-                else
-                {
-                    var x2 = Console.CursorLeft;
-                    var y2 = Console.CursorTop;
-                    this.ShiftDown();
-                    Console.SetCursorPosition(x2, y2);
-                }
-            }
-
-            Console.SetCursorPosition(x, y);
-            this.WriteToStream(ch);
-
-            return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
-        }
-
-        private void WriteToStream(char ch)
-        {
-            using (var stream = Console.OpenStandardOutput())
-            {
-                var bytes = Console.OutputEncoding.GetBytes(ch.ToString());
-                stream.Write(bytes, 0, bytes.Length);
-            }
-        }
-
+        
         private string ReadLineImpl(string prompt, string defaultText, bool isHidden)
         {
             lock (lockobj)
@@ -543,7 +472,9 @@ namespace Ntreev.Library.Commands.Shell
                 else if (key.Key == ConsoleKey.Enter)
                 {
                     var text = this.Text;
-                    this.Index = this.start;
+                    this.Index = this.Length;
+                    var x = Console.CursorLeft;
+                    var y = Console.CursorTop;
                     this.chars.Clear();
                     this.start = 0;
                     this.index = 0;
@@ -555,6 +486,7 @@ namespace Ntreev.Library.Commands.Shell
                         if (this.historyIndex != this.histories.Count)
                             this.historyIndex++;
                     }
+                    Console.SetCursorPosition(x, y);
                     return text;
                 }
                 else if (key.KeyChar != '\0')
@@ -602,12 +534,14 @@ namespace Ntreev.Library.Commands.Shell
 
         class ConsoleTextWriter : TextWriter
         {
+            private readonly TextWriter writer;
             private readonly Terminal prompter;
             private int x;
             private int y;
 
             public ConsoleTextWriter(TextWriter writer, Terminal prompter)
             {
+                this.writer = writer;
                 this.prompter = prompter;
                 this.x = Console.CursorLeft;
                 this.y = Console.CursorTop;
@@ -623,9 +557,19 @@ namespace Ntreev.Library.Commands.Shell
                 lock (lockobj)
                 {
                     Console.CursorVisible = false;
-                    var re = this.prompter.Insert(this.x, this.y, value);
-                    this.x = re.Item1;
-                    this.y = re.Item2;
+                    var oldIndex = this.prompter.Index;
+
+                    try
+                    {
+                        this.WriteToStream(value);
+                    }
+                    finally
+                    {
+                        this.prompter.Index = oldIndex;
+                    }
+
+                    this.x = Console.CursorLeft;
+                    this.y = Console.CursorTop;
                     Console.CursorVisible = true;
                 }
             }
@@ -635,9 +579,21 @@ namespace Ntreev.Library.Commands.Shell
                 lock (lockobj)
                 {
                     Console.CursorVisible = false;
-                    var re = this.prompter.Insert(this.x, this.y, value);
-                    this.x = re.Item1;
-                    this.y = re.Item2;
+                    var oldIndex = this.prompter.Index;
+
+                    try
+                    {
+                        foreach (var item in value)
+                        {
+                            this.WriteToStream(item);
+                        }
+                    }
+                    finally
+                    {
+                        this.prompter.Index = oldIndex;
+                    }
+                    this.x = Console.CursorLeft;
+                    this.y = Console.CursorTop;
                     Console.CursorVisible = true;
                 }
             }
@@ -647,19 +603,106 @@ namespace Ntreev.Library.Commands.Shell
                 lock (lockobj)
                 {
                     Console.CursorVisible = false;
-                    var re = this.prompter.Insert(this.x, this.y, value + Environment.NewLine);
-                    this.x = re.Item1;
-                    this.y = re.Item2;
+                    var oldIndex = this.prompter.Index;
+
+                    try
+                    {
+                        var text = value + Environment.NewLine;
+                        foreach (var item in text)
+                        {
+                            this.WriteToStream(item);
+                        }
+                    }
+                    finally
+                    {
+                        this.prompter.Index = oldIndex;
+                    }
+                    this.x = Console.CursorLeft;
+                    this.y = Console.CursorTop;
                     Console.CursorVisible = true;
                 }
             }
+
+            //private void WriteImpl(char ch)
+            //{
+            //    this.writer.Write(ch);
+            //}
+
+            //private System.Tuple<int, int> Insert(int x, int y, string text, TextWriter writer)
+            //{
+            //    var oldIndex = this.prompter.Index;
+
+            //    foreach (var item in text)
+            //    {
+            //        var re = this.WriteToStream(x, y, item, writer);
+            //        x = re.Item1;
+            //        y = re.Item2;
+            //    }
+
+            //    try
+            //    {
+            //        return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
+            //    }
+            //    finally
+            //    {
+            //        this.prompter.Index = oldIndex;
+            //    }
+            //}
+
+            //private System.Tuple<int, int> Insert(int x, int y, char ch, TextWriter writer)
+            //{
+            //    var oldIndex = this.prompter.Index;
+
+            //    var re = this.WriteToStream(x, y, ch, writer);
+            //    x = re.Item1;
+            //    y = re.Item2;
+            //    try
+            //    {
+            //        return new Tuple<int, int>(Console.CursorLeft, Console.CursorTop);
+            //    }
+            //    finally
+            //    {
+            //        this.prompter.Index = oldIndex;
+            //    }
+            //}
+
+            private void WriteToStream(char ch)
+            {
+                var x1 = Console.CursorLeft;
+                var y1 = Console.CursorTop;
+
+                if (this.y == this.prompter.y)
+                {
+                    if (this.prompter.y + this.prompter.height == Console.BufferHeight)
+                    {
+                        Console.MoveBufferArea(0, 1, Console.BufferWidth, this.prompter.y - 1, 0, 0);
+                        this.y -= this.prompter.height;
+                    }
+                    else
+                    {
+                        var x2 = Console.CursorLeft;
+                        var y2 = Console.CursorTop;
+                        this.prompter.ShiftDown();
+                        Console.SetCursorPosition(x2, y2);
+                    }
+                }
+
+                Console.SetCursorPosition(this.x, this.y);
+                this.writer.Write(ch);
+            }
         }
 
-        enum CompletionState
+        static class ConsoleCursor
         {
-            None,
+            public static void Push()
+            {
 
-            Completed,
+            }
+
+            public static void Pop()
+            {
+
+            }
         }
 
         #endregion
