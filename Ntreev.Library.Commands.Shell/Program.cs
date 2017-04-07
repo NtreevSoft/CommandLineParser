@@ -42,6 +42,8 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
+            var terminal = new Terminal();
+            terminal.ReadSecureString("wer:");
             var shell = Container.GetService<IShell>();
             shell.Prompt = Directory.GetCurrentDirectory();
             shell.Start();

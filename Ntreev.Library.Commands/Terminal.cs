@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -128,7 +127,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                using (ConsoleVisible.Set(false))
+                using (TerminalCursorVisible.Set(false))
                 {
                     this.ClearText();
                     this.inputText = this.LeftText;
@@ -142,7 +141,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.Index < this.Length)
                 {
-                    using (ConsoleVisible.Set(false))
+                    using (TerminalCursorVisible.Set(false))
                     {
                         this.Index++;
                         this.Backspace();
@@ -157,7 +156,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                using (ConsoleVisible.Set(false))
+                using (TerminalCursorVisible.Set(false))
                 {
                     this.Index = 0;
                 }
@@ -168,7 +167,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                using (ConsoleVisible.Set(false))
+                using (TerminalCursorVisible.Set(false))
                 {
                     this.Index = this.Length;
                 }
@@ -181,7 +180,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.Index > 0)
                 {
-                    using (ConsoleVisible.Set(false))
+                    using (TerminalCursorVisible.Set(false))
                     {
                         this.Index--;
                         this.inputText = this.LeftText;
@@ -196,7 +195,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.Index + 1 < this.Length)
                 {
-                    using (ConsoleVisible.Set(false))
+                    using (TerminalCursorVisible.Set(false))
                     {
                         this.Index++;
                         this.inputText = this.LeftText;
@@ -211,7 +210,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.Index > 0)
                 {
-                    using (ConsoleVisible.Set(false))
+                    using (TerminalCursorVisible.Set(false))
                     {
                         this.BackspaceImpl();
                         this.inputText = this.LeftText;
@@ -224,7 +223,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                using (ConsoleVisible.Set(false))
+                using (TerminalCursorVisible.Set(false))
                 {
                     var index = this.Index;
                     this.Index = this.Length;
@@ -241,7 +240,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                using (ConsoleVisible.Set(false))
+                using (TerminalCursorVisible.Set(false))
                 {
                     while (this.Index > 0)
                     {
@@ -262,15 +261,25 @@ namespace Ntreev.Library.Commands
                 var leftText = this.inputText.Substring(0, this.inputText.Length - find.Length);
                 var text = args.LastOrDefault() ?? string.Empty;
                 var items = SplitAll(leftText).Select(i => i.Trim()).Where(i => i != string.Empty).ToArray();
-                var result = this.OnNextCompletion(items, text, find);
-                if (result != null)
+                var completions = this.GetCompletion(items, find);
+                if (completions != null && completions.Any())
                 {
-                    using (ConsoleVisible.Set(false))
+                    var completion = NextCompletion(completions, text);
+                    using (TerminalCursorVisible.Set(false))
                     {
                         this.ClearText();
-                        this.InsertText(leftText + result);
+                        this.InsertText(leftText + completion);
                     }
                 }
+                //var result = this.OnNextCompletion(items, text, find);
+                //if (result != null)
+                //{
+                //    using (TerminalCursorVisible.Set(false))
+                //    {
+                //        this.ClearText();
+                //        this.InsertText(leftText + result);
+                //    }
+                //}
             }
         }
 
@@ -284,13 +293,14 @@ namespace Ntreev.Library.Commands
                 var leftText = this.inputText.Substring(0, this.inputText.Length - find.Length);
                 var text = args.LastOrDefault() ?? string.Empty;
                 var items = SplitAll(leftText).Select(i => i.Trim()).Where(i => i != string.Empty).ToArray();
-                var result = this.OnPrevCompletion(items, text, find);
-                if (result != null)
+                var completions = this.GetCompletion(items, find);
+                if (completions != null && completions.Any())
                 {
-                    using (ConsoleVisible.Set(false))
+                    var completion = PrevCompletion(completions, text);
+                    using (TerminalCursorVisible.Set(false))
                     {
                         this.ClearText();
-                        this.InsertText(leftText + result);
+                        this.InsertText(leftText + completion);
                     }
                 }
             }
@@ -329,79 +339,84 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public static string NextCompletion(string[] items, string text)
+        public static string NextCompletion(string[] completions, string text)
         {
-            items = items.OrderBy(item => item)
+            completions = completions.OrderBy(item => item)
                          .ToArray();
-            if (items.Contains(text) == true)
+            if (completions.Contains(text) == true)
             {
-                for (var i = 0; i < items.Length; i++)
+                for (var i = 0; i < completions.Length; i++)
                 {
-                    var r = string.Compare(text, items[i], true);
+                    var r = string.Compare(text, completions[i], true);
                     if (r == 0)
                     {
-                        if (i + 1 < items.Length)
-                            return items[i + 1];
+                        if (i + 1 < completions.Length)
+                            return completions[i + 1];
                         else
-                            return items.First();
+                            return completions.First();
                     }
                 }
             }
             else
             {
-                for (var i = 0; i < items.Length; i++)
+                for (var i = 0; i < completions.Length; i++)
                 {
-                    var r = string.Compare(text, items[i], true);
+                    var r = string.Compare(text, completions[i], true);
                     if (r < 0)
                     {
-                        return items[i];
+                        return completions[i];
                     }
                 }
             }
             return text;
         }
 
-        public static string PrevCompletion(string[] items, string text)
+        public static string PrevCompletion(string[] completions, string text)
         {
-            items = items.OrderBy(item => item)
+            completions = completions.OrderBy(item => item)
                          .ToArray();
-            if (items.Contains(text) == true)
+            if (completions.Contains(text) == true)
             {
-                for (var i = items.Length - 1; i >= 0; i--)
+                for (var i = completions.Length - 1; i >= 0; i--)
                 {
-                    var r = string.Compare(text, items[i], true);
+                    var r = string.Compare(text, completions[i], true);
                     if (r == 0)
                     {
                         if (i - 1 >= 0)
-                            return items[i - 1];
+                            return completions[i - 1];
                         else
-                            return items.Last();
+                            return completions.Last();
                     }
                 }
             }
             else
             {
-                for (var i = items.Length - 1; i >= 0; i--)
+                for (var i = completions.Length - 1; i >= 0; i--)
                 {
-                    var r = string.Compare(text, items[i], true);
+                    var r = string.Compare(text, completions[i], true);
                     if (r < 0)
                     {
-                        return items[i];
+                        return completions[i];
                     }
                 }
             }
             return text;
         }
 
-        protected virtual string OnNextCompletion(string[] items, string text, string find)
+        protected virtual string[] GetCompletion(string[] items, string find)
         {
             return null;
         }
 
-        protected virtual string OnPrevCompletion(string[] items, string text, string find)
-        {
-            return null;
-        }
+        //protected virtual string OnNextCompletion(string[] items, string text, string find)
+        //{
+        //    return null;
+        //}
+
+        //protected virtual string OnPrevCompletion(string[] items, string text, string find)
+        //{
+        //    return null;
+        //}
 
         private void ShiftDown()
         {
@@ -506,7 +521,8 @@ namespace Ntreev.Library.Commands
             var text = this.Text.Substring(this.Index);
             var inputIndex = this.Index;
             this.Index = this.Length;
-            this.writer.Write("\b\0");
+            if (this.isHidden == false)
+                this.writer.Write("\b\0");
             this.Index = inputIndex;
             this.Index--;
             this.chars.RemoveAt(this.index);
@@ -621,7 +637,7 @@ namespace Ntreev.Library.Commands
             {
                 lock (lockobj)
                 {
-                    using (ConsoleVisible.Set(false))
+                    using (TerminalCursorVisible.Set(false))
                     {
                         var oldIndex = this.prompter.Index;
 
@@ -633,9 +649,6 @@ namespace Ntreev.Library.Commands
                         {
                             this.prompter.Index = oldIndex;
                         }
-
-                        this.x = Console.CursorLeft;
-                        this.y = Console.CursorTop;
                     }
                 }
             }
@@ -644,7 +657,7 @@ namespace Ntreev.Library.Commands
             {
                 lock (lockobj)
                 {
-                    using (ConsoleVisible.Set(false))
+                    using (TerminalCursorVisible.Set(false))
                     {
                         var oldIndex = this.prompter.Index;
 
@@ -659,8 +672,6 @@ namespace Ntreev.Library.Commands
                         {
                             this.prompter.Index = oldIndex;
                         }
-                        this.x = Console.CursorLeft;
-                        this.y = Console.CursorTop;
                     }
                 }
             }
@@ -669,7 +680,7 @@ namespace Ntreev.Library.Commands
             {
                 lock (lockobj)
                 {
-                    using (ConsoleVisible.Set(false))
+                    using (TerminalCursorVisible.Set(false))
                     {
                         var oldIndex = this.prompter.Index;
 
@@ -685,8 +696,6 @@ namespace Ntreev.Library.Commands
                         {
                             this.prompter.Index = oldIndex;
                         }
-                        this.x = Console.CursorLeft;
-                        this.y = Console.CursorTop;
                     }
                 }
             }
@@ -714,31 +723,9 @@ namespace Ntreev.Library.Commands
 
                 Console.SetCursorPosition(this.x, this.y);
                 this.writer.Write(ch);
+                this.x = Console.CursorLeft;
+                this.y = Console.CursorTop;
             }
-        }
-
-        class ConsoleVisible : IDisposable
-        {
-            private readonly Stack<bool> stack = new Stack<bool>();
-
-            private ConsoleVisible()
-            {
-
-            }
-
-            public void Dispose()
-            {
-                Console.CursorVisible = this.stack.Pop();
-            }
-
-            public static ConsoleVisible Set(bool visible)
-            {
-                Default.stack.Push(Console.CursorVisible);
-                Console.CursorVisible = visible;
-                return Default;
-            }
-
-            private static ConsoleVisible Default = new ConsoleVisible();
         }
 
         #endregion

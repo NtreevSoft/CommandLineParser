@@ -12,6 +12,8 @@ namespace Ntreev.Library.Commands
         private readonly CommandContextBase commandContext;
         private bool isCancellationRequested;
         private string prompt;
+        private string prefix;
+        private string postfix;
 
         public CommandContextTerminal(CommandContextBase commandContext)
         {
@@ -28,6 +30,24 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public string Prefix
+        {
+            get { return this.prefix ?? string.Empty; }
+            set
+            {
+                this.prefix = value;
+            }
+        }
+
+        public string Postfix
+        {
+            get { return this.postfix ?? string.Empty; }
+            set
+            {
+                this.postfix = value;
+            }
+        }
+
         public void Cancel()
         {
             this.isCancellationRequested = true;
@@ -37,7 +57,7 @@ namespace Ntreev.Library.Commands
         {
             string line;
 
-            while ((line = this.ReadString(this.Prompt + ">")) != null)
+            while ((line = this.ReadString(this.Prefix + this.Prompt + this.Postfix)) != null)
             {
                 try
                 {
@@ -57,38 +77,39 @@ namespace Ntreev.Library.Commands
             get { return this.isCancellationRequested; }
         }
 
-        protected override string OnNextCompletion(string[] items, string text, string find)
+        protected override string[] GetCompletion(string[] items, string find)
         {
             if (items.Length == 0)
             {
-                var commandNames = this.commandContext.Commands.Select(item => item.Name)
-                                                               .Where(item => item.StartsWith(find))
-                                                               .OrderBy(item => item)
-                                                               .ToArray();
-                return NextCompletion(commandNames, text);
+                var query = from item in this.commandContext.Commands
+                            let name = item.Name
+                            where name.StartsWith(find)
+                            select name;
+                return query.ToArray();
             }
             else if (items.Length == 1)
             {
                 var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
-                if (commandNames.Contains(items[0]) == true)
+                var commandName = items[0];
+                if (commandNames.Contains(commandName) == true)
                 {
-                    var command = this.commandContext.Commands[items[0]];
+                    var command = this.commandContext.Commands[commandName];
                     if (this.commandContext.IsCommandVisible(command) == true)
                     {
                         if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
                         {
-                            var methodNames = CommandDescriptor.GetMethodDescriptors(command).Select(item => item.Name)
-                                                                                             .Where(item => item.StartsWith(find))
-                                                                                             .OrderBy(item => item)
-                                                                                             .ToArray();
-                            return NextCompletion(methodNames, text);
+                            var query = from item in CommandDescriptor.GetMethodDescriptors(command)
+                                        let name = item.Name
+                                        where name.StartsWith(find)
+                                        select name;
+                            return query.ToArray();
                         }
                         else
                         {
-                            var completions = this.GetCompletions(command);
+                            var completions = this.GetCompletions(command, string.Empty, find);
                             if (completions != null)
                             {
-                                return NextCompletion(completions, text);
+                                return completions;
                             }
                         }
                     }
@@ -98,48 +119,7 @@ namespace Ntreev.Library.Commands
             return null;
         }
 
-        protected override string OnPrevCompletion(string[] items, string text, string find)
-        {
-            if (items.Length == 0)
-            {
-                var commandNames = this.commandContext.Commands.Select(item => item.Name)
-                                                               .Where(item => item.StartsWith(find))
-                                                               .OrderBy(item => item)
-                                                               .ToArray();
-                return PrevCompletion(commandNames, text);
-            }
-            else if (items.Length == 1)
-            {
-                var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
-                if (commandNames.Contains(items[0]) == true)
-                {
-                    var command = this.commandContext.Commands[items[0]];
-                    if (this.commandContext.IsCommandVisible(command) == true)
-                    {
-                        if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
-                        {
-                            var methodNames = CommandDescriptor.GetMethodDescriptors(command).Select(item => item.Name)
-                                                                                             .Where(item => item.StartsWith(find))
-                                                                                             .OrderBy(item => item)
-                                                                                             .ToArray();
-                            return PrevCompletion(methodNames, text);
-                        }
-                        else
-                        {
-                            var completions = this.GetCompletions(command);
-                            if (completions != null)
-                            {
-                                return PrevCompletion(completions, text);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        protected virtual string[] GetCompletions(ICommand command)
+        protected virtual string[] GetCompletions(ICommand command, string methodName, string find)
         {
             return null;
         }
