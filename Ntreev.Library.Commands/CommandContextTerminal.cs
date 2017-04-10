@@ -18,7 +18,7 @@ namespace Ntreev.Library.Commands
         public CommandContextTerminal(CommandContextBase commandContext)
         {
             this.commandContext = commandContext;
-            this.commandContext.Name = string.Empty;
+            //this.commandContext.Name = string.Empty;
         }
 
         public string Prompt

@@ -37,6 +37,8 @@ namespace Ntreev.Library.Commands
 {
     public partial class CommandLineParser
     {
+        private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"(?=\\s)|\\S+)";
+        private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"(?=\\s)|\\S+|\\s+$)";
         private readonly string name;
         private readonly object instance;
         private Version version;
@@ -61,17 +63,15 @@ namespace Ntreev.Library.Commands
 
         public bool Parse(string commandLine)
         {
-            var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
-            var name = match.Value.Trim(new char[] { '\"', });
+            var arguments = CommandLineParser.Split(commandLine);
+            var name = arguments[0];
 
             if (File.Exists(name) == true)
                 name = Process.GetCurrentProcess().ProcessName;
-
             if (this.name != name)
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
-            var arguments = commandLine.Substring(match.Length).Trim();
-            var items = CommandLineParser.Split(arguments);
+            var items = CommandLineParser.Split(arguments[1]);
 
             if (items[0] == this.HelpName)
             {
@@ -90,31 +90,23 @@ namespace Ntreev.Library.Commands
             {
                 var descriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberVisible(item));
                 var helper = new ParseDescriptor(descriptors);
-                helper.Parse(this.instance, arguments);
+                helper.Parse(this.instance, arguments[1]);
                 return true;
             }
         }
 
         public bool Invoke(string commandLine)
         {
-            var cmdLine = commandLine;
-
-            var regex = new Regex(@"^((""[^""]*"")|(\S+))");
-            var match = regex.Match(cmdLine);
-            var name = match.Value.Trim(new char[] { '\"', });
+            var arguments = CommandLineParser.Split(commandLine);
+            var name = arguments[0];
 
             if (File.Exists(name) == true)
                 name = Process.GetCurrentProcess().ProcessName;
-
             if (this.name != name)
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
-            cmdLine = cmdLine.Substring(match.Length).Trim();
-            match = regex.Match(cmdLine);
-            var method = match.Value;
-
-            var arguments = cmdLine.Substring(match.Length).Trim();
-            var items = CommandLineParser.Split(arguments);
+            var arguments1 = CommandLineParser.Split(arguments[1]);
+            var method = arguments1[0];
 
             if (string.IsNullOrEmpty(method) == true)
             {
@@ -123,11 +115,12 @@ namespace Ntreev.Library.Commands
             }
             else if (method == this.HelpName)
             {
-                if (arguments == string.Empty)
+                var items = CommandLineParser.Split(arguments1[1]);
+                if (arguments1[1] == string.Empty)
                     this.PrintMethodUsage();
-                else if(items[1] == string.Empty)
-                    this.PrintMethodUsage(arguments);
-                else 
+                else if (items[1] == string.Empty)
+                    this.PrintMethodUsage(arguments1[1]);
+                else
                     this.PrintMethodUsage(items[0], items[1]);
                 return false;
             }
@@ -139,13 +132,10 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
-
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
-
                 var visibleDescriptors = descriptor.Members.Where(item => this.IsMemberVisible(item));
-
-                Invoke(this.instance, arguments, descriptor.MethodInfo, visibleDescriptors);
+                Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors);
                 return true;
             }
         }
@@ -165,8 +155,8 @@ namespace Ntreev.Library.Commands
         {
             var descriptor = CommandDescriptor.GetMemberDescriptors(this.instance)
                                               .Where(item => this.IsMemberVisible(item))
-                                              .FirstOrDefault(item => (item.Required == true && memberName == item.Name) || 
-                                                                       memberName == item.NamePattern || 
+                                              .FirstOrDefault(item => (item.Required == true && memberName == item.Name) ||
+                                                                       memberName == item.NamePattern ||
                                                                        memberName == item.ShortNamePattern);
             if (descriptor == null)
                 throw new InvalidOperationException(string.Format(Resources.MemberDoesNotExist_Format, memberName));
@@ -216,48 +206,66 @@ namespace Ntreev.Library.Commands
             this.MethodUsagePrinter.Print(this.Out, descriptor, visibleDescriptor);
         }
 
-        public static string[] Split(string commandLine)
+        public static string[] Split(string text)
         {
-            var match = Regex.Match(commandLine, @"^((""[^""]*"")|(\S+))");
-            var name = match.Value.Trim(new char[] { '\"', });
-
-            try
-            {
-                if (Path.HasExtension(name) == true)
-                    name = Path.GetFileNameWithoutExtension(name);
-            }
-            catch
-            {
-
-            }
-
-            var arguments = commandLine.Substring(match.Length).Trim();
-
+            var matches = Regex.Matches(text, pattern);
+            var match = Regex.Match(text, pattern);
+            var name = EscapeQuot(match.Value);
+            var arguments = text.Substring(match.Length).Trim();
             return new string[] { name, arguments, };
         }
 
-        public static string[] SplitAll(string commandLine)
+        public static string[] SplitAll(string text)
         {
-            var pattern = @"^((""[^""]*"")|(\S+))";
-            var match = Regex.Match(commandLine, pattern);
+            var matches = Regex.Matches(text, pattern);
             var argList = new List<string>();
 
-            while (match.Success)
+            foreach (Match item in matches)
             {
-                commandLine = commandLine.Substring(match.Length).Trim();
-                argList.Add(TrimQuot(match.Value));
-                match = Regex.Match(commandLine, pattern);
+                var t = EscapeQuot(item.Value);
+                argList.Add(t);
             }
 
             return argList.ToArray();
         }
 
-        internal static string TrimQuot(string text)
+        public static Match[] MatchAll(string text)
         {
-            if (text.StartsWith("\"") == true && text.EndsWith("\"") == true)
+            var matches = Regex.Matches(text, pattern);
+            var argList = new List<Match>();
+
+            foreach (Match item in matches)
             {
+                argList.Add(item);
+            }
+
+            return argList.ToArray();
+        }
+
+        public static Match[] MatchCompletion(string text)
+        {
+            var matches = Regex.Matches(text, completionPattern);
+            var argList = new List<Match>();
+
+            foreach (Match item in matches)
+            {
+                argList.Add(item);
+            }
+
+            return argList.ToArray();
+        }
+
+        public static string EscapeQuot(string text)
+        {
+            if (text.StartsWith("\"") == true && text.Length > 1 && text.EndsWith("\"") == true)
+            {
+                text = text.Replace("\"\"", "\"");
                 text = text.Substring(1);
                 text = text.Remove(text.Length - 1);
+            }
+            else
+            {
+                text = text.Replace("\"\"", "\"");
             }
             return text;
         }

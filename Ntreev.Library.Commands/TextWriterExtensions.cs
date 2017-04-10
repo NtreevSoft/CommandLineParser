@@ -73,5 +73,89 @@ namespace Ntreev.Library.Commands
                 writer.WriteLine();
             }
         }
+
+        public static void Print<T>(this TextWriter writer, T[] items)
+        {
+            Print<T>(writer, items, (o, a) => a(), item => item.ToString());
+        }
+
+        public static void Print<T>(this TextWriter writer, T[] items, Action<T, Action> action)
+        {
+            Print<T>(writer, items, action, item => item.ToString());
+        }
+
+        public static void Print<T>(this TextWriter writer, T[] items, Action<T, Action> action, Func<T, string> selector)
+        {
+            var maxWidth = Console.BufferWidth;
+            var lineCount = 4;
+
+            while (true)
+            {
+                var lines = new List<string>[lineCount];
+                var objs = new List<T>[lineCount];
+                var lengths = new int[lineCount];
+                var columns = new List<int>();
+
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var y = i % lineCount;
+                    var item = selector(items[i]);
+                    if (lines[y] == null)
+                    {
+                        lines[y] = new List<string>();
+                        objs[y] = new List<T>();
+                        lengths[y] = item.Length + 2;
+                    }
+                    else
+                    {
+                        lengths[y] += item.Length + 2;
+                    }
+
+                    var c = lines[y].Count;
+                    lines[y].Add(item);
+                    objs[y].Add(items[i]);
+
+                    if (columns.Count < lines[y].Count)
+                        columns.Add(0);
+
+                    columns[c] = Math.Max(columns[c], item.Length + 2);
+                }
+
+                var canPrint = true;
+                for (var i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i] == null)
+                        continue;
+                    var c = 0;
+                    for (var j = 0; j < lines[i].Count; j++)
+                    {
+                        c += columns[j];
+                    }
+                    if (c >= maxWidth)
+                        canPrint = false;
+                }
+
+                if (canPrint == false)
+                {
+                    lineCount++;
+                    continue;
+                }
+
+                for (var i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i] == null)
+                        continue;
+                    for (var j = 0; j < lines[i].Count; j++)
+                    {
+                        var obj = objs[i][j];
+                        var text = lines[i][j].PadRight(columns[j]);
+                        action(obj, () => writer.Write(text));
+                    }
+                    writer.WriteLine();
+                }
+
+                break;
+            }
+        }
     }
 }

@@ -86,7 +86,7 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                if (this.name == null)
+                if (string.IsNullOrEmpty(this.name) == true)
                     return System.Diagnostics.Process.GetCurrentProcess().ProcessName;
                 return this.name;
             }
@@ -154,11 +154,6 @@ namespace Ntreev.Library.Commands
             var parser = this.parsers[command];
             if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
             {
-                //if (arguments == string.Empty)
-                //{
-                //    this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
-                //    return false;
-                //}
                 if (parser.Invoke(parser.Name + " " + arguments) == false)
                 {
                     return false;
@@ -166,11 +161,6 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                //if (arguments == string.Empty)
-                //{
-                //    this.Out.WriteLine(Resources.TypeForUsage_Format, string.Join(" ", this.Name, this.HelpCommand.Name, command.Name).Trim());
-                //    return false;
-                //}
                 if (parser.Parse(command.Name + " " + arguments) == false)
                 {
                     return false;

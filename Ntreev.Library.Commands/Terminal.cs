@@ -13,7 +13,7 @@ namespace Ntreev.Library.Commands
         private static object lockobj = new object();
 
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
-        private readonly List<ConsoleChar> chars = new List<ConsoleChar>();
+        private readonly List<TerminalChar> chars = new List<TerminalChar>();
 
         private List<string> histories = new List<string>();
 
@@ -24,6 +24,7 @@ namespace Ntreev.Library.Commands
         private int historyIndex;
         private bool isHidden;
         private string inputText;
+        private string completion = string.Empty;
         private TextWriter writer;
 
         public Terminal()
@@ -68,7 +69,7 @@ namespace Ntreev.Library.Commands
             this.writer = Console.Out;
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            Console.SetOut(new ConsoleTextWriter(Console.Out, this));
+            Console.SetOut(new TerminalTextWriter(Console.Out, this));
 
             try
             {
@@ -101,7 +102,7 @@ namespace Ntreev.Library.Commands
                 var text = this.histories[this.historyIndex + 1];
                 this.ClearText();
                 this.InsertText(text);
-                this.inputText = this.LeftText;
+                this.SetInputText();
                 this.historyIndex++;
             }
         }
@@ -113,7 +114,7 @@ namespace Ntreev.Library.Commands
                 var text = this.histories[this.historyIndex - 1];
                 this.ClearText();
                 this.InsertText(text);
-                this.inputText = this.LeftText;
+                this.SetInputText();
                 this.historyIndex--;
             }
         }
@@ -130,7 +131,7 @@ namespace Ntreev.Library.Commands
                 using (TerminalCursorVisible.Set(false))
                 {
                     this.ClearText();
-                    this.inputText = this.LeftText;
+                    this.SetInputText();
                 }
             }
         }
@@ -145,7 +146,7 @@ namespace Ntreev.Library.Commands
                     {
                         this.Index++;
                         this.Backspace();
-                        this.inputText = this.LeftText;
+                        this.SetInputText();
                     }
                 }
             }
@@ -183,7 +184,7 @@ namespace Ntreev.Library.Commands
                     using (TerminalCursorVisible.Set(false))
                     {
                         this.Index--;
-                        this.inputText = this.LeftText;
+                        this.SetInputText();
                     }
                 }
             }
@@ -198,7 +199,7 @@ namespace Ntreev.Library.Commands
                     using (TerminalCursorVisible.Set(false))
                     {
                         this.Index++;
-                        this.inputText = this.LeftText;
+                        this.SetInputText();
                     }
                 }
             }
@@ -213,7 +214,7 @@ namespace Ntreev.Library.Commands
                     using (TerminalCursorVisible.Set(false))
                     {
                         this.BackspaceImpl();
-                        this.inputText = this.LeftText;
+                        this.SetInputText();
                     }
                 }
             }
@@ -231,7 +232,7 @@ namespace Ntreev.Library.Commands
                     {
                         this.BackspaceImpl();
                     }
-                    this.inputText = this.LeftText;
+                    this.SetInputText();
                 }
             }
         }
@@ -246,7 +247,7 @@ namespace Ntreev.Library.Commands
                     {
                         this.BackspaceImpl();
                     }
-                    this.inputText = this.LeftText;
+                    this.SetInputText();
                 }
             }
         }
@@ -255,22 +256,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                var inputArgs = SplitAll(this.inputText);
-                var args = SplitAll(this.LeftText);
-                var find = (inputArgs.LastOrDefault() ?? string.Empty).Trim();
-                var leftText = this.inputText.Substring(0, this.inputText.Length - find.Length);
-                var text = args.LastOrDefault() ?? string.Empty;
-                var items = SplitAll(leftText).Select(i => i.Trim()).Where(i => i != string.Empty).ToArray();
-                var completions = this.GetCompletion(items, find);
-                if (completions != null && completions.Any())
-                {
-                    var completion = NextCompletion(completions, text);
-                    using (TerminalCursorVisible.Set(false))
-                    {
-                        this.ClearText();
-                        this.InsertText(leftText + completion);
-                    }
-                }
+                this.CompletionImpl(NextCompletion);
             }
         }
 
@@ -278,22 +264,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                var inputArgs = SplitAll(this.inputText);
-                var args = SplitAll(this.LeftText);
-                var find = (inputArgs.LastOrDefault() ?? string.Empty).Trim();
-                var leftText = this.inputText.Substring(0, this.inputText.Length - find.Length);
-                var text = args.LastOrDefault() ?? string.Empty;
-                var items = SplitAll(leftText).Select(i => i.Trim()).Where(i => i != string.Empty).ToArray();
-                var completions = this.GetCompletion(items, find);
-                if (completions != null && completions.Any())
-                {
-                    var completion = PrevCompletion(completions, text);
-                    using (TerminalCursorVisible.Set(false))
-                    {
-                        this.ClearText();
-                        this.InsertText(leftText + completion);
-                    }
-                }
+                this.CompletionImpl(PrevCompletion);
             }
         }
 
@@ -399,16 +370,6 @@ namespace Ntreev.Library.Commands
             return null;
         }
 
-        //protected virtual string OnNextCompletion(string[] items, string text, string find)
-        //{
-        //    return null;
-        //}
-
-        //protected virtual string OnPrevCompletion(string[] items, string text, string find)
-        //{
-        //    return null;
-        //}
-
         private void ShiftDown()
         {
             Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.height, 0, this.y + 1);
@@ -480,7 +441,7 @@ namespace Ntreev.Library.Commands
 
             if (y1 != y2)
             {
-                this.chars.Insert(this.index++, new ConsoleChar()
+                this.chars.Insert(this.index++, new TerminalChar()
                 {
                     Slot = Console.BufferWidth - x1,
                     Char = ch,
@@ -490,7 +451,7 @@ namespace Ntreev.Library.Commands
             else if (x1 > x2)
             {
                 this.y--;
-                this.chars.Insert(this.index++, new ConsoleChar()
+                this.chars.Insert(this.index++, new TerminalChar()
                 {
                     Slot = Console.BufferWidth - x1,
                     Char = ch,
@@ -499,7 +460,7 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                this.chars.Insert(this.index++, new ConsoleChar()
+                this.chars.Insert(this.index++, new TerminalChar()
                 {
                     Slot = x2 - x1,
                     Char = ch,
@@ -518,6 +479,49 @@ namespace Ntreev.Library.Commands
             this.Index--;
             this.chars.RemoveAt(this.index);
             this.ReplaceText(text);
+        }
+
+        private void CompletionImpl(Func<string[], string, string> func)
+        {
+            var matches = new List<Match>(CommandLineParser.MatchCompletion(this.inputText));
+            var find = string.Empty;
+            var leftText = this.inputText;
+            if (matches.Count > 0)
+            {
+                var match = matches.Last();
+                var matchText = CommandLineParser.EscapeQuot(match.Value);
+                if (matchText.Trim() != string.Empty)
+                {
+                    find = matchText.Trim();
+                    matches.RemoveAt(matches.Count - 1);
+                    leftText = this.inputText.Remove(match.Index);
+                }
+            }
+
+            var argList = new List<string>();
+            for (var i = 0; i < matches.Count; i++)
+            {
+                var matchText = CommandLineParser.EscapeQuot(matches[i].Value).Trim();
+                if (matchText != string.Empty)
+                    argList.Add(matchText);
+            }
+
+            var completions = this.GetCompletion(argList.ToArray(), find);
+            if (completions != null && completions.Any())
+            {
+                this.completion = func(completions, this.completion);
+                using (TerminalCursorVisible.Set(false))
+                {
+                    this.ClearText();
+                    this.InsertText(leftText + this.completion);
+                }
+            }
+        }
+
+        private void SetInputText()
+        {
+            this.inputText = this.LeftText;
+            this.completion = string.Empty;
         }
 
         private string ReadLineImpl(string prompt, string defaultText, bool isHidden)
@@ -564,54 +568,62 @@ namespace Ntreev.Library.Commands
                 else if (key.KeyChar != '\0')
                 {
                     this.InsertText(key.KeyChar);
-                    this.inputText = this.LeftText;
+                    this.SetInputText();
                 }
             }
         }
 
-        private static IList<string> SplitAll(string text)
-        {
-            var pattern = @"^((""[^""]*"")|(\S+)|(\s+))";
-            var match = Regex.Match(text, pattern);
-            var argList = new List<string>();
+        //private static string[] SplitAll(string text, bool trim, bool removeEmpty)
+        //{
+        //    var pattern = @"^((""[^""]*"")|(\S+)|(\s+))";
+        //    var match = Regex.Match(text, pattern);
+        //    var argList = new List<string>();
 
-            while (match.Success)
-            {
-                text = text.Substring(match.Length);
-                argList.Add(match.Value);
-                match = Regex.Match(text, pattern);
-            }
+        //    while (match.Success)
+        //    {
+        //        text = text.Substring(match.Length);
+                
+        //        if (removeEmpty == false || text != string.Empty)
+        //        {
+        //            if (trim == true)
+        //                argList.Add(match.Value.Trim());
+        //            else
+        //                argList.Add(match.Value);
+        //        }
+                    
+        //        match = Regex.Match(text, pattern);
+        //    }
 
-            return argList;
-        }
+        //    return argList.ToArray();
+        //}
 
-        private static string TrimQuot(string text)
-        {
-            if (text.StartsWith("\"") == true && text.EndsWith("\"") == true)
-            {
-                text = text.Substring(1);
-                text = text.Remove(text.Length - 1);
-            }
-            return text;
-        }
+        //private static string TrimQuot(string text)
+        //{
+        //    if (text.StartsWith("\"") == true && text.EndsWith("\"") == true)
+        //    {
+        //        text = text.Substring(1);
+        //        text = text.Remove(text.Length - 1);
+        //    }
+        //    return text;
+        //}
 
         #region classes
 
-        struct ConsoleChar
+        struct TerminalChar
         {
             public int Slot { get; set; }
 
             public char Char { get; set; }
         }
 
-        class ConsoleTextWriter : TextWriter
+        class TerminalTextWriter : TextWriter
         {
             private readonly TextWriter writer;
             private readonly Terminal prompter;
             private int x;
             private int y;
 
-            public ConsoleTextWriter(TextWriter writer, Terminal prompter)
+            public TerminalTextWriter(TextWriter writer, Terminal prompter)
             {
                 this.writer = writer;
                 this.prompter = prompter;
