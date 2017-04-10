@@ -16,6 +16,7 @@ namespace Ntreev.Library.Commands.Shell
            : base(commandContext)
         {
             this.Prompt = "shell";
+            this.Postfix = ">";
         }
     }
 }

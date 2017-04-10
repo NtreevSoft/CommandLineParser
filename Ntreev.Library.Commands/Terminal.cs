@@ -271,15 +271,6 @@ namespace Ntreev.Library.Commands
                         this.InsertText(leftText + completion);
                     }
                 }
-                //var result = this.OnNextCompletion(items, text, find);
-                //if (result != null)
-                //{
-                //    using (TerminalCursorVisible.Set(false))
-                //    {
-                //        this.ClearText();
-                //        this.InsertText(leftText + result);
-                //    }
-                //}
             }
         }
 
