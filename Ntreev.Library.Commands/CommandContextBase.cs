@@ -63,10 +63,23 @@ namespace Ntreev.Library.Commands
                 return false;
             if (this.VersionCommand == command)
                 return false;
+            if (this.parsers.Contains(command) == false)
+                return false;
             var attr = command.GetType().GetCustomAttribute<BrowsableAttribute>();
             if (attr == null)
                 return true;
             return attr.Browsable;
+        }
+
+        public virtual bool IsMethodVisible(ICommand command, string methodName)
+        {
+            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
+                return false;
+            if (this.IsCommandVisible(command) == false)
+                return false;
+
+            var parser = this.parsers[command];
+            return parser.IsMethodVisible(methodName);
         }
 
         public TextWriter Out

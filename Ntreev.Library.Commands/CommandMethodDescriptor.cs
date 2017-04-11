@@ -122,7 +122,7 @@ namespace Ntreev.Library.Commands
             {
                 var descriptor = descriptors[item.Name];
 
-                var value = descriptor.GetValue(instance);
+                var value = descriptor.GetValueInternal(instance);
                 values.Add(value);
             }
 

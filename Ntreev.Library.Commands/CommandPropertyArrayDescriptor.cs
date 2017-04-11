@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    class CommandPropertyArrayDescriptor : CommandMemberArrayDescriptor
+    public sealed class CommandPropertyArrayDescriptor : CommandMemberArrayDescriptor
     {
         private readonly PropertyInfo propertyInfo;
         private readonly string summary;
@@ -47,17 +47,7 @@ namespace Ntreev.Library.Commands
         {
             get { return this.propertyInfo.GetDefaultValue(); }
         }
-
-        public override void SetValue(object instance, object value)
-        {
-            this.propertyInfo.SetValue(instance, value, null);
-        }
-
-        public override object GetValue(object instance)
-        {
-            return this.propertyInfo.GetValue(instance, null);
-        }
-
+        
         public override IEnumerable<Attribute> Attributes
         {
             get
@@ -67,6 +57,16 @@ namespace Ntreev.Library.Commands
                     yield return item;
                 }
             }
+        }
+
+        protected override void SetValue(object instance, object value)
+        {
+            this.propertyInfo.SetValue(instance, value, null);
+        }
+
+        protected override object GetValue(object instance)
+        {
+            return this.propertyInfo.GetValue(instance, null);
         }
     }
 }

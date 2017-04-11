@@ -48,32 +48,32 @@ namespace Ntreev.Library.Commands.Shell.Commands
             throw new NotImplementedException();
         }
 
-        [CommandProperty(ShortName = 'p')]
+        [CommandProperty('p')]
         [ShellDescription("PatchDescription_StashCommand")]
         public bool Patch
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'k')]
+        [CommandProperty('k')]
         public bool KeepIndex
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'u')]
+        [CommandProperty('u', true)]
         public bool IncludeUntracked
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'a')]
+        [CommandProperty('a')]
         public bool All
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'q')]
+        [CommandProperty('q')]
         public bool Quit
         {
             get; set;
@@ -85,7 +85,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
             get; set;
         }
 
-        [CommandProperty(ShortName = 't', Required = true)]
+        [CommandProperty('t', IsRequired = true)]
         public int Port
         {
             get; set;

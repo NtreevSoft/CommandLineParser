@@ -24,7 +24,7 @@ namespace Ntreev.Library.Commands
             this.SubCommandName = string.Empty;
         }
 
-        [CommandProperty(Name = "CommandName", Required = true)]
+        [CommandProperty("CommandName", IsRequired = true)]
         [DisplayName("command")]
         [DefaultValue("")]
         public string CommandName
@@ -32,7 +32,7 @@ namespace Ntreev.Library.Commands
             get; set;
         }
 
-        [CommandProperty(Name = "sub-command", Required = true)]
+        [CommandProperty("sub-command", IsRequired = true)]
         [DefaultValue("")]
         public string SubCommandName
         {

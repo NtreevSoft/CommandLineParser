@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands
         {
             if (this.parsers.ContainsKey(command) == false)
                 return false;
-            return false;
+            return true;
         }
 
         public CommandLineParser this[ICommand command]

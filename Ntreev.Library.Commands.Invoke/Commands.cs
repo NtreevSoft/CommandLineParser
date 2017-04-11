@@ -54,13 +54,13 @@ namespace Ntreev.Library.Commands.Invoke
             
         }
 
-        [CommandProperty(ShortName = 'm')]
+        [CommandProperty('m')]
         public string Message
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'q')]
+        [CommandProperty('q')]
         public string Message1
         {
             get; set;

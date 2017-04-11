@@ -43,7 +43,7 @@ namespace Ntreev.Library.Commands
             this.members = members.ToArray();
             foreach (var item in this.members)
             {
-                if (item.Required == true)
+                if (item.IsRequired == true)
                     continue;
                 if (item.NamePattern != string.Empty)
                     descriptors.Add(item.NamePattern, item);
@@ -54,8 +54,8 @@ namespace Ntreev.Library.Commands
 
         public void Parse(object instance, string commandLine)
         {
-            var requirements = this.members.Where(item => item.Required == true).ToList();
-            var options = this.members.Where(item => item.Required == false).ToList();
+            var requirements = this.members.Where(item => item.IsRequired == true).ToList();
+            var options = this.members.Where(item => item.IsRequired == false).ToList();
             var variables = this.members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
 
             var variableList = new List<string>();
@@ -65,13 +65,24 @@ namespace Ntreev.Library.Commands
             {
                 var arg = arguments.Dequeue();
 
-                if (descriptors.ContainsKey(arg) == true)
+                if (this.descriptors.ContainsKey(arg) == true)
                 {
-                    var descriptor = descriptors[arg];
-                    if (descriptor.MemberType == typeof(bool))
-                        this.args.Add(descriptor, true);
-                    else
+                    var descriptor = this.descriptors[arg];
+                    var nextArg = arguments.FirstOrDefault();
+                    var isValue = nextArg != null ? !Regex.IsMatch(nextArg, $"{CommandSettings.Delimiter}\\S+|{CommandSettings.ShortDelimiter}\\S+") : false;
+
+                    if (nextArg != null && isValue == true)
+                    {
                         this.args.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
+                    }
+                    else if(descriptor.DefaultValue != DBNull.Value)
+                    {
+                        this.args.Add(descriptor, descriptor.DefaultValue);
+                    }
+                    else
+                    {
+                        throw new ArgumentException(@"처리되지 않은 인자가 포함되어 있습니다.");
+                    }
                     options.Remove(descriptor);
                 }
                 else if (requirements.Any() == false)
@@ -104,7 +115,7 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in options.ToArray())
             {
-                if (item.DefaultValue != DBNull.Value)
+                if (item.IsImplicit == true && item.DefaultValue != DBNull.Value)
                 {
                     this.args.Add(item, item.DefaultValue);
                     options.Remove(item);
@@ -118,12 +129,12 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in this.args)
             {
-                item.Key.SetValue(instance, item.Value);
+                item.Key.SetValueInternal(instance, item.Value);
             }
 
             if (variables != null)
             {
-                variables.SetValue(instance, Parser.ParseArray(variables, variableList));
+                variables.SetValueInternal(instance, Parser.ParseArray(variables, variableList));
             }
         }
     }

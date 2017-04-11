@@ -56,6 +56,7 @@ namespace Ntreev.Library.Commands
 
         private static string ToSpinalCase(string text)
         {
+            ValidateIdentifier(text);
             return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
         }
 
@@ -63,6 +64,11 @@ namespace Ntreev.Library.Commands
         {
             if (Regex.IsMatch(name, "^[_a-zA-Z][_a-zA-Z0-9]*") == false)
                 throw new ArgumentException(string.Format("{0} is a invalid member name"));
+        }
+
+        internal static bool VerifyName(string argument)
+        {
+            return Regex.IsMatch(argument, $"{CommandSettings.Delimiter}\\S+|{CommandSettings.ShortDelimiter}\\S+");
         }
     }
 }

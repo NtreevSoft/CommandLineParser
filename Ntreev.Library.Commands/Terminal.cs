@@ -150,7 +150,6 @@ namespace Ntreev.Library.Commands
                     }
                 }
             }
-
         }
 
         public void Home()
@@ -529,6 +528,7 @@ namespace Ntreev.Library.Commands
             lock (lockobj)
             {
                 this.y = Console.CursorTop;
+                this.isHidden = false;
                 this.InsertText(prompt);
                 this.start = this.Index;
                 this.isHidden = isHidden;
@@ -572,40 +572,6 @@ namespace Ntreev.Library.Commands
                 }
             }
         }
-
-        //private static string[] SplitAll(string text, bool trim, bool removeEmpty)
-        //{
-        //    var pattern = @"^((""[^""]*"")|(\S+)|(\s+))";
-        //    var match = Regex.Match(text, pattern);
-        //    var argList = new List<string>();
-
-        //    while (match.Success)
-        //    {
-        //        text = text.Substring(match.Length);
-                
-        //        if (removeEmpty == false || text != string.Empty)
-        //        {
-        //            if (trim == true)
-        //                argList.Add(match.Value.Trim());
-        //            else
-        //                argList.Add(match.Value);
-        //        }
-                    
-        //        match = Regex.Match(text, pattern);
-        //    }
-
-        //    return argList.ToArray();
-        //}
-
-        //private static string TrimQuot(string text)
-        //{
-        //    if (text.StartsWith("\"") == true && text.EndsWith("\"") == true)
-        //    {
-        //        text = text.Substring(1);
-        //        text = text.Remove(text.Length - 1);
-        //    }
-        //    return text;
-        //}
 
         #region classes
 

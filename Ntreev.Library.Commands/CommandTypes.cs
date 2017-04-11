@@ -15,10 +15,5 @@ namespace Ntreev.Library.Commands
         /// 하위 명령을 가질수 있습니다.
         /// </summary>
         HasSubCommand = 1,
-
-        ///// <summary>
-        ///// 인자가 하나도 없을때에도 Execute 메소드를 호출합니다.
-        ///// </summary>
-        //AllowEmptyArgument = 2,
     }
 }

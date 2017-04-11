@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel;
 
 namespace Ntreev.Library.Commands.Test
 {
@@ -11,13 +12,14 @@ namespace Ntreev.Library.Commands.Test
         {
             var settings = new Settings();
             var parser = new CommandLineParser(settings);
-            parser.Parse("poke:4004");
+            parser.ParseArguments("");
         }
 
         class Settings
         {
-            [CommandProperty]
-            public int Value { get; set; }
+            [CommandProperty(IsImplicit = false)]
+            [DefaultValue("")]
+            public string List { get; set; }
         }
     }
 }

@@ -42,8 +42,6 @@ namespace Ntreev.Library.Commands
         private readonly string name;
         private readonly string shortName;
 
-        //private string pattern;
-
         protected CommandMemberDescriptor(CommandPropertyAttribute attribute, string descriptorName)
         {
             this.attribute = attribute;
@@ -59,9 +57,9 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public abstract void SetValue(object instance, object value);
+        protected abstract void SetValue(object instance, object value);
 
-        public abstract object GetValue(object instance);
+        protected abstract object GetValue(object instance);
 
         public string Name
         {
@@ -93,9 +91,14 @@ namespace Ntreev.Library.Commands
             get { return DBNull.Value; }
         }
 
-        public bool Required
+        public bool IsRequired
         {
-            get { return this.attribute.Required; }
+            get { return this.attribute.IsRequired; }
+        }
+
+        public bool IsImplicit
+        {
+            get { return this.attribute.IsImplicit; }
         }
 
         public abstract Type MemberType
@@ -113,37 +116,10 @@ namespace Ntreev.Library.Commands
             get { yield break; }
         }
 
-        //private string BuildPattern()
-        //{
-        //    var quotes = string.Format(@"(""(?<{0}>.*)"")", CommandMemberDescriptor.valueName);
-        //    var normal = string.Format(@"(?<{0}>(\S)+)", CommandMemberDescriptor.valueName);
-
-        //    var pattern = string.Empty;
-        //    if (this.Name != string.Empty && this.ShortName != string.Empty)
-        //    {
-        //        pattern = string.Format(@"^(?<{0}>({1}{2}|{3}{4}))", CommandMemberDescriptor.keyName, CommandSettings.Delimiter, this.Name, CommandSettings.ShortDelimiter, this.ShortName);
-        //    }
-        //    else if (this.Name != string.Empty)
-        //    {
-        //        pattern = string.Format(@"^(?<{0}>{1}{2})", CommandMemberDescriptor.keyName, CommandSettings.Delimiter, this.Name);
-        //    }
-        //    else if (this.ShortName != string.Empty)
-        //    {
-        //        pattern = string.Format(@"^(?<{0}>{1}{2})", CommandMemberDescriptor.keyName, CommandSettings.ShortDelimiter, this.ShortName);
-        //    }
-
-        //    return pattern;
-        //}
-
-        //private string Pattern
-        //{
-        //    get
-        //    {
-        //        if (this.pattern == null)
-        //            this.pattern = this.BuildPattern();
-        //        return this.pattern;
-        //    }
-        //}
+        public string DescriptorName
+        {
+            get { return this.descriptorName; }
+        }
 
         internal object Parse(object instance, string arg)
         {
@@ -165,20 +141,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        //internal string TryMatch(string arguments, ref string parsed)
-        //{
-        //    var match = Regex.Match(arguments, this.Pattern, RegexOptions.ExplicitCapture);
-        //    if (match.Success == false)
-        //        return null;
-        //    parsed = match.Value;
-        //    return match.Groups[CommandMemberDescriptor.valueName].Value;
-        //}
-
-        internal string DescriptorName
-        {
-            get { return this.descriptorName; }
-        }
-
         internal string NamePattern
         {
             get
@@ -197,6 +159,16 @@ namespace Ntreev.Library.Commands
                     return string.Empty;
                 return CommandSettings.ShortDelimiter + this.shortName;
             }
+        }
+
+        internal void SetValueInternal(object instance, object value)
+        {
+            this.SetValue(instance, value);
+        }
+
+        internal object GetValueInternal(object instance)
+        {
+            return this.GetValue(instance);
         }
     }
 }

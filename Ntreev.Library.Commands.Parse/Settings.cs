@@ -15,21 +15,21 @@ namespace Ntreev.Library.Commands.Parse
             this.Libraries = new string[] { };
         }
 
-        [CommandProperty(Required = true)]
+        [CommandProperty(IsRequired = true)]
         [Description("service name")]
         public string ServiceName
         {
             get; set;
         }
 
-        [CommandProperty(Name = "path", Required = true)]
+        [CommandProperty("path", IsRequired = true)]
         [Description("path to work")]
         public string WorkingPath
         {
             get; set;
         }
 
-        [CommandProperty(Required = true)]
+        [CommandProperty(IsRequired = true)]
         [DefaultValue("10001")]
         [Description("port")]
         [Browsable(true)]
@@ -38,14 +38,14 @@ namespace Ntreev.Library.Commands.Parse
             get; set;
         }
 
-        [CommandProperty(ShortName = 'c', ShortNameOnly = true)]
+        [CommandProperty('c', true)]
         [Description("use cache")]
         public bool UseCache
         {
             get; set;
         }
 
-        [CommandProperty(Name = "cache-size")]
+        [CommandProperty("cache-size", IsImplicit = true)]
         [Description("cache size. default is 1024")]
         [DefaultValue("1024")]
         public int CacheSize

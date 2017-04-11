@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
 
         }
 
-        [CommandProperty(Required = true)]
+        [CommandProperty(IsRequired = true)]
         [DefaultValue(0)]
         public int ExitCode
         {

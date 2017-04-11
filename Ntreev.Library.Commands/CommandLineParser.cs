@@ -95,6 +95,11 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public bool ParseArguments(string arguments)
+        {
+            return this.Parse($"{this.Name} {arguments}");
+        }
+
         public bool Invoke(string commandLine)
         {
             var arguments = CommandLineParser.Split(commandLine);
@@ -155,7 +160,7 @@ namespace Ntreev.Library.Commands
         {
             var descriptor = CommandDescriptor.GetMemberDescriptors(this.instance)
                                               .Where(item => this.IsMemberVisible(item))
-                                              .FirstOrDefault(item => (item.Required == true && memberName == item.Name) ||
+                                              .FirstOrDefault(item => (item.IsRequired == true && memberName == item.Name) ||
                                                                        memberName == item.NamePattern ||
                                                                        memberName == item.ShortNamePattern);
             if (descriptor == null)
@@ -196,7 +201,7 @@ namespace Ntreev.Library.Commands
                 throw new CommandNotFoundException(methodName);
 
             var visibleDescriptor = descriptor.Members.Where(item => this.IsMemberVisible(item))
-                                                      .FirstOrDefault(item => (item.Required == true && memberName == item.Name) ||
+                                                      .FirstOrDefault(item => (item.IsRequired == true && memberName == item.Name) ||
                                                                                memberName == item.NamePattern ||
                                                                                memberName == item.ShortNamePattern);
 
@@ -350,7 +355,7 @@ namespace Ntreev.Library.Commands
             {
                 var descriptor = nameToDescriptors[item.Name];
 
-                var value = descriptor.GetValue(instance);
+                var value = descriptor.GetValueInternal(instance);
                 values.Add(value);
             }
 
@@ -375,6 +380,14 @@ namespace Ntreev.Library.Commands
                     this.methodUsagePrinter = this.CreateMethodUsagePrinter(this.name, this.instance);
                 return this.methodUsagePrinter;
             }
+        }
+
+        internal bool IsMethodVisible(string methodName)
+        {
+            var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, methodName);
+            if (descriptor == null || this.IsMethodVisible(descriptor) == false)
+                return false;
+            return true;
         }
     }
 }

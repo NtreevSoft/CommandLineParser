@@ -18,7 +18,6 @@ namespace Ntreev.Library.Commands
         public CommandContextTerminal(CommandContextBase commandContext)
         {
             this.commandContext = commandContext;
-            //this.commandContext.Name = string.Empty;
         }
 
         public string Prompt
@@ -89,31 +88,103 @@ namespace Ntreev.Library.Commands
             }
             else if (items.Length == 1)
             {
-                var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
                 var commandName = items[0];
-                if (commandNames.Contains(commandName) == true)
+                var command = this.GetCommand(commandName);
+                if (command == null)
+                    return null;
+                if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
                 {
-                    var command = this.commandContext.Commands[commandName];
-                    if (this.commandContext.IsCommandVisible(command) == true)
+                    var query = from item in CommandDescriptor.GetMethodDescriptors(command)
+                                let name = item.Name
+                                where name.StartsWith(find)
+                                select name;
+                    return query.ToArray();
+                }
+                else
+                {
+                    var completions = this.GetCompletions(command, string.Empty, find);
+                    if (completions != null)
                     {
-                        if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+                        return completions;
+                    }
+                }
+            }
+            else if (items.Length >= 2)
+            {
+                var commandName = items[0];
+                var command = this.GetCommand(commandName);
+                if (command == null)
+                    return null;
+
+                var methodName = items[1];
+                var methodDescriptor = this.GetMethodDescriptor(command, methodName);
+                if (methodDescriptor == null)
+                    return null;
+
+                if (methodDescriptor.Members.Length == 0)
+                    return null;
+
+                var memberList = new List<CommandMemberDescriptor>(methodDescriptor.Members);
+                var argList = new List<string>(items.Skip(2));
+
+
+                if(argList.Any())
+                {
+                    foreach (var item in memberList)
+                    {
+                        if (item.NamePattern == argList.Last())
                         {
-                            var query = from item in CommandDescriptor.GetMethodDescriptors(command)
-                                        let name = item.Name
-                                        where name.StartsWith(find)
-                                        select name;
-                            return query.ToArray();
-                        }
-                        else
-                        {
-                            var completions = this.GetCompletions(command, string.Empty, find);
-                            if (completions != null)
-                            {
-                                return completions;
-                            }
+
+                            return this.GetCompletions(command, methodDescriptor, item, find);
                         }
                     }
                 }
+                //var arg = string.Empty;
+
+                for (var i = 0; i < argList.Count; i++)
+                {
+                    if (memberList.Any() == false)
+                        break;
+                    var arg = argList[i];
+
+                    foreach(var item in memberList)
+                    {
+                        if(item.NamePattern == arg)
+                        {
+                            int qwr = 0;
+                        }
+                    }
+
+                    var member = memberList.First();
+                    if (member.IsRequired == true)
+                        memberList.RemoveAt(0);
+                    
+                }
+
+                if (memberList.Any() == true)
+                {
+                    return this.GetCompletions(command, methodDescriptor, memberList.First(), find);
+                }
+
+                //var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
+
+                //if (commandNames.Contains(commandName) == true)
+                //{
+                //    var command = this.commandContext.Commands[commandName];
+                //    if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+                //    {
+                //        var methodName = items[1];
+                //        if (this.commandContext.IsMethodVisible(command, methodName) == true)
+                //        {
+                //            var methodDescriptor = CommandDescriptor.GetMethodDescriptor(command, methodName);
+                //            if (methodDescriptor.Members.Length > 0)
+                //            {
+                //                var completions = this.GetCompletions(command, methodDescriptor, methodDescriptor.Members[items.Length - 2], find);
+                //                return completions;
+                //            }
+                //        }
+                //    }
+                //}
             }
 
             return null;
@@ -122,6 +193,35 @@ namespace Ntreev.Library.Commands
         protected virtual string[] GetCompletions(ICommand command, string methodName, string find)
         {
             return null;
+        }
+
+        protected virtual string[] GetCompletions(ICommand command, CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor, string find)
+        {
+            return null;
+        }
+
+
+        private ICommand GetCommand(string commandName)
+        {
+            var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
+            if (commandNames.Contains(commandName) == true)
+            {
+                var command = this.commandContext.Commands[commandName];
+                if (this.commandContext.IsCommandVisible(command) == true)
+                    return command;
+            }
+            return null;
+        }
+
+        private CommandMethodDescriptor GetMethodDescriptor(ICommand command, string methodName)
+        {
+            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
+                return null;
+
+            if (this.commandContext.IsMethodVisible(command, methodName) == false)
+                return null;
+                
+                    return CommandDescriptor.GetMethodDescriptor(command, methodName);
         }
     }
 }

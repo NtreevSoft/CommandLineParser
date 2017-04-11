@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    class CommandParameterDescriptor : CommandMemberDescriptor
+    public sealed class CommandParameterDescriptor : CommandMemberDescriptor
     {
         private readonly ParameterInfo parameterInfo;
         private readonly string summary;
@@ -15,7 +15,7 @@ namespace Ntreev.Library.Commands
         private object value;
 
         public CommandParameterDescriptor(ParameterInfo parameterInfo)
-            : base(new CommandPropertyAttribute() { Required = true, }, parameterInfo.Name)
+            : base(new CommandPropertyAttribute() { IsRequired = true, }, parameterInfo.Name)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(parameterInfo.Member.DeclaringType);
             var paramAttr = parameterInfo.GetCustomAttribute<ParamArrayAttribute>();
@@ -56,16 +56,6 @@ namespace Ntreev.Library.Commands
             get { return this.parameterInfo.ParameterType; }
         }
 
-        public override void SetValue(object instance, object value)
-        {
-            this.value = value;
-        }
-
-        public override object GetValue(object instance)
-        {
-            return this.value;
-        }
-
         public override IEnumerable<Attribute> Attributes
         {
             get
@@ -75,6 +65,16 @@ namespace Ntreev.Library.Commands
                     yield return item;
                 }
             }
+        }
+
+        protected override void SetValue(object instance, object value)
+        {
+            this.value = value;
+        }
+
+        protected override object GetValue(object instance)
+        {
+            return this.value;
         }
     }
 }

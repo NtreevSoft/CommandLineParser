@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using Ntreev.Library.Commands.Properties;
+using System.Text.RegularExpressions;
 
 namespace Ntreev.Library.Commands
 {
@@ -36,34 +37,87 @@ namespace Ntreev.Library.Commands
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class CommandPropertyAttribute : Attribute
     {
-        private string name = string.Empty;
+        private string name;
         private char shortName;
-        private bool required;
+        private bool isRequired;
+        private bool shortNameOnly;
+        private bool isImplicit;
 
         public CommandPropertyAttribute()
         {
 
         }
 
+        public CommandPropertyAttribute(string name)
+            : this(name, char.MinValue)
+        {
+
+        }
+
+        public CommandPropertyAttribute(string name, char shortName)
+        {
+            this.name = name;
+            if (shortName != char.MinValue && Regex.IsMatch(shortName.ToString(), "[a-z]", RegexOptions.IgnoreCase) == false)
+                throw new ArgumentException("shortName must be a alphabet character");
+            this.shortName = shortName;
+        }
+
+        public CommandPropertyAttribute(char shortName)
+            : this(null, shortName)
+        {
+
+        }
+
+        public CommandPropertyAttribute(char shortName, bool shortNameOnly)
+            : this(null, shortName)
+        {
+            this.shortNameOnly = shortNameOnly;
+        }
+
         public string Name
         {
             get { return this.name ?? string.Empty; }
-            set { this.name = value; }
         }
 
-        public virtual char ShortName
+        public char ShortName
         {
             get { return this.shortName; }
-            set { this.shortName = value; }
         }
 
-        public virtual bool Required
+        public virtual bool IsRequired
         {
-            get { return this.required; }
-            set { this.required = value; }
+            get { return this.isRequired; }
+            set
+            {
+                if (this.isImplicit == true && value == true)
+                    throw new ArgumentException();
+                this.isRequired = value;
+            }
         }
 
-        public virtual bool ShortNameOnly { get; set; }
+        /// <summary>
+        /// 기본값을 설정하는데 있어서 명령줄에 인자 명확히 포함되어야 하는지에 대한 여부를 설정합니다.
+        /// </summary>
+        public bool IsImplicit
+        {
+            get { return this.isImplicit; }
+            set
+            {
+                if (this.isRequired == true && value == true)
+                    throw new ArgumentException();
+                this.isImplicit = value;
+            }
+        }
+
+        internal bool ShortNameOnly
+        {
+            get
+            {
+                if (this.shortNameOnly == true)
+                    return true;
+                return this.name == null && this.shortName != char.MinValue;
+            }
+        }
 
         internal string ShortNameInternal
         {

@@ -22,7 +22,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
 
         }
 
-        [CommandProperty(ShortName = 's', ShortNameOnly = true)]
+        [CommandProperty('s', true)]
         public bool IsRecursive
         {
             get; set;

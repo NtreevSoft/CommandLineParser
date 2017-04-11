@@ -216,7 +216,7 @@ namespace Ntreev.Library.Commands
         {
             var indent = writer.Indent;
             var query = from item in memberDescriptors
-                        orderby item.Required descending
+                        orderby item.IsRequired descending
                         select this.GetString(item);
 
             var maxWidth = writer.Width - (writer.TabString.Length * writer.Indent);
@@ -242,7 +242,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintRequirements(CommandTextWriter writer, CommandMethodDescriptor descriptor, CommandMemberDescriptor[] memberDescriptors)
         {
-            var items = memberDescriptors.Where(item => item.Required == true).ToArray();
+            var items = memberDescriptors.Where(item => item.IsRequired == true).ToArray();
             if (items.Any() == false)
                 return;
 
@@ -275,7 +275,7 @@ namespace Ntreev.Library.Commands
         private void PrintOptions(CommandTextWriter writer, CommandMethodDescriptor descriptor, CommandMemberDescriptor[] memberDescriptors)
         {
             var items = memberDescriptors.Where(item => item is CommandMemberArrayDescriptor == false)
-                                .Where(item => item.Required == false)
+                                .Where(item => item.IsRequired == false)
                                 .ToArray();
             if (items.Any() == false)
                 return;
@@ -340,7 +340,7 @@ namespace Ntreev.Library.Commands
 
         private string GetString(CommandMemberDescriptor descriptor)
         {
-            if (descriptor.Required == true)
+            if (descriptor.IsRequired == true)
             {
                 var text = string.Empty;
                 if (descriptor is CommandParameterDescriptor == true)

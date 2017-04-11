@@ -38,27 +38,9 @@ namespace Ntreev.Library.Commands
 
         }
 
-        public override char ShortName
-        {
-            get { return base.ShortName; }
-            set
-            {
-                throw new InvalidOperationException("cannot be set");
-            }
-        }
-
-        public override bool Required
+        public override bool IsRequired
         {
             get { return false; }
-            set
-            {
-                throw new InvalidOperationException("cannot be set");
-            }
-        }
-
-        public override bool ShortNameOnly
-        {
-            get { return base.ShortNameOnly; }
             set
             {
                 throw new InvalidOperationException("cannot be set");

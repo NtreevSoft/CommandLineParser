@@ -18,19 +18,19 @@ namespace Ntreev.Library.Commands.Shell.Commands
 
         }
 
-        [CommandProperty(Required = true)]
+        [CommandProperty(IsRequired = true)]
         public string SourcePath
         {
             get; set;
         }
 
-        [CommandProperty(Required = true)]
+        [CommandProperty(IsRequired = true)]
         public string TargetPath
         {
             get; set;
         }
 
-        [CommandShortProperty('o')]
+        [CommandProperty('o', true)]
         public bool OverWrite
         {
             get; set;

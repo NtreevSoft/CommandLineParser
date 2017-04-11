@@ -24,7 +24,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
             this.DirectoryName = string.Empty;
         }
 
-        [CommandProperty(Name = "dir", Required = true)]
+        [CommandProperty("dir", IsRequired = true)]
         [DefaultValue("")]
         public string DirectoryName
         {

@@ -22,38 +22,38 @@ namespace Ntreev.Library.Commands.Shell.Commands
             this.Path = string.Empty;
         }
 
-        [CommandProperty(Required = true)]
+        [CommandProperty(IsRequired = true)]
         [DisplayName("<pathspec>...")]
         public string Path
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'n')]
+        [CommandProperty('n')]
         public bool DryRun
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'v')]
+        [CommandProperty('v')]
         public bool Verbose
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'f')]
+        [CommandProperty('f')]
         public bool Force
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'i')]
+        [CommandProperty('i')]
         public bool Interactive
         {
             get; set;
         }
 
-        [CommandProperty(ShortName = 'P')]
+        [CommandProperty('P')]
         public bool Patch
         {
             get;set;

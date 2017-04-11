@@ -84,6 +84,9 @@ namespace Ntreev.Library.Commands
             Print<T>(writer, items, action, item => item.ToString());
         }
 
+        /// <summary>
+        /// linux에 ls 명령처럼 단순 문자열을 위에서 아래로 좌에서 우로 정렬해서 출력하는 기능
+        /// </summary>
         public static void Print<T>(this TextWriter writer, T[] items, Action<T, Action> action, Func<T, string> selector)
         {
             var maxWidth = Console.BufferWidth;
@@ -155,6 +158,30 @@ namespace Ntreev.Library.Commands
                 }
 
                 break;
+            }
+        }
+
+        public static void Print<T>(this TextWriter writer, IDictionary<string, T> items)
+        {
+            Print<T>(writer, items, (o, a) => a(), item => item.ToString());
+        }
+
+        public static void Print<T>(this TextWriter writer, IDictionary<string, T> items, Action<T, Action> action)
+        {
+            Print<T>(writer, items, action, item => item.ToString());
+        }
+
+        /// <summary>
+        /// 라벨과 값이 존재하는 아이템을 {0} : {1} 형태로 출력하는 기능
+        /// </summary>
+        public static void Print<T>(this TextWriter writer, IDictionary<string, T> items, Action<T, Action> action, Func<T, string> selector)
+        {
+            var maxWidth = items.Keys.Max(item => item.Length);
+
+            foreach (var item in items)
+            {
+                var text = $"{item.Key.PadRight(maxWidth)} : {selector(item.Value)}";
+                action(item.Value, () => writer.WriteLine(text));
             }
         }
     }

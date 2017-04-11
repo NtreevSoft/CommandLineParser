@@ -24,7 +24,11 @@ namespace Ntreev.Library.Commands
         {
             var attr = propertyInfo.GetCustomAttribute<DefaultValueAttribute>();
             if (attr == null)
+            {
+                if (propertyInfo.PropertyType == typeof(bool))
+                    return true;
                 return DBNull.Value;
+            }
 
             var value = attr.Value;
             if (value == null)
