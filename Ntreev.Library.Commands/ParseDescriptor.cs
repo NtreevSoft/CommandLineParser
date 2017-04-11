@@ -75,7 +75,7 @@ namespace Ntreev.Library.Commands
                     {
                         this.args.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
                     }
-                    else if(descriptor.DefaultValue != DBNull.Value)
+                    else if (descriptor.DefaultValue != DBNull.Value)
                     {
                         this.args.Add(descriptor, descriptor.DefaultValue);
                     }

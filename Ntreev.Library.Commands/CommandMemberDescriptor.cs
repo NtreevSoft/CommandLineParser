@@ -155,7 +155,7 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                if (this.ShortName == string.Empty)
+                if (this.shortName == string.Empty)
                     return string.Empty;
                 return CommandSettings.ShortDelimiter + this.shortName;
             }
