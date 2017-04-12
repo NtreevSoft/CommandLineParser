@@ -101,7 +101,7 @@ namespace Ntreev.Library.Commands
                 var descriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberVisible(item));
                 var parser = new ParseDescriptor(descriptors)
                 {
-                    IsInitializable = types.HasFlag(CommandParsingTypes.Initialize)
+                    IsInitializable = types.HasFlag(CommandParsingTypes.OmitInitialize) == false
                 };
                 parser.Parse(this.instance, arguments[1]);
                 return true;
@@ -158,7 +158,7 @@ namespace Ntreev.Library.Commands
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
                 var visibleDescriptors = descriptor.Members.Where(item => this.IsMemberVisible(item));
-                Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors, types.HasFlag(CommandParsingTypes.Initialize));
+                Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
                 return true;
             }
         }

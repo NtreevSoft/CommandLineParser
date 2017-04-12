@@ -17,9 +17,9 @@ namespace Ntreev.Library.Commands
         OmitCommandName = 1,
 
         /// <summary>
-        /// 설정되지 않은 속성을 초기화합니다. 기본값이 설정되어 있는 경우 기본값을 사용합니다.
+        /// 설정되지 않은 속성은 초기화하지 않습니다.
         /// </summary>
-        Initialize = 2,
+        OmitInitialize = 2,
 
         [Obsolete]
         IgnoreCase = 4,
