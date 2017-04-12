@@ -81,6 +81,12 @@ namespace Ntreev.Library.Commands
             get { return this.shortName; }
         }
 
+        /// <summary>
+        /// 필수 속성을 나타냅니다. 필수 속성은 스위치값이 필요없이 인자값만 필요로 합니다. 
+        /// 정의된 필수 속성 순서대로 인자값이 설정됩니다.
+        /// 정의된 필수 속성 갯수와 인자 갯수가 다르면 예외를 발생합니다.
+        /// 단 기본값이 정의되어 있는 경우 생략할 수 있습니다.
+        /// </summary>
         public virtual bool IsRequired
         {
             get { return this.type.HasFlag(CommandPropertyTypes.IsRequired); }
@@ -96,7 +102,9 @@ namespace Ntreev.Library.Commands
         }
 
         /// <summary>
-        /// 기본값을 설정하는데 있어서 명령줄에 인자 명확히 포함되어야 하는지에 대한 여부를 설정합니다.
+        /// 일반 형태와 같이 스위치값과 인자값이 필요하지만 때에 따라서 인자값을 생략할 수 있습니다. 
+        /// 인자값이 생략되면 기본값으로 설정됩니다.
+        /// 기본값이 없다면 타입의 초기값으로 설정됩니다.
         /// </summary>
         public virtual bool IsImplicit
         {
@@ -112,6 +120,10 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        /// <summary>
+        /// 토글 형태의 속성을 나타냅니다. 토글로 설정되면 인자값은 필요없이 스위치값만 요구합니다. 스위치가 설정되면 스위치의 기본값으로 설정합니다.
+        /// 따라서 토글 형태의 속성은 항상 기본값이 존재해야 합니다. bool 형태의 속성은 기본값이 자동으로 true로 설정됩니다.
+        /// </summary>
         public virtual bool IsToggle
         {
             get { return this.type.HasFlag(CommandPropertyTypes.IsToggle); }

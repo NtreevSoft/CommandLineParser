@@ -12,14 +12,21 @@ namespace Ntreev.Library.Commands.Test
         {
             var settings = new Settings();
             var parser = new CommandLineParser(settings);
-            parser.ParseArguments("");
+            parser.Parse("--list -c", CommandParsingTypes.OmitCommandName);
         }
 
         class Settings
         {
-            [CommandProperty(IsImplicit = false)]
+            [CommandProperty(IsImplicit = true)]
             [DefaultValue("")]
             public string List { get; set; }
+
+            [CommandProperty('c')]
+            public bool IsCancel { get; set; }
+
+            [CommandProperty]
+            [DefaultValue(5005)]
+            public int Port { get; set; }
         }
     }
 }

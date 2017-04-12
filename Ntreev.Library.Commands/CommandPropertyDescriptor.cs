@@ -52,7 +52,7 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                if (this.MemberType == typeof(bool))
+                if (this.IsRequired == false && this.MemberType == typeof(bool))
                     return true;
                 return base.IsToggle;
             }

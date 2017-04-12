@@ -68,6 +68,11 @@ namespace Ntreev.Library.Commands
 
         public bool Parse(string commandLine, CommandParsingTypes types)
         {
+            if (types.HasFlag(CommandParsingTypes.OmitCommandName) == true)
+            {
+                commandLine = $"{this.Name} {commandLine}";
+            }
+
             var arguments = CommandLineParser.Split(commandLine);
             var name = arguments[0];
 
@@ -94,19 +99,27 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberVisible(item));
-                var helper = new ParseDescriptor(descriptors);
-                helper.Parse(this.instance, arguments[1]);
+                var parser = new ParseDescriptor(descriptors)
+                {
+                    IsInitializable = types.HasFlag(CommandParsingTypes.Initialize)
+                };
+                parser.Parse(this.instance, arguments[1]);
                 return true;
             }
         }
 
-        public bool ParseArguments(string arguments)
-        {
-            return this.Parse($"{this.Name} {arguments}");
-        }
-
         public bool Invoke(string commandLine)
         {
+            return this.Invoke(commandLine, CommandParsingTypes.None);
+        }
+
+        public bool Invoke(string commandLine, CommandParsingTypes types)
+        {
+            if (types.HasFlag(CommandParsingTypes.OmitCommandName) == true)
+            {
+                commandLine = $"{this.Name} {commandLine}";
+            }
+
             var arguments = CommandLineParser.Split(commandLine);
             var name = arguments[0];
 
@@ -145,7 +158,7 @@ namespace Ntreev.Library.Commands
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
                 var visibleDescriptors = descriptor.Members.Where(item => this.IsMemberVisible(item));
-                Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors);
+                Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors, types.HasFlag(CommandParsingTypes.Initialize));
                 return true;
             }
         }
@@ -355,10 +368,13 @@ namespace Ntreev.Library.Commands
             return new CommandMethodUsagePrinter(name, instance);
         }
 
-        private static void Invoke(object instance, string arguments, MethodInfo methodInfo, IEnumerable<CommandMemberDescriptor> descriptors)
+        private static void Invoke(object instance, string arguments, MethodInfo methodInfo, IEnumerable<CommandMemberDescriptor> descriptors, bool init)
         {
-            var helper = new ParseDescriptor(descriptors);
-            helper.Parse(instance, arguments);
+            var parser = new ParseDescriptor(descriptors)
+            {
+                IsInitializable = init,
+            };
+            parser.Parse(instance, arguments);
 
             var values = new ArrayList();
             var nameToDescriptors = descriptors.ToDictionary(item => item.DescriptorName);
@@ -366,7 +382,6 @@ namespace Ntreev.Library.Commands
             foreach (var item in methodInfo.GetParameters())
             {
                 var descriptor = nameToDescriptors[item.Name];
-
                 var value = descriptor.GetValueInternal(instance);
                 values.Add(value);
             }

@@ -52,6 +52,11 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public bool IsInitializable
+        {
+            get; set;
+        }
+
         public void Parse(object instance, string commandLine)
         {
             var requirements = this.members.Where(item => item.IsRequired == true).ToList();
@@ -78,6 +83,10 @@ namespace Ntreev.Library.Commands
                     else if (descriptor.DefaultValue != DBNull.Value)
                     {
                         this.args.Add(descriptor, descriptor.DefaultValue);
+                    }
+                    else if (descriptor.MemberType == typeof(bool))
+                    {
+                        this.args.Add(descriptor, true);
                     }
                     else
                     {
@@ -115,13 +124,16 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in options.ToArray())
             {
-                if (item.IsImplicit == true && item.DefaultValue != DBNull.Value)
+                if (this.IsInitializable == false)
+                    continue;
+
+                if (item.DefaultValue != DBNull.Value)
                 {
                     this.args.Add(item, item.DefaultValue);
                 }
                 else if (item.MemberType.IsValueType == true)
                 {
-                    this.args.Add(item, item.DefaultValue);
+                    this.args.Add(item, Activator.CreateInstance(item.MemberType));
                 }
                 else
                 {
