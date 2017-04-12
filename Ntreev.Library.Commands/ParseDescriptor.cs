@@ -69,9 +69,9 @@ namespace Ntreev.Library.Commands
                 {
                     var descriptor = this.descriptors[arg];
                     var nextArg = arguments.FirstOrDefault();
-                    var isValue = nextArg != null ? !Regex.IsMatch(nextArg, $"{CommandSettings.Delimiter}\\S+|{CommandSettings.ShortDelimiter}\\S+") : false;
+                    var isValue = CommandLineParser.IsSwitch(nextArg) == false;
 
-                    if (nextArg != null && isValue == true)
+                    if (nextArg != null && isValue == true && descriptor.IsToggle == false)
                     {
                         this.args.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
                     }
@@ -118,7 +118,14 @@ namespace Ntreev.Library.Commands
                 if (item.IsImplicit == true && item.DefaultValue != DBNull.Value)
                 {
                     this.args.Add(item, item.DefaultValue);
-                    options.Remove(item);
+                }
+                else if (item.MemberType.IsValueType == true)
+                {
+                    this.args.Add(item, item.DefaultValue);
+                }
+                else
+                {
+                    this.args.Add(item, null);
                 }
             }
 

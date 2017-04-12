@@ -31,17 +31,14 @@ using System.Text.RegularExpressions;
 
 namespace Ntreev.Library.Commands
 {
-    /// <summary>
-    /// 스위치의 속성을 지정합니다.
-    /// </summary>
+    
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class CommandPropertyAttribute : Attribute
     {
         private string name;
         private char shortName;
-        private bool isRequired;
         private bool shortNameOnly;
-        private bool isImplicit;
+        private CommandPropertyTypes type;
 
         public CommandPropertyAttribute()
         {
@@ -86,26 +83,46 @@ namespace Ntreev.Library.Commands
 
         public virtual bool IsRequired
         {
-            get { return this.isRequired; }
+            get { return this.type.HasFlag(CommandPropertyTypes.IsRequired); }
             set
             {
-                if (this.isImplicit == true && value == true)
+                if (this.type != CommandPropertyTypes.None && value == true)
                     throw new ArgumentException();
-                this.isRequired = value;
+                if (value == true)
+                    this.type = CommandPropertyTypes.IsRequired;
+                else
+                    this.type = CommandPropertyTypes.None;
             }
         }
 
         /// <summary>
         /// 기본값을 설정하는데 있어서 명령줄에 인자 명확히 포함되어야 하는지에 대한 여부를 설정합니다.
         /// </summary>
-        public bool IsImplicit
+        public virtual bool IsImplicit
         {
-            get { return this.isImplicit; }
+            get { return this.type.HasFlag(CommandPropertyTypes.IsImplicit); }
             set
             {
-                if (this.isRequired == true && value == true)
+                if (this.type != CommandPropertyTypes.None && value == true)
                     throw new ArgumentException();
-                this.isImplicit = value;
+                if (value == true)
+                    this.type = CommandPropertyTypes.IsImplicit;
+                else
+                    this.type = CommandPropertyTypes.None;
+            }
+        }
+
+        public virtual bool IsToggle
+        {
+            get { return this.type.HasFlag(CommandPropertyTypes.IsToggle); }
+            set
+            {
+                if (this.type != CommandPropertyTypes.None && value == true)
+                    throw new ArgumentException();
+                if (value == true)
+                    this.type = CommandPropertyTypes.IsToggle;
+                else
+                    this.type = CommandPropertyTypes.None;
             }
         }
 

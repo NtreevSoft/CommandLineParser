@@ -86,11 +86,13 @@
     <Compile Include="CommandParameterArrayDescriptor.cs" />
     <Compile Include="CommandPropertyArrayAttribute.cs" />
     <Compile Include="CommandPropertyArrayDescriptor.cs" />
+    <Compile Include="CommandPropertyTypes.cs" />
     <Compile Include="CommandSettings.cs" />
     <Compile Include="CommandStaticMethodAttribute.cs" />
     <Compile Include="CommandStaticPropertyAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
+    <Compile Include="CommandParsingTypes.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

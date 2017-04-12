@@ -46,5 +46,14 @@ namespace Ntreev.Library.Commands
                 throw new InvalidOperationException("cannot be set");
             }
         }
+
+        public override bool IsImplicit
+        {
+            get { return false; }
+            set
+            {
+                throw new InvalidOperationException("cannot be set");
+            }
+        }
     }
 }

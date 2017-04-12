@@ -56,11 +56,7 @@ namespace Ntreev.Library.Commands
                 this.name = string.Empty;
             }
         }
-
-        protected abstract void SetValue(object instance, object value);
-
-        protected abstract object GetValue(object instance);
-
+                
         public string Name
         {
             get { return this.name; }
@@ -91,14 +87,19 @@ namespace Ntreev.Library.Commands
             get { return DBNull.Value; }
         }
 
-        public bool IsRequired
+        public virtual bool IsRequired
         {
             get { return this.attribute.IsRequired; }
         }
 
-        public bool IsImplicit
+        public virtual bool IsImplicit
         {
             get { return this.attribute.IsImplicit; }
+        }
+
+        public virtual bool IsToggle
+        {
+            get { return this.attribute.IsToggle; }
         }
 
         public abstract Type MemberType
@@ -120,6 +121,10 @@ namespace Ntreev.Library.Commands
         {
             get { return this.descriptorName; }
         }
+
+        protected abstract void SetValue(object instance, object value);
+
+        protected abstract object GetValue(object instance);
 
         internal object Parse(object instance, string arg)
         {

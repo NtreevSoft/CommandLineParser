@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace Ntreev.Library.Commands
 {
-    public partial class CommandLineParser
+    public class CommandLineParser
     {
         private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"(?=\\s)|\\S+)";
         private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"(?=\\s)|\\S+|\\s+$)";
@@ -62,6 +62,11 @@ namespace Ntreev.Library.Commands
         }
 
         public bool Parse(string commandLine)
+        {
+            return this.Parse(commandLine, CommandParsingTypes.None);
+        }
+
+        public bool Parse(string commandLine, CommandParsingTypes types)
         {
             var arguments = CommandLineParser.Split(commandLine);
             var name = arguments[0];
@@ -273,6 +278,13 @@ namespace Ntreev.Library.Commands
                 text = text.Replace("\"\"", "\"");
             }
             return text;
+        }
+
+        public static bool IsSwitch(string argument)
+        {
+            if (argument == null)
+                return false;
+            return Regex.IsMatch(argument, $"{CommandSettings.Delimiter}\\S+|{CommandSettings.ShortDelimiter}\\S+");
         }
 
         public TextWriter Out

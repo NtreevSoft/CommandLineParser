@@ -48,6 +48,16 @@ namespace Ntreev.Library.Commands
             get { return this.propertyInfo.GetDefaultValue(); }
         }
 
+        public override bool IsToggle
+        {
+            get
+            {
+                if (this.MemberType == typeof(bool))
+                    return true;
+                return base.IsToggle;
+            }
+        }
+
         public override IEnumerable<Attribute> Attributes
         {
             get

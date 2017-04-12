@@ -127,64 +127,30 @@ namespace Ntreev.Library.Commands
                 var memberList = new List<CommandMemberDescriptor>(methodDescriptor.Members);
                 var argList = new List<string>(items.Skip(2));
 
-
-                if(argList.Any())
+                if (argList.Any())
                 {
-                    foreach (var item in memberList)
+                    var arg = argList.Last();
+                    var descriptor = this.FindMemberDescriptor(memberList, arg);
+                    if (descriptor != null)
                     {
-                        if (item.NamePattern == argList.Last())
-                        {
-
-                            return this.GetCompletions(command, methodDescriptor, item, find);
-                        }
+                        return this.GetCompletions(command, methodDescriptor, descriptor, find);
                     }
                 }
-                //var arg = string.Empty;
 
                 for (var i = 0; i < argList.Count; i++)
                 {
                     if (memberList.Any() == false)
                         break;
                     var arg = argList[i];
-
-                    foreach(var item in memberList)
-                    {
-                        if(item.NamePattern == arg)
-                        {
-                            int qwr = 0;
-                        }
-                    }
-
                     var member = memberList.First();
                     if (member.IsRequired == true)
                         memberList.RemoveAt(0);
-                    
                 }
 
-                if (memberList.Any() == true)
+                if (memberList.Any() == true && memberList.First().IsRequired == true)
                 {
                     return this.GetCompletions(command, methodDescriptor, memberList.First(), find);
                 }
-
-                //var commandNames = this.commandContext.Commands.Select(item => item.Name).ToArray();
-
-                //if (commandNames.Contains(commandName) == true)
-                //{
-                //    var command = this.commandContext.Commands[commandName];
-                //    if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
-                //    {
-                //        var methodName = items[1];
-                //        if (this.commandContext.IsMethodVisible(command, methodName) == true)
-                //        {
-                //            var methodDescriptor = CommandDescriptor.GetMethodDescriptor(command, methodName);
-                //            if (methodDescriptor.Members.Length > 0)
-                //            {
-                //                var completions = this.GetCompletions(command, methodDescriptor, methodDescriptor.Members[items.Length - 2], find);
-                //                return completions;
-                //            }
-                //        }
-                //    }
-                //}
             }
 
             return null;
@@ -220,8 +186,20 @@ namespace Ntreev.Library.Commands
 
             if (this.commandContext.IsMethodVisible(command, methodName) == false)
                 return null;
-                
-                    return CommandDescriptor.GetMethodDescriptor(command, methodName);
+
+            return CommandDescriptor.GetMethodDescriptor(command, methodName);
+        }
+
+        private CommandMemberDescriptor FindMemberDescriptor(IEnumerable<CommandMemberDescriptor> descriptors, string argument)
+        {
+            foreach (var item in descriptors)
+            {
+                if (item.NamePattern == argument || item.ShortNamePattern == argument)
+                {
+                    return item;
+                }
+            }
+            return null;
         }
     }
 }

@@ -112,11 +112,11 @@ namespace Ntreev.Library.Commands
 
         internal static void Invoke(object instance, string arguments, MethodInfo methodInfo, IEnumerable<CommandMemberDescriptor> memberDescriptors)
         {
-            var helper = new ParseDescriptor(memberDescriptors);
-            helper.Parse(instance, arguments);
-
             var values = new ArrayList();
             var descriptors = memberDescriptors.ToDictionary(item => item.DescriptorName);
+            var parser = new ParseDescriptor(memberDescriptors);
+
+            parser.Parse(instance, arguments);
 
             foreach (var item in methodInfo.GetParameters())
             {
