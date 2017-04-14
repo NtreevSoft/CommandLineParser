@@ -32,10 +32,10 @@ namespace Ntreev.Library.Commands
             foreach (var item in commands)
             {
                 this.commands.Add(item);
-                this.parsers.Add(item, this.CreateInstance(item));
+                this.parsers.Add(item, this.CreateInstance(this, item));
             }
-            this.parsers.Add(this.HelpCommand, this.CreateInstance(this.HelpCommand));
-            this.parsers.Add(this.VersionCommand, this.CreateInstance(this.versionCommand));
+            this.parsers.Add(this.HelpCommand, this.CreateInstance(this, this.HelpCommand));
+            this.parsers.Add(this.VersionCommand, this.CreateInstance(this, this.versionCommand));
 
             foreach (var item in this.parsers)
             {
@@ -74,15 +74,13 @@ namespace Ntreev.Library.Commands
             return attr.Browsable;
         }
 
-        public virtual bool IsMethodVisible(ICommand command, string methodName)
+        public virtual bool IsMethodVisible(ICommand command, CommandMethodDescriptor descriptor)
         {
             if (command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
                 return false;
             if (this.IsCommandVisible(command) == false)
                 return false;
-
-            var parser = this.parsers[command];
-            return parser.IsMethodVisible(methodName);
+            return true;
         }
 
         public TextWriter Out
@@ -214,6 +212,13 @@ namespace Ntreev.Library.Commands
             }
 
             throw new ArgumentException(string.Format("'{0}' does not exsited command.", commandName));
+        }
+
+        private CommandLineParser CreateInstance(CommandContextBase commandContext, ICommand command)
+        {
+            var parser = this.CreateInstance(command);
+            parser.CommandContext = commandContext;
+            return parser;
         }
     }
 }

@@ -184,10 +184,10 @@ namespace Ntreev.Library.Commands
             if (command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
                 return null;
 
-            if (this.commandContext.IsMethodVisible(command, methodName) == false)
+            var descriptor = CommandDescriptor.GetMethodDescriptor(command, methodName);
+            if (this.commandContext.IsMethodVisible(command, descriptor) == false)
                 return null;
-
-            return CommandDescriptor.GetMethodDescriptor(command, methodName);
+            return descriptor;
         }
 
         private CommandMemberDescriptor FindMemberDescriptor(IEnumerable<CommandMemberDescriptor> descriptors, string argument)

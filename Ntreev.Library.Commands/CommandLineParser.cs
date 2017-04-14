@@ -345,9 +345,11 @@ namespace Ntreev.Library.Commands
         protected virtual bool IsMethodVisible(CommandMethodDescriptor descriptor)
         {
             var attr = descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) as BrowsableAttribute;
-            if (attr == null)
-                return true;
-            return attr.Browsable;
+            if (attr != null && attr.Browsable == false)
+                return false;
+            if (this.CommandContext != null)
+                return this.CommandContext.IsMethodVisible(this.Instance as ICommand, descriptor);
+            return true;
         }
 
         protected virtual bool IsMemberVisible(CommandMemberDescriptor descriptor)
@@ -415,6 +417,11 @@ namespace Ntreev.Library.Commands
             if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                 return false;
             return true;
+        }
+
+        internal CommandContextBase CommandContext
+        {
+            get; set;
         }
     }
 }
