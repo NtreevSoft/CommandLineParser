@@ -51,6 +51,9 @@ namespace Ntreev.Library.Commands
             var name = segments[0];
             var arguments = segments[1];
 
+            if (File.Exists(name) == true)
+                name = Process.GetCurrentProcess().ProcessName;
+
             if (this.VerifyName == true && this.Name != name)
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
