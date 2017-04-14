@@ -15,7 +15,8 @@ namespace Ntreev.Library.Commands
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
         private readonly List<TerminalChar> chars = new List<TerminalChar>();
 
-        private List<string> histories = new List<string>();
+        private readonly List<string> histories = new List<string>();
+        private readonly List<string> completions = new List<string>();
 
         private int y = 0;
         private int height = 1;
@@ -122,6 +123,11 @@ namespace Ntreev.Library.Commands
         public IList<string> Histories
         {
             get { return this.histories; }
+        }
+
+        public IList<string> Completions
+        {
+            get { return this.completions; }
         }
 
         public void Clear()
@@ -366,7 +372,10 @@ namespace Ntreev.Library.Commands
 
         protected virtual string[] GetCompletion(string[] items, string find)
         {
-            return null;
+            var query = from item in this.completions
+                        where item.StartsWith(find)
+                        select item;
+            return query.ToArray();
         }
 
         private void ShiftDown()
@@ -473,7 +482,20 @@ namespace Ntreev.Library.Commands
             var inputIndex = this.Index;
             this.Index = this.Length;
             if (this.isHidden == false)
-                this.writer.Write("\b\0");
+            {
+                if (Console.CursorLeft == 0)
+                {
+                    var i = this.Index;
+                    this.Index--;
+                    this.writer.Write("\0");
+                    this.Index--;
+                }
+                else
+                {
+                    this.writer.Write("\b\0");
+                }
+            }
+
             this.Index = inputIndex;
             this.Index--;
             this.chars.RemoveAt(this.index);

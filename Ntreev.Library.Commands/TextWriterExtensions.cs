@@ -89,7 +89,7 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public static void Print<T>(this TextWriter writer, T[] items, Action<T, Action> action, Func<T, string> selector)
         {
-            var maxWidth = Console.BufferWidth;
+            var maxWidth = Console.IsOutputRedirected == false ? Console.BufferWidth : 80;
             var lineCount = 4;
 
             while (true)
