@@ -165,7 +165,10 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintSummary()
         {
-            this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
+            if(this.CommandContext != null)
+                this.Out.WriteLine("Type '{0} {1}' for usage.", this.CommandContext.HelpCommand.Name, this.name);
+            else
+                this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
         }
 
         public virtual void PrintUsage()

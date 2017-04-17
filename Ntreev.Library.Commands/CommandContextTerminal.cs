@@ -96,6 +96,7 @@ namespace Ntreev.Library.Commands
                 {
                     var query = from item in CommandDescriptor.GetMethodDescriptors(command)
                                 let name = item.Name
+                                where this.commandContext.IsMethodVisible(command, item)
                                 where name.StartsWith(find)
                                 select name;
                     return query.ToArray();
