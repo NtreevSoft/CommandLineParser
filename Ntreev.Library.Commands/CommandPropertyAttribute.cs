@@ -31,7 +31,6 @@ using System.Text.RegularExpressions;
 
 namespace Ntreev.Library.Commands
 {
-    
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class CommandPropertyAttribute : Attribute
     {
