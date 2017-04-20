@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -61,6 +62,13 @@ namespace Ntreev.Library.Commands
                 try
                 {
                     this.commandContext.Execute(this.commandContext.Name + " " + line);
+                }
+                catch (TargetInvocationException e)
+                {
+                    if (e.InnerException != null)
+                        this.commandContext.Out.WriteLine(e.InnerException.Message);
+                    else
+                        this.commandContext.Out.WriteLine(e.Message);
                 }
                 catch (Exception e)
                 {
