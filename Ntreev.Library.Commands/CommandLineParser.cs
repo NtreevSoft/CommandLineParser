@@ -300,7 +300,7 @@ namespace Ntreev.Library.Commands
         {
             if (argument == null)
                 return false;
-            return Regex.IsMatch(argument, $"{CommandSettings.Delimiter}\\S+|{CommandSettings.ShortDelimiter}\\S+");
+            return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}\\S+|^{CommandSettings.ShortDelimiter}\\S+");
         }
 
         public TextWriter Out
