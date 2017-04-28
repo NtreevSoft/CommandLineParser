@@ -380,7 +380,8 @@ namespace Ntreev.Library.Commands
 
         private void ShiftDown()
         {
-            Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.height, 0, this.y + 1);
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+                Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.height, 0, this.y + 1);
             this.y++;
             this.Index = this.Length;
         }
@@ -700,7 +701,8 @@ namespace Ntreev.Library.Commands
                 {
                     if (this.prompter.y + this.prompter.height == Console.BufferHeight)
                     {
-                        Console.MoveBufferArea(0, 1, Console.BufferWidth, this.prompter.y - 1, 0, 0);
+                        if (Environment.OSVersion.Platform != PlatformID.Unix)
+                            Console.MoveBufferArea(0, 1, Console.BufferWidth, this.prompter.y - 1, 0, 0);
                         this.y -= this.prompter.height;
                     }
                     else
