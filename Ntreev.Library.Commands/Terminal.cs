@@ -306,6 +306,19 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public string FullText
+        {
+            get
+            {
+                var text = string.Empty;
+                for (var i = 0; i < this.chars.Count; i++)
+                {
+                    text += this.chars[i].Char;
+                }
+                return text;
+            }
+        }
+
         public static string NextCompletion(string[] completions, string text)
         {
             completions = completions.OrderBy(item => item)
@@ -383,8 +396,18 @@ namespace Ntreev.Library.Commands
             if (Environment.OSVersion.Platform != PlatformID.Unix)
             {
                 Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.height, 0, this.y + 1);
-                this.y++;
             }
+            else
+            {
+                for (var i = 0; i < this.height; i++)
+                {
+                    Console.SetCursorPosition(0, this.y + i);
+                    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+                }
+                Console.SetCursorPosition(0, this.y + 1);
+                this.writer.WriteLine(this.FullText);
+            }
+            this.y++;
             this.Index = this.Length;
         }
 
