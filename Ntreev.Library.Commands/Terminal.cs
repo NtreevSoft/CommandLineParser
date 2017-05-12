@@ -386,8 +386,8 @@ namespace Ntreev.Library.Commands
         protected virtual string[] GetCompletion(string[] items, string find)
         {
             var query = from item in this.completions
-                        where item.StartsWith(find)
-                        select item;
+                                 where item.StartsWith(find)
+                                 select item;
             return query.ToArray();
         }
 
@@ -396,6 +396,8 @@ namespace Ntreev.Library.Commands
             if (Environment.OSVersion.Platform != PlatformID.Unix)
             {
                 Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.height, 0, this.y + 1);
+                this.y++;
+                this.Index = this.Length;
             }
             else
             {
@@ -404,11 +406,25 @@ namespace Ntreev.Library.Commands
                     Console.SetCursorPosition(0, this.y + i);
                     this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
                 }
-                Console.SetCursorPosition(0, this.y + 1);
-                this.writer.WriteLine(this.FullText);
+                Console.SetCursorPosition(0, this.y);
+                this.writer.WriteLine();
+                this.writer.Write(this.FullText);
             }
-            this.y++;
-            this.Index = this.Length;
+
+        }
+
+        private void ShiftDown2()
+        {
+            for (var i = 0; i < this.height; i++)
+            {
+                Console.SetCursorPosition(0, this.y + i);
+                this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+            }
+            Console.SetCursorPosition(0, this.y);
+            this.writer.WriteLine();
+            this.writer.Write(this.FullText);
+            //this.y++;
+            //this.Index = this.Length;
         }
 
         private int Length
@@ -476,29 +492,29 @@ namespace Ntreev.Library.Commands
             if (y1 != y2)
             {
                 this.chars.Insert(this.index++, new TerminalChar()
-                {
-                    Slot = Console.BufferWidth - x1,
-                    Char = ch,
-                });
+                    {
+                        Slot = Console.BufferWidth - x1,
+                        Char = ch,
+                    });
                 this.height++;
             }
             else if (x1 > x2)
             {
                 this.y--;
                 this.chars.Insert(this.index++, new TerminalChar()
-                {
-                    Slot = Console.BufferWidth - x1,
-                    Char = ch,
-                });
+                    {
+                        Slot = Console.BufferWidth - x1,
+                        Char = ch,
+                    });
                 this.height++;
             }
             else
             {
                 this.chars.Insert(this.index++, new TerminalChar()
-                {
-                    Slot = x2 - x1,
-                    Char = ch,
-                });
+                    {
+                        Slot = x2 - x1,
+                        Char = ch,
+                    });
             }
         }
 
@@ -722,22 +738,43 @@ namespace Ntreev.Library.Commands
                 var x1 = Console.CursorLeft;
                 var y1 = Console.CursorTop;
 
-                if (this.y == this.prompter.y)
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
-                    if (this.prompter.y + this.prompter.height == Console.BufferHeight)
+                    if (this.y == this.prompter.y)
                     {
-                        if (Environment.OSVersion.Platform != PlatformID.Unix)
+                        if (this.prompter.y + this.prompter.height == Console.BufferHeight)
                         {
                             Console.MoveBufferArea(0, 1, Console.BufferWidth, this.prompter.y - 1, 0, 0);
                             this.y -= this.prompter.height;
                         }
+                        else
+                        {
+                            var x2 = Console.CursorLeft;
+                            var y2 = Console.CursorTop;
+                            this.prompter.ShiftDown();
+                            Console.SetCursorPosition(x2, y2);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    if (this.y >= this.prompter.y)
                     {
-                        var x2 = Console.CursorLeft;
-                        var y2 = Console.CursorTop;
-                        this.prompter.ShiftDown();
-                        Console.SetCursorPosition(x2, y2);
+                        if (this.prompter.y + this.prompter.height == Console.BufferHeight)
+                        {
+                            this.prompter.ShiftDown();
+                            if (this.y != this.prompter.y)
+                                this.y -= this.prompter.height;
+                            else
+                                this.y--;
+                        }
+                        else
+                        {
+                            //var x2 = Console.CursorLeft;
+                            //var y2 = Console.CursorTop;
+                            //this.prompter.ShiftDown();
+                            //Console.SetCursorPosition(x2, y2);
+                        }
                     }
                 }
 
