@@ -104,8 +104,7 @@
     <Compile Include="CommandPropertyDescriptor.cs" />
     <Compile Include="TableDataBuilder.cs" />
     <Compile Include="TerminalCursorVisible.cs" />
-    <Compile Include="TerminalForegroundColor.cs" />
-    <Compile Include="TerminalBackgroundColor.cs" />
+    <Compile Include="TerminalColor.cs" />
     <Compile Include="Terminal.cs" />
     <Compile Include="UsageDescriptionProvider.cs" />
     <Compile Include="IUsageDescriptionProvider.cs" />
