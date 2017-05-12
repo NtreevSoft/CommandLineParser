@@ -42,32 +42,8 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
-            using (TerminalColor.SetForeground(ConsoleColor.Red))
-            {
-                Console.WriteLine("red");
-                using (TerminalColor.SetForeground(ConsoleColor.Blue))
-                {
-                    Console.WriteLine("blue");
-                }
-            }
-            Console.WriteLine("default");
-            return;
-
-                for (var i = 0; i < 23; i++)
-                {
-                    Console.WriteLine(i);
-                }
-            System.Threading.Tasks.Task.Run(() =>
-                {
-                    while (true)
-                    {
-                        System.Threading.Thread.Sleep(1000);
-                        Console.WriteLine(DateTime.Now);
-                    }
-                });
             var shell = Container.GetService<IShell>();
             shell.Prompt = Directory.GetCurrentDirectory();
-            //shell.Prompt = "123";
             shell.Start();
         }
     }
