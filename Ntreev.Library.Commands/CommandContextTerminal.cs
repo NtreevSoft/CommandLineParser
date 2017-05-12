@@ -90,6 +90,7 @@ namespace Ntreev.Library.Commands
             {
                 var query = from item in this.commandContext.Commands
                             let name = item.Name
+                            where this.commandContext.IsCommandVisible(item)
                             where name.StartsWith(find)
                             select name;
                 return query.ToArray();
