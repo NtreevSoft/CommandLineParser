@@ -10,6 +10,7 @@ namespace Ntreev.Library.Commands
 {
     public class Terminal
     {
+        private static ConsoleKeyInfo cancelKeyInfo = new ConsoleKeyInfo('\u0003', ConsoleKey.C, false, false, true);
         private static object lockobj = new object();
 
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
@@ -94,6 +95,26 @@ namespace Ntreev.Library.Commands
                 secureString.AppendChar(item);
             }
             return secureString;
+        }
+
+        public ConsoleKey ReadKey(string prompt, params ConsoleKey[] filters)
+        {
+            this.writer = Console.Out;
+            var oldTreatControlCAsInput = Console.TreatControlCAsInput;
+            Console.TreatControlCAsInput = true;
+            Console.SetOut(new TerminalTextWriter(Console.Out, this));
+
+            try
+            {
+                return ReadKeyImpl(prompt, filters);
+            }
+            finally
+            {
+                Console.TreatControlCAsInput = oldTreatControlCAsInput;
+                Console.SetOut(this.writer);
+                Console.WriteLine();
+                this.writer = null;
+            }
         }
 
         public void NextHistory()
@@ -319,6 +340,11 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public bool IsReading
+        {
+            get { return this.writer != null; }
+        }
+
         public static string NextCompletion(string[] completions, string text)
         {
             completions = completions.OrderBy(item => item)
@@ -383,11 +409,32 @@ namespace Ntreev.Library.Commands
             return text;
         }
 
+        public void SetPrompt(string prompt)
+        {
+            if (this.writer == null)
+                throw new Exception("prompt can set only on read mode.");
+
+            lock (lockobj)
+            {
+                using (TerminalCursorVisible.Set(false))
+                {
+                    var text = this.Text;
+                    var index = this.Index;
+                    this.start = 0;
+                    this.Clear();
+                    this.InsertText(prompt);
+                    this.start = this.Index;
+                    this.InsertText(text);
+                    this.Index = index;
+                }
+            }
+        }
+
         protected virtual string[] GetCompletion(string[] items, string find)
         {
             var query = from item in this.completions
-                                 where item.StartsWith(find)
-                                 select item;
+                        where item.StartsWith(find)
+                        select item;
             return query.ToArray();
         }
 
@@ -484,29 +531,29 @@ namespace Ntreev.Library.Commands
             if (y1 != y2)
             {
                 this.chars.Insert(this.index++, new TerminalChar()
-                    {
-                        Slot = Console.BufferWidth - x1,
-                        Char = ch,
-                    });
+                {
+                    Slot = Console.BufferWidth - x1,
+                    Char = ch,
+                });
                 this.height++;
             }
             else if (x1 > x2)
             {
                 this.y--;
                 this.chars.Insert(this.index++, new TerminalChar()
-                    {
-                        Slot = Console.BufferWidth - x1,
-                        Char = ch,
-                    });
+                {
+                    Slot = Console.BufferWidth - x1,
+                    Char = ch,
+                });
                 this.height++;
             }
             else
             {
                 this.chars.Insert(this.index++, new TerminalChar()
-                    {
-                        Slot = x2 - x1,
-                        Char = ch,
-                    });
+                {
+                    Slot = x2 - x1,
+                    Char = ch,
+                });
             }
         }
 
@@ -599,10 +646,13 @@ namespace Ntreev.Library.Commands
             {
                 var key = Console.ReadKey(true);
 
-                if (this.actionMaps.ContainsKey(key) == true)
+                if (key == cancelKeyInfo)
+                {
+                    return null;
+                }
+                else if (this.actionMaps.ContainsKey(key) == true)
                 {
                     this.actionMaps[key]();
-
                 }
                 else if (key.Key == ConsoleKey.Enter)
                 {
@@ -628,6 +678,33 @@ namespace Ntreev.Library.Commands
                 {
                     this.InsertText(key.KeyChar);
                     this.SetInputText();
+                }
+            }
+        }
+
+        private ConsoleKey ReadKeyImpl(string prompt, params ConsoleKey[] filters)
+        {
+            lock (lockobj)
+            {
+                this.y = Console.CursorTop;
+                this.isHidden = false;
+                this.InsertText(prompt);
+                this.start = this.Index;
+                this.isHidden = false;
+                this.inputText = string.Empty;
+            }
+
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+
+                if ((int)key.Modifiers != 0)
+                    continue;
+
+                if (filters.Any() == false || filters.Any(item => item == key.Key) == true)
+                {
+                    this.InsertText(key.Key.ToString());
+                    return key.Key;
                 }
             }
         }

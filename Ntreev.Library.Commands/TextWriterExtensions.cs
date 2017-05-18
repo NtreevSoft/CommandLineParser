@@ -31,10 +31,10 @@ namespace Ntreev.Library.Commands
                 dataBuilder.Add(query.Select(i => i.GetValue(item)).ToArray());
             }
 
-            writer.WriteLine(dataBuilder.Data, true);
+            writer.PrintTableData(dataBuilder.Data, true);
         }
 
-        public static void WriteLine(this TextWriter writer, string[][] itemsArray, bool hasHeader)
+        public static void PrintTableData(this TextWriter writer, string[][] itemsArray, bool hasHeader)
         {
             var count = itemsArray.First().Length;
 

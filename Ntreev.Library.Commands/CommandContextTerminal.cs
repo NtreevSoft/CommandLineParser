@@ -27,6 +27,10 @@ namespace Ntreev.Library.Commands
             set
             {
                 this.prompt = value;
+                if (this.IsReading == true)
+                {
+                    this.SetPrompt(this.Prefix + this.Prompt + this.Postfix);
+                }
             }
         }
 
@@ -36,6 +40,10 @@ namespace Ntreev.Library.Commands
             set
             {
                 this.prefix = value;
+                if (this.IsReading == true)
+                {
+                    this.SetPrompt(this.Prefix + this.Prompt + this.Postfix);
+                }
             }
         }
 
@@ -45,6 +53,10 @@ namespace Ntreev.Library.Commands
             set
             {
                 this.postfix = value;
+                if (this.IsReading == true)
+                {
+                    this.SetPrompt(this.Prefix + this.Prompt + this.Postfix);
+                }
             }
         }
 
@@ -175,7 +187,6 @@ namespace Ntreev.Library.Commands
         {
             return null;
         }
-
 
         private ICommand GetCommand(string commandName)
         {
