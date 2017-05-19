@@ -163,12 +163,12 @@ namespace Ntreev.Library.Commands
 
         public static void Print<T>(this TextWriter writer, IDictionary<string, T> items)
         {
-            Print<T>(writer, items, (o, a) => a(), item => item.ToString());
+            Print<T>(writer, items, (o, a) => a(), item => $"{item}");
         }
 
         public static void Print<T>(this TextWriter writer, IDictionary<string, T> items, Action<T, Action> action)
         {
-            Print<T>(writer, items, action, item => item.ToString());
+            Print<T>(writer, items, action, item => $"{item}");
         }
 
         /// <summary>

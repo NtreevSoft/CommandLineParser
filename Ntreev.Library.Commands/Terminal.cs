@@ -634,6 +634,7 @@ namespace Ntreev.Library.Commands
             lock (lockobj)
             {
                 this.y = Console.CursorTop;
+                this.height = 1;
                 this.isHidden = false;
                 this.InsertText(prompt);
                 this.start = this.Index;
