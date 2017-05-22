@@ -93,6 +93,7 @@
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandTypes.cs" />
     <Compile Include="CommandParsingTypes.cs" />
+    <Compile Include="IMethodProvider.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
