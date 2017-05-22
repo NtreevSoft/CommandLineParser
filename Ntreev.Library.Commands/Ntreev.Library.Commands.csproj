@@ -103,6 +103,8 @@
     <Compile Include="CommandParameterDescriptor.cs" />
     <Compile Include="CommandPropertyDescriptor.cs" />
     <Compile Include="TableDataBuilder.cs" />
+    <Compile Include="TerminalCancelEventHandler.cs" />
+    <Compile Include="TerminalCancelEventArgs.cs" />
     <Compile Include="TerminalCursorVisible.cs" />
     <Compile Include="TerminalColor.cs" />
     <Compile Include="Terminal.cs" />

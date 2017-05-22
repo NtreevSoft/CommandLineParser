@@ -15,6 +15,14 @@ namespace Ntreev.Library.Commands
 
         }
 
+        public bool Contains(string name)
+        {
+            var query = from item in descriptors
+                        where item.Name == name
+                        select item;
+            return query.Any();
+        }
+
         public CommandMethodDescriptor this[string name]
         {
             get

@@ -19,12 +19,12 @@ namespace Ntreev.Library.Commands.Shell.Commands
 
         }
 
-        [CommandMethod("list")]
-        [CommandStaticProperty(typeof(GlobalSettings))]
-        public void List(string options)
-        {
+        //[CommandMethod("list")]
+        //[CommandStaticProperty(typeof(GlobalSettings))]
+        //public void List(string options)
+        //{
 
-        }
+        //}
 
         [CommandMethod("show")]
         [CommandMethodProperty("Path", "Port")]

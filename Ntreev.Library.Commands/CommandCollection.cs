@@ -40,7 +40,7 @@ namespace Ntreev.Library.Commands
 
         internal void Add(ICommand command)
         {
-            if (this.commands.ContainsKey(command.Name) == true)
+            if (this.commands.ContainsKey(command.Name) == true && command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
                 throw new ArgumentException($"command '{command.Name}' is already registered.");
             this.commands.Add(command.Name, command);
         }

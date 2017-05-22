@@ -51,6 +51,42 @@ namespace Ntreev.Library.Commands
             this.actionMaps.Add(new ConsoleKeyInfo('\t', ConsoleKey.Tab, true, false, false), this.PrevCompletion);
         }
 
+        public long? ReadLong(string prompt)
+        {
+            if (this.ReadNumber(prompt, null, i => long.TryParse(i, out long v)) is long value)
+            {
+                return value;
+            }
+            return null;
+        }
+
+        public long? ReadLong(string prompt, long defaultValue)
+        {
+            if (this.ReadNumber(prompt, defaultValue, i => long.TryParse(i, out long v)) is long value)
+            {
+                return value;
+            }
+            return null;
+        }
+
+        public double? ReadDouble(string prompt)
+        {
+            if (this.ReadNumber(prompt, null, i => double.TryParse(i, out double v)) is double value)
+            {
+                return value;
+            }
+            return null;
+        }
+
+        public double? ReadDouble(string prompt, double defaultValue)
+        {
+            if (this.ReadNumber(prompt, defaultValue, i => double.TryParse(i, out double v)) is double value)
+            {
+                return value;
+            }
+            return null;
+        }
+
         public string ReadString(string prompt)
         {
             return ReadString(prompt, string.Empty);
@@ -75,7 +111,7 @@ namespace Ntreev.Library.Commands
 
             try
             {
-                return ReadLineImpl(prompt, defaultText, isHidden);
+                return ReadLineImpl(prompt, defaultText, isHidden, i => true);
             }
             finally
             {
@@ -138,6 +174,14 @@ namespace Ntreev.Library.Commands
                 this.InsertText(text);
                 this.SetInputText();
                 this.historyIndex--;
+            }
+            else if (this.histories.Count == 1)
+            {
+                var text = this.histories[0];
+                this.ClearText();
+                this.InsertText(text);
+                this.SetInputText();
+                this.historyIndex = 0;
             }
         }
 
@@ -430,6 +474,20 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public event TerminalCancelEventHandler CancelKeyPress;
+
+        public event EventHandler Cancelled;
+
+        protected virtual void OnCancelKeyPress(TerminalCancelEventArgs e)
+        {
+            this.CancelKeyPress?.Invoke(this, e);
+        }
+
+        protected virtual void OnCancelled(EventArgs e)
+        {
+            this.Cancelled?.Invoke(this, e);
+        }
+
         protected virtual string[] GetCompletion(string[] items, string find)
         {
             var query = from item in this.completions
@@ -629,12 +687,15 @@ namespace Ntreev.Library.Commands
             this.completion = string.Empty;
         }
 
-        private string ReadLineImpl(string prompt, string defaultText, bool isHidden)
+        private string ReadLineImpl(string prompt, string defaultText, bool isHidden, Func<string, bool> validation)
         {
             lock (lockobj)
             {
                 this.y = Console.CursorTop;
                 this.height = 1;
+                this.index = 0;
+                this.start = 0;
+                this.chars.Clear();
                 this.isHidden = false;
                 this.InsertText(prompt);
                 this.start = this.Index;
@@ -649,7 +710,13 @@ namespace Ntreev.Library.Commands
 
                 if (key == cancelKeyInfo)
                 {
-                    return null;
+                    var args = new TerminalCancelEventArgs(ConsoleSpecialKey.ControlC);
+                    this.OnCancelKeyPress(args);
+                    if (args.Cancel == false)
+                    {
+                        this.OnCancelled(EventArgs.Empty);
+                        return null;
+                    }
                 }
                 else if (this.actionMaps.ContainsKey(key) == true)
                 {
@@ -667,19 +734,48 @@ namespace Ntreev.Library.Commands
 
                     if (this.isHidden == false && text != string.Empty)
                     {
-                        if (this.histories.LastOrDefault() != text)
+                        if (this.histories.Contains(text) == false)
+                        {
                             this.histories.Add(text);
-                        if (this.historyIndex != this.histories.Count)
-                            this.historyIndex++;
+                            this.historyIndex = this.histories.Count;
+                        }
+                        else
+                        {
+                            this.historyIndex = this.histories.LastIndexOf(text) + 1;
+                        }
+
                     }
                     Console.SetCursorPosition(x, y);
                     return text;
                 }
                 else if (key.KeyChar != '\0')
                 {
-                    this.InsertText(key.KeyChar);
-                    this.SetInputText();
+                    if (validation(this.Text + key.KeyChar) == true)
+                    {
+                        this.InsertText(key.KeyChar);
+                        this.SetInputText();
+                    }
                 }
+            }
+        }
+
+        private object ReadNumber(string prompt, object defaultValue, Func<string, bool> validation)
+        {
+            this.writer = Console.Out;
+            var oldTreatControlCAsInput = Console.TreatControlCAsInput;
+            Console.TreatControlCAsInput = true;
+            Console.SetOut(new TerminalTextWriter(Console.Out, this));
+
+            try
+            {
+                return ReadLineImpl(prompt, $"{defaultValue}", false, validation);
+            }
+            finally
+            {
+                Console.TreatControlCAsInput = oldTreatControlCAsInput;
+                Console.SetOut(this.writer);
+                Console.WriteLine();
+                this.writer = null;
             }
         }
 

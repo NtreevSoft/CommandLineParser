@@ -11,12 +11,12 @@ namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class ListDirectoryCommand : CommandBase
+    class ListDirectoryCommandPartial : CommandBase
     {
         [Import]
         private Lazy<CommandContextBase> commandContext = null;
 
-        public ListDirectoryCommand()
+        public ListDirectoryCommandPartial()
             : base("ls")
         {
 
@@ -74,7 +74,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
             }
 
             this.Out.WriteLine();
-            this.Out.WriteLine(items.ToArray(), true);
+            this.Out.PrintTableData(items.ToArray(), true);
             this.Out.WriteLine();
 
             if (this.IsRecursive == true)

@@ -68,7 +68,6 @@ namespace Ntreev.Library.Commands
         public void Start()
         {
             string line;
-
             while ((line = this.ReadString(this.Prefix + this.Prompt + this.Postfix)) != null)
             {
                 try
@@ -205,7 +204,10 @@ namespace Ntreev.Library.Commands
             if (command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
                 return null;
 
-            var descriptor = CommandDescriptor.GetMethodDescriptor(command, methodName);
+            var descriptors = CommandDescriptor.GetMethodDescriptors(command);
+            if (descriptors.Contains(methodName) == false)
+                return null;
+            var descriptor = descriptors[methodName];
             if (this.commandContext.IsMethodVisible(command, descriptor) == false)
                 return null;
             return descriptor;
