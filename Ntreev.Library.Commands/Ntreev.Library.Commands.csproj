@@ -91,7 +91,6 @@
     <Compile Include="CommandStaticMethodAttribute.cs" />
     <Compile Include="CommandStaticPropertyAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
-    <Compile Include="CommandTypes.cs" />
     <Compile Include="CommandParsingTypes.cs" />
     <Compile Include="IExecutable.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands
 {
     /// <summary>
-    /// SubCommand로 사용할 클래스에 추가로 사용될 CommandMethodAttribute가 정의되어 있는 static class 타입을 설정합니다.
+    /// CommandMethod로 사용할 클래스에 추가로 사용될 CommandMethodAttribute가 정의되어 있는 static class 타입을 설정합니다.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class CommandStaticMethodAttribute : Attribute
