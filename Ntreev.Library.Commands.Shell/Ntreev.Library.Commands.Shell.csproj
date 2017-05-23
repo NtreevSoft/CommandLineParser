@@ -53,7 +53,6 @@
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\GlobalSettings.cs" />
     <Compile Include="Commands\ListDirectoryCommand.cs" />
-    <Compile Include="Commands\StashCommandPartial.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ShellCommandContext.cs" />
     <Compile Include="ShellCommandLineParser.cs" />
@@ -95,9 +94,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Commands\ListDirectoryCommand.resx">
       <DependentUpon>ListDirectoryCommand.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Commands\StashCommandPartial.resx">
-      <DependentUpon>StashCommandPartial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Commands\StashCommand.resx">
       <DependentUpon>StashCommand.cs</DependentUpon>

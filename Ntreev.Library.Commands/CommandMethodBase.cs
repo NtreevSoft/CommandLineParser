@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    public abstract class CommandBase : ICommand, IExecutable
+    public abstract class CommandMethodBase : ICommand
     {
         private readonly string name;
 
-        protected CommandBase(string name)
+        protected CommandMethodBase(string name)
         {
             this.name = name;
         }
@@ -19,16 +19,5 @@ namespace Ntreev.Library.Commands
         {
             get { return this.name; }
         }
-
-        protected abstract void OnExecute();
-
-        #region ICommand
-
-        void IExecutable.Execute()
-        {
-            this.OnExecute();
-        }
-
-        #endregion
     }
 }

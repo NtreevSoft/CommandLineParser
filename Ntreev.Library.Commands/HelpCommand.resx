@@ -129,7 +129,7 @@ help &lt;command&gt;
 하위명령의 표시법은 하위명령의 이름을 추가로 설정하시면 됩니다.
 help &lt;command&gt; &lt;sub-command=null&gt;</value>
   </data>
-  <data name="SubCommandName" xml:space="preserve">
+  <data name="MethodName" xml:space="preserve">
     <value>사용법을 표시할 하위 명령을 설정합니다.</value>
   </data>
 </root>

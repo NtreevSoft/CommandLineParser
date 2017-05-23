@@ -391,7 +391,10 @@ namespace Ntreev.Library.Commands
                 values.Add(value);
             }
 
-            methodInfo.Invoke(instance, values.ToArray());
+            if (methodInfo.DeclaringType.IsAbstract && methodInfo.DeclaringType.IsSealed == true)
+                methodInfo.Invoke(null, values.ToArray());
+            else
+                methodInfo.Invoke(instance, values.ToArray());
         }
 
         private CommandMemberUsagePrinter MemberUsagePrinter

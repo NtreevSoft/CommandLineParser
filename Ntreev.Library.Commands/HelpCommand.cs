@@ -21,7 +21,7 @@ namespace Ntreev.Library.Commands
         {
             this.commandContext = commandContext;
             this.CommandName = string.Empty;
-            this.SubCommandName = string.Empty;
+            this.MethodName = string.Empty;
         }
 
         [CommandProperty("CommandName", IsRequired = true)]
@@ -34,7 +34,7 @@ namespace Ntreev.Library.Commands
 
         [CommandProperty("sub-command", IsRequired = true)]
         [DefaultValue("")]
-        public string SubCommandName
+        public string MethodName
         {
             get; set;
         }
@@ -69,10 +69,10 @@ namespace Ntreev.Library.Commands
 
         protected virtual void PrintUsage(ICommand command, CommandLineParser parser)
         {
-            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+            if (command is IExecutable == false)
             {
-                if (this.SubCommandName != string.Empty)
-                    parser.PrintMethodUsage(this.SubCommandName);
+                if (this.MethodName != string.Empty)
+                    parser.PrintMethodUsage(this.MethodName);
                 else
                     parser.PrintMethodUsage();
             }

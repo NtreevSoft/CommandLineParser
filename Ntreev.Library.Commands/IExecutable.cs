@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
-    public interface ICommand
+    public interface IExecutable
     {
-        string Name { get; }
+        void Execute();
     }
 }

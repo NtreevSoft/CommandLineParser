@@ -112,7 +112,7 @@ namespace Ntreev.Library.Commands
                 var command = this.GetCommand(commandName);
                 if (command == null)
                     return null;
-                if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
+                if (command is IExecutable == false)
                 {
                     var query = from item in CommandDescriptor.GetMethodDescriptors(command)
                                 let name = item.Name
@@ -201,7 +201,7 @@ namespace Ntreev.Library.Commands
 
         private CommandMethodDescriptor GetMethodDescriptor(ICommand command, string methodName)
         {
-            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
+            if (command is IExecutable == true)
                 return null;
 
             var descriptors = CommandDescriptor.GetMethodDescriptors(command);

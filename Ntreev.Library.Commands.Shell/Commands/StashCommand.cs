@@ -11,7 +11,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]
-    class StashCommand : SubCommandBase
+    class StashCommand : CommandMethodBase
     {
         public StashCommand()
             : base("stash")
@@ -23,7 +23,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
         //[CommandStaticProperty(typeof(GlobalSettings))]
         //public void List(string options)
         //{
-
+        //
         //}
 
         [CommandMethod("show")]
@@ -40,12 +40,6 @@ namespace Ntreev.Library.Commands.Shell.Commands
         public void Save(string message)
         {
 
-
-        }
-
-        protected override void OnExecute()
-        {
-            throw new NotImplementedException();
         }
 
         [CommandProperty('p')]

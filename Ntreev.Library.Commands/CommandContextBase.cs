@@ -76,7 +76,7 @@ namespace Ntreev.Library.Commands
 
         public virtual bool IsMethodVisible(ICommand command, CommandMethodDescriptor descriptor)
         {
-            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == false)
+            if (command is IExecutable == true)
                 return false;
             if (this.IsCommandVisible(command) == false)
                 return false;
@@ -166,21 +166,21 @@ namespace Ntreev.Library.Commands
         protected virtual bool OnExecute(ICommand command, string arguments)
         {
             var parser = this.parsers[command];
-            if (command.Types.HasFlag(CommandTypes.HasSubCommand) == true)
-            {
-                if (parser.Invoke(parser.Name + " " + arguments) == false)
-                {
-                    return false;
-                }
-            }
-            else
+            if (command is IExecutable == false)
             {
                 if (parser.Parse(command.Name + " " + arguments) == false)
                 {
                     return false;
                 }
 
-                command.Execute();
+                (command as IExecutable).Execute();
+            }
+            else
+            {
+                if (parser.Invoke(parser.Name + " " + arguments) == false)
+                {
+                    return false;
+                }
             }
             return true;
         }
