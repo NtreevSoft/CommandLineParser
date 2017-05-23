@@ -159,7 +159,7 @@
   <data name="ShortNameDoesNotExist" xml:space="preserve">
     <value>짧은 이름이 존재하지 않습니다.</value>
   </data>
-  <data name="SubCommands" xml:space="preserve">
+  <data name="CommandMethod" xml:space="preserve">
     <value>하위 명령들</value>
   </data>
   <data name="Summary" xml:space="preserve">

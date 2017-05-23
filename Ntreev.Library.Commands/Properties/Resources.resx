@@ -159,8 +159,8 @@
   <data name="ShortNameDoesNotExist" xml:space="preserve">
     <value>short name does not exist.</value>
   </data>
-  <data name="SubCommands" xml:space="preserve">
-    <value>SubCommands</value>
+  <data name="CommandMethod" xml:space="preserve">
+    <value>CommandMethod</value>
   </data>
   <data name="Summary" xml:space="preserve">
     <value>Summary</value>

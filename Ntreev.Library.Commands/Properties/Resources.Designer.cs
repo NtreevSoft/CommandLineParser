@@ -187,11 +187,11 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   SubCommands과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   CommandMethod과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string SubCommands {
+        internal static string CommandMethod {
             get {
-                return ResourceManager.GetString("SubCommands", resourceCulture);
+                return ResourceManager.GetString("CommandMethod", resourceCulture);
             }
         }
         

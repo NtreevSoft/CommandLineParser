@@ -161,7 +161,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintSubcommands(CommandTextWriter writer, CommandMethodDescriptor[] descriptors)
         {
-            writer.WriteLine(Resources.SubCommands);
+            writer.WriteLine(Resources.CommandMethod);
             writer.Indent++;
 
             foreach (var item in descriptors)
