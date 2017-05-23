@@ -82,6 +82,7 @@
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandMemberArrayDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
+    <Compile Include="CommandProviderBase.cs" />
     <Compile Include="CommandMethodPropertyAttribute.cs" />
     <Compile Include="CommandParameterArrayDescriptor.cs" />
     <Compile Include="CommandPropertyArrayAttribute.cs" />
@@ -92,6 +93,8 @@
     <Compile Include="CommandStaticPropertyAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandParsingTypes.cs" />
+    <Compile Include="ExternalCommandMethodDescriptor.cs" />
+    <Compile Include="ICommandProvider.cs" />
     <Compile Include="IExecutable.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -102,6 +105,7 @@
     <Compile Include="CommandMethodBase.cs" />
     <Compile Include="CommandParameterDescriptor.cs" />
     <Compile Include="CommandPropertyDescriptor.cs" />
+    <Compile Include="StandardCommandMethodDescriptor.cs" />
     <Compile Include="TableDataBuilder.cs" />
     <Compile Include="TerminalCancelEventHandler.cs" />
     <Compile Include="TerminalCancelEventArgs.cs" />

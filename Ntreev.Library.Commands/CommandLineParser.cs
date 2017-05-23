@@ -158,7 +158,8 @@ namespace Ntreev.Library.Commands
                 if (descriptor == null || this.IsMethodVisible(descriptor) == false)
                     throw new CommandNotFoundException(method);
                 var visibleDescriptors = descriptor.Members.Where(item => this.IsMemberVisible(item));
-                Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
+                descriptor.Invoke(this.instance, arguments1[1], visibleDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
+                //Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
                 return true;
             }
         }

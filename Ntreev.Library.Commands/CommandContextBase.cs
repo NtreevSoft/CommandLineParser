@@ -26,9 +26,16 @@ namespace Ntreev.Library.Commands
         private ICommand versionCommand;
 
         protected CommandContextBase(IEnumerable<ICommand> commands)
+            : this(commands, new ICommandProvider[] { })
+        {
+
+        }
+
+        protected CommandContextBase(IEnumerable<ICommand> commands, IEnumerable<ICommandProvider> commandProviders)
         {
             this.VerifyName = true;
             this.Out = Console.Out;
+
             foreach (var item in commands)
             {
                 this.commands.Add(item);
@@ -36,6 +43,17 @@ namespace Ntreev.Library.Commands
             }
             this.parsers.Add(this.HelpCommand, this.CreateInstance(this, this.HelpCommand));
             this.parsers.Add(this.VersionCommand, this.CreateInstance(this, this.versionCommand));
+
+            foreach (var item in commandProviders)
+            {
+                var command = commands.FirstOrDefault(i => i.GetType() == item.CommandType);
+                if (command == null)
+                    throw new InvalidOperationException();
+
+                var descriptors = CommandDescriptor.GetMethodDescriptors(command);
+
+                descriptors.AddRange(this.GetExternalMethodDescriptors(item));
+            }
 
             foreach (var item in this.parsers)
             {
@@ -166,7 +184,7 @@ namespace Ntreev.Library.Commands
         protected virtual bool OnExecute(ICommand command, string arguments)
         {
             var parser = this.parsers[command];
-            if (command is IExecutable == false)
+            if (command is IExecutable == true)
             {
                 if (parser.Parse(command.Name + " " + arguments) == false)
                 {
@@ -219,6 +237,14 @@ namespace Ntreev.Library.Commands
             var parser = this.CreateInstance(command);
             parser.CommandContext = commandContext;
             return parser;
+        }
+
+        private IEnumerable<CommandMethodDescriptor> GetExternalMethodDescriptors(ICommandProvider commandProvider)
+        {
+            foreach (var item in CommandDescriptor.GetMethodDescriptors(commandProvider))
+            {
+                yield return new ExternalCommandMethodDescriptor(commandProvider, item);
+            }
         }
     }
 }

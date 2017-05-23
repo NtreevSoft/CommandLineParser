@@ -12,8 +12,8 @@ namespace Ntreev.Library.Commands.Shell
     class ShellCommandContext : CommandContextBase
     {
         [ImportingConstructor]
-        public ShellCommandContext([ImportMany]IEnumerable<ICommand> commands)
-            : base(commands)
+        public ShellCommandContext([ImportMany]IEnumerable<ICommand> commands, [ImportMany]IEnumerable<ICommandProvider> methods)
+            : base(commands, methods)
         {
 
         }

@@ -9,6 +9,7 @@ namespace Ntreev.Library.Commands
 {
     public static class CommandDescriptor
     {
+        private static Dictionary<object, CommandMethodDescriptorCollection> instanceToMethodDescriptors = new Dictionary<object, CommandMethodDescriptorCollection>();
         private static Dictionary<Type, CommandMethodDescriptorCollection> typeToMethodDescriptors = new Dictionary<Type, CommandMethodDescriptorCollection>();
         private static Dictionary<Type, CommandMemberDescriptorCollection> typeToMemberDescriptors = new Dictionary<Type, CommandMemberDescriptorCollection>();
         private static Dictionary<ICustomAttributeProvider, CommandMemberDescriptorCollection> providerToMemberDescriptors = new Dictionary<ICustomAttributeProvider, CommandMemberDescriptorCollection>();
@@ -118,7 +119,7 @@ namespace Ntreev.Library.Commands
                 var attr = item.GetCustomAttribute<CommandMethodAttribute>();
                 if (attr == null)
                     continue;
-                descriptors.Add(new CommandMethodDescriptor(item));
+                descriptors.Add(new StandardCommandMethodDescriptor(item));
             }
 
             foreach (var item in GetStaticMethodDescriptors(type))
@@ -149,7 +150,7 @@ namespace Ntreev.Library.Commands
                     descriptors.Add(new CommandPropertyDescriptor(item));
             }
 
-            foreach(var item in GetStaticMemberDescriptors(type))
+            foreach (var item in GetStaticMemberDescriptors(type))
             {
                 descriptors.Add(item);
             }

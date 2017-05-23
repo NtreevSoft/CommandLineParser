@@ -53,6 +53,7 @@
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\GlobalSettings.cs" />
     <Compile Include="Commands\ListDirectoryCommand.cs" />
+    <Compile Include="Commands\StashCommandExtension.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ShellCommandContext.cs" />
     <Compile Include="ShellCommandLineParser.cs" />
