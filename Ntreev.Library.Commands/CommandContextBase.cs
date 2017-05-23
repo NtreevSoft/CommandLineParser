@@ -51,7 +51,6 @@ namespace Ntreev.Library.Commands
                     throw new InvalidOperationException();
 
                 var descriptors = CommandDescriptor.GetMethodDescriptors(command);
-
                 descriptors.AddRange(this.GetExternalMethodDescriptors(item));
             }
 
