@@ -42,6 +42,10 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
+            for (var i = 0; i < 22; i++)
+            {
+                Console.WriteLine(i);
+            }
             var shell = Container.GetService<IShell>();
             //System.Threading.Tasks.Task.Run(() =>
             //{

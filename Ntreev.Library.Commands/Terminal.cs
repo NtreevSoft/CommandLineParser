@@ -53,36 +53,44 @@ namespace Ntreev.Library.Commands
 
         public long? ReadLong(string prompt)
         {
-            if (this.ReadNumber(prompt, null, i => long.TryParse(i, out long v)) is long value)
+            long v;
+            var result = this.ReadNumber(prompt, null, i => long.TryParse(i, out v));
+            if (result is long)
             {
-                return value;
+                return (long)result;
             }
             return null;
         }
 
         public long? ReadLong(string prompt, long defaultValue)
         {
-            if (this.ReadNumber(prompt, defaultValue, i => long.TryParse(i, out long v)) is long value)
+            long v;
+            var result = this.ReadNumber(prompt, defaultValue, i => long.TryParse(i, out v));
+            if (result is long)
             {
-                return value;
+                return (long)result;
             }
             return null;
         }
 
         public double? ReadDouble(string prompt)
         {
-            if (this.ReadNumber(prompt, null, i => double.TryParse(i, out double v)) is double value)
+            double v;
+            var result = this.ReadNumber(prompt, null, i => double.TryParse(i, out v));
+            if (result is double)
             {
-                return value;
+                return (double)result;
             }
             return null;
         }
 
         public double? ReadDouble(string prompt, double defaultValue)
         {
-            if (this.ReadNumber(prompt, defaultValue, i => double.TryParse(i, out double v)) is double value)
+            double v;
+            var result = this.ReadNumber(prompt, defaultValue, i => double.TryParse(i, out v));
+            if (result is double)
             {
-                return value;
+                return (double)result;
             }
             return null;
         }
