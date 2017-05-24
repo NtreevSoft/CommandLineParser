@@ -37,8 +37,8 @@ namespace Ntreev.Library.Commands
 {
     public class CommandLineParser
     {
-        private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"(?=\\s)|\\S+)";
-        private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"(?=\\s)|\\S+|\\s+$)";
+        private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+)";
+        private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+|\\s+$)";
         private readonly string name;
         private readonly object instance;
         private Version version;
@@ -166,7 +166,7 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintSummary()
         {
-            if(this.CommandContext != null)
+            if (this.CommandContext != null)
                 this.Out.WriteLine("Type '{0} {1}' for usage.", this.CommandContext.HelpCommand.Name, this.name);
             else
                 this.Out.WriteLine("Type '{0} {1}' for usage.", this.name, this.HelpName);
@@ -237,7 +237,7 @@ namespace Ntreev.Library.Commands
         {
             var matches = Regex.Matches(text, pattern);
             var match = Regex.Match(text, pattern);
-            var name = EscapeQuot(match.Value);
+            var name = RemoveQuot(match.Value);
             var arguments = text.Substring(match.Length).Trim();
             return new string[] { name, arguments, };
         }
@@ -249,7 +249,7 @@ namespace Ntreev.Library.Commands
 
             foreach (Match item in matches)
             {
-                var t = EscapeQuot(item.Value);
+                var t = RemoveQuot(item.Value);
                 argList.Add(t);
             }
 
@@ -282,13 +282,17 @@ namespace Ntreev.Library.Commands
             return argList.ToArray();
         }
 
-        public static string EscapeQuot(string text)
+        public static string RemoveQuot(string text)
         {
-            if (text.StartsWith("\"") == true && text.Length > 1 && text.EndsWith("\"") == true)
+            if (text.StartsWith("\"") == true && text.Length > 2 && text.EndsWith("\"") == true)
             {
                 text = text.Replace("\"\"", "\"");
                 text = text.Substring(1);
                 text = text.Remove(text.Length - 1);
+            }
+            else if (text == "\"\"")
+            {
+                text = string.Empty;
             }
             else
             {

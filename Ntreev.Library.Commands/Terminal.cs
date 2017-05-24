@@ -648,14 +648,26 @@ namespace Ntreev.Library.Commands
         {
             var matches = new List<Match>(CommandLineParser.MatchCompletion(this.inputText));
             var find = string.Empty;
+            var prefix = false;
+            var postfix = false;
             var leftText = this.inputText;
             if (matches.Count > 0)
             {
                 var match = matches.Last();
-                var matchText = CommandLineParser.EscapeQuot(match.Value);
-                if (matchText.Trim() != string.Empty)
+                var matchText = match.Value;
+                if (matchText.Length > 0 && matchText.First() == '\"')
                 {
-                    find = matchText.Trim();
+                    prefix = true;
+                    matchText = matchText.Substring(1);
+                }
+                if (matchText.Length > 1 && matchText.Last() == '\"')
+                {
+                    postfix = true;
+                    matchText = matchText.Remove(matchText.Length - 1);
+                }
+                if (matchText == string.Empty || matchText.Trim() != string.Empty)
+                {
+                    find = matchText;
                     matches.RemoveAt(matches.Count - 1);
                     leftText = this.inputText.Remove(match.Index);
                 }
@@ -664,7 +676,7 @@ namespace Ntreev.Library.Commands
             var argList = new List<string>();
             for (var i = 0; i < matches.Count; i++)
             {
-                var matchText = CommandLineParser.EscapeQuot(matches[i].Value).Trim();
+                var matchText = CommandLineParser.RemoveQuot(matches[i].Value).Trim();
                 if (matchText != string.Empty)
                     argList.Add(matchText);
             }
@@ -676,7 +688,14 @@ namespace Ntreev.Library.Commands
                 using (TerminalCursorVisible.Set(false))
                 {
                     this.ClearText();
-                    this.InsertText(leftText + this.completion);
+                    if (prefix == true || postfix == true)
+                    {
+                        this.InsertText(leftText + "\"" + this.completion + "\"");
+                    }
+                    else
+                    {
+                        this.InsertText(leftText + this.completion);
+                    }
                 }
             }
         }
