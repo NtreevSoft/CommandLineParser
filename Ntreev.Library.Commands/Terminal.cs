@@ -532,17 +532,9 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        private int ShiftUp()
+        private void ShiftUp()
         {
-            if (Environment.OSVersion.Platform != PlatformID.Unix)
-            {
-//                Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.height, 0, this.y + 1);
-//                this.y++;
-//                this.Index = this.Length;
-//                return this.y;
-                return 0;
-            }
-            else
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
                 this.writer.WriteLine();
                 for (var i = 0; i < this.height; i++)
@@ -550,12 +542,8 @@ namespace Ntreev.Library.Commands
                     Console.SetCursorPosition(0, this.y + i);
                     this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
                 }
-
-
-                //this.y--;
                 Console.SetCursorPosition(0, this.y);
                 this.writer.Write(this.FullText);
-                return this.y - 1;
             }
         }
 

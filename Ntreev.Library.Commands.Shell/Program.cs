@@ -42,7 +42,7 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
-            for (var i = 0; i < 22; i++)
+            for (var i = 0; i < Console.BufferHeight-2; i++)
             {
                 Console.WriteLine(i);
             }
