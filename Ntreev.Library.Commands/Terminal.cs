@@ -504,6 +504,44 @@ namespace Ntreev.Library.Commands
             return query.ToArray();
         }
 
+        private void Erase()
+        {
+            var x = Console.CursorLeft;
+            var y = Console.CursorTop;
+            for (var i = 0; i < this.height; i++)
+            {
+                Console.SetCursorPosition(0, this.y + i);
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    Console.MoveBufferArea(Console.WindowWidth - 1, this.y + i, 1, 1, 0, this.y + i);
+                    this.writer.Write(new string(' ', Console.WindowWidth - 1));
+                }
+                else
+                {
+                    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+                }
+            }
+            Console.SetCursorPosition(x, y);
+        }
+
+        private void Draw()
+        {
+            var x1 = Console.CursorLeft;
+            var y1 = Console.CursorTop;
+            this.writer.Write(this.FullText);
+            //if(Console.CursorTop (this.height - 1)
+            //this.y -= (y1 - Console.CursorTop);
+            if(this.y + (this.height -1) == Console.CursorTop)
+            {
+                int qwer = 0;
+            }
+            else
+            {
+                this.y = Console.CursorTop - (this.height - 1);
+                int qwer = 0;
+            }
+        }
+
         private int ShiftDown()
         {
             if (Environment.OSVersion.Platform != PlatformID.Unix)
@@ -884,16 +922,7 @@ namespace Ntreev.Library.Commands
                 {
                     using (TerminalCursorVisible.Set(false))
                     {
-                        var oldIndex = this.terminal.Index;
-
-                        try
-                        {
-                            this.WriteToStream(value);
-                        }
-                        finally
-                        {
-                            this.terminal.Index = oldIndex;
-                        }
+                        this.WriteToStream(value.ToString());
                     }
                 }
             }
@@ -904,19 +933,7 @@ namespace Ntreev.Library.Commands
                 {
                     using (TerminalCursorVisible.Set(false))
                     {
-                        var oldIndex = this.terminal.Index;
-
-                        try
-                        {
-                            foreach (var item in value)
-                            {
-                                this.WriteToStream(item);
-                            }
-                        }
-                        finally
-                        {
-                            this.terminal.Index = oldIndex;
-                        }
+                        this.WriteToStream(value);
                     }
                 }
             }
@@ -927,45 +944,20 @@ namespace Ntreev.Library.Commands
                 {
                     using (TerminalCursorVisible.Set(false))
                     {
-                        var oldIndex = this.terminal.Index;
-
-                        try
-                        {
-                            var text = value + Environment.NewLine;
-                            foreach (var item in text)
-                            {
-                                this.WriteToStream(item);
-                            }
-                        }
-                        finally
-                        {
-                            this.terminal.Index = oldIndex;
-                        }
+                        this.WriteToStream(value + Environment.NewLine);
                     }
                 }
             }
 
-            private void WriteToStream(char ch)
+            private void WriteToStream(string text)
             {
-                var x1 = Console.CursorLeft;
-                var y1 = Console.CursorTop;
+                var y1 = this.y;
 
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
-                    if (this.y == this.terminal.y)
+                    if (this.y >= this.terminal.y)
                     {
-                        if (this.terminal.y + this.terminal.height == Console.BufferHeight)
-                        {
-                            Console.MoveBufferArea(0, 1, Console.BufferWidth, this.terminal.y - 1, 0, 0);
-                            this.y -= this.terminal.height;
-                        }
-                        else
-                        {
-                            var x2 = Console.CursorLeft;
-                            var y2 = Console.CursorTop;
-                            this.terminal.ShiftDown();
-                            Console.SetCursorPosition(x2, y2);
-                        }
+                        this.terminal.Erase();
                     }
                 }
                 else
@@ -977,11 +969,26 @@ namespace Ntreev.Library.Commands
                 }
 
                 Console.SetCursorPosition(this.x, this.y);
-                this.writer.Write(ch);
+                using (var stream = Console.OpenStandardOutput())
+                using (var writer = new StreamWriter(stream, Console.OutputEncoding))
+                {
+                    writer.Write(text);
+                }
+
                 this.x = Console.CursorLeft;
                 this.y = Console.CursorTop;
+                this.terminal.y += this.y - y1;
+                var diff = this.terminal.y - y;
+                this.terminal.Draw();
+
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    this.y = this.terminal.y - diff;
+                }
             }
         }
+
+        
 
         #endregion
     }
