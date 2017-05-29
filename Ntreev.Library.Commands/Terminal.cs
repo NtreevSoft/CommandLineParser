@@ -518,7 +518,7 @@ namespace Ntreev.Library.Commands
                 }
                 else
                 {
-                    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+                    this.writer.Write("\r" + new string(' ', Console.WindowWidth));
                 }
             }
             Console.SetCursorPosition(x, y);
@@ -535,7 +535,14 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                this.y = Console.CursorTop - (this.height - 1);
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    this.y = Console.CursorTop - (this.height - 1);
+                }
+                else
+                {
+                    this.y = Console.CursorTop - (this.height - 1);
+                }
             }
         }
 
@@ -955,20 +962,29 @@ namespace Ntreev.Library.Commands
                 {
                     if (this.y >= this.terminal.y)
                     {
-                        this.y = this.terminal.ShiftDown();
+                        this.terminal.Erase();
+                        //this.y = this.terminal.y - 1;
                     }
                 }
 
                 Console.SetCursorPosition(this.x, this.y);
-                using (var stream = Console.OpenStandardOutput())
-                using (var writer = new StreamWriter(stream, this.encoding))
-                {
-                    writer.Write(text);
-                }
+                //using (var stream = Console.OpenStandardOutput())
+                //using (var writer = new StreamWriter(stream, this.encoding))
+                //{
+                //    writer.Write(text);
+                //}
+                this.writer.Write(text);
 
                 this.x = Console.CursorLeft;
                 this.y = Console.CursorTop;
-                this.terminal.y += this.y - y1;
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    this.terminal.y += this.y - y1;
+                }
+                else
+                {
+                    this.terminal.y += this.y - y1;
+                }
                 var diff = this.terminal.y - y;
                 this.terminal.Draw();
 
