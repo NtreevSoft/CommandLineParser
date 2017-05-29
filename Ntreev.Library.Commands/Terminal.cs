@@ -115,7 +115,7 @@ namespace Ntreev.Library.Commands
             this.writer = Console.Out;
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            Console.SetOut(new TerminalTextWriter(Console.Out, this));
+            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
 
             try
             {
@@ -146,7 +146,7 @@ namespace Ntreev.Library.Commands
             this.writer = Console.Out;
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            Console.SetOut(new TerminalTextWriter(Console.Out, this));
+            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
 
             try
             {
@@ -529,16 +529,13 @@ namespace Ntreev.Library.Commands
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
             this.writer.Write(this.FullText);
-            //if(Console.CursorTop (this.height - 1)
-            //this.y -= (y1 - Console.CursorTop);
-            if(this.y + (this.height -1) == Console.CursorTop)
+            if (this.y + (this.height - 1) == Console.CursorTop)
             {
                 int qwer = 0;
             }
             else
             {
                 this.y = Console.CursorTop - (this.height - 1);
-                int qwer = 0;
             }
         }
 
@@ -588,14 +585,6 @@ namespace Ntreev.Library.Commands
         private int Length
         {
             get { return this.chars.Count - this.start; }
-        }
-
-        private string LeftText
-        {
-            get
-            {
-                return this.Text.Remove(this.Index, this.Text.Length - this.Index);
-            }
         }
 
         private void ClearText()
@@ -764,7 +753,7 @@ namespace Ntreev.Library.Commands
 
         private void SetInputText()
         {
-            this.inputText = this.LeftText;
+            this.inputText = this.Text.Remove(this.Index, this.Text.Length - this.Index);
             this.completion = string.Empty;
         }
 
@@ -845,7 +834,7 @@ namespace Ntreev.Library.Commands
             this.writer = Console.Out;
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            Console.SetOut(new TerminalTextWriter(Console.Out, this));
+            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
 
             try
             {
@@ -900,13 +889,15 @@ namespace Ntreev.Library.Commands
         {
             private readonly TextWriter writer;
             private readonly Terminal terminal;
+            private Encoding encoding;
             private int x;
             private int y;
 
-            public TerminalTextWriter(TextWriter writer, Terminal terminal)
+            public TerminalTextWriter(TextWriter writer, Terminal terminal, Encoding encoding)
             {
                 this.writer = writer;
                 this.terminal = terminal;
+                this.encoding = encoding;
                 this.x = Console.CursorLeft;
                 this.y = Console.CursorTop;
             }
@@ -970,7 +961,7 @@ namespace Ntreev.Library.Commands
 
                 Console.SetCursorPosition(this.x, this.y);
                 using (var stream = Console.OpenStandardOutput())
-                using (var writer = new StreamWriter(stream, Console.OutputEncoding))
+                using (var writer = new StreamWriter(stream, this.encoding))
                 {
                     writer.Write(text);
                 }
@@ -987,8 +978,6 @@ namespace Ntreev.Library.Commands
                 }
             }
         }
-
-        
 
         #endregion
     }
