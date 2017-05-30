@@ -20,7 +20,7 @@ namespace Ntreev.Library.Commands
         private readonly List<string> completions = new List<string>();
 
         private int y = 0;
-        private int height = 1;
+        //private int height = 1;
         private int index;
         private int start = 0;
         private int historyIndex;
@@ -28,6 +28,7 @@ namespace Ntreev.Library.Commands
         private string inputText;
         private string completion = string.Empty;
         private TextWriter writer;
+		private TerminalTextWriter t;
 
         public Terminal()
         {
@@ -113,9 +114,10 @@ namespace Ntreev.Library.Commands
         public string ReadString(string prompt, string defaultText, bool isHidden)
         {
             this.writer = Console.Out;
+			this.t = new TerminalTextWriter(Console.Out, this, Console.OutputEncoding);
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
+            Console.SetOut(t);
 
             try
             {
@@ -126,6 +128,7 @@ namespace Ntreev.Library.Commands
                 Console.TreatControlCAsInput = oldTreatControlCAsInput;
                 Console.SetOut(this.writer);
                 Console.WriteLine();
+				this.t = null;
                 this.writer = null;
             }
         }
@@ -508,7 +511,7 @@ namespace Ntreev.Library.Commands
         {
             var x = Console.CursorLeft;
             var y = Console.CursorTop;
-            for (var i = 0; i < this.height; i++)
+            for (var i = 0; i < this.Height; i++)
             {
                 Console.SetCursorPosition(0, this.y + i);
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
@@ -528,8 +531,14 @@ namespace Ntreev.Library.Commands
         {
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
+			var index = this.Index;
             this.writer.Write(this.FullText);
-            if (this.y + (this.height - 1) == Console.CursorTop)
+			if (Console.CursorTop - y1 < this.chars.Count / Console.BufferWidth && this.chars.Count % Console.BufferWidth == 0)
+			{
+				this.writer.WriteLine();
+			}
+
+            if (this.y + (this.Height - 1) == Console.CursorTop)
             {
                 int qwer = 0;
             }
@@ -537,27 +546,28 @@ namespace Ntreev.Library.Commands
             {
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
-                    this.y = Console.CursorTop - (this.height - 1);
+                    this.y = Console.CursorTop - (this.Height - 1);
                 }
                 else
                 {
-                    this.y = Console.CursorTop - (this.height - 1);
+                    this.y = Console.CursorTop - (this.Height - 1);
                 }
             }
+			this.Index = index;
         }
 
         private int ShiftDown()
         {
             if (Environment.OSVersion.Platform != PlatformID.Unix)
             {
-                Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.height, 0, this.y + 1);
+                Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.Height, 0, this.y + 1);
                 this.y++;
                 this.Index = this.Length;
                 return this.y;
             }
             else
             {
-                for (var i = 0; i < this.height; i++)
+                for (var i = 0; i < this.Height; i++)
                 {
                     Console.SetCursorPosition(0, this.y + i);
                     this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
@@ -566,7 +576,7 @@ namespace Ntreev.Library.Commands
                 this.writer.WriteLine();
                 this.writer.Write(this.FullText);
 
-                if (this.y + this.height < Console.BufferHeight)
+                if (this.y + this.Height < Console.BufferHeight)
                 {
                     this.y++;
                 }
@@ -578,20 +588,33 @@ namespace Ntreev.Library.Commands
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
-                this.writer.WriteLine();
-                for (var i = 0; i < this.height; i++)
-                {
-                    Console.SetCursorPosition(0, this.y + i);
-                    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-                }
-                Console.SetCursorPosition(0, this.y);
-                this.writer.Write(this.FullText);
+				this.writer.WriteLine();
+				this.t.y--;
+                //for (var i = 0; i < this.height; i++)
+                //{
+                //    Console.SetCursorPosition(0, this.y + i);
+                //    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+                //}
+                //Console.SetCursorPosition(0, this.y);
+                //this.writer.Write(this.FullText);
             }
         }
 
         private int Length
         {
             get { return this.chars.Count - this.start; }
+        }
+
+        private int Height
+        {
+            get {
+                var length = 0;
+                for (var i = 0; i < this.chars.Count; i++)
+                {
+                    length += this.chars[i].Slot;
+                }
+                return length / Console.BufferWidth + 1;
+            }
         }
 
         private void ClearText()
@@ -607,6 +630,12 @@ namespace Ntreev.Library.Commands
         {
             var index = this.Index;
             this.writer.Write(text);
+            if (text.Length > 0 && Console.CursorLeft == 0 && Console.CursorTop == Console.BufferHeight-1)
+            {
+                this.writer.WriteLine();
+                this.y--;
+                this.t.y--;
+            }
             this.Index = index;
         }
 
@@ -634,6 +663,7 @@ namespace Ntreev.Library.Commands
         {
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
+            var height = this.Height;
 
             if (this.isHidden == false)
             {
@@ -650,7 +680,7 @@ namespace Ntreev.Library.Commands
                     Slot = Console.BufferWidth - x1,
                     Char = ch,
                 });
-                this.height++;
+                //this.height++;
             }
             else if (x1 > x2)
             {
@@ -660,7 +690,11 @@ namespace Ntreev.Library.Commands
                     Slot = Console.BufferWidth - x1,
                     Char = ch,
                 });
-                this.height++;
+                if (this.Height != height)
+                {
+                    int qwer = 0;
+                }
+                //this.height++;
                 this.ShiftUp();
             }
             else
@@ -769,7 +803,7 @@ namespace Ntreev.Library.Commands
             lock (lockobj)
             {
                 this.y = Console.CursorTop;
-                this.height = 1;
+                //this.height = 1;
                 this.index = 0;
                 this.start = 0;
                 this.chars.Clear();
@@ -898,7 +932,7 @@ namespace Ntreev.Library.Commands
             private readonly Terminal terminal;
             private Encoding encoding;
             private int x;
-            private int y;
+            public int y;
 
             public TerminalTextWriter(TextWriter writer, Terminal terminal, Encoding encoding)
             {
@@ -951,21 +985,12 @@ namespace Ntreev.Library.Commands
             {
                 var y1 = this.y;
 
-                if (Environment.OSVersion.Platform != PlatformID.Unix)
-                {
-                    if (this.y >= this.terminal.y)
-                    {
-                        this.terminal.Erase();
-                    }
-                }
-                else
-                {
-                    if (this.y >= this.terminal.y)
-                    {
-                        this.terminal.Erase();
-                        //this.y = this.terminal.y - 1;
-                    }
-                }
+				var b = this.y - this.terminal.y;
+				if (this.y >= this.terminal.y)
+				{
+					this.terminal.Erase();
+					//this.y = this.terminal.y - 1;
+				}
 
                 Console.SetCursorPosition(this.x, this.y);
                 //using (var stream = Console.OpenStandardOutput())
@@ -983,15 +1008,24 @@ namespace Ntreev.Library.Commands
                 }
                 else
                 {
-                    this.terminal.y += this.y - y1;
+                    //this.terminal.y += this.y - y1;
                 }
                 var diff = this.terminal.y - y;
                 this.terminal.Draw();
 
-                if (Environment.OSVersion.Platform != PlatformID.Unix)
-                {
-                    this.y = this.terminal.y - diff;
-                }
+				if (Environment.OSVersion.Platform != PlatformID.Unix) 
+				{
+					this.y = this.terminal.y - diff;
+				} 
+				else 
+				{
+					//this.y = this.terminal.y - 1;
+				}
+				//if (b > 0)
+				{
+					
+				}
+				this.y -= (this.y - this.terminal.y);
             }
         }
 
