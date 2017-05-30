@@ -44,20 +44,20 @@ namespace Ntreev.Library.Commands.Shell
         {
             for (var i = 0; i < Console.BufferHeight - 2; i++)
             {
-                //Console.WriteLine(i);
+                Console.WriteLine(i);
             }
             var shell = Container.GetService<IShell>();
             System.Threading.Tasks.Task.Run(() =>
             {
                 while (true)
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(100);
                     Console.WriteLine(DateTime.Now);
                 }
             });
 
-            shell.Prompt = Directory.GetCurrentDirectory() + "11y111111111erwer1111111111111111111111111111111111111111qqewqw";            //shell.Prompt = Directory.GetCurrentDirectory();
-            //shell.Prompt = "abc";
+            //shell.Prompt = Directory.GetCurrentDirectory() + "1 1y111111111erwer11111111111111111111111111111qqewqw";            //shell.Prompt = Directory.GetCurrentDirectory();
+            shell.Prompt = "1ababccabcaabcabcbcbabcabcabccabcabcabcabcabcabcababcabccabcabcabcabc";
             shell.Start();
         }
     }

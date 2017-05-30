@@ -20,7 +20,6 @@ namespace Ntreev.Library.Commands
         private readonly List<string> completions = new List<string>();
 
         private int y = 0;
-        //private int height = 1;
         private int index;
         private int start = 0;
         private int historyIndex;
@@ -28,7 +27,7 @@ namespace Ntreev.Library.Commands
         private string inputText;
         private string completion = string.Empty;
         private TextWriter writer;
-		private TerminalTextWriter t;
+        private TerminalTextWriter t;
 
         public Terminal()
         {
@@ -114,7 +113,7 @@ namespace Ntreev.Library.Commands
         public string ReadString(string prompt, string defaultText, bool isHidden)
         {
             this.writer = Console.Out;
-			this.t = new TerminalTextWriter(Console.Out, this, Console.OutputEncoding);
+            this.t = new TerminalTextWriter(Console.Out, this, Console.OutputEncoding);
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
             Console.SetOut(t);
@@ -128,7 +127,7 @@ namespace Ntreev.Library.Commands
                 Console.TreatControlCAsInput = oldTreatControlCAsInput;
                 Console.SetOut(this.writer);
                 Console.WriteLine();
-				this.t = null;
+                this.t = null;
                 this.writer = null;
             }
         }
@@ -275,7 +274,7 @@ namespace Ntreev.Library.Commands
         {
             lock (lockobj)
             {
-                if (this.Index + 1 < this.Length)
+                if (this.Index + 1 <= this.Length)
                 {
                     using (TerminalCursorVisible.Set(false))
                     {
@@ -511,8 +510,17 @@ namespace Ntreev.Library.Commands
         {
             var x = Console.CursorLeft;
             var y = Console.CursorTop;
+
+            var length = 0;
+            for (var i = 0; i < this.chars.Count; i++)
+            {
+                length += this.chars[i].Slot;
+            }
+
             for (var i = 0; i < this.Height; i++)
             {
+                if (length == 0)
+                    continue;
                 Console.SetCursorPosition(0, this.y + i);
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
@@ -523,24 +531,40 @@ namespace Ntreev.Library.Commands
                 {
                     this.writer.Write("\r" + new string(' ', Console.WindowWidth));
                 }
+                length -= Console.BufferWidth;
             }
             Console.SetCursorPosition(x, y);
+        }
+
+        private void Write(string text)
+        {
+
         }
 
         private void Draw()
         {
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
-			var index = this.Index;
+            var index = this.Index;
+            var text = this.FullText;
+            var y = Console.CursorTop;
             this.writer.Write(this.FullText);
-			if (Console.CursorTop - y1 < this.chars.Count / Console.BufferWidth && this.chars.Count % Console.BufferWidth == 0)
-			{
-				this.writer.WriteLine();
-			}
+            if (text.Length > 0 && Console.CursorLeft == 0)
+            {
+                if (y == Console.CursorTop)
+                {
+                    if (Environment.OSVersion.Platform == PlatformID.Unix && y != Console.BufferHeight - 1)
+                    {
+                        this.writer.WriteLine();
+                    }
+                    this.y--;
+                    this.t.y--;
+                }
+            }
 
             if (this.y + (this.Height - 1) == Console.CursorTop)
             {
-                int qwer = 0;
+                
             }
             else
             {
@@ -553,52 +577,52 @@ namespace Ntreev.Library.Commands
                     this.y = Console.CursorTop - (this.Height - 1);
                 }
             }
-			this.Index = index;
+            this.Index = index;
         }
 
-        private int ShiftDown()
-        {
-            if (Environment.OSVersion.Platform != PlatformID.Unix)
-            {
-                Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.Height, 0, this.y + 1);
-                this.y++;
-                this.Index = this.Length;
-                return this.y;
-            }
-            else
-            {
-                for (var i = 0; i < this.Height; i++)
-                {
-                    Console.SetCursorPosition(0, this.y + i);
-                    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-                }
-                Console.SetCursorPosition(0, this.y);
-                this.writer.WriteLine();
-                this.writer.Write(this.FullText);
+        //private int ShiftDown()
+        //{
+        //    if (Environment.OSVersion.Platform != PlatformID.Unix)
+        //    {
+        //        Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.Height, 0, this.y + 1);
+        //        this.y++;
+        //        this.Index = this.Length;
+        //        return this.y;
+        //    }
+        //    else
+        //    {
+        //        for (var i = 0; i < this.Height; i++)
+        //        {
+        //            Console.SetCursorPosition(0, this.y + i);
+        //            this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+        //        }
+        //        Console.SetCursorPosition(0, this.y);
+        //        this.writer.WriteLine();
+        //        this.writer.Write(this.FullText);
 
-                if (this.y + this.Height < Console.BufferHeight)
-                {
-                    this.y++;
-                }
-                return this.y - 1;
-            }
-        }
+        //        if (this.y + this.Height < Console.BufferHeight)
+        //        {
+        //            this.y++;
+        //        }
+        //        return this.y - 1;
+        //    }
+        //}
 
-        private void ShiftUp()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-            {
-				this.writer.WriteLine();
-				this.t.y--;
-                //for (var i = 0; i < this.height; i++)
-                //{
-                //    Console.SetCursorPosition(0, this.y + i);
-                //    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-                //}
-                //Console.SetCursorPosition(0, this.y);
-                //this.writer.Write(this.FullText);
-            }
-        }
+        //private void ShiftUp()
+        //{
+        //    if (Environment.OSVersion.Platform == PlatformID.Unix)
+        //    {
+        //        this.writer.WriteLine();
+        //        this.t.y--;
+        //        //for (var i = 0; i < this.height; i++)
+        //        //{
+        //        //    Console.SetCursorPosition(0, this.y + i);
+        //        //    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+        //        //}
+        //        //Console.SetCursorPosition(0, this.y);
+        //        //this.writer.Write(this.FullText);
+        //    }
+        //}
 
         private int Length
         {
@@ -607,7 +631,8 @@ namespace Ntreev.Library.Commands
 
         private int Height
         {
-            get {
+            get
+            {
                 var length = 0;
                 for (var i = 0; i < this.chars.Count; i++)
                 {
@@ -629,12 +654,19 @@ namespace Ntreev.Library.Commands
         private void ReplaceText(string text)
         {
             var index = this.Index;
+            var y = Console.CursorTop;
             this.writer.Write(text);
-            if (text.Length > 0 && Console.CursorLeft == 0 && Console.CursorTop == Console.BufferHeight-1)
+            if (text.Length > 0 && Console.CursorLeft == 0)
             {
-                this.writer.WriteLine();
-                this.y--;
-                this.t.y--;
+                if (y == Console.CursorTop)
+                {
+                    if (Environment.OSVersion.Platform == PlatformID.Unix && y != Console.BufferHeight - 1)
+                    {
+                        this.writer.WriteLine();
+                    }
+                    this.y--;
+                    this.t.y--;
+                }
             }
             this.Index = index;
         }
@@ -685,17 +717,18 @@ namespace Ntreev.Library.Commands
             else if (x1 > x2)
             {
                 this.y--;
+                this.t.y--;
                 this.chars.Insert(this.index++, new TerminalChar()
                 {
                     Slot = Console.BufferWidth - x1,
                     Char = ch,
                 });
-                if (this.Height != height)
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
-                    int qwer = 0;
+                    this.writer.WriteLine();
+                    this.y--;
+                    this.t.y--;
                 }
-                //this.height++;
-                this.ShiftUp();
             }
             else
             {
@@ -985,47 +1018,49 @@ namespace Ntreev.Library.Commands
             {
                 var y1 = this.y;
 
-				var b = this.y - this.terminal.y;
-				if (this.y >= this.terminal.y)
-				{
-					this.terminal.Erase();
-					//this.y = this.terminal.y - 1;
-				}
+                var b = this.y - this.terminal.y;
+                if (this.y >= this.terminal.y)
+                {
+                    this.terminal.Erase();
+                }
 
                 Console.SetCursorPosition(this.x, this.y);
-                //using (var stream = Console.OpenStandardOutput())
-                //using (var writer = new StreamWriter(stream, this.encoding))
-                //{
-                //    writer.Write(text);
-                //}
-                this.writer.Write(text);
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    using (var stream = Console.OpenStandardOutput())
+                    using (var writer = new StreamWriter(stream, this.encoding))
+                    {
+                        writer.Write(text);
+                    }
+                }
+                else
+                {
+                    this.writer.Write(text);
+                }
 
                 this.x = Console.CursorLeft;
                 this.y = Console.CursorTop;
-                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
-                    this.terminal.y += this.y - y1;
+                    //this.terminal.y += this.y - y1;
                 }
                 else
                 {
                     //this.terminal.y += this.y - y1;
                 }
-                var diff = this.terminal.y - y;
+                var diff = this.terminal.y - this.y;
                 this.terminal.Draw();
 
-				if (Environment.OSVersion.Platform != PlatformID.Unix) 
-				{
-					this.y = this.terminal.y - diff;
-				} 
-				else 
-				{
-					//this.y = this.terminal.y - 1;
-				}
-				//if (b > 0)
-				{
-					
-				}
-				this.y -= (this.y - this.terminal.y);
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    //this.y = this.terminal.y - diff;
+                }
+                else
+                {
+                    //this.y = this.terminal.y - 1;
+                }
+                
+                this.y -= (this.y - this.terminal.y);
             }
         }
 
