@@ -549,11 +549,11 @@ namespace Ntreev.Library.Commands
             var text = this.FullText;
             var y = Console.CursorTop;
             this.writer.Write(this.FullText);
-            if (text.Length > 0 && Console.CursorLeft == 0)
+            if (text.Length > 0 && text.Length % Console.BufferWidth == 0 && Console.CursorLeft == 0)
             {
                 if (y == Console.CursorTop)
                 {
-                    if (Environment.OSVersion.Platform == PlatformID.Unix && y != Console.BufferHeight - 1)
+                    if (Environment.OSVersion.Platform == PlatformID.Unix && y == Console.BufferHeight - 1)
                     {
                         this.writer.WriteLine();
                     }
@@ -570,13 +570,14 @@ namespace Ntreev.Library.Commands
             {
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
-                    this.y = Console.CursorTop - (this.Height - 1);
+                    //this.y = Console.CursorTop - (this.Height - 1);
                 }
                 else
                 {
-                    this.y = Console.CursorTop - (this.Height - 1);
+                    //
                 }
             }
+            this.y = Console.CursorTop - (this.Height - 1);
             this.Index = index;
         }
 
@@ -726,8 +727,8 @@ namespace Ntreev.Library.Commands
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
                     this.writer.WriteLine();
-                    this.y--;
-                    this.t.y--;
+                    //this.y--;
+                    //this.t.y--;
                 }
             }
             else
