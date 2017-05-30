@@ -44,7 +44,7 @@ namespace Ntreev.Library.Commands.Shell
         {
             for (var i = 0; i < Console.BufferHeight - 12; i++)
             {
-                Console.WriteLine(i);
+                //Console.WriteLine(i);
             }
             var shell = Container.GetService<IShell>();
             System.Threading.Tasks.Task.Run(() =>
