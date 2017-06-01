@@ -42,22 +42,17 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
-            for (var i = 0; i < Console.BufferHeight - 12; i++)
-            {
-                //Console.WriteLine(i);
-            }
             var shell = Container.GetService<IShell>();
-            System.Threading.Tasks.Task.Run(() =>
-            {
-                while (true)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    Console.WriteLine(DateTime.Now);
-                }
-            });
+            //System.Threading.Tasks.Task.Run(() =>
+            //{
+            //    while (true)
+            //    {
+            //        System.Threading.Thread.Sleep(1000);
+            //        Console.WriteLine(DateTime.Now);
+            //    }
+            //});
 
-            //shell.Prompt = Directory.GetCurrentDirectory() + "1 1y111111111erwer11111111111111111111111111111qqewqw";            //shell.Prompt = Directory.GetCurrentDirectory();
-            shell.Prompt = "1ababccabcaabcabcbcbabcabcabccabcabcabcabcabcabcababcabccabcabcabcabc1ababccabcaabcabcbcbabcabcabccabcabcabcabcabcabcababcabccabcabcabcabc";
+            shell.Prompt = Directory.GetCurrentDirectory();
             shell.Start();
         }
     }

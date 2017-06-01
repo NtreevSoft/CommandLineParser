@@ -562,68 +562,24 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            if (this.y + (this.Height - 1) == Console.CursorTop)
-            {
+            //if (this.y + (this.Height - 1) == Console.CursorTop)
+            //{
                 
-            }
-            else
-            {
-                if (Environment.OSVersion.Platform != PlatformID.Unix)
-                {
-                    //this.y = Console.CursorTop - (this.Height - 1);
-                }
-                else
-                {
-                    //
-                }
-            }
+            //}
+            //else
+            //{
+            //    if (Environment.OSVersion.Platform != PlatformID.Unix)
+            //    {
+            //        //this.y = Console.CursorTop - (this.Height - 1);
+            //    }
+            //    else
+            //    {
+            //        //
+            //    }
+            //}
             this.y = Console.CursorTop - (this.Height - 1);
             this.Index = index;
         }
-
-        //private int ShiftDown()
-        //{
-        //    if (Environment.OSVersion.Platform != PlatformID.Unix)
-        //    {
-        //        Console.MoveBufferArea(0, this.y, Console.BufferWidth, this.Height, 0, this.y + 1);
-        //        this.y++;
-        //        this.Index = this.Length;
-        //        return this.y;
-        //    }
-        //    else
-        //    {
-        //        for (var i = 0; i < this.Height; i++)
-        //        {
-        //            Console.SetCursorPosition(0, this.y + i);
-        //            this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-        //        }
-        //        Console.SetCursorPosition(0, this.y);
-        //        this.writer.WriteLine();
-        //        this.writer.Write(this.FullText);
-
-        //        if (this.y + this.Height < Console.BufferHeight)
-        //        {
-        //            this.y++;
-        //        }
-        //        return this.y - 1;
-        //    }
-        //}
-
-        //private void ShiftUp()
-        //{
-        //    if (Environment.OSVersion.Platform == PlatformID.Unix)
-        //    {
-        //        this.writer.WriteLine();
-        //        this.t.y--;
-        //        //for (var i = 0; i < this.height; i++)
-        //        //{
-        //        //    Console.SetCursorPosition(0, this.y + i);
-        //        //    this.writer.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-        //        //}
-        //        //Console.SetCursorPosition(0, this.y);
-        //        //this.writer.Write(this.FullText);
-        //    }
-        //}
 
         private int Length
         {
