@@ -43,14 +43,14 @@ namespace Ntreev.Library.Commands.Shell
         static void Main(string[] args)
         {
             var shell = Container.GetService<IShell>();
-            //System.Threading.Tasks.Task.Run(() =>
-            //{
-            //    while (true)
-            //    {
-            //        System.Threading.Thread.Sleep(1000);
-            //        Console.WriteLine(DateTime.Now);
-            //    }
-            //});
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                while (true)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    Console.WriteLine(DateTime.Now);
+                }
+            });
 
             shell.Prompt = Directory.GetCurrentDirectory();
             shell.Start();

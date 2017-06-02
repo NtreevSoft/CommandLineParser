@@ -793,7 +793,6 @@ namespace Ntreev.Library.Commands
             lock (lockobj)
             {
                 this.y = Console.CursorTop;
-                //this.height = 1;
                 this.index = 0;
                 this.start = 0;
                 this.chars.Clear();
@@ -816,7 +815,7 @@ namespace Ntreev.Library.Commands
                     if (args.Cancel == false)
                     {
                         this.OnCancelled(EventArgs.Empty);
-                        return null;
+                        throw new OperationCanceledException($"ReadLine is cancelled.");
                     }
                 }
                 else if (this.actionMaps.ContainsKey(key) == true)

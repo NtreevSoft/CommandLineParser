@@ -286,7 +286,7 @@ namespace Ntreev.Library.Commands
         {
             if (text.StartsWith("\"") == true && text.Length > 2 && text.EndsWith("\"") == true)
             {
-                text = text.Replace("\"\"", "\"");
+                //text = text.Replace("\"\"", "\"");
                 text = text.Substring(1);
                 text = text.Remove(text.Length - 1);
             }
