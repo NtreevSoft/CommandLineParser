@@ -381,6 +381,19 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public string Prompt
+        {
+            get
+            {
+                var text = string.Empty;
+                for (var i = 0; i < this.start; i++)
+                {
+                    text += this.chars[i + this.start].Char;
+                }
+                return text;
+            }
+        }
+
         public string FullText
         {
             get
