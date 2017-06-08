@@ -21,6 +21,7 @@ namespace Ntreev.Library.Commands
         private string name;
         private Version version;
         private TextWriter writer;
+        private TextWriter errorWriter;
         private ICommand helpCommand;
         private ICommand versionCommand;
 
@@ -110,6 +111,11 @@ namespace Ntreev.Library.Commands
                     item.Out = value;
                 }
             }
+        }
+
+        public TextWriter Error
+        {
+            get { return this.errorWriter ?? Console.Error; }
         }
 
         public string Name

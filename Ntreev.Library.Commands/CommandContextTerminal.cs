@@ -21,7 +21,7 @@ namespace Ntreev.Library.Commands
             this.commandContext = commandContext;
         }
 
-        public string Prompt
+        public new string Prompt
         {
             get { return this.prompt ?? string.Empty; }
             set
@@ -76,14 +76,28 @@ namespace Ntreev.Library.Commands
                 }
                 catch (TargetInvocationException e)
                 {
-                    if (e.InnerException != null)
-                        this.commandContext.Out.WriteLine(e.InnerException.Message);
+                    if (this.DetailErrorMessage == true)
+                    {
+                        this.commandContext.Error.WriteLine(e);
+                    }
                     else
-                        this.commandContext.Out.WriteLine(e.Message);
+                    {
+                        if (e.InnerException != null)
+                            this.commandContext.Error.WriteLine(e.InnerException.Message);
+                        else
+                            this.commandContext.Error.WriteLine(e.Message);
+                    }
                 }
                 catch (Exception e)
                 {
-                    this.commandContext.Out.WriteLine(e.Message);
+                    if (this.DetailErrorMessage == true)
+                    {
+                        this.commandContext.Error.WriteLine(e);
+                    }
+                    else
+                    {
+                        this.commandContext.Error.WriteLine(e.Message);
+                    }
                 }
                 if (this.IsCancellationRequested == true)
                     break;
@@ -93,6 +107,11 @@ namespace Ntreev.Library.Commands
         public bool IsCancellationRequested
         {
             get { return this.isCancellationRequested; }
+        }
+
+        public bool DetailErrorMessage
+        {
+            get; set;
         }
 
         protected override string[] GetCompletion(string[] items, string find)
