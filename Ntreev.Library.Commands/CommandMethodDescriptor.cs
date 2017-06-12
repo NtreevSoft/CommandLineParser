@@ -61,11 +61,8 @@ namespace Ntreev.Library.Commands
 
         internal void Invoke(object instance, string arguments, IEnumerable<CommandMemberDescriptor> descriptors, bool init)
         {
-            var parser = new ParseDescriptor(descriptors)
-            {
-                IsInitializable = init,
-            };
-            parser.Parse(instance, arguments);
+            var parser = new ParseDescriptor(descriptors, arguments, init);
+            parser.SetValue(instance);
 
             var values = new ArrayList();
             var nameToDescriptors = descriptors.ToDictionary(item => item.DescriptorName);

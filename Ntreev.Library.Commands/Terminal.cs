@@ -549,11 +549,6 @@ namespace Ntreev.Library.Commands
             Console.SetCursorPosition(x, y);
         }
 
-        private void Write(string text)
-        {
-
-        }
-
         private void Draw()
         {
             var x1 = Console.CursorLeft;
@@ -575,21 +570,6 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            //if (this.y + (this.Height - 1) == Console.CursorTop)
-            //{
-                
-            //}
-            //else
-            //{
-            //    if (Environment.OSVersion.Platform != PlatformID.Unix)
-            //    {
-            //        //this.y = Console.CursorTop - (this.Height - 1);
-            //    }
-            //    else
-            //    {
-            //        //
-            //    }
-            //}
             this.y = Console.CursorTop - (this.Height - 1);
             this.Index = index;
         }

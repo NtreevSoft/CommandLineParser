@@ -9,16 +9,16 @@ namespace Ntreev.Library.Commands
 {
     public abstract class CommandProviderBase : ICommandProvider
     {
-        private readonly Type commandType;
+        private readonly string commandName;
 
-        protected CommandProviderBase(Type commandType)
+        protected CommandProviderBase(string commandName)
         {
-            this.commandType = commandType;
+            this.commandName = commandName;
         }
 
-        public Type CommandType
+        public string CommandName
         {
-            get { return this.commandType; }
+            get { return this.commandName; }
         }
     }
 }

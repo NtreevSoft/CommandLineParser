@@ -9,7 +9,6 @@ namespace Ntreev.Library.Commands
 {
     public interface ICommandProvider
     {
-        Type CommandType { get; }
+        string CommandName { get; }
     }
-
 }

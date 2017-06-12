@@ -18,6 +18,7 @@ namespace Ntreev.Library.Commands
     {
         private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();
         private readonly CommandCollection commands = new CommandCollection();
+        private readonly ICommandProvider[] commandProviders;
         private string name;
         private Version version;
         private TextWriter writer;
@@ -35,6 +36,7 @@ namespace Ntreev.Library.Commands
         {
             this.VerifyName = true;
             this.Out = Console.Out;
+            this.commandProviders = commandProviders.ToArray();
 
             foreach (var item in commands)
             {
@@ -46,7 +48,7 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in commandProviders)
             {
-                var command = commands.FirstOrDefault(i => i.GetType() == item.CommandType);
+                var command = commands.FirstOrDefault(i => i.Name == item.CommandName);
                 if (command == null)
                     throw new InvalidOperationException();
 
@@ -116,6 +118,10 @@ namespace Ntreev.Library.Commands
         public TextWriter Error
         {
             get { return this.errorWriter ?? Console.Error; }
+            set
+            {
+                this.errorWriter = value;
+            }
         }
 
         public string Name
@@ -156,6 +162,11 @@ namespace Ntreev.Library.Commands
         public CommandLineParserCollection Parsers
         {
             get { return this.parsers; }
+        }
+
+        public ICommandProvider[] CommandProviders
+        {
+            get { return this.commandProviders; }
         }
 
         public virtual ICommand HelpCommand

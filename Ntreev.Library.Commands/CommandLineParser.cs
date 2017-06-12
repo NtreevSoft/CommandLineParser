@@ -99,11 +99,8 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberVisible(item));
-                var parser = new ParseDescriptor(descriptors)
-                {
-                    IsInitializable = types.HasFlag(CommandParsingTypes.OmitInitialize) == false
-                };
-                parser.Parse(this.instance, arguments[1]);
+                var parser = new ParseDescriptor(descriptors, arguments[1], types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
+                parser.SetValue(this.instance);
                 return true;
             }
         }
@@ -380,11 +377,8 @@ namespace Ntreev.Library.Commands
 
         private static void Invoke(object instance, string arguments, MethodInfo methodInfo, IEnumerable<CommandMemberDescriptor> descriptors, bool init)
         {
-            var parser = new ParseDescriptor(descriptors)
-            {
-                IsInitializable = init,
-            };
-            parser.Parse(instance, arguments);
+            var parser = new ParseDescriptor(descriptors, arguments, init);
+            parser.SetValue(instance);
 
             var values = new ArrayList();
             var nameToDescriptors = descriptors.ToDictionary(item => item.DescriptorName);

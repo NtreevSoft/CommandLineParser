@@ -75,6 +75,7 @@
     <Compile Include="CharWidth.cs" />
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandBase.cs" />
+    <Compile Include="CommandCompletionContext.cs" />
     <Compile Include="CommandContextTerminal.cs" />
     <Compile Include="CommandLineParserCollection.cs" />
     <Compile Include="CommandCollection.cs" />

@@ -34,65 +34,81 @@ namespace Ntreev.Library.Commands
 {
     class ParseDescriptor
     {
-        private readonly CommandMemberDescriptor[] members;
-        private readonly Dictionary<CommandMemberDescriptor, object> args = new Dictionary<CommandMemberDescriptor, object>();
-        private readonly Dictionary<string, CommandMemberDescriptor> descriptors = new Dictionary<string, CommandMemberDescriptor>();
+        //private readonly CommandMemberDescriptor[] members;
+        private readonly Dictionary<CommandMemberDescriptor, object> parsedDescriptors = new Dictionary<CommandMemberDescriptor, object>();
+        private readonly List<CommandMemberDescriptor> unparsedDescriptors = new List<CommandMemberDescriptor>();
+        private readonly List<string> unparsedArguments = new List<string>();
+        //private readonly List<string> variableList = new List<string>();
+        //private readonly Dictionary<string, CommandMemberDescriptor> descriptors = new Dictionary<string, CommandMemberDescriptor>();
 
-        public ParseDescriptor(IEnumerable<CommandMemberDescriptor> members)
+        //private List<CommandMemberDescriptor> requirements;
+        //private List<CommandMemberDescriptor> options;
+        //private CommandMemberDescriptor variables;
+
+        public ParseDescriptor(IEnumerable<CommandMemberDescriptor> members, string commandLine, bool isInitializable)
+            : this(members, CommandLineParser.SplitAll(commandLine), isInitializable)
         {
-            this.members = members.ToArray();
-            foreach (var item in this.members)
+
+
+        }
+
+        public ParseDescriptor(IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args)
+            : this(members, args, true)
+        {
+
+        }
+        public ParseDescriptor(IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, bool isInitializable)
+        {
+            this.unparsedDescriptors = new List<CommandMemberDescriptor>(members.Where(item => item.IsRequired));
+            //this.members = members.ToArray();
+
+            var descriptors = new Dictionary<string, CommandMemberDescriptor>();
+            foreach (var item in members)
             {
-                if (item.IsRequired == true)
+                if (item.IsRequired == true || item is CommandMemberArrayDescriptor)
                     continue;
                 if (item.NamePattern != string.Empty)
                     descriptors.Add(item.NamePattern, item);
                 if (item.ShortNamePattern != string.Empty)
                     descriptors.Add(item.ShortNamePattern, item);
             }
-        }
-
-        public bool IsInitializable
-        {
-            get; set;
-        }
-
-        public void Parse(object instance, string commandLine)
-        {
-            var requirements = this.members.Where(item => item.IsRequired == true).ToList();
-            var options = this.members.Where(item => item.IsRequired == false).ToList();
-            var variables = this.members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
-
             var variableList = new List<string>();
-            var arguments = new Queue<string>(CommandLineParser.SplitAll(commandLine));
+            var requirements = members.Where(item => item.IsRequired == true).ToList();
+            var options = members.Where(item => item.IsRequired == false && item is CommandMemberArrayDescriptor == false).ToList();
+            var variables = members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
+
+            var arguments = new Queue<string>(args);
 
             while (arguments.Any())
             {
                 var arg = arguments.Dequeue();
 
-                if (this.descriptors.ContainsKey(arg) == true)
+                if (descriptors.ContainsKey(arg) == true)
                 {
-                    var descriptor = this.descriptors[arg];
+                    var descriptor = descriptors[arg];
                     var nextArg = arguments.FirstOrDefault();
                     var isValue = CommandLineParser.IsSwitch(nextArg) == false;
 
                     if (nextArg != null && isValue == true && descriptor.IsToggle == false)
                     {
-                        this.args.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
+                        this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
                     }
                     else if (descriptor.DefaultValue != DBNull.Value)
                     {
-                        this.args.Add(descriptor, descriptor.DefaultValue);
+                        this.parsedDescriptors.Add(descriptor, descriptor.DefaultValue);
                     }
                     else if (descriptor.MemberType == typeof(bool))
                     {
-                        this.args.Add(descriptor, true);
+                        this.parsedDescriptors.Add(descriptor, true);
                     }
                     else
                     {
-                        throw new ArgumentException(@"처리되지 않은 인자가 포함되어 있습니다.");
+                        this.unparsedDescriptors.Insert(0, descriptor);
+                        return;
+                        //throw new ArgumentException("처리되지 않은 인자가 포함되어 있습니다.");
                     }
                     options.Remove(descriptor);
+
                 }
                 else if (requirements.Any() == false)
                 {
@@ -102,14 +118,16 @@ namespace Ntreev.Library.Commands
                     }
                     else
                     {
-                        throw new ArgumentException("처리되지 않은 인자가 포함되어 있습니다.");
+                        this.unparsedArguments.Add(arg);
+                        return;
                     }
                 }
                 else
                 {
                     var descriptor = requirements.First();
-                    this.args.Add(descriptor, Parser.Parse(descriptor, arg));
+                    this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, arg));
                     requirements.Remove(descriptor);
+                    this.unparsedDescriptors.Remove(descriptor);
                 }
             }
 
@@ -117,44 +135,178 @@ namespace Ntreev.Library.Commands
             {
                 if (item.DefaultValue != DBNull.Value)
                 {
-                    this.args.Add(item, item.DefaultValue);
+                    this.parsedDescriptors.Add(item, item.DefaultValue);
+                    this.unparsedDescriptors.Remove(item);
                     requirements.Remove(item);
                 }
             }
 
             foreach (var item in options.ToArray())
             {
-                if (this.IsInitializable == false)
+                if (isInitializable == false)
                     continue;
 
                 if (item.DefaultValue != DBNull.Value)
                 {
-                    this.args.Add(item, item.DefaultValue);
+                    this.parsedDescriptors.Add(item, item.DefaultValue);
                 }
                 else if (item.MemberType.IsValueType == true)
                 {
-                    this.args.Add(item, Activator.CreateInstance(item.MemberType));
+                    this.parsedDescriptors.Add(item, Activator.CreateInstance(item.MemberType));
                 }
                 else
                 {
-                    this.args.Add(item, null);
+                    this.parsedDescriptors.Add(item, null);
                 }
-            }
-
-            if (requirements.Count > 0)
-            {
-                throw new ArgumentException(string.Format("필수 인자 {0}가 빠져있습니다", requirements.First().Name));
-            }
-
-            foreach (var item in this.args)
-            {
-                item.Key.SetValueInternal(instance, item.Value);
             }
 
             if (variables != null)
             {
-                variables.SetValueInternal(instance, Parser.ParseArray(variables, variableList));
+                this.parsedDescriptors.Add(variables, Parser.ParseArray(variables, variableList));
+                this.unparsedDescriptors.Remove(variables);
             }
         }
+
+        public void SetValue(object instance)
+        {
+            var descriptor = this.unparsedDescriptors.FirstOrDefault();
+            if (descriptor != null)
+            {
+                if (descriptor.IsRequired == true)
+                    throw new ArgumentException($"필수 인자 {descriptor.Name}가 빠져있습니다");
+                else
+                    throw new ArgumentException("처리되지 않은 인자가 포함되어 있습니다.");
+            }
+
+            if (this.unparsedArguments.Any())
+            {
+                throw new ArgumentException("처리되지 않은 인자가 포함되어 있습니다.");
+            }
+
+            foreach (var item in this.parsedDescriptors)
+            {
+                item.Key.SetValueInternal(instance, item.Value);
+            }
+        }
+
+        public IReadOnlyDictionary<CommandMemberDescriptor, object> ParsedDescriptors
+        {
+            get { return this.parsedDescriptors; }
+        }
+
+        public CommandMemberDescriptor[] UnparsedDescriptors
+        {
+            get { return this.unparsedDescriptors.ToArray(); }
+        }
+
+
+        //public IReadOnlyDictionary<string, object> Parse(string[] args)
+        //{
+        //    var properties = new Dictionary<string, object>();
+        //    var requirements = this.members.Where(item => item.IsRequired == true).ToList();
+        //    var options = this.members.Where(item => item.IsRequired == false).ToList();
+        //    var variables = this.members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
+
+        //    var variableList = new List<string>();
+        //    var arguments = new Queue<string>(args);
+
+        //    while (arguments.Any())
+        //    {
+        //        var arg = arguments.Dequeue();
+
+        //        if (this.descriptors.ContainsKey(arg) == true)
+        //        {
+        //            var descriptor = this.descriptors[arg];
+        //            var nextArg = arguments.FirstOrDefault();
+        //            var isValue = CommandLineParser.IsSwitch(nextArg) == false;
+
+        //            if (nextArg != null && isValue == true && descriptor.IsToggle == false)
+        //            {
+        //                this.args.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
+        //            }
+        //            else if (descriptor.DefaultValue != DBNull.Value)
+        //            {
+        //                this.args.Add(descriptor, descriptor.DefaultValue);
+        //            }
+        //            else if (descriptor.MemberType == typeof(bool))
+        //            {
+        //                this.args.Add(descriptor, true);
+        //            }
+        //            else
+        //            {
+        //                throw new ArgumentException(@"처리되지 않은 인자가 포함되어 있습니다.");
+        //            }
+        //            options.Remove(descriptor);
+        //        }
+        //        else if (requirements.Any() == false)
+        //        {
+        //            if (variables != null)
+        //            {
+        //                variableList.Add(arg);
+        //            }
+        //            else
+        //            {
+        //                throw new ArgumentException("처리되지 않은 인자가 포함되어 있습니다.");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            var descriptor = requirements.First();
+        //            this.args.Add(descriptor, Parser.Parse(descriptor, arg));
+        //            requirements.Remove(descriptor);
+        //        }
+        //    }
+
+        //    foreach (var item in requirements.ToArray())
+        //    {
+        //        if (item.DefaultValue != DBNull.Value)
+        //        {
+        //            this.args.Add(item, item.DefaultValue);
+        //            requirements.Remove(item);
+        //        }
+        //    }
+
+        //    foreach (var item in options.ToArray())
+        //    {
+        //        if (this.IsInitializable == false)
+        //            continue;
+
+        //        if (item.DefaultValue != DBNull.Value)
+        //        {
+        //            this.args.Add(item, item.DefaultValue);
+        //        }
+        //        else if (item.MemberType.IsValueType == true)
+        //        {
+        //            this.args.Add(item, Activator.CreateInstance(item.MemberType));
+        //        }
+        //        else
+        //        {
+        //            this.args.Add(item, null);
+        //        }
+        //    }
+
+        //    //if (requirements.Count > 0)
+        //    //{
+        //    //    throw new ArgumentException(string.Format("필수 인자 {0}가 빠져있습니다", requirements.First().Name));
+        //    //}
+
+        //    foreach (var item in this.args)
+        //    {
+        //        properties.Add(item.Key.DescriptorName, item.Value);
+        //    }
+
+        //    if (variables != null)
+        //    {
+        //        var index = 0;
+        //        var values = Parser.ParseArray(variables, variableList) as IEnumerable;
+
+        //        foreach (var item in values)
+        //        {
+        //            properties.Add($"{variables.DescriptorName}{index++}", item);
+        //        }
+        //    }
+
+        //    return properties;
+        //}
     }
 }
