@@ -8,6 +8,6 @@ Debug/
 Release/
 bin/Debug/
 packages/
-
+.vs
 *.user
 *.VC.db
