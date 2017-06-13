@@ -113,6 +113,7 @@
     <Compile Include="TerminalCursorVisible.cs" />
     <Compile Include="TerminalColor.cs" />
     <Compile Include="Terminal.cs" />
+    <Compile Include="TerminalTextWriter.cs" />
     <Compile Include="UsageDescriptionProvider.cs" />
     <Compile Include="IUsageDescriptionProvider.cs" />
     <Compile Include="UsageDescriptionProviderAttribute.cs" />

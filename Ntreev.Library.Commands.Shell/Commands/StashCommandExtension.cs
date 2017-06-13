@@ -13,7 +13,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
     class StashCommandExtension : CommandProviderBase
     {
         public StashCommandExtension()
-            : base(typeof(StashCommand))
+            : base("stash")
         {
 
         }

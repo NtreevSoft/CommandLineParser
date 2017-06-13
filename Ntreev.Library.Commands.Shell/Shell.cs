@@ -12,7 +12,7 @@ namespace Ntreev.Library.Commands.Shell
     class Shell : CommandContextTerminal, IShell
     {
         [ImportingConstructor]
-        public Shell(CommandContextBase commandContext)
+        public Shell(ShellCommandContext commandContext)
            : base(commandContext)
         {
             this.Prompt = "shell";

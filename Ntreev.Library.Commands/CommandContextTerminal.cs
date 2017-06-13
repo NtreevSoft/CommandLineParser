@@ -143,7 +143,7 @@ namespace Ntreev.Library.Commands
                 else
                 {
                     var memberList = new List<CommandMemberDescriptor>(CommandDescriptor.GetMemberDescriptors(command));
-                    var argList = new List<string>(items.Skip(0));
+                    var argList = new List<string>(items.Skip(1));
                     var completionContext = new CommandCompletionContext(command, memberList, argList, find);
                     return this.GetCompletions(completionContext);
                     //if (argList.Any())

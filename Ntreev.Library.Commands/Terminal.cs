@@ -19,7 +19,8 @@ namespace Ntreev.Library.Commands
         private readonly List<string> histories = new List<string>();
         private readonly List<string> completions = new List<string>();
 
-        private int y = 0;
+        private int y = Console.CursorTop;
+        private int width = Console.BufferWidth;
         private int index;
         private int start = 0;
         private int historyIndex;
@@ -27,7 +28,7 @@ namespace Ntreev.Library.Commands
         private string inputText;
         private string completion = string.Empty;
         private TextWriter writer;
-        private TerminalTextWriter t;
+        //private TerminalTextWriter t;
 
         public Terminal()
         {
@@ -35,9 +36,14 @@ namespace Ntreev.Library.Commands
                 throw new Exception("Terminal cannot use. Console.IsInputRedirected must be false");
             this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.Escape, false, false, false), this.Clear);
             if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
                 this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Backspace, false, false, false), this.Backspace);
+            }
             else
+            {
                 this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
+                this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.V, false, false, true), this.Paste);
+            }
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Delete, false, false, false), this.Delete);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, false), this.Home);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, true), this.DeleteToHome);
@@ -113,10 +119,9 @@ namespace Ntreev.Library.Commands
         public string ReadString(string prompt, string defaultText, bool isHidden)
         {
             this.writer = Console.Out;
-            this.t = new TerminalTextWriter(Console.Out, this, Console.OutputEncoding);
             var oldTreatControlCAsInput = Console.TreatControlCAsInput;
             Console.TreatControlCAsInput = true;
-            Console.SetOut(t);
+            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
 
             try
             {
@@ -127,7 +132,6 @@ namespace Ntreev.Library.Commands
                 Console.TreatControlCAsInput = oldTreatControlCAsInput;
                 Console.SetOut(this.writer);
                 Console.WriteLine();
-                this.t = null;
                 this.writer = null;
             }
         }
@@ -300,6 +304,14 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public void Paste()
+        {
+            lock (lockobj)
+            {
+
+            }
+        }
+
         public void DeleteToEnd()
         {
             lock (lockobj)
@@ -363,7 +375,7 @@ namespace Ntreev.Library.Commands
                 {
                     x += this.chars[i].Slot;
                 }
-                Console.SetCursorPosition(x % Console.BufferWidth, x / Console.BufferWidth + y);
+                Console.SetCursorPosition(x % Console.BufferWidth, x / Console.BufferWidth + this.Top);
                 this.index = value + this.start;
             }
         }
@@ -410,6 +422,23 @@ namespace Ntreev.Library.Commands
         public bool IsReading
         {
             get { return this.writer != null; }
+        }
+
+        public int Top
+        {
+            get
+            {
+                if (this.width != Console.BufferWidth)
+                {
+                    this.y = Console.CursorTop - this.index / Console.BufferWidth;
+                    this.width = Console.BufferWidth;
+                }
+                return this.y;
+            }
+            internal set
+            {
+                this.y = value;
+            }
         }
 
         public static string NextCompletion(string[] completions, string text)
@@ -519,7 +548,7 @@ namespace Ntreev.Library.Commands
             return query.ToArray();
         }
 
-        private void Erase()
+        internal void Erase()
         {
             var x = Console.CursorLeft;
             var y = Console.CursorTop;
@@ -534,10 +563,10 @@ namespace Ntreev.Library.Commands
             {
                 if (length == 0)
                     continue;
-                Console.SetCursorPosition(0, this.y + i);
+                Console.SetCursorPosition(0, this.Top + i);
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
-                    Console.MoveBufferArea(Console.WindowWidth - 1, this.y + i, 1, 1, 0, this.y + i);
+                    Console.MoveBufferArea(Console.WindowWidth - 1, this.Top + i, 1, 1, 0, this.Top + i);
                     this.writer.Write(new string(' ', Console.WindowWidth - 1));
                 }
                 else
@@ -549,13 +578,14 @@ namespace Ntreev.Library.Commands
             Console.SetCursorPosition(x, y);
         }
 
-        private void Draw()
+        internal void Draw()
         {
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
             var index = this.Index;
             var text = this.FullText;
             var y = Console.CursorTop;
+            Console.SetCursorPosition(0, this.y);
             this.writer.Write(this.FullText);
             if (text.Length > 0 && text.Length % Console.BufferWidth == 0 && Console.CursorLeft == 0)
             {
@@ -566,7 +596,7 @@ namespace Ntreev.Library.Commands
                         this.writer.WriteLine();
                     }
                     this.y--;
-                    this.t.y--;
+                    //this.t.y--;
                 }
             }
 
@@ -615,7 +645,7 @@ namespace Ntreev.Library.Commands
                         this.writer.WriteLine();
                     }
                     this.y--;
-                    this.t.y--;
+                    //this.t.y--;
                 }
             }
             this.Index = index;
@@ -662,12 +692,11 @@ namespace Ntreev.Library.Commands
                     Slot = Console.BufferWidth - x1,
                     Char = ch,
                 });
-                //this.height++;
             }
             else if (x1 > x2)
             {
                 this.y--;
-                this.t.y--;
+                //this.t.y--;
                 this.chars.Insert(this.index++, new TerminalChar()
                 {
                     Slot = Console.BufferWidth - x1,
@@ -676,8 +705,6 @@ namespace Ntreev.Library.Commands
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
                     this.writer.WriteLine();
-                    //this.y--;
-                    //this.t.y--;
                 }
             }
             else
@@ -786,6 +813,7 @@ namespace Ntreev.Library.Commands
             lock (lockobj)
             {
                 this.y = Console.CursorTop;
+                this.width = Console.BufferWidth;
                 this.index = 0;
                 this.start = 0;
                 this.chars.Clear();
@@ -800,6 +828,11 @@ namespace Ntreev.Library.Commands
             while (true)
             {
                 var key = Console.ReadKey(true);
+
+                //if (width != Console.BufferWidth)
+                //{
+                //    this.y = Console.CursorTop - this.index / Console.BufferWidth;
+                //}
 
                 if (key == cancelKeyInfo)
                 {
@@ -899,6 +932,11 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        internal static object LockedObject
+        {
+            get { return lockobj; }
+        }
+
         #region classes
 
         struct TerminalChar
@@ -906,111 +944,6 @@ namespace Ntreev.Library.Commands
             public int Slot { get; set; }
 
             public char Char { get; set; }
-        }
-
-        class TerminalTextWriter : TextWriter
-        {
-            private readonly TextWriter writer;
-            private readonly Terminal terminal;
-            private Encoding encoding;
-            private int x;
-            public int y;
-
-            public TerminalTextWriter(TextWriter writer, Terminal terminal, Encoding encoding)
-            {
-                this.writer = writer;
-                this.terminal = terminal;
-                this.encoding = encoding;
-                this.x = Console.CursorLeft;
-                this.y = Console.CursorTop;
-            }
-
-            public override Encoding Encoding
-            {
-                get { return Encoding.UTF8; }
-            }
-
-            public override void Write(char value)
-            {
-                lock (lockobj)
-                {
-                    using (TerminalCursorVisible.Set(false))
-                    {
-                        this.WriteToStream(value.ToString());
-                    }
-                }
-            }
-
-            public override void Write(string value)
-            {
-                lock (lockobj)
-                {
-                    using (TerminalCursorVisible.Set(false))
-                    {
-                        this.WriteToStream(value);
-                    }
-                }
-            }
-
-            public override void WriteLine(string value)
-            {
-                lock (lockobj)
-                {
-                    using (TerminalCursorVisible.Set(false))
-                    {
-                        this.WriteToStream(value + Environment.NewLine);
-                    }
-                }
-            }
-
-            private void WriteToStream(string text)
-            {
-                var y1 = this.y;
-
-                var b = this.y - this.terminal.y;
-                if (this.y >= this.terminal.y)
-                {
-                    this.terminal.Erase();
-                }
-
-                Console.SetCursorPosition(this.x, this.y);
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    using (var stream = Console.OpenStandardOutput())
-                    using (var writer = new StreamWriter(stream, this.encoding))
-                    {
-                        writer.Write(text);
-                    }
-                }
-                else
-                {
-                    this.writer.Write(text);
-                }
-
-                this.x = Console.CursorLeft;
-                this.y = Console.CursorTop;
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    //this.terminal.y += this.y - y1;
-                }
-                else
-                {
-                    //this.terminal.y += this.y - y1;
-                }
-                var diff = this.terminal.y - this.y;
-                this.terminal.Draw();
-
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    //this.y = this.terminal.y - diff;
-                }
-                else
-                {
-                    //this.y = this.terminal.y - 1;
-                }
-                
-                this.y -= (this.y - this.terminal.y);
-            }
         }
 
         #endregion
