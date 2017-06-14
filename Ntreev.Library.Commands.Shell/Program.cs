@@ -42,15 +42,20 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
+            for (var i = 0; i < Console.BufferHeight - 2; i++)
+            {
+                //Console.WriteLine(i);
+            }
             var shell = Container.GetService<IShell>();
             System.Threading.Tasks.Task.Run(() =>
             {
                 System.Threading.Thread.Sleep(1000);
-                for (var i = 0; i < 100; i++)
+                while(true)
                 {
-                    
                     Console.Write(string.Empty.PadRight(80 + 1, 'c'));
-                    System.Threading.Thread.Sleep(1000);
+                    
+                    //Console.WriteLine(DateTime.Now);
+                    System.Threading.Thread.Sleep(100);
                 }
                 //System.Threading.Thread.Sleep(10000);
                 //Console.Write(DateTime.Now);

@@ -585,7 +585,7 @@ namespace Ntreev.Library.Commands
             var index = this.Index;
             var text = this.FullText;
             var y = Console.CursorTop;
-            Console.SetCursorPosition(0, this.y);
+            //Console.SetCursorPosition(0, this.y);
             this.writer.Write(this.FullText);
             if (text.Length > 0 && text.Length % Console.BufferWidth == 0 && Console.CursorLeft == 0)
             {

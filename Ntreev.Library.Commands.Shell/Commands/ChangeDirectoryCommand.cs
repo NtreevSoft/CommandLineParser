@@ -16,7 +16,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
         [Import]
         private Lazy<IShell> shell = null;
         [Import]
-        private Lazy<CommandContextBase> commandContext = null;
+        private Lazy<ShellCommandContext> commandContext = null;
 
         public ChangeDirectoryCommand()
             : base("cd")

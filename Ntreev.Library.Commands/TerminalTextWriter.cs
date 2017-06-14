@@ -67,11 +67,11 @@ namespace Ntreev.Library.Commands
         {
             this.terminal.Erase();
             Console.SetCursorPosition(this.length % Console.BufferWidth, this.terminal.Top + this.offsetY);
-            if (this.offsetY == 0)
-            {
-                this.terminal.Top++;
-                this.offsetY = -1;
-            }
+            //if (this.offsetY == 0)
+            //{
+            //    this.terminal.Top++;
+            //    this.offsetY = -1;
+            //}
 
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
@@ -94,10 +94,18 @@ namespace Ntreev.Library.Commands
 
             this.length += (y2 - y1) * Console.BufferWidth - x1 + x2;
 
-            //this.x = Console.CursorLeft;
-            this.terminal.Top += y2 - y1;
+            if (Console.CursorLeft != 0)
+            {
+                this.offsetY = -1;
+                this.WriteLineCore();
+            }
+            else
+            {
+                this.offsetY = 0;
+            }
+            this.terminal.Top = Console.CursorTop;
             this.terminal.Draw();
-            this.offsetY = y2 - this.terminal.Top;
+            //this.offsetY = y2 - this.terminal.Top;
         }
 
         private void WriteCore(string text)

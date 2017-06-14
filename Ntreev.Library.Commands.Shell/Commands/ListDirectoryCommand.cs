@@ -14,7 +14,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
     class ListDirectoryCommandPartial : CommandBase
     {
         [Import]
-        private Lazy<CommandContextBase> commandContext = null;
+        private Lazy<ShellCommandContext> commandContext = null;
 
         public ListDirectoryCommandPartial()
             : base("ls")
