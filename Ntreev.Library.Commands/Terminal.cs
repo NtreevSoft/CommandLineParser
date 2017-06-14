@@ -566,12 +566,12 @@ namespace Ntreev.Library.Commands
                 Console.SetCursorPosition(0, this.Top + i);
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
-                    Console.MoveBufferArea(Console.WindowWidth - 1, this.Top + i, 1, 1, 0, this.Top + i);
-                    this.writer.Write(new string(' ', Console.WindowWidth - 1));
+                    Console.MoveBufferArea(Console.BufferWidth - 1, this.Top + i, 1, 1, 0, this.Top + i);
+                    this.writer.Write(new string(' ', Console.BufferWidth - 1));
                 }
                 else
                 {
-                    this.writer.Write("\r" + new string(' ', Console.WindowWidth));
+                    this.writer.Write("\r" + new string(' ', Console.BufferWidth));
                 }
                 length -= Console.BufferWidth;
             }
