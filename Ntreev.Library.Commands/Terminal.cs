@@ -29,7 +29,6 @@ namespace Ntreev.Library.Commands
         private string completion = string.Empty;
         private TextWriter writer;
         private bool treatControlCAsInput;
-        //private TerminalTextWriter t;
 
         public Terminal()
         {
@@ -903,10 +902,9 @@ namespace Ntreev.Library.Commands
             lock (lockobj)
             {
                 this.writer = Console.Out;
-                this.writer.WriteLine();
+                Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
                 this.treatControlCAsInput = Console.TreatControlCAsInput;
                 Console.TreatControlCAsInput = true;
-                Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
 
                 this.y = Console.CursorTop;
                 this.width = Console.BufferWidth;
@@ -930,6 +928,7 @@ namespace Ntreev.Library.Commands
                 Console.SetOut(this.writer);
                 Console.WriteLine();
                 this.writer = null;
+                this.isHidden = false;
             }
         }
 

@@ -12,8 +12,6 @@ namespace Ntreev.Library.Commands
         private readonly TextWriter writer;
         private readonly Terminal terminal;
         private Encoding encoding;
-        //private int x;
-        //private int y;
         private int offsetY;
         private int length;
 
@@ -22,8 +20,6 @@ namespace Ntreev.Library.Commands
             this.writer = writer;
             this.terminal = terminal;
             this.encoding = encoding;
-            //this.x = Console.CursorLeft;
-            //this.y = Console.CursorTop;
         }
 
         public override Encoding Encoding
@@ -67,11 +63,6 @@ namespace Ntreev.Library.Commands
         {
             this.terminal.Erase();
             Console.SetCursorPosition(this.length % Console.BufferWidth, this.terminal.Top + this.offsetY);
-            //if (this.offsetY == 0)
-            //{
-            //    this.terminal.Top++;
-            //    this.offsetY = -1;
-            //}
 
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
@@ -102,13 +93,10 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                //this.WriteLineCore();
-                //Console.CursorTop--;
                 this.offsetY = 0;
             }
             this.terminal.Top = Console.CursorTop;
             this.terminal.Draw();
-            //this.offsetY = y2 - this.terminal.Top;
         }
 
         private void WriteCore(string text)
