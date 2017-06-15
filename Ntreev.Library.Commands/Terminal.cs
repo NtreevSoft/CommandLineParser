@@ -28,6 +28,7 @@ namespace Ntreev.Library.Commands
         private string inputText;
         private string completion = string.Empty;
         private TextWriter writer;
+        private bool treatControlCAsInput;
         //private TerminalTextWriter t;
 
         public Terminal()
@@ -118,21 +119,15 @@ namespace Ntreev.Library.Commands
 
         public string ReadString(string prompt, string defaultText, bool isHidden)
         {
-            this.writer = Console.Out;
-            var oldTreatControlCAsInput = Console.TreatControlCAsInput;
-            Console.TreatControlCAsInput = true;
-            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
+            this.Initialize(prompt, defaultText, isHidden);
 
             try
             {
-                return ReadLineImpl(prompt, defaultText, isHidden, i => true);
+                return ReadLineImpl(i => true);
             }
             finally
             {
-                Console.TreatControlCAsInput = oldTreatControlCAsInput;
-                Console.SetOut(this.writer);
-                Console.WriteLine();
-                this.writer = null;
+                this.Release();
             }
         }
 
@@ -149,21 +144,14 @@ namespace Ntreev.Library.Commands
 
         public ConsoleKey ReadKey(string prompt, params ConsoleKey[] filters)
         {
-            this.writer = Console.Out;
-            var oldTreatControlCAsInput = Console.TreatControlCAsInput;
-            Console.TreatControlCAsInput = true;
-            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
-
+            this.Initialize(prompt, string.Empty, false);
             try
             {
-                return ReadKeyImpl(prompt, filters);
+                return ReadKeyImpl(filters);
             }
             finally
             {
-                Console.TreatControlCAsInput = oldTreatControlCAsInput;
-                Console.SetOut(this.writer);
-                Console.WriteLine();
-                this.writer = null;
+                this.Release();
             }
         }
 
@@ -571,7 +559,7 @@ namespace Ntreev.Library.Commands
                 }
                 else
                 {
-                    this.writer.Write("\r" + new string(' ', Console.BufferWidth));
+                    this.writer.Write("\r" + new string(' ', Console.BufferWidth) + "\r");
                 }
                 length -= Console.BufferWidth;
             }
@@ -808,23 +796,21 @@ namespace Ntreev.Library.Commands
             this.completion = string.Empty;
         }
 
-        private string ReadLineImpl(string prompt, string defaultText, bool isHidden, Func<string, bool> validation)
+        private object ReadNumber(string prompt, object defaultValue, Func<string, bool> validation)
         {
-            lock (lockobj)
+            this.Initialize(prompt, $"{defaultValue}", false);
+            try
             {
-                this.y = Console.CursorTop;
-                this.width = Console.BufferWidth;
-                this.index = 0;
-                this.start = 0;
-                this.chars.Clear();
-                this.isHidden = false;
-                this.InsertText(prompt);
-                this.start = this.Index;
-                this.isHidden = isHidden;
-                this.InsertText(defaultText);
-                this.inputText = string.Empty;
+                return ReadLineImpl(validation);
             }
+            finally
+            {
+                this.Release();
+            }
+        }
 
+        private string ReadLineImpl(Func<string, bool> validation)
+        {
             while (true)
             {
                 var key = Console.ReadKey(true);
@@ -885,37 +871,17 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        private object ReadNumber(string prompt, object defaultValue, Func<string, bool> validation)
+        private ConsoleKey ReadKeyImpl(params ConsoleKey[] filters)
         {
-            this.writer = Console.Out;
-            var oldTreatControlCAsInput = Console.TreatControlCAsInput;
-            Console.TreatControlCAsInput = true;
-            Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
-
-            try
-            {
-                return ReadLineImpl(prompt, $"{defaultValue}", false, validation);
-            }
-            finally
-            {
-                Console.TreatControlCAsInput = oldTreatControlCAsInput;
-                Console.SetOut(this.writer);
-                Console.WriteLine();
-                this.writer = null;
-            }
-        }
-
-        private ConsoleKey ReadKeyImpl(string prompt, params ConsoleKey[] filters)
-        {
-            lock (lockobj)
-            {
-                this.y = Console.CursorTop;
-                this.isHidden = false;
-                this.InsertText(prompt);
-                this.start = this.Index;
-                this.isHidden = false;
-                this.inputText = string.Empty;
-            }
+            //lock (lockobj)
+            //{
+            //    this.y = Console.CursorTop;
+            //    this.isHidden = false;
+            //    this.InsertText(prompt);
+            //    this.start = this.Index;
+            //    this.isHidden = false;
+            //    this.inputText = string.Empty;
+            //}
 
             while (true)
             {
@@ -929,6 +895,41 @@ namespace Ntreev.Library.Commands
                     this.InsertText(key.Key.ToString());
                     return key.Key;
                 }
+            }
+        }
+
+        private void Initialize(string prompt, string defaultText, bool isHidden)
+        {
+            lock (lockobj)
+            {
+                this.writer = Console.Out;
+                this.writer.WriteLine();
+                this.treatControlCAsInput = Console.TreatControlCAsInput;
+                Console.TreatControlCAsInput = true;
+                Console.SetOut(new TerminalTextWriter(Console.Out, this, Console.OutputEncoding));
+
+                this.y = Console.CursorTop;
+                this.width = Console.BufferWidth;
+                this.index = 0;
+                this.start = 0;
+                this.chars.Clear();
+                this.isHidden = false;
+                this.InsertText(prompt);
+                this.start = this.Index;
+                this.isHidden = isHidden;
+                this.InsertText(defaultText);
+                this.inputText = string.Empty;
+            }
+        }
+
+        private void Release()
+        {
+            lock (lockobj)
+            {
+                Console.TreatControlCAsInput = this.treatControlCAsInput;
+                Console.SetOut(this.writer);
+                Console.WriteLine();
+                this.writer = null;
             }
         }
 
