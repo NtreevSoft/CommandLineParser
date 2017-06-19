@@ -79,7 +79,7 @@ namespace Ntreev.Library.Commands
             this.Execute(CommandLineParser.Split(arguments));
         }
 
-        public virtual bool IsCommandVisible(ICommand command)
+        public virtual bool IsCommandEnabled(ICommand command)
         {
             if (this.HelpCommand == command)
                 return false;
@@ -87,18 +87,17 @@ namespace Ntreev.Library.Commands
                 return false;
             if (this.parsers.Contains(command) == false)
                 return false;
-            var attr = command.GetType().GetCustomAttribute<BrowsableAttribute>();
-            if (attr == null)
-                return true;
-            return attr.Browsable;
+            return command.IsEnabled;
         }
 
-        public virtual bool IsMethodVisible(ICommand command, CommandMethodDescriptor descriptor)
+        public virtual bool IsMethodEnabled(ICommand command, CommandMethodDescriptor descriptor)
         {
             if (command is IExecutable == true)
                 return false;
-            if (this.IsCommandVisible(command) == false)
+            if (this.IsCommandEnabled(command) == false)
                 return false;
+            if (command is CommandMethodBase commandMethod)
+                return commandMethod.InvokeIsMethodEnabled(descriptor);
             return true;
         }
 
@@ -240,7 +239,7 @@ namespace Ntreev.Library.Commands
             else if (this.commands.Contains(commandName) == true)
             {
                 var command = this.commands[commandName];
-                if (this.IsCommandVisible(command) == true)
+                if (this.IsCommandEnabled(command) == true)
                     return this.OnExecute(command, arguments);
             }
 

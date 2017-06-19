@@ -9,5 +9,7 @@ namespace Ntreev.Library.Commands
     public interface ICommand
     {
         string Name { get; }
+
+        bool IsEnabled { get; }
     }
 }

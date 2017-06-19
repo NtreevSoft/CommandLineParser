@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -19,6 +20,26 @@ namespace Ntreev.Library.Commands
         public string Name
         {
             get { return this.name; }
+        }
+
+        public virtual bool IsEnabled
+        {
+            get { return true; }
+        }
+
+        protected virtual bool IsMethodEnabled(CommandMethodDescriptor descriptor)
+        {
+            return true;
+        }
+
+        public virtual string[] GetCompletions(CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor, string find)
+        {
+            return null;
+        }
+
+        internal bool InvokeIsMethodEnabled(CommandMethodDescriptor descriptor)
+        {
+            return this.IsMethodEnabled(descriptor);
         }
     }
 }

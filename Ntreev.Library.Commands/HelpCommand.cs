@@ -53,7 +53,7 @@ namespace Ntreev.Library.Commands
                 else
                 {
                     var command = this.commandContext.Commands[this.CommandName];
-                    if (this.commandContext.IsCommandVisible(command) == false)
+                    if (this.commandContext.IsCommandEnabled(command) == false)
                         throw new CommandNotFoundException(this.CommandName);
 
                     var parser = this.commandContext.Parsers[command];
@@ -90,7 +90,7 @@ namespace Ntreev.Library.Commands
             writer.Indent++;
             foreach (var item in this.commandContext.Commands)
             {
-                if (this.commandContext.IsCommandVisible(item) == false)
+                if (this.commandContext.IsCommandEnabled(item) == false)
                     continue;
                 var summary = CommandDescriptor.GetUsageDescriptionProvider(item.GetType()).GetSummary(item);
 

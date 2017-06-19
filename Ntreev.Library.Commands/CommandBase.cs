@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,17 @@ namespace Ntreev.Library.Commands
             get { return this.name; }
         }
 
+        public virtual bool IsEnabled
+        {
+            get { return true; }
+        }
+
         protected abstract void OnExecute();
+
+        public virtual string[] GetCompletions(CommandCompletionContext completionContext)
+        {
+            return null;
+        }
 
         #region ICommand
 

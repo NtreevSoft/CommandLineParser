@@ -353,7 +353,7 @@ namespace Ntreev.Library.Commands
             if (attr != null && attr.Browsable == false)
                 return false;
             if (this.CommandContext != null)
-                return this.CommandContext.IsMethodVisible(this.Instance as ICommand, descriptor);
+                return this.CommandContext.IsMethodEnabled(this.Instance as ICommand, descriptor);
             return true;
         }
 

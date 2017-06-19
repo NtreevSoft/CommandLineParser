@@ -120,7 +120,7 @@ namespace Ntreev.Library.Commands
             {
                 var query = from item in this.commandContext.Commands
                             let name = item.Name
-                            where this.commandContext.IsCommandVisible(item)
+                            where this.commandContext.IsCommandEnabled(item)
                             where name.StartsWith(find)
                             select name;
                 return query.ToArray();
@@ -135,7 +135,7 @@ namespace Ntreev.Library.Commands
                 {
                     var query = from item in CommandDescriptor.GetMethodDescriptors(command)
                                 let name = item.Name
-                                where this.commandContext.IsMethodVisible(command, item)
+                                where this.commandContext.IsMethodEnabled(command, item)
                                 where name.StartsWith(find)
                                 select name;
                     return query.ToArray();
@@ -146,35 +146,6 @@ namespace Ntreev.Library.Commands
                     var argList = new List<string>(items.Skip(1));
                     var completionContext = new CommandCompletionContext(command, memberList, argList, find);
                     return this.GetCompletions(completionContext);
-                    //if (argList.Any())
-                    //{
-                    //    var arg = argList.Last();
-                    //    var descriptor = this.FindMemberDescriptor(memberList, arg);
-                    //    if (descriptor != null)
-                    //    {
-                    //        return this.GetCompletions(command, descriptor, find);
-                    //    }
-                    //}
-
-                    //for (var i = 0; i < argList.Count; i++)
-                    //{
-                    //    if (memberList.Any() == false)
-                    //        break;
-                    //    var arg = argList[i];
-                    //    var member = memberList.First();
-                    //    if (member.IsRequired == true)
-                    //        memberList.RemoveAt(0);
-                    //}
-
-                    //if (memberList.Any() == true && memberList.First().IsRequired == true)
-                    //{
-                    //    int qwer = 0;
-                    //    //var methodInfo = methodDescriptor.MethodInfo;
-                    //    //if (methodInfo.DeclaringType == command.GetType())
-                    //    //    return this.GetCompletions(command, methodDescriptor, memberList.First(), find);
-                    //    //var commandProvider = this.commandContext.CommandProviders.First(item => item.CommandName == command.Name && item.GetType() == methodInfo.DeclaringType);
-                    //    //return this.GetCompletions(commandProvider, methodDescriptor, memberList.First(), find);
-                    //}
                 }
             }
             else if (items.Length >= 2)
@@ -209,46 +180,17 @@ namespace Ntreev.Library.Commands
                     var memberList = new List<CommandMemberDescriptor>(methodDescriptor.Members);
                     var argList = new List<string>(items.Skip(2));
                     var completionContext = new CommandCompletionContext(command, methodDescriptor, memberList, argList, find);
-                    //completionContext.MemberDescriptor = this.FindMemberDescriptor(argList, memberList);
+                    if (completionContext.MemberDescriptor == null && find != string.Empty)
+                        return this.GetCompletions(memberList, find);
+
                     return this.GetCompletions(completionContext);
-
-                    //if (argList.Any())
-                    //{
-                    //    var arg = argList.Last();
-                    //    var descriptor = this.FindMemberDescriptor(memberList, arg);
-                    //    if (descriptor != null)
-                    //    {
-                    //        var methodInfo = methodDescriptor.MethodInfo;
-                    //        if (methodInfo.DeclaringType == command.GetType())
-                    //            return this.GetCompletions(command, methodDescriptor, descriptor, find);
-                    //        var commandProvider = this.commandContext.CommandProviders.First(item => item.CommandName == command.Name && item.GetType() == methodInfo.DeclaringType);
-                    //        return this.GetCompletions(commandProvider, methodDescriptor, descriptor, find);
-                    //    }
-                    //}
-
-                    //for (var i = 0; i < argList.Count; i++)
-                    //{
-                    //    if (memberList.Any() == false)
-                    //        break;
-                    //    var arg = argList[i];
-                    //    var member = memberList.First();
-                    //    if (member.IsRequired == true)
-                    //        memberList.RemoveAt(0);
-                    //}
-
-                    //if (memberList.Any() == true && memberList.First().IsRequired == true)
-                    //{
-                    //    var methodInfo = methodDescriptor.MethodInfo;
-                    //    if (methodInfo.DeclaringType == command.GetType())
-                    //        return this.GetCompletions(command, methodDescriptor, memberList.First(), find);
-                    //    var commandProvider = this.commandContext.CommandProviders.First(item => item.CommandName == command.Name && item.GetType() == methodInfo.DeclaringType);
-                    //    return this.GetCompletions(commandProvider, methodDescriptor, memberList.First(), find);
-                    //}
                 }
             }
 
             return null;
         }
+
+        
 
         //protected virtual string[] GetCompletions(ICommand command, string methodName, string find)
         //{
@@ -272,6 +214,18 @@ namespace Ntreev.Library.Commands
 
         protected virtual string[] GetCompletions(CommandCompletionContext completionContext)
         {
+            if (completionContext.Command is CommandBase commandBase)
+            {
+                return commandBase.GetCompletions(completionContext);
+            }
+            else if (completionContext.Command is CommandMethodBase commandMethodBase)
+            {
+                return commandMethodBase.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor, completionContext.Find);
+            }
+            else if (completionContext.Command is CommandProviderBase consoleCommandProvider)
+            {
+                return consoleCommandProvider.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor, completionContext.Find);
+            }
             return null;
         }
 
@@ -310,7 +264,7 @@ namespace Ntreev.Library.Commands
             if (commandNames.Contains(commandName) == true)
             {
                 var command = this.commandContext.Commands[commandName];
-                if (this.commandContext.IsCommandVisible(command) == true)
+                if (this.commandContext.IsCommandEnabled(command) == true)
                     return command;
             }
             return null;
@@ -324,7 +278,7 @@ namespace Ntreev.Library.Commands
             if (descriptors.Contains(methodName) == false)
                 return null;
             var descriptor = descriptors[methodName];
-            if (this.commandContext.IsMethodVisible(command, descriptor) == false)
+            if (this.commandContext.IsMethodEnabled(command, descriptor) == false)
                 return null;
             return descriptor;
         }
@@ -352,6 +306,22 @@ namespace Ntreev.Library.Commands
                         select item;
 
             return query.First();
+        }
+
+        private string[] GetCompletions(IEnumerable<CommandMemberDescriptor> descriptors, string find)
+        {
+            var patternList = new List<string>();
+            foreach (var item in descriptors)
+            {
+                if (item.IsRequired == false)
+                {
+                    if (item.NamePattern != string.Empty)
+                        patternList.Add(item.NamePattern);
+                    if (item.ShortNamePattern != string.Empty)
+                        patternList.Add(item.ShortNamePattern);
+                }
+            }
+            return patternList.Where(item => item.StartsWith(find)).ToArray();
         }
     }
 }
