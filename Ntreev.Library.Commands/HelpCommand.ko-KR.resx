@@ -130,6 +130,6 @@ help &lt;command&gt;
 help &lt;command&gt; &lt;sub-command=null&gt;</value>
   </data>
   <data name="MethodName" xml:space="preserve">
-    <value>사용법을 표시할 하위 명령을 설정합니다.</value>
+    <value>사용법을 표시할 하위 명령의 이름을 나타냅니다.</value>
   </data>
 </root>

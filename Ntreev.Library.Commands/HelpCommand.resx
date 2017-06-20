@@ -121,15 +121,15 @@
     <value>Diplay available commands and usage.</value>
   </data>
   <data name="CommandName" xml:space="preserve">
-    <value>사용법을 표시할 명령의 이름을 나타냅니다. 사용 가능한 명령의 목록은 AvaliableCommands에 표시됩니다.</value>
+    <value>'command-name' is argument for usage display, available commands are displayed in 'AvaliableCommands'</value>
   </data>
   <data name="HelpCommand" xml:space="preserve">
-    <value>Display available command list. 특정 명령의 사용법을 표시하려면 'help' 뒤에 인자로 명령의 이름을 지정하시면 됩니다.
+    <value>to display a specific command usage, type the command name after 'help'.
 help &lt;command&gt;
-하위명령의 표시법은 하위명령의 이름을 추가로 설정하시면 됩니다.
+sub command refer to the usage below
 help &lt;command&gt; &lt;sub-command=null&gt;</value>
   </data>
   <data name="MethodName" xml:space="preserve">
-    <value>사용법을 표시할 하위 명령을 설정합니다.</value>
+    <value>'sub-command' is argument for sub-command usage display</value>
   </data>
 </root>
