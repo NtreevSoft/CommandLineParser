@@ -88,7 +88,7 @@ namespace Ntreev.Library.Commands
 
             if (Console.CursorLeft != 0 || this.length % Console.BufferWidth == 0)
             {
-                this.offsetY = -1;
+                //this.offsetY = -1;
                 //this.WriteLineCore();
             }
             else

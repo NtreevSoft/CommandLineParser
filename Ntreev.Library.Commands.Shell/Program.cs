@@ -56,7 +56,7 @@ namespace Ntreev.Library.Commands.Shell
                 {
                     //if (Console.BufferWidth == 81)
                     {
-                        Console.WriteLine(string.Empty.PadRight(81, 'c') + Environment.NewLine + "werwerwer");
+                        Console.WriteLine("werwerwer");
                         //break;
                     }
                     System.Threading.Thread.Sleep(1000);
