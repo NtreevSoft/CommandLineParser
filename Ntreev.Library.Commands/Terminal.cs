@@ -814,11 +814,6 @@ namespace Ntreev.Library.Commands
             {
                 var key = Console.ReadKey(true);
 
-                //if (width != Console.BufferWidth)
-                //{
-                //    this.y = Console.CursorTop - this.index / Console.BufferWidth;
-                //}
-
                 if (key == cancelKeyInfo)
                 {
                     var args = new TerminalCancelEventArgs(ConsoleSpecialKey.ControlC);

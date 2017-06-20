@@ -98,7 +98,7 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var descriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberVisible(item));
+                var descriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberEnabled(item));
                 var parser = new ParseDescriptor(descriptors, arguments[1], types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
                 parser.SetValue(this.instance);
                 return true;
@@ -152,11 +152,10 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
-                if (descriptor == null || this.IsMethodVisible(descriptor) == false)
+                if (descriptor == null || this.IsMethodEnabled(descriptor) == false)
                     throw new CommandNotFoundException(method);
-                var visibleDescriptors = descriptor.Members.Where(item => this.IsMemberVisible(item));
-                descriptor.Invoke(this.instance, arguments1[1], visibleDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
-                //Invoke(this.instance, arguments1[1], descriptor.MethodInfo, visibleDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
+                var enabledDescriptors = descriptor.Members.Where(item => this.IsMemberEnabled(item));
+                descriptor.Invoke(this.instance, arguments1[1], enabledDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
                 return true;
             }
         }
@@ -171,14 +170,14 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintUsage()
         {
-            var visibleDescriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberVisible(item));
-            this.MemberUsagePrinter.Print(this.Out, visibleDescriptors.ToArray());
+            var enabledDescriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberEnabled(item));
+            this.MemberUsagePrinter.Print(this.Out, enabledDescriptors.ToArray());
         }
 
         public virtual void PrintUsage(string memberName)
         {
             var descriptor = CommandDescriptor.GetMemberDescriptors(this.instance)
-                                              .Where(item => this.IsMemberVisible(item))
+                                              .Where(item => this.IsMemberEnabled(item))
                                               .FirstOrDefault(item => (item.IsRequired == true && memberName == item.Name) ||
                                                                        memberName == item.NamePattern ||
                                                                        memberName == item.ShortNamePattern);
@@ -196,7 +195,7 @@ namespace Ntreev.Library.Commands
 
         public virtual void PrintMethodUsage()
         {
-            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance).Where(item => this.IsMethodVisible(item));
+            var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance).Where(item => this.IsMethodEnabled(item));
             this.MethodUsagePrinter.Print(this.Out, descriptors.ToArray());
         }
 
@@ -204,22 +203,22 @@ namespace Ntreev.Library.Commands
         {
             var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance);
             var descriptor = descriptors.FirstOrDefault(item => item.Name == methodName);
-            if (descriptor == null || this.IsMethodVisible(descriptor) == false)
+            if (descriptor == null || this.IsMethodEnabled(descriptor) == false)
                 throw new CommandNotFoundException(methodName);
 
-            var visibleDescriptros = descriptor.Members.Where(item => this.IsMemberVisible(item)).ToArray();
+            var enabledDescriptors = descriptor.Members.Where(item => this.IsMemberEnabled(item)).ToArray();
 
-            this.MethodUsagePrinter.Print(this.Out, descriptor, visibleDescriptros);
+            this.MethodUsagePrinter.Print(this.Out, descriptor, enabledDescriptors);
         }
 
         public virtual void PrintMethodUsage(string methodName, string memberName)
         {
             var descriptors = CommandDescriptor.GetMethodDescriptors(this.instance);
             var descriptor = descriptors.FirstOrDefault(item => item.Name == methodName);
-            if (descriptor == null || this.IsMethodVisible(descriptor) == false)
+            if (descriptor == null || this.IsMethodEnabled(descriptor) == false)
                 throw new CommandNotFoundException(methodName);
 
-            var visibleDescriptor = descriptor.Members.Where(item => this.IsMemberVisible(item))
+            var visibleDescriptor = descriptor.Members.Where(item => this.IsMemberEnabled(item))
                                                       .FirstOrDefault(item => (item.IsRequired == true && memberName == item.Name) ||
                                                                                memberName == item.NamePattern ||
                                                                                memberName == item.ShortNamePattern);
@@ -347,7 +346,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        protected virtual bool IsMethodVisible(CommandMethodDescriptor descriptor)
+        protected virtual bool IsMethodEnabled(CommandMethodDescriptor descriptor)
         {
             var attr = descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) as BrowsableAttribute;
             if (attr != null && attr.Browsable == false)
@@ -357,7 +356,7 @@ namespace Ntreev.Library.Commands
             return true;
         }
 
-        protected virtual bool IsMemberVisible(CommandMemberDescriptor descriptor)
+        protected virtual bool IsMemberEnabled(CommandMemberDescriptor descriptor)
         {
             var attr = descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) as BrowsableAttribute;
             if (attr == null)
@@ -419,7 +418,7 @@ namespace Ntreev.Library.Commands
         internal bool IsMethodVisible(string methodName)
         {
             var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, methodName);
-            if (descriptor == null || this.IsMethodVisible(descriptor) == false)
+            if (descriptor == null || this.IsMethodEnabled(descriptor) == false)
                 return false;
             return true;
         }

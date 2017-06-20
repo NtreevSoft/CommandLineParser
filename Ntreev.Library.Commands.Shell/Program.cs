@@ -50,13 +50,13 @@ namespace Ntreev.Library.Commands.Shell
             System.Threading.Tasks.Task.Run(() =>
             {
                 System.Threading.Thread.Sleep(1000);
-                Console.Write(string.Empty.PadRight(81, 'c') + Environment.NewLine + "werwerwer");
+                //Console.Write(string.Empty.PadRight(81, 'c') + Environment.NewLine + "werwerwer");
 
                 while (true)
                 {
                     //if (Console.BufferWidth == 81)
                     {
-                        Console.Write(string.Empty.PadRight(81, 'c') + Environment.NewLine + "werwerwer");
+                        Console.WriteLine(string.Empty.PadRight(81, 'c') + Environment.NewLine + "werwerwer");
                         //break;
                     }
                     System.Threading.Thread.Sleep(1000);
