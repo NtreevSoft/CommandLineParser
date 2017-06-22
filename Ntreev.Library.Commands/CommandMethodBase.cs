@@ -32,7 +32,7 @@ namespace Ntreev.Library.Commands
             return true;
         }
 
-        public virtual string[] GetCompletions(CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor, string find)
+        public virtual string[] GetCompletions(CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor)
         {
             return null;
         }

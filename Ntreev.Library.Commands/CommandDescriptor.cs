@@ -23,7 +23,7 @@ namespace Ntreev.Library.Commands
                 return UsageDescriptionProvider.Default;
             if (typeToUsageDescriptionProvider.ContainsKey(type) == false)
             {
-                typeToUsageDescriptionProvider.Add(type, attribute.CreateInstance());
+                typeToUsageDescriptionProvider.Add(type, attribute.CreateInstanceInternal(type));
             }
             return typeToUsageDescriptionProvider[type];
         }
@@ -102,7 +102,6 @@ namespace Ntreev.Library.Commands
                 if (item is CommandStaticMethodAttribute == false)
                     continue;
                 var attr = item as CommandStaticMethodAttribute;
-
                 var staticDescriptors = CommandDescriptor.GetMethodDescriptors(attr.StaticType);
                 descriptors.AddRange(Filter(staticDescriptors, attr.MethodNames));
             }
@@ -114,10 +113,15 @@ namespace Ntreev.Library.Commands
         {
             var descriptors = new CommandMethodDescriptorCollection();
 
+            if (CommandSettings.IsConsoleMode == false && type.GetCustomAttribute<ConsoleModeOnlyAttribute>() != null)
+                return descriptors;
+
             foreach (var item in type.GetMethods())
             {
                 var attr = item.GetCustomAttribute<CommandMethodAttribute>();
                 if (attr == null)
+                    continue;
+                if (CommandSettings.IsConsoleMode == false && item.GetCustomAttribute<ConsoleModeOnlyAttribute>() != null)
                     continue;
                 descriptors.Add(new StandardCommandMethodDescriptor(item));
             }
@@ -139,6 +143,8 @@ namespace Ntreev.Library.Commands
             {
                 var attr = item.GetCommandPropertyAttribute();
                 if (attr == null)
+                    continue;
+                if (CommandSettings.IsConsoleMode == false && item.GetCustomAttribute<ConsoleModeOnlyAttribute>() != null)
                     continue;
 
                 if (item.CanWrite == false)

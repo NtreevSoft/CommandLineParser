@@ -56,6 +56,7 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandProperty('m')]
+        [ConsoleModeOnly]
         public string Message
         {
             get; set;

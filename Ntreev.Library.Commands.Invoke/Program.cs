@@ -11,6 +11,7 @@ namespace Ntreev.Library.Commands.Invoke
     {
         static void Main(string[] args)
         {
+            CommandSettings.IsConsoleMode = false;
             var settings = new Commands();
             var parser = new CommandLineParser(settings);
 

@@ -94,6 +94,7 @@
     <Compile Include="CommandStaticPropertyAttribute.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandParsingTypes.cs" />
+    <Compile Include="ConsoleModeOnlyAttribute.cs" />
     <Compile Include="ExternalCommandMethodDescriptor.cs" />
     <Compile Include="ICommandProvider.cs" />
     <Compile Include="IExecutable.cs" />
@@ -102,6 +103,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ResourceDescriptionAttribute.cs" />
     <Compile Include="ResourceUsageDescriptionProvider.cs" />
     <Compile Include="CommandMethodBase.cs" />
     <Compile Include="CommandParameterDescriptor.cs" />

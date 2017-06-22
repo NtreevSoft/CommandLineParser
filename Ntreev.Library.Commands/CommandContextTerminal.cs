@@ -10,6 +10,7 @@ namespace Ntreev.Library.Commands
 {
     public class CommandContextTerminal : Terminal
     {
+        private readonly static string[] emptyStrings = new string[] { };
         private readonly CommandContextBase commandContext;
         private bool isCancellationRequested;
         private string prompt;
@@ -190,43 +191,29 @@ namespace Ntreev.Library.Commands
             return null;
         }
 
-        
-
-        //protected virtual string[] GetCompletions(ICommand command, string methodName, string find)
-        //{
-        //    return null;
-        //}
-
-        //protected virtual string[] GetCompletions(ICommand command, CommandMemberDescriptor memberDescriptor, string find)
-        //{
-        //    return null;
-        //}
-
-        //protected virtual string[] GetCompletions(ICommand command, CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor, string find)
-        //{
-        //    return null;
-        //}
-
-        //protected virtual string[] GetCompletions(ICommandProvider commandProvider, CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor, string find)
-        //{
-        //    return null;
-        //}
-
         protected virtual string[] GetCompletions(CommandCompletionContext completionContext)
         {
-            if (completionContext.Command is CommandBase commandBase)
+            var query = from item in GetCompletionsCore() ?? emptyStrings
+                        where item.StartsWith(completionContext.Find)
+                        select item;
+            return query.ToArray();
+
+            string[] GetCompletionsCore()
             {
-                return commandBase.GetCompletions(completionContext);
+                if (completionContext.Command is CommandBase commandBase)
+                {
+                    return commandBase.GetCompletions(completionContext);
+                }
+                else if (completionContext.Command is CommandMethodBase commandMethodBase)
+                {
+                    return commandMethodBase.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor);
+                }
+                else if (completionContext.Command is CommandProviderBase consoleCommandProvider)
+                {
+                    return consoleCommandProvider.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor);
+                }
+                return null;
             }
-            else if (completionContext.Command is CommandMethodBase commandMethodBase)
-            {
-                return commandMethodBase.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor, completionContext.Find);
-            }
-            else if (completionContext.Command is CommandProviderBase consoleCommandProvider)
-            {
-                return consoleCommandProvider.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor, completionContext.Find);
-            }
-            return null;
         }
 
         private CommandMemberDescriptor FindMemberDescriptor(List<string> argList, List<CommandMemberDescriptor> memberList)

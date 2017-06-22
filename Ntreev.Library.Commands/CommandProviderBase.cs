@@ -21,7 +21,7 @@ namespace Ntreev.Library.Commands
             get { return this.commandName; }
         }
 
-        public virtual string[] GetCompletions(CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor, string find)
+        public virtual string[] GetCompletions(CommandMethodDescriptor methodDescriptor, CommandMemberDescriptor memberDescriptor)
         {
             return null;
         }

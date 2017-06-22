@@ -12,7 +12,9 @@ namespace Ntreev.Library.Commands
 {
     public class ResourceUsageDescriptionProvider : IUsageDescriptionProvider
     {
+        private const string extension = ".resources";
         private readonly static Dictionary<Type, ResourceManager> resourceSets = new Dictionary<Type, ResourceManager>();
+        private readonly string resourceName;
 
         static ResourceUsageDescriptionProvider()
         {
@@ -20,21 +22,19 @@ namespace Ntreev.Library.Commands
         }
 
         public ResourceUsageDescriptionProvider()
+            : this(string.Empty)
         {
 
         }
 
-        public string GetDescription(PropertyDescriptor descriptor)
+        public ResourceUsageDescriptionProvider(string resourceName)
         {
-            var description = GetResourceDescription(descriptor.ComponentType, descriptor.Name);
-            if (description != null)
-                return description;
-            return UsageDescriptionProvider.Default.GetDescription(descriptor);
+            this.resourceName = resourceName ?? string.Empty;
         }
 
         public string GetDescription(PropertyInfo propertyInfo)
         {
-            var description = GetResourceDescription(propertyInfo.DeclaringType, propertyInfo.Name);
+            var description = GetResourceDescription(this.resourceName, propertyInfo.DeclaringType, propertyInfo.Name);
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(propertyInfo);
@@ -42,7 +42,7 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(ParameterInfo parameterInfo)
         {
-            var description = GetResourceDescription(parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
+            var description = GetResourceDescription(this.resourceName, parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(parameterInfo);
@@ -50,7 +50,10 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(object instance)
         {
-            var description = GetResourceDescription(instance.GetType(), instance.GetType().Name);
+            var description = GetResourceDescription(this.resourceName, instance.GetType(), instance.GetType().Name);
+            if (description != null)
+                return description;
+            description = GetResourceDescription(this.resourceName, instance.GetType(), "ctor");
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(instance);
@@ -58,7 +61,7 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(MethodInfo methodInfo)
         {
-            var description = GetResourceDescription(methodInfo.DeclaringType, methodInfo.Name);
+            var description = GetResourceDescription(this.resourceName, methodInfo.DeclaringType, methodInfo.Name);
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(methodInfo);
@@ -66,7 +69,7 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(PropertyInfo propertyInfo)
         {
-            var summary = GetResourceSummary(propertyInfo.DeclaringType, propertyInfo.Name);
+            var summary = GetResourceSummary(this.resourceName, propertyInfo.DeclaringType, propertyInfo.Name);
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(propertyInfo);
@@ -74,23 +77,18 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(ParameterInfo parameterInfo)
         {
-            var summary = GetResourceSummary(parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
+            var summary = GetResourceSummary(this.resourceName, parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(parameterInfo);
         }
 
-        public string GetSummary(PropertyDescriptor descriptor)
-        {
-            var summary = GetResourceSummary(descriptor.ComponentType, descriptor.Name);
-            if (summary != null)
-                return summary;
-            return UsageDescriptionProvider.Default.GetSummary(descriptor);
-        }
-
         public string GetSummary(object instance)
         {
-            var summary = GetResourceSummary(instance.GetType(), instance.GetType().Name);
+            var summary = GetResourceSummary(this.resourceName, instance.GetType(), instance.GetType().Name);
+            if (summary != null)
+                return summary;
+            summary = GetResourceSummary(this.resourceName, instance.GetType(), "ctor");
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(instance);
@@ -98,40 +96,38 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(MethodInfo methodInfo)
         {
-            var summary = GetResourceSummary(methodInfo.DeclaringType, methodInfo.Name);
+            var summary = GetResourceSummary(this.resourceName, methodInfo.DeclaringType, methodInfo.Name);
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(methodInfo);
         }
 
-        private static string GetResourceDescription(Type type, string name)
+        private static string GetResourceDescription(string resourceName, Type type, string name)
         {
-            var resourceSet = GetResourceSet(type);
+            var resourceSet = GetResourceSet(resourceName, type);
             if (resourceSet == null)
                 return null;
             return resourceSet.GetString(name);
         }
 
-        private static string GetResourceSummary(Type type, string name)
+        private static string GetResourceSummary(string resourceName, Type type, string name)
         {
-            var resourceSet = GetResourceSet(type);
+            var resourceSet = GetResourceSet(resourceName, type);
             if (resourceSet == null)
                 return null;
             return resourceSet.GetString("@" + name);
         }
 
-        private static ResourceManager GetResourceSet(Type type)
+        private static ResourceManager GetResourceSet(string resourceName, Type type)
         {
             var resourceNames = type.Assembly.GetManifestResourceNames();
-            var resourceName = type.FullName + ".resources";
+            var baseName = resourceName == string.Empty ? type.FullName : resourceName;
 
-            if (resourceNames.Contains(resourceName) == false)
+            if (resourceNames.Contains(baseName + extension) == false)
                 return null;
 
             if (resourceSets.ContainsKey(type) == false)
-            {
-                resourceSets.Add(type, new ResourceManager(type.FullName, type.Assembly));
-            }
+                resourceSets.Add(type, new ResourceManager(baseName, type.Assembly));
 
             return resourceSets[type];
         }

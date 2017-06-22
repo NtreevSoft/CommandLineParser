@@ -10,7 +10,7 @@ namespace Ntreev.Library.Commands
     [AttributeUsage(AttributeTargets.Class)]
     public class UsageDescriptionProviderAttribute : Attribute
     {
-        private readonly Type type;
+        private readonly Type providerType;
 
         public UsageDescriptionProviderAttribute(string typeName)
             : this(Type.GetType(typeName))
@@ -22,12 +22,22 @@ namespace Ntreev.Library.Commands
         {
             if (typeof(IUsageDescriptionProvider).IsAssignableFrom(type) == false)
                 throw new ArgumentException();
-            this.type = type;
+            this.providerType = type;
         }
 
-        internal IUsageDescriptionProvider CreateInstance()
+        public Type ProviderType
         {
-            return TypeDescriptor.CreateInstance(null, this.type, null, null) as IUsageDescriptionProvider;
+            get { return this.providerType; }
+        }
+
+        protected virtual IUsageDescriptionProvider CreateInstance(Type type)
+        {
+            return TypeDescriptor.CreateInstance(null, this.ProviderType, null, null) as IUsageDescriptionProvider;
+        }
+
+        internal IUsageDescriptionProvider CreateInstanceInternal(Type type)
+        {
+            return this.CreateInstance(type);
         }
     }
 }

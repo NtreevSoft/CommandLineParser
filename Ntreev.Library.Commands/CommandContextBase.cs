@@ -40,6 +40,8 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in commands)
             {
+                if (Environment.UserInteractive == true && item.GetType().GetCustomAttribute<ConsoleModeOnlyAttribute>() != null)
+                    continue;
                 this.commands.Add(item);
                 this.parsers.Add(item, this.CreateInstance(this, item));
             }
@@ -48,6 +50,8 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in commandProviders)
             {
+                if (Environment.UserInteractive == true && item.GetType().GetCustomAttribute<ConsoleModeOnlyAttribute>() != null)
+                    continue;
                 var command = commands.FirstOrDefault(i => i.Name == item.CommandName);
                 if (command == null)
                     throw new InvalidOperationException();

@@ -15,6 +15,11 @@ namespace Ntreev.Library.Commands
         private static char itemSeparator = ';';
         private static Func<string, string> nameGenerator;
 
+        static CommandSettings()
+        {
+            IsConsoleMode = true;
+        }
+
         public static string Delimiter
         {
             get { return delimiter; }
@@ -52,6 +57,11 @@ namespace Ntreev.Library.Commands
         {
             get { return nameGenerator ?? ToSpinalCase; }
             set { nameGenerator = value; }
+        }
+
+        public static bool IsConsoleMode
+        {
+            get; set;
         }
 
         private static string ToSpinalCase(string text)
