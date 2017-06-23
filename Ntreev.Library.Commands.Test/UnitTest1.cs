@@ -13,6 +13,8 @@ namespace Ntreev.Library.Commands.Test
             var settings = new Settings();
             var parser = new CommandLineParser(settings);
             parser.Parse("--list -c", CommandParsingTypes.OmitCommandName);
+
+            parser.Parse("--list wer -c", CommandParsingTypes.OmitCommandName);
         }
 
         class Settings
