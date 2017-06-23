@@ -113,30 +113,5 @@ namespace Ntreev.Library.Commands
             else
                 this.methodInfo.Invoke(instance, parameters);
         }
-
-        //internal MethodInfo MethodInfo
-        //{
-        //    get { return this.methodInfo; }
-        //}
-
-        //internal void Invoke(object instance, string arguments, IEnumerable<CommandMemberDescriptor> descriptors, bool init)
-        //{
-        //    var parser = new ParseDescriptor(descriptors)
-        //    {
-        //        IsInitializable = init,
-        //    };
-        //    parser.Parse(instance, arguments);
-
-        //    var values = new ArrayList();
-        //    var nameToDescriptors = descriptors.ToDictionary(item => item.DescriptorName);
-
-        //    foreach (var item in this.methodInfo.GetParameters())
-        //    {
-        //        var descriptor = nameToDescriptors[item.Name];
-        //        var value = descriptor.GetValueInternal(instance);
-        //        values.Add(value);
-        //    }
-        //    this.OnInvoke(instance, values.ToArray());
-        //}
     }
 }
