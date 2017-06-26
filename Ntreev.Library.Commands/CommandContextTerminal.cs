@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
@@ -61,9 +62,10 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public void Cancel()
+        public new void Cancel()
         {
             this.isCancellationRequested = true;
+            base.Cancel();
         }
 
         public void Start()

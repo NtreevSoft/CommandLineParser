@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Ntreev.Library.Commands
 {
@@ -29,6 +30,7 @@ namespace Ntreev.Library.Commands
         private string completion = string.Empty;
         private TextWriter writer;
         private bool treatControlCAsInput;
+        private bool isCancellationRequested;
 
         public Terminal()
         {
@@ -194,6 +196,11 @@ namespace Ntreev.Library.Commands
         public IList<string> Completions
         {
             get { return this.completions; }
+        }
+
+        public void Cancel()
+        {
+            this.isCancellationRequested = true;
         }
 
         public void Clear()
@@ -812,7 +819,10 @@ namespace Ntreev.Library.Commands
         {
             while (true)
             {
-                var key = Console.ReadKey(true);
+                var keyPtr = this.ReadKey();
+                if (keyPtr == null)
+                    return null;
+                var key = keyPtr.Value;
 
                 if (key == cancelKeyInfo)
                 {
@@ -863,6 +873,19 @@ namespace Ntreev.Library.Commands
                     }
                 }
             }
+        }
+
+        private ConsoleKeyInfo? ReadKey()
+        {
+            while (this.isCancellationRequested == false)
+            {
+                if (Console.KeyAvailable == true)
+                {
+                    return Console.ReadKey(true);
+                }
+                Thread.Sleep(50);
+            }
+            return null;
         }
 
         private ConsoleKey ReadKeyImpl(params ConsoleKey[] filters)

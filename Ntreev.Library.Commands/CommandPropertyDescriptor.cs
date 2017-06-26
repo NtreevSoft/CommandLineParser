@@ -69,6 +69,11 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public override TypeConverter Converter
+        {
+            get { return this.propertyInfo.GetConverter(); }
+        }
+
         protected override void SetValue(object instance, object value)
         {
             this.propertyInfo.SetValue(instance, value, null);

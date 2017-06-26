@@ -42,6 +42,13 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
+
+            while(true)
+            {
+                if (Console.KeyAvailable)
+                    Console.ReadKey();
+            }
+
             for (var i = 0; i < Console.BufferHeight - 2; i++)
             {
                 Console.WriteLine(i);
@@ -56,7 +63,7 @@ namespace Ntreev.Library.Commands.Shell
                 {
                     //if (Console.BufferWidth == 81)
                     {
-                        Console.WriteLine("werwerwer");
+                        Console.Write(string.Empty.PadRight(81, 'c'));
                         //break;
                     }
                     System.Threading.Thread.Sleep(1000);

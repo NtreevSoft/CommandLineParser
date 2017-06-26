@@ -59,6 +59,7 @@ namespace Ntreev.Library.Commands
                 }
             }
         }
+
         private void WriteToStream(string text)
         {
             this.terminal.Erase();
@@ -66,6 +67,7 @@ namespace Ntreev.Library.Commands
 
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
+            var y = y1;
 
             var ss = text.Split('\n');
             for (var i = 0; i < ss.Length; i++)
@@ -86,10 +88,10 @@ namespace Ntreev.Library.Commands
 
             this.length += (y2 - y1) * Console.BufferWidth - x1 + x2;
 
-            if (Console.CursorLeft != 0 || this.length % Console.BufferWidth == 0)
+            if ((Console.CursorLeft != 0 || this.length % Console.BufferWidth == 0) && y == y2)
             {
-                //this.offsetY = -1;
-                //this.WriteLineCore();
+                this.WriteLineCore();
+                this.offsetY = -1;
             }
             else
             {

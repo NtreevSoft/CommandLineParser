@@ -16,6 +16,7 @@ namespace Ntreev.Library.Commands
 {
     public abstract class CommandContextBase
     {
+        private readonly static TextWriter defaultWriter = new ConsoleTextWriter();
         private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();
         private readonly CommandCollection commands = new CommandCollection();
         private readonly ICommandProvider[] commandProviders;
@@ -35,7 +36,7 @@ namespace Ntreev.Library.Commands
         protected CommandContextBase(IEnumerable<ICommand> commands, IEnumerable<ICommandProvider> commandProviders)
         {
             this.VerifyName = true;
-            this.Out = Console.Out;
+            this.Out = defaultWriter;
             this.commandProviders = commandProviders.ToArray();
 
             foreach (var item in commands)
@@ -264,5 +265,32 @@ namespace Ntreev.Library.Commands
                 yield return new ExternalCommandMethodDescriptor(commandProvider, item);
             }
         }
+
+        #region classes
+
+        class ConsoleTextWriter : TextWriter
+        {
+            public override Encoding Encoding
+            {
+                get { return Console.OutputEncoding; }
+            }
+
+            public override void Write(char value)
+            {
+                Console.Write(value);
+            }
+
+            public override void Write(string value)
+            {
+                Console.Write(value);
+            }
+
+            public override void WriteLine(string value)
+            {
+                Console.WriteLine(value);
+            }
+        }
+
+        #endregion
     }
 }
