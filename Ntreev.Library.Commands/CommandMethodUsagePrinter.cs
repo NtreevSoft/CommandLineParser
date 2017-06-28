@@ -71,16 +71,16 @@ namespace Ntreev.Library.Commands
         private void Print(CommandTextWriter writer, CommandMethodDescriptor[] descriptors)
         {
             this.PrintSummary(writer, descriptors);
-            this.PrintUsage(writer, descriptors);
             this.PrintDescription(writer, descriptors);
+            this.PrintUsage(writer, descriptors);
             this.PrintSubcommands(writer, descriptors);
         }
 
         private void Print(CommandTextWriter writer, CommandMethodDescriptor descriptor, CommandMemberDescriptor[] memberDescriptors)
         {
             this.PrintSummary(writer, descriptor, memberDescriptors);
-            this.PrintUsage(writer, descriptor, memberDescriptors);
             this.PrintDescription(writer, descriptor, memberDescriptors);
+            this.PrintUsage(writer, descriptor, memberDescriptors);
             this.PrintRequirements(writer, descriptor, memberDescriptors);
             this.PrintVariables(writer, descriptor, memberDescriptors);
             this.PrintOptions(writer, descriptor, memberDescriptors);
@@ -89,8 +89,8 @@ namespace Ntreev.Library.Commands
         private void Print(CommandTextWriter writer, CommandMethodDescriptor descriptor, CommandMemberDescriptor memberDescriptor)
         {
             this.PrintSummary(writer, descriptor, memberDescriptor);
-            this.PrintUsage(writer, descriptor, memberDescriptor);
             this.PrintDescription(writer, descriptor, memberDescriptor);
+            this.PrintUsage(writer, descriptor, memberDescriptor);
         }
 
         private void PrintSummary(CommandTextWriter writer, CommandMethodDescriptor[] descriptors)
@@ -221,7 +221,7 @@ namespace Ntreev.Library.Commands
 
             var maxWidth = writer.Width - (writer.TabString.Length * writer.Indent);
 
-            var line = descriptor.Name;
+            var line = this.name + " " + descriptor.Name;
 
             foreach (var item in query)
             {

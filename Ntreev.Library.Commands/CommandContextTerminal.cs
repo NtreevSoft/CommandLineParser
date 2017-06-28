@@ -256,6 +256,8 @@ namespace Ntreev.Library.Commands
                 if (this.commandContext.IsCommandEnabled(command) == true)
                     return command;
             }
+            if (commandName == this.commandContext.HelpCommand.Name)
+                return this.commandContext.HelpCommand;
             return null;
         }
 

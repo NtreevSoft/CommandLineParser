@@ -87,8 +87,8 @@ namespace Ntreev.Library.Commands
         private void Print(CommandTextWriter writer, CommandMemberDescriptor[] descriptors)
         {
             this.PrintSummary(writer, descriptors);
-            this.PrintUsage(writer, descriptors);
             this.PrintDescription(writer, descriptors);
+            this.PrintUsage(writer, descriptors);
             this.PrintRequirements(writer, descriptors);
             this.PrintVariables(writer, descriptors);
             this.PrintOptions(writer, descriptors);
@@ -235,10 +235,12 @@ namespace Ntreev.Library.Commands
         private void PrintRequirement(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
             writer.WriteLine(descriptor.Name);
-            if (descriptor.Description != string.Empty)
+
+            var description = descriptor.Summary != string.Empty ? descriptor.Summary : descriptor.Description;
+            if (description != string.Empty)
             {
                 writer.Indent++;
-                writer.WriteMultiline(descriptor.Description);
+                writer.WriteMultiline(description);
                 writer.Indent--;
             }
             writer.WriteLine();
@@ -261,9 +263,13 @@ namespace Ntreev.Library.Commands
             if (descriptor.NamePattern != string.Empty)
                 writer.WriteLine(descriptor.NamePattern);
 
-            writer.Indent++;
-            writer.WriteMultiline(descriptor.Description);
-            writer.Indent--;
+            var description = descriptor.Summary != string.Empty ? descriptor.Summary : descriptor.Description;
+            if (description != string.Empty)
+            {
+                writer.Indent++;
+                writer.WriteMultiline(description);
+                writer.Indent--;
+            }
             writer.WriteLine();
         }
 
@@ -276,7 +282,7 @@ namespace Ntreev.Library.Commands
                     return string.Format("<{0}>", text);
                 return string.Format("<{0}='{1}'>", text, descriptor.DefaultValue ?? "null");
             }
-            else if(descriptor is CommandMemberArrayDescriptor)
+            else if (descriptor is CommandMemberArrayDescriptor)
             {
                 return string.Format("[{0} ...]", descriptor.Name);
             }

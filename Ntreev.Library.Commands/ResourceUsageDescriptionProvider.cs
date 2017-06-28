@@ -34,7 +34,7 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(PropertyInfo propertyInfo)
         {
-            var description = GetResourceDescription(this.resourceName, propertyInfo.DeclaringType, propertyInfo.Name);
+            var description = GetResourceDescription(this.resourceName, propertyInfo.DeclaringType, propertyInfo.Name, this.IsShared);
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(propertyInfo);
@@ -42,7 +42,7 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(ParameterInfo parameterInfo)
         {
-            var description = GetResourceDescription(this.resourceName, parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
+            var description = GetResourceDescription(this.resourceName, parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name), this.IsShared);
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(parameterInfo);
@@ -50,10 +50,10 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(object instance)
         {
-            var description = GetResourceDescription(this.resourceName, instance.GetType(), instance.GetType().Name);
+            var description = GetResourceDescription(this.resourceName, instance.GetType(), instance.GetType().Name, this.IsShared);
             if (description != null)
                 return description;
-            description = GetResourceDescription(this.resourceName, instance.GetType(), "ctor");
+            description = GetResourceDescription(this.resourceName, instance.GetType(), "ctor", this.IsShared);
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(instance);
@@ -61,7 +61,7 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(MethodInfo methodInfo)
         {
-            var description = GetResourceDescription(this.resourceName, methodInfo.DeclaringType, methodInfo.Name);
+            var description = GetResourceDescription(this.resourceName, methodInfo.DeclaringType, methodInfo.Name, this.IsShared);
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(methodInfo);
@@ -69,7 +69,7 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(PropertyInfo propertyInfo)
         {
-            var summary = GetResourceSummary(this.resourceName, propertyInfo.DeclaringType, propertyInfo.Name);
+            var summary = GetResourceSummary(this.resourceName, propertyInfo.DeclaringType, propertyInfo.Name, this.IsShared);
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(propertyInfo);
@@ -77,7 +77,7 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(ParameterInfo parameterInfo)
         {
-            var summary = GetResourceSummary(this.resourceName, parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
+            var summary = GetResourceSummary(this.resourceName, parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name), this.IsShared);
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(parameterInfo);
@@ -85,10 +85,10 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(object instance)
         {
-            var summary = GetResourceSummary(this.resourceName, instance.GetType(), instance.GetType().Name);
+            var summary = GetResourceSummary(this.resourceName, instance.GetType(), instance.GetType().Name, this.IsShared);
             if (summary != null)
                 return summary;
-            summary = GetResourceSummary(this.resourceName, instance.GetType(), "ctor");
+            summary = GetResourceSummary(this.resourceName, instance.GetType(), "ctor", this.IsShared);
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(instance);
@@ -96,26 +96,41 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(MethodInfo methodInfo)
         {
-            var summary = GetResourceSummary(this.resourceName, methodInfo.DeclaringType, methodInfo.Name);
+            var summary = GetResourceSummary(this.resourceName, methodInfo.DeclaringType, methodInfo.Name, this.IsShared);
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(methodInfo);
         }
 
-        private static string GetResourceDescription(string resourceName, Type type, string name)
+        public bool IsShared
         {
-            var resourceSet = GetResourceSet(resourceName, type);
-            if (resourceSet == null)
-                return null;
-            return resourceSet.GetString(name);
+            get; set;
         }
 
-        private static string GetResourceSummary(string resourceName, Type type, string name)
+        private static string GetResourceDescription(string resourceName, Type type, string name, bool isShared)
         {
             var resourceSet = GetResourceSet(resourceName, type);
             if (resourceSet == null)
                 return null;
-            return resourceSet.GetString("@" + name);
+            var resName = name;
+            if (isShared == true && type.Name != name)
+            {
+                resName = $"{type.Name}.{name}";
+            }
+            return resourceSet.GetString(resName);
+        }
+
+        private static string GetResourceSummary(string resourceName, Type type, string name, bool isShared)
+        {
+            var resourceSet = GetResourceSet(resourceName, type);
+            if (resourceSet == null)
+                return null;
+            var resName = name;
+            if (isShared == true && type.Name != name)
+            {
+                resName = $"{type.Name}.{name}";
+            }
+            return resourceSet.GetString("@" + resName);
         }
 
         private static ResourceManager GetResourceSet(string resourceName, Type type)

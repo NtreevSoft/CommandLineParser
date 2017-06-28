@@ -56,24 +56,30 @@ namespace Ntreev.Library.Commands
             var emptyCount = this.TabString.Length * this.Indent;
             var width = Console.WindowWidth - emptyCount;
 
-            var i = emptyCount;
             this.Indent = 0;
 
-            var x = 0;
+            var i = 0;
             foreach (var item in s)
             {
-                if (x == 0)
+                try
                 {
-                    this.Write(string.Empty.PadRight(emptyCount));
-                    x += emptyCount;
-                    if (item == ' ')
-                        continue;
+                    if (Console.CursorLeft == 0)
+                    {
+                        this.Write(string.Empty.PadRight(emptyCount));
+                        if (item == ' ' && i != 0)
+                            continue;
+                    }
+                    var x = Console.CursorLeft;
+                    this.Write(item);
+                    if (item != ' ' && Console.CursorLeft != 0 && Console.CursorLeft < x)
+                    {
+                        this.Write("\r" + string.Empty.PadRight(emptyCount));
+                        this.Write(item);
+                    }
                 }
-                this.Write(item);
-                x += CharWidth.mk_wcwidth_cjk(item);
-                if (x == this.width || Console.CursorLeft == 0)
+                finally
                 {
-                    x = 0;
+                    i++;
                 }
             }
             this.WriteLine();

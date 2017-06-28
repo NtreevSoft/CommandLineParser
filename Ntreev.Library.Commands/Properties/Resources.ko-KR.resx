@@ -165,13 +165,16 @@
   <data name="Summary" xml:space="preserve">
     <value>요약</value>
   </data>
-  <data name="TypeForUsage_Format" xml:space="preserve">
-    <value>type '{0}' for usage.</value>
+  <data name="HelpMessage_Format" xml:space="preserve">
+    <value>도움말을 사용하시려면 '{0}'을(를) 입력하세요.</value>
   </data>
   <data name="Usage" xml:space="preserve">
     <value>사용법</value>
   </data>
   <data name="Variables" xml:space="preserve">
     <value>가변 인자</value>
+  </data>
+  <data name="VersionMessage_Format" xml:space="preserve">
+    <value>버전을 확인하시려면 '{0}'을(를) 입력하세요.</value>
   </data>
 </root>

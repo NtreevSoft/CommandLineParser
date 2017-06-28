@@ -24,6 +24,15 @@ namespace Ntreev.Library.Commands
             this.MethodName = string.Empty;
         }
 
+        public override string[] GetCompletions(CommandCompletionContext completionContext)
+        {
+            if (completionContext.MethodDescriptor == null)
+            {
+                return this.GetCommandNames();
+            }
+            return base.GetCompletions(completionContext);
+        }
+
         [CommandProperty("CommandName", IsRequired = true)]
         [DisplayName("command")]
         [DefaultValue("")]
@@ -97,9 +106,17 @@ namespace Ntreev.Library.Commands
                 writer.WriteLine(item.Name);
                 writer.Indent++;
                 writer.WriteMultiline(summary);
+                if (summary != string.Empty)
+                    writer.WriteLine();
                 writer.Indent--;
             }
             writer.Indent--;
+        }
+
+        private string[] GetCommandNames()
+        {
+            return this.commandContext.Commands.Select(item => item.Name).ToArray();
+
         }
     }
 }

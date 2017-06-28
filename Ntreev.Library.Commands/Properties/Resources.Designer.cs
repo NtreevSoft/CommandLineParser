@@ -88,6 +88,15 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
+        ///   CommandMethod과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string CommandMethod {
+            get {
+                return ResourceManager.GetString("CommandMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Delimiter must be a Punctuation.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
         internal static string DelimiterMustBePunctuation {
@@ -102,6 +111,15 @@ namespace Ntreev.Library.Commands.Properties {
         internal static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   type &apos;{0}&apos; for usage.과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string HelpMessage_Format {
+            get {
+                return ResourceManager.GetString("HelpMessage_Format", resourceCulture);
             }
         }
         
@@ -187,11 +205,11 @@ namespace Ntreev.Library.Commands.Properties {
         }
         
         /// <summary>
-        ///   CommandMethod과(와) 유사한 지역화된 문자열을 찾습니다.
+        ///   type &apos;{0}&apos; to see the version.과(와) 유사한 지역화된 문자열을 찾습니다.
         /// </summary>
-        internal static string CommandMethod {
+        internal static string String1 {
             get {
-                return ResourceManager.GetString("CommandMethod", resourceCulture);
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         
@@ -201,15 +219,6 @@ namespace Ntreev.Library.Commands.Properties {
         internal static string Summary {
             get {
                 return ResourceManager.GetString("Summary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   type &apos;{0}&apos; for usage.과(와) 유사한 지역화된 문자열을 찾습니다.
-        /// </summary>
-        internal static string TypeForUsage_Format {
-            get {
-                return ResourceManager.GetString("TypeForUsage_Format", resourceCulture);
             }
         }
         
@@ -228,6 +237,15 @@ namespace Ntreev.Library.Commands.Properties {
         internal static string Variables {
             get {
                 return ResourceManager.GetString("Variables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string VersionMessage_Format {
+            get {
+                return ResourceManager.GetString("VersionMessage_Format", resourceCulture);
             }
         }
     }
