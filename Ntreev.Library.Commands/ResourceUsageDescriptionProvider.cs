@@ -13,7 +13,7 @@ namespace Ntreev.Library.Commands
     public class ResourceUsageDescriptionProvider : IUsageDescriptionProvider
     {
         private const string extension = ".resources";
-        private readonly static Dictionary<Type, ResourceManager> resourceSets = new Dictionary<Type, ResourceManager>();
+        private readonly static Dictionary<string, ResourceManager> resourceSets = new Dictionary<string, ResourceManager>();
         private readonly string resourceName;
 
         static ResourceUsageDescriptionProvider()
@@ -30,6 +30,14 @@ namespace Ntreev.Library.Commands
         public ResourceUsageDescriptionProvider(string resourceName)
         {
             this.resourceName = resourceName ?? string.Empty;
+        }
+
+        public static string GetString(Assembly assembly, string resourceName, string name)
+        {
+            var resourceSet = GetResourceSet(resourceName, assembly);
+            if (resourceSet == null)
+                return null;
+            return resourceSet.GetString(name);
         }
 
         public string GetDescription(PropertyInfo propertyInfo)
@@ -141,10 +149,24 @@ namespace Ntreev.Library.Commands
             if (resourceNames.Contains(baseName + extension) == false)
                 return null;
 
-            if (resourceSets.ContainsKey(type) == false)
-                resourceSets.Add(type, new ResourceManager(baseName, type.Assembly));
+            if (resourceSets.ContainsKey(baseName) == false)
+                resourceSets.Add(baseName, new ResourceManager(baseName, type.Assembly));
 
-            return resourceSets[type];
+            return resourceSets[baseName];
+        }
+
+        private static ResourceManager GetResourceSet(string resourceName, Assembly assembly)
+        {
+            var resourceNames = assembly.GetManifestResourceNames();
+            var baseName = resourceName;
+
+            if (resourceNames.Contains(baseName + extension) == false)
+                return null;
+
+            if (resourceSets.ContainsKey(baseName) == false)
+                resourceSets.Add(baseName, new ResourceManager(baseName, assembly));
+
+            return resourceSets[baseName];
         }
     }
 }
