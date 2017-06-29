@@ -107,7 +107,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintSummary(CommandTextWriter writer, CommandMethodDescriptor descriptor, CommandMemberDescriptor[] memberDescriptors)
         {
-            if (this.Description == string.Empty)
+            if (this.Summary == string.Empty)
                 return;
 
             writer.WriteLine(Resources.Summary);
@@ -167,12 +167,14 @@ namespace Ntreev.Library.Commands
             foreach (var item in descriptors)
             {
                 writer.WriteLine(item.Name);
-                writer.Indent++;
-                if (item.Summary == string.Empty)
-                    writer.WriteMultiline("*<empty>*");
-                else
-                    writer.WriteMultiline(item.Summary);
-                writer.Indent--;
+                var summary = item.Summary != string.Empty ? item.Summary : item.Description;
+                if (summary != string.Empty)
+                {
+                    writer.Indent++;
+                    writer.WriteMultiline(summary);
+                    writer.Indent--;
+                }
+                writer.WriteLine();
             }
 
             writer.Indent--;
@@ -308,10 +310,11 @@ namespace Ntreev.Library.Commands
                     writer.WriteLine(descriptor.NamePattern);
             }
 
-            if (descriptor.Description != string.Empty)
+            var description = descriptor.Summary != string.Empty ? descriptor.Summary : descriptor.Description;
+            if (description != string.Empty)
             {
                 writer.Indent++;
-                writer.WriteMultiline(descriptor.Description);
+                writer.WriteMultiline(description);
                 writer.Indent--;
             }
         }
@@ -333,9 +336,13 @@ namespace Ntreev.Library.Commands
             if (descriptor.NamePattern != string.Empty)
                 writer.WriteLine(descriptor.NamePattern);
 
-            writer.Indent++;
-            writer.WriteMultiline(descriptor.Description);
-            writer.Indent--;
+            var description = descriptor.Summary != string.Empty ? descriptor.Summary : descriptor.Description;
+            if (description != string.Empty)
+            {
+                writer.Indent++;
+                writer.WriteMultiline(description);
+                writer.Indent--;
+            }
         }
 
         private string GetString(CommandMemberDescriptor descriptor)

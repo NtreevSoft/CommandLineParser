@@ -9,7 +9,7 @@ namespace Ntreev.Library.Commands
     /// CommandMethod로 사용할 메소드에 추가적으로 사용할 속성을 설정합니다.
     /// 속성의 이름은 여러개를 설정할 수 있으며 해당 클래스내에 CommandProperty 특성을 갖고 있는 public 속성이여야만 합니다.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public sealed class CommandMethodPropertyAttribute : Attribute
     {
         private readonly string[] propertyNames;

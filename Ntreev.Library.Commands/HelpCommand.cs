@@ -26,9 +26,13 @@ namespace Ntreev.Library.Commands
 
         public override string[] GetCompletions(CommandCompletionContext completionContext)
         {
-            if (completionContext.MethodDescriptor == null)
+            if (completionContext.Arguments.Length == 0)
             {
                 return this.GetCommandNames();
+            }
+            else if (completionContext.Arguments.Length == 1)
+            {
+                return this.GetCommandMethodNames(completionContext.Arguments[0]);
             }
             return base.GetCompletions(completionContext);
         }
@@ -62,7 +66,7 @@ namespace Ntreev.Library.Commands
                 else
                 {
                     var command = this.commandContext.Commands[this.CommandName];
-                    if (this.commandContext.IsCommandEnabled(command) == false)
+                    if (command == null || this.commandContext.IsCommandEnabled(command) == false)
                         throw new CommandNotFoundException(this.CommandName);
 
                     var parser = this.commandContext.Parsers[command];
@@ -115,8 +119,27 @@ namespace Ntreev.Library.Commands
 
         private string[] GetCommandNames()
         {
-            return this.commandContext.Commands.Select(item => item.Name).ToArray();
+            var query = from item in this.commandContext.Commands
+                        where item.IsEnabled
+                        orderby item.Name
+                        select item.Name;
+            return query.ToArray();
+        }
 
+        private string[] GetCommandMethodNames(string commandName)
+        {
+            if (this.commandContext.Commands.Contains(commandName) == false)
+                return null;
+            var command = this.commandContext.Commands[commandName];
+            if (command is IExecutable == true)
+                return null;
+
+            var descriptors = CommandDescriptor.GetMethodDescriptors(command);
+            var query = from item in descriptors
+                        where this.commandContext.IsMethodEnabled(command, item)
+                        orderby item.Name
+                        select item.Name;
+            return query.ToArray();
         }
     }
 }

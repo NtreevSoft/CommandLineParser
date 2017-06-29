@@ -163,10 +163,6 @@ namespace Ntreev.Library.Commands
                     var memberList = new List<CommandMemberDescriptor>(CommandDescriptor.GetMemberDescriptors(command));
                     var argList = new List<string>(items.Skip(1));
                     var completionContext = new CommandCompletionContext(command, memberList, argList, find);
-                    //completionContext.MemberDescriptor = this.FindMemberDescriptor(argList, memberList);
-                    //var parser = new ParseDescriptor(memberList, argList.ToArray());
-                    //completionContext.MemberDescriptor = parser.UnparsedDescriptors.First();
-                    //completionContext.Properties = parser.p
                     return this.GetCompletions(completionContext);
                 }
                 else

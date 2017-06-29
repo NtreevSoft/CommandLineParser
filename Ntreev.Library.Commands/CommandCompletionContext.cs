@@ -10,6 +10,7 @@ namespace Ntreev.Library.Commands
     public class CommandCompletionContext
     {
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
+        private readonly string[] arguments;
 
         public CommandCompletionContext(object command, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, string find)
         {
@@ -25,6 +26,7 @@ namespace Ntreev.Library.Commands
             {
                 this.MemberDescriptor = members.FirstOrDefault(item => item is CommandMemberArrayDescriptor);
             }
+            this.arguments = args.ToArray();
         }
 
         public CommandCompletionContext(object command, CommandMethodDescriptor MethodDescriptor, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, string find)
@@ -55,6 +57,11 @@ namespace Ntreev.Library.Commands
         {
             get;
             private set;
+        }
+
+        public string[] Arguments
+        {
+            get { return this.arguments; }
         }
 
         public IReadOnlyDictionary<string, object> Properties

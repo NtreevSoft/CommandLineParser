@@ -19,7 +19,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
         }
 
         [CommandMethod("list")]
-        [CommandStaticProperty(typeof(GlobalSettings))]
+        [CommandMethodStaticProperty(typeof(GlobalSettings))]
         public void List(string options)
         {
 

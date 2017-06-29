@@ -17,7 +17,7 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandMethod("init")]
-        [CommandStaticProperty(typeof(GlobalSettings))]
+        [CommandMethodStaticProperty(typeof(GlobalSettings))]
         [CommandMethodProperty("Message", nameof(Message1))]
         public void Initialize(string path)
         {

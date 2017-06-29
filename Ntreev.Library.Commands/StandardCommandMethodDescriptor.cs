@@ -53,7 +53,7 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            var staticAttrs = this.methodInfo.GetCustomAttributes<CommandStaticPropertyAttribute>();
+            var staticAttrs = this.methodInfo.GetCustomAttributes<CommandMethodStaticPropertyAttribute>();
             foreach (var item in staticAttrs)
             {
                 var memberDescriptors = CommandDescriptor.GetMemberDescriptors(item.StaticType);
