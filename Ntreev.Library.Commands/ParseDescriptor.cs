@@ -86,13 +86,13 @@ namespace Ntreev.Library.Commands
                     {
                         this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
                     }
-                    else if (descriptor.DefaultValue != DBNull.Value)
-                    {
-                        this.parsedDescriptors.Add(descriptor, descriptor.DefaultValue);
-                    }
                     else if (descriptor.MemberType == typeof(bool))
                     {
                         this.parsedDescriptors.Add(descriptor, true);
+                    }
+                    else if (descriptor.DefaultValue != DBNull.Value)
+                    {
+                        this.parsedDescriptors.Add(descriptor, descriptor.DefaultValue);
                     }
                     else
                     {
