@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace Ntreev.Library.Commands
 {
     public abstract class CommandContextBase
     {
+        private const string redirectionPattern = "(>{1,2}[^>]+)";
         private readonly static TextWriter defaultWriter = new ConsoleTextWriter();
         private readonly CommandLineParserCollection parsers = new CommandLineParserCollection();
         private readonly CommandCollection commands = new CommandCollection();
@@ -26,6 +28,8 @@ namespace Ntreev.Library.Commands
         private TextWriter errorWriter;
         private ICommand helpCommand;
         private ICommand versionCommand;
+        private string category;
+        private string baseDirectory;
 
         protected CommandContextBase(IEnumerable<ICommand> commands)
             : this(commands, new ICommandProvider[] { })
@@ -81,7 +85,19 @@ namespace Ntreev.Library.Commands
             if (this.VerifyName == true && this.Name != name)
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
-            this.Execute(CommandLineParser.Split(arguments));
+            arguments = this.InitializeRedirection(arguments);
+            try
+            {
+                this.Execute(CommandLineParser.Split(arguments));
+            }
+            finally
+            {
+                if (this.Out is RedirectionTextWriter == true)
+                {
+                    (this.Out as RedirectionTextWriter).Dispose();
+                    this.Out = defaultWriter;
+                }
+            }
         }
 
         public virtual bool IsCommandEnabled(ICommand command)
@@ -92,6 +108,12 @@ namespace Ntreev.Library.Commands
                 return false;
             if (this.parsers.Contains(command) == false)
                 return false;
+
+            var attr = command.GetType().GetCustomAttribute<CategoryAttribute>();
+            var category = attr == null ? string.Empty : attr.Category;
+            if (this.Category != category)
+                return false;
+
             return command.IsEnabled;
         }
 
@@ -104,6 +126,18 @@ namespace Ntreev.Library.Commands
             if (command is CommandMethodBase commandMethod)
                 return commandMethod.InvokeIsMethodEnabled(descriptor);
             return true;
+        }
+
+        public virtual string ReadString(string title)
+        {
+            var terminal = new Terminal();
+            return terminal.ReadString(title);
+        }
+
+        public virtual SecureString ReadSecureString(string title)
+        {
+            var terminal = new Terminal();
+            return terminal.ReadSecureString(title);
         }
 
         public TextWriter Out
@@ -195,6 +229,20 @@ namespace Ntreev.Library.Commands
 
         public bool VerifyName { get; set; }
 
+        public string Category
+        {
+            get { return this.category ?? string.Empty; }
+            set { this.category = value; }
+        }
+
+        public string BaseDirectory
+        {
+            get { return this.baseDirectory ?? Directory.GetCurrentDirectory(); }
+            set { this.baseDirectory = value; }
+        }
+
+        public event EventHandler Executed;
+
         protected virtual CommandLineParser CreateInstance(ICommand command)
         {
             return new CommandLineParser(command.Name, command) { Out = this.Out, };
@@ -219,7 +267,16 @@ namespace Ntreev.Library.Commands
                     return false;
                 }
             }
+            this.OnExecuted(EventArgs.Empty);
             return true;
+        }
+
+        protected virtual void OnExecuted(EventArgs e)
+        {
+            if (this.Executed != null)
+            {
+                this.Executed(this, e);
+            }
         }
 
         private bool Execute(string[] args)
@@ -266,6 +323,77 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        private string InitializeRedirection(string arguments)
+        {
+            var args = CommandLineParser.SplitAll(arguments, false);
+            var argList = new List<string>(args.Length);
+
+            for (var i = 0; i < args.Length; i++)
+            {
+                var arg = args[i];
+                var isWrpped = arg.Length > 1 && arg.First() == '\"' && arg.Last() == '\"';
+
+                if (args[i] == ">")
+                {
+                    i++;
+                    this.AddRedirection(args[i], false);
+                }
+                else if (args[i].StartsWith(">>"))
+                {
+                    this.AddRedirection(args[i].Substring(2), true);
+                }
+                else if (args[i].StartsWith(">"))
+                {
+                    this.AddRedirection(args[i].Substring(1), false);
+                }
+                else
+                {
+                    if (isWrpped == false)
+                    {
+                        arg = this.InitializeRedirectionFromArgument(arg);
+                    }
+                    argList.Add(arg);
+                }
+            }
+
+            return string.Join(" ", argList);
+        }
+
+        private string InitializeRedirectionFromArgument(string input)
+        {
+            var match = Regex.Match(input, redirectionPattern);
+            var matchList = new List<Match>();
+            while (match.Success)
+            {
+                matchList.Insert(0, match);
+                if (match.Value.StartsWith(">>"))
+                {
+                    this.AddRedirection(match.Value.Substring(2), true);
+                }
+                else if (match.Value.StartsWith(">"))
+                {
+                    this.AddRedirection(match.Value.Substring(1), false);
+                }
+                match = match.NextMatch();
+            }
+
+            foreach (var item in matchList)
+            {
+                input = input.Remove(item.Index, item.Length);
+            }
+            return input;
+        }
+
+        private void AddRedirection(string filename, bool appendMode)
+        {
+            if (this.Out is RedirectionTextWriter == false)
+            {
+                this.Out = new RedirectionTextWriter(this.BaseDirectory);
+            }
+
+            (this.Out as RedirectionTextWriter).Add(CommandLineParser.RemoveQuot(filename), false);
+        }
+
         #region classes
 
         class ConsoleTextWriter : TextWriter
@@ -288,6 +416,49 @@ namespace Ntreev.Library.Commands
             public override void WriteLine(string value)
             {
                 Console.WriteLine(value);
+            }
+        }
+
+        class RedirectionTextWriter : StringWriter
+        {
+            private readonly List<string> writeList = new List<string>();
+            private readonly List<string> appendList = new List<string>();
+            private readonly string baseDirectory;
+
+            public RedirectionTextWriter(string baseDirectory)
+            {
+                this.baseDirectory = baseDirectory;
+            }
+
+            public void Add(string filename, bool appendMode)
+            {
+                if (appendMode == true)
+                    this.appendList.Add(filename);
+                else
+                    this.writeList.Add(filename);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                var directory = Directory.GetCurrentDirectory();
+                try
+                {
+                    Directory.SetCurrentDirectory(baseDirectory);
+                    foreach (var item in this.writeList)
+                    {
+                        File.WriteAllText(item, this.ToString());
+                    }
+                    foreach (var item in this.appendList)
+                    {
+                        File.AppendAllText(item, this.ToString());
+                    }
+                }
+                finally
+                {
+                    Directory.SetCurrentDirectory(directory);
+                }
+
+                base.Dispose(disposing);
             }
         }
 

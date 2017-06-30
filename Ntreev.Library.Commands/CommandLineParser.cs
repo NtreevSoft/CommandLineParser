@@ -240,13 +240,20 @@ namespace Ntreev.Library.Commands
 
         public static string[] SplitAll(string text)
         {
+            return SplitAll(text, true);
+        }
+
+        public static string[] SplitAll(string text, bool removeQuot)
+        {
             var matches = Regex.Matches(text, pattern);
             var argList = new List<string>();
 
             foreach (Match item in matches)
             {
-                var t = RemoveQuot(item.Value);
-                argList.Add(t);
+                if (removeQuot == true)
+                    argList.Add(RemoveQuot(item.Value));
+                else
+                    argList.Add(item.Value);
             }
 
             return argList.ToArray();
