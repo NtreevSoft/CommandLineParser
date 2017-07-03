@@ -42,13 +42,6 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
-
-            while(true)
-            {
-                if (Console.KeyAvailable)
-                    Console.ReadKey();
-            }
-
             for (var i = 0; i < Console.BufferHeight - 2; i++)
             {
                 Console.WriteLine(i);
@@ -57,7 +50,7 @@ namespace Ntreev.Library.Commands.Shell
             System.Threading.Tasks.Task.Run(() =>
             {
                 System.Threading.Thread.Sleep(1000);
-                //Console.Write(string.Empty.PadRight(81, 'c') + Environment.NewLine + "werwerwer");
+                Console.Write(string.Empty.PadRight(81, 'c') + Environment.NewLine + "werwerwer");
 
                 while (true)
                 {
@@ -67,6 +60,7 @@ namespace Ntreev.Library.Commands.Shell
                         //break;
                     }
                     System.Threading.Thread.Sleep(1000);
+                    break;
                 }
                 //    //Console.WriteLine(DateTime.Now);
                 //    System.Threading.Thread.Sleep(1000);

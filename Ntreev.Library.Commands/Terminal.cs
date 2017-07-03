@@ -13,15 +13,15 @@ namespace Ntreev.Library.Commands
     {
         private static ConsoleKeyInfo cancelKeyInfo = new ConsoleKeyInfo('\u0003', ConsoleKey.C, false, false, true);
         private static object lockobj = new object();
+        private static readonly Dictionary<char, int> charToWidth = new Dictionary<char, int>();
 
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
-        private readonly List<TerminalChar> chars = new List<TerminalChar>();
-
         private readonly List<string> histories = new List<string>();
         private readonly List<string> completions = new List<string>();
 
         private int y = Console.CursorTop;
         private int width = Console.BufferWidth;
+        private string fullText;
         private int index;
         private int start = 0;
         private int historyIndex;
@@ -367,7 +367,16 @@ namespace Ntreev.Library.Commands
                 var x = 0;
                 for (var i = 0; i < value + this.start; i++)
                 {
-                    x += this.chars[i].Slot;
+                    var w = charToWidth[this.fullText[i]];
+                    if ((x % Console.BufferWidth) + w >= Console.BufferWidth)
+                    {
+                        x += ((x % Console.BufferWidth) + w) - Console.BufferWidth;
+                        x += w;
+                    }
+                    else
+                    {
+                        x += w;
+                    }
                 }
                 Console.SetCursorPosition(x % Console.BufferWidth, x / Console.BufferWidth + this.Top);
                 this.index = value + this.start;
@@ -376,41 +385,17 @@ namespace Ntreev.Library.Commands
 
         public string Text
         {
-            get
-            {
-                var text = string.Empty;
-                for (var i = 0; i < this.Length; i++)
-                {
-                    text += this.chars[i + this.start].Char;
-                }
-                return text;
-            }
+            get { return this.fullText.Substring(this.start); }
         }
 
         public string Prompt
         {
-            get
-            {
-                var text = string.Empty;
-                for (var i = 0; i < this.start; i++)
-                {
-                    text += this.chars[i + this.start].Char;
-                }
-                return text;
-            }
+            get { return this.fullText.Substring(0, this.start); }
         }
 
         public string FullText
         {
-            get
-            {
-                var text = string.Empty;
-                for (var i = 0; i < this.chars.Count; i++)
-                {
-                    text += this.chars[i].Char;
-                }
-                return text;
-            }
+            get { return this.fullText; }
         }
 
         public bool IsReading
@@ -548,9 +533,18 @@ namespace Ntreev.Library.Commands
             var y = Console.CursorTop;
 
             var length = 0;
-            for (var i = 0; i < this.chars.Count; i++)
+            for (var i = 0; i < this.fullText.Length; i++)
             {
-                length += this.chars[i].Slot;
+                var w = charToWidth[this.fullText[i]];
+                if ((length % Console.BufferWidth) + w >= Console.BufferWidth)
+                {
+                    length += ((length % Console.BufferWidth) + w) - Console.BufferWidth;
+                    length += w;
+                }
+                else
+                {
+                    length += w;
+                }
             }
 
             for (var i = 0; i < this.Height; i++)
@@ -579,7 +573,6 @@ namespace Ntreev.Library.Commands
             var index = this.Index;
             var text = this.FullText;
             var y = Console.CursorTop;
-            //Console.SetCursorPosition(0, this.y);
             this.writer.Write(this.FullText);
             if (text.Length > 0 && text.Length % Console.BufferWidth == 0 && Console.CursorLeft == 0)
             {
@@ -590,7 +583,6 @@ namespace Ntreev.Library.Commands
                         this.writer.WriteLine();
                     }
                     this.y--;
-                    //this.t.y--;
                 }
             }
 
@@ -600,19 +592,36 @@ namespace Ntreev.Library.Commands
 
         private int Length
         {
-            get { return this.chars.Count - this.start; }
+            get { return this.fullText.Length - this.start; }
         }
 
         private int Height
         {
             get
             {
-                var length = 0;
-                for (var i = 0; i < this.chars.Count; i++)
+                var x = 0;
+                var y = 0;
+                for (var i = 0; i < this.fullText.Length; i++)
                 {
-                    length += this.chars[i].Slot;
+                    //x += this.chars[i].Slot;
+                    var w = charToWidth[this.fullText[i]];
+                    if (x + w >= Console.BufferWidth)
+                    {
+                        x = 0;
+                        y++;
+                    }
+                    else
+                    {
+                        x += w;
+                    }
                 }
-                return length / Console.BufferWidth + 1;
+                return y + 1;
+                //var length = 0;
+                //for (var i = 0; i < this.text.Length; i++)
+                //{
+                //    length += this.chars[i].Slot;
+                //}
+                //return length / Console.BufferWidth + 1;
             }
         }
 
@@ -679,35 +688,27 @@ namespace Ntreev.Library.Commands
             var x2 = Console.CursorLeft;
             var y2 = Console.CursorTop;
 
-            if (y1 != y2)
+            this.fullText = this.fullText.Insert(this.index++, $"{ch}");
+
+            if (this.isHidden == false)
             {
-                this.chars.Insert(this.index++, new TerminalChar()
+                if (y1 != y2)
                 {
-                    Slot = Console.BufferWidth - x1,
-                    Char = ch,
-                });
-            }
-            else if (x1 > x2)
-            {
-                this.y--;
-                //this.t.y--;
-                this.chars.Insert(this.index++, new TerminalChar()
-                {
-                    Slot = Console.BufferWidth - x1,
-                    Char = ch,
-                });
-                if (Environment.OSVersion.Platform == PlatformID.Unix)
-                {
-                    this.writer.WriteLine();
+                    charToWidth[ch] = Console.BufferWidth - x1;
                 }
-            }
-            else
-            {
-                this.chars.Insert(this.index++, new TerminalChar()
+                else if (x1 > x2)
                 {
-                    Slot = x2 - x1,
-                    Char = ch,
-                });
+                    this.y--;
+                    charToWidth[ch] = Console.BufferWidth - x1;
+                    if (Environment.OSVersion.Platform == PlatformID.Unix)
+                    {
+                        this.writer.WriteLine();
+                    }
+                }
+                else
+                {
+                    charToWidth[ch] = x2 - x1;
+                }
             }
         }
 
@@ -736,7 +737,7 @@ namespace Ntreev.Library.Commands
 
             this.Index = inputIndex;
             this.Index--;
-            this.chars.RemoveAt(this.index);
+            this.fullText = this.fullText.Remove(this.index, 1);
             this.ReplaceText(text);
         }
 
@@ -822,8 +823,8 @@ namespace Ntreev.Library.Commands
                 var keyPtr = this.ReadKey();
                 if (keyPtr == null)
                     return null;
-                var key = keyPtr.Value;
 
+                var key = keyPtr.Value;
                 if (key == cancelKeyInfo)
                 {
                     var args = new TerminalCancelEventArgs(ConsoleSpecialKey.ControlC);
@@ -844,7 +845,7 @@ namespace Ntreev.Library.Commands
                     this.Index = this.Length;
                     var x = Console.CursorLeft;
                     var y = Console.CursorTop;
-                    this.chars.Clear();
+                    this.fullText = string.Empty;
                     this.start = 0;
                     this.index = 0;
 
@@ -890,16 +891,6 @@ namespace Ntreev.Library.Commands
 
         private ConsoleKey ReadKeyImpl(params ConsoleKey[] filters)
         {
-            //lock (lockobj)
-            //{
-            //    this.y = Console.CursorTop;
-            //    this.isHidden = false;
-            //    this.InsertText(prompt);
-            //    this.start = this.Index;
-            //    this.isHidden = false;
-            //    this.inputText = string.Empty;
-            //}
-
             while (true)
             {
                 var key = Console.ReadKey(true);
@@ -928,7 +919,7 @@ namespace Ntreev.Library.Commands
                 this.width = Console.BufferWidth;
                 this.index = 0;
                 this.start = 0;
-                this.chars.Clear();
+                this.fullText = string.Empty;
                 this.isHidden = false;
                 this.InsertText(prompt);
                 this.start = this.Index;
@@ -954,16 +945,5 @@ namespace Ntreev.Library.Commands
         {
             get { return lockobj; }
         }
-
-        #region classes
-
-        struct TerminalChar
-        {
-            public int Slot { get; set; }
-
-            public char Char { get; set; }
-        }
-
-        #endregion
     }
 }
