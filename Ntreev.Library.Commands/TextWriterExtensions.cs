@@ -34,6 +34,11 @@ namespace Ntreev.Library.Commands
             writer.PrintTableData(dataBuilder.Data, true);
         }
 
+        public static void Print(this TextWriter writer, TableDataBuilder tableData)
+        {
+            PrintTableData(writer, tableData.Data, tableData.HasHeader);
+        }
+
         public static void PrintTableData(this TextWriter writer, string[][] itemsArray, bool hasHeader)
         {
             var count = itemsArray.First().Length;

@@ -38,5 +38,10 @@ namespace Ntreev.Library.Commands
                 return this.data;
             }
         }
+
+        public bool HasHeader
+        {
+            get { return this.headers != null; }
+        }
     }
 }
