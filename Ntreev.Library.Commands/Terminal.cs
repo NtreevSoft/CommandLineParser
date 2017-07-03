@@ -14,6 +14,7 @@ namespace Ntreev.Library.Commands
         private static ConsoleKeyInfo cancelKeyInfo = new ConsoleKeyInfo('\u0003', ConsoleKey.C, false, false, true);
         private static object lockobj = new object();
         private static readonly Dictionary<char, int> charToWidth = new Dictionary<char, int>();
+        private static readonly List<string> lines = new List<string>();
 
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
         private readonly List<string> histories = new List<string>();
@@ -672,6 +673,54 @@ namespace Ntreev.Library.Commands
                 this.InsertChar(ch);
                 this.ReplaceText(text);
             }
+        }
+
+        internal static int GetWidth(char ch)
+        {
+            if (charToWidth.ContainsKey(ch) == false)
+                return -1;
+            return charToWidth[ch];
+        }
+
+        internal static int GetWidth(string text)
+        {
+            var width = 0;
+            foreach(var item in text)
+            {
+                width += charToWidth[item];
+            }
+            return width;
+        }
+
+        internal static int InsertChar(TextWriter writer, char ch, int y)
+        {
+            var x1 = Console.CursorLeft;
+            var y1 = Console.CursorTop;
+
+            writer.Write(ch);
+
+            var x2 = Console.CursorLeft;
+            var y2 = Console.CursorTop;
+
+            if (y1 != y2)
+            {
+                charToWidth[ch] = Console.BufferWidth - x1;
+            }
+            else if (x1 > x2)
+            {
+                y--;
+                charToWidth[ch] = Console.BufferWidth - x1;
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    writer.WriteLine();
+                }
+            }
+            else
+            {
+                charToWidth[ch] = x2 - x1;
+            }
+
+            return y;
         }
 
         private void InsertChar(char ch)

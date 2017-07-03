@@ -65,38 +65,85 @@ namespace Ntreev.Library.Commands
             this.terminal.Erase();
             Console.SetCursorPosition(this.length % Console.BufferWidth, this.terminal.Top + this.offsetY);
 
-            var x1 = Console.CursorLeft;
-            var y1 = Console.CursorTop;
-            var y = y1;
-
-            var ss = text.Split('\n');
-            for (var i = 0; i < ss.Length; i++)
+            var t = text;
+            while (t != string.Empty)
             {
-                if (i != 0)
+                var c = null as char?;
+                var pre = string.Empty;
+                for (var i = 0; i < t.Length; i++)
                 {
-                    this.WriteLineCore();
-                    x1 = Console.CursorLeft;
-                    y1 = Console.CursorTop;
-                    this.length = 0;
+                    var ch = t[i];
+                    var w = Terminal.GetWidth(ch);
+                    if (w < 0)
+                    {
+                        pre = t.Substring(0, i);
+                        c = ch;
+                        t = t.Substring(i + 1);
+                        break;
+                    }
+                    else
+                    {
+                        pre += ch;
+                    }
+                    if (i + 1 == t.Length)
+                    {
+                        t = string.Empty;
+                    }
                 }
-
-                this.WriteCore(ss[i]);
+                if (pre != string.Empty)
+                {
+                    this.writer.Write(pre);
+                }
+                if(c != null)
+                {
+                    Terminal.InsertChar(this.writer, c.Value, 0);
+                }
             }
 
-            var x2 = Console.CursorLeft;
-            var y2 = Console.CursorTop;
-
-            this.length += (y2 - y1) * Console.BufferWidth - x1 + x2;
-
-            if ((Console.CursorLeft != 0 || this.length % Console.BufferWidth == 0) && y == y2)
+            if (text == string.Empty || text.Last() != '\n')
             {
-                this.WriteLineCore();
+                this.length += Terminal.GetWidth(text);
                 this.offsetY = -1;
+                this.writer.WriteLine();
             }
             else
             {
-                this.offsetY = 0;
+                this.length = 0;
             }
+
+            //var x1 = Console.CursorLeft;
+            //var y1 = Console.CursorTop;
+            //var y = y1;
+
+            //var ss = text.Split('\n');
+            //for (var i = 0; i < ss.Length; i++)
+            //{
+            //    if (i != 0)
+            //    {
+            //        this.WriteLineCore();
+            //        x1 = Console.CursorLeft;
+            //        y1 = Console.CursorTop;
+            //        this.length = 0;
+            //    }
+
+            //    this.WriteCore(ss[i]);
+            //}
+
+            //var x2 = Console.CursorLeft;
+            //var y2 = Console.CursorTop;
+
+            //this.length += (y2 - y1) * Console.BufferWidth - x1 + x2;
+
+            //if ((Console.CursorLeft != 0 || this.length % Console.BufferWidth == 0) && y == y2)
+            //{
+            //    this.WriteLineCore();
+            //    this.offsetY = -1;
+            //}
+            //else
+            //{
+            //    this.offsetY = 0;
+            //}
+            //this.WriteCore(text);
             this.terminal.Top = Console.CursorTop;
             this.terminal.Draw();
         }
