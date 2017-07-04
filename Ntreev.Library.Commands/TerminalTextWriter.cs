@@ -94,7 +94,7 @@ namespace Ntreev.Library.Commands
                 {
                     this.writer.Write(pre);
                 }
-                if(c != null)
+                if (c != null)
                 {
                     Terminal.InsertChar(this.writer, c.Value, 0);
                 }
@@ -111,73 +111,8 @@ namespace Ntreev.Library.Commands
                 this.length = 0;
             }
 
-            //var x1 = Console.CursorLeft;
-            //var y1 = Console.CursorTop;
-            //var y = y1;
-
-            //var ss = text.Split('\n');
-            //for (var i = 0; i < ss.Length; i++)
-            //{
-            //    if (i != 0)
-            //    {
-            //        this.WriteLineCore();
-            //        x1 = Console.CursorLeft;
-            //        y1 = Console.CursorTop;
-            //        this.length = 0;
-            //    }
-
-            //    this.WriteCore(ss[i]);
-            //}
-
-            //var x2 = Console.CursorLeft;
-            //var y2 = Console.CursorTop;
-
-            //this.length += (y2 - y1) * Console.BufferWidth - x1 + x2;
-
-            //if ((Console.CursorLeft != 0 || this.length % Console.BufferWidth == 0) && y == y2)
-            //{
-            //    this.WriteLineCore();
-            //    this.offsetY = -1;
-            //}
-            //else
-            //{
-            //    this.offsetY = 0;
-            //}
-            //this.WriteCore(text);
             this.terminal.Top = Console.CursorTop;
             this.terminal.Draw();
-        }
-
-        private void WriteCore(string text)
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                using (var stream = Console.OpenStandardOutput())
-                using (var writer = new StreamWriter(stream, this.encoding))
-                {
-                    writer.Write(text);
-                }
-            }
-            else
-            {
-                this.writer.Write(text);
-            }
-        }
-
-        private void WriteLineCore()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                using (var stream = Console.OpenStandardOutput())
-                using (var writer = new StreamWriter(stream, this.encoding))
-                {
-                    writer.WriteLine();
-                }
-            }
-            else
-            {
-                this.writer.WriteLine();
-            }
         }
     }
 }

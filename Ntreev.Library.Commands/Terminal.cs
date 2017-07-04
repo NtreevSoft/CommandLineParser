@@ -14,7 +14,7 @@ namespace Ntreev.Library.Commands
         private static ConsoleKeyInfo cancelKeyInfo = new ConsoleKeyInfo('\u0003', ConsoleKey.C, false, false, true);
         private static object lockobj = new object();
         private static readonly Dictionary<char, int> charToWidth = new Dictionary<char, int>();
-        private static readonly List<string> lines = new List<string>();
+        //private static readonly List<string> lines = new List<string>();
 
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
         private readonly List<string> histories = new List<string>();
@@ -22,14 +22,14 @@ namespace Ntreev.Library.Commands
 
         private int y = Console.CursorTop;
         private int width = Console.BufferWidth;
-        private string fullText;
         private int index;
         private int start = 0;
         private int historyIndex;
-        private bool isHidden;
+        private string fullText;
         private string inputText;
         private string completion = string.Empty;
         private TextWriter writer;
+        private bool isHidden;
         private bool treatControlCAsInput;
         private bool isCancellationRequested;
 
@@ -369,6 +369,9 @@ namespace Ntreev.Library.Commands
                 for (var i = 0; i < value + this.start; i++)
                 {
                     var w = charToWidth[this.fullText[i]];
+                    if (this.isHidden == true && i >= this.start)
+                        w = 0;
+                    
                     if ((x % Console.BufferWidth) + w >= Console.BufferWidth)
                     {
                         x += ((x % Console.BufferWidth) + w) - Console.BufferWidth;
@@ -649,7 +652,6 @@ namespace Ntreev.Library.Commands
                         this.writer.WriteLine();
                     }
                     this.y--;
-                    //this.t.y--;
                 }
             }
             this.Index = index;
@@ -685,7 +687,7 @@ namespace Ntreev.Library.Commands
         internal static int GetWidth(string text)
         {
             var width = 0;
-            foreach(var item in text)
+            foreach (var item in text)
             {
                 width += charToWidth[item];
             }
