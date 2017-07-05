@@ -368,9 +368,9 @@ namespace Ntreev.Library.Commands
                 var x = 0;
                 for (var i = 0; i < value + this.start; i++)
                 {
-                    var w = charToWidth[this.fullText[i]];
-                    if (this.isHidden == true && i >= this.start)
-                        w = 0;
+                    var w = 0;
+                    if (this.isHidden == false || i < this.start)
+                        w = charToWidth[this.fullText[i]];
                     
                     if ((x % Console.BufferWidth) + w >= Console.BufferWidth)
                     {
@@ -607,8 +607,9 @@ namespace Ntreev.Library.Commands
                 var y = 0;
                 for (var i = 0; i < this.fullText.Length; i++)
                 {
-                    //x += this.chars[i].Slot;
-                    var w = charToWidth[this.fullText[i]];
+                    var w = 0;
+                    if (this.isHidden == false || i < this.start)
+                        w = charToWidth[this.fullText[i]];
                     if (x + w >= Console.BufferWidth)
                     {
                         x = 0;
