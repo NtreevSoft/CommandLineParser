@@ -632,11 +632,15 @@ namespace Ntreev.Library.Commands
 
         private void ClearText()
         {
-            this.Index = this.Length;
-            while (this.Index > 0)
-            {
-                this.BackspaceImpl();
-            }
+            var x = 0;
+            var y = this.Top;
+            this.Erase();
+            this.fullText = this.fullText.Substring(0, this.start);
+            this.start = this.fullText.Length;
+            this.index = this.start;
+            this.inputText = string.Empty;
+            Console.SetCursorPosition(x, y);
+            this.Draw();
         }
 
         private void ReplaceText(string text)
@@ -836,6 +840,7 @@ namespace Ntreev.Library.Commands
                 this.completion = func(completions, this.completion);
                 using (TerminalCursorVisible.Set(false))
                 {
+                    var inputText = this.inputText;
                     this.ClearText();
                     if (prefix == true || postfix == true)
                     {
@@ -845,6 +850,7 @@ namespace Ntreev.Library.Commands
                     {
                         this.InsertText(leftText + this.completion);
                     }
+                    this.inputText = inputText;
                 }
             }
         }
