@@ -704,7 +704,14 @@ namespace Ntreev.Library.Commands
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
 
-            writer.Write(ch);
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                writer.Write(ch + "\0");
+            }
+            else
+            {
+                writer.Write(ch);
+            }
 
             var x2 = Console.CursorLeft;
             var y2 = Console.CursorTop;
