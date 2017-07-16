@@ -42,7 +42,24 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
-            for (var i = 0; i < Console.BufferHeight - 2; i++)
+            var ssss = "----------------------------------------------------------------------------------------";
+            var text = "ショット判定をパンヤに正確に合わせれば、より強力なスーパー パンヤが出ることもあります。 ";
+
+            //Console.WriteLine(ssss);
+            //Console.WriteLine(text);
+
+            Terminal.Init();
+            //var llll = Terminal.GetLength(text);
+            Console.Write("\r");
+             var tableData = new TableDataBuilder("taiwan", "korean", "japan");
+            tableData.Add("เปิดใช้งาน Super PANGYA ที่เสริมพลังเมื่อแถบการตีหยุดตรงเขต PANGYA", "샷 판정을 팡야에 정확하게 맞히는 경우 성능이 향상된 슈퍼팡야가 나오기도 합니다.", text);
+
+            Console.Out.Print(tableData);
+
+            return;
+            var sss = Console.OutputEncoding.GetBytes("เ최");
+            Console.Write("เ");
+            for (var i = 0; i < 40; i++)
             {
                 Console.WriteLine(i);
             }
@@ -51,13 +68,13 @@ namespace Ntreev.Library.Commands.Shell
             {
                 System.Threading.Thread.Sleep(1000);
 
-                Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
+                //Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
 
                 while (true)
                 {
                     //if (Console.BufferWidth == 81)
                     {
-                        Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
+                        //Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
                         //break;
                     }
                     System.Threading.Thread.Sleep(1000);

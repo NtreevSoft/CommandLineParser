@@ -388,7 +388,7 @@ namespace Ntreev.Library.Commands
         {
             if (this.Out is RedirectionTextWriter == false)
             {
-                this.Out = new RedirectionTextWriter(this.BaseDirectory);
+                this.Out = new RedirectionTextWriter(this.BaseDirectory, this.Out.Encoding);
             }
 
             (this.Out as RedirectionTextWriter).Add(CommandLineParser.RemoveQuot(filename), false);
@@ -424,10 +424,12 @@ namespace Ntreev.Library.Commands
             private readonly List<string> writeList = new List<string>();
             private readonly List<string> appendList = new List<string>();
             private readonly string baseDirectory;
+            private readonly Encoding encoding;
 
-            public RedirectionTextWriter(string baseDirectory)
+            public RedirectionTextWriter(string baseDirectory, Encoding encoding)
             {
                 this.baseDirectory = baseDirectory;
+                this.encoding = encoding;
             }
 
             public void Add(string filename, bool appendMode)
@@ -437,6 +439,8 @@ namespace Ntreev.Library.Commands
                 else
                     this.writeList.Add(filename);
             }
+
+            public override Encoding Encoding => this.encoding;
 
             protected override void Dispose(bool disposing)
             {

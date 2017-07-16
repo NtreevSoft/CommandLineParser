@@ -50,7 +50,7 @@ namespace Ntreev.Library.Commands
                 var len = 0;
                 for (var y = 0; y < itemsArray.Length; y++)
                 {
-                    len = Math.Max(CharWidth.mk_wcswidth_cjk(itemsArray[y][x]), len);
+                    len = Math.Max(Terminal.GetLength(itemsArray[y][x]), len);
                 }
                 lengths[x] = len + (4 - (len % 4));
             }
@@ -59,7 +59,7 @@ namespace Ntreev.Library.Commands
             {
                 for (var x = 0; x < itemsArray[y].Length; x++)
                 {
-                    var pad = lengths[x] - CharWidth.mk_wcswidth_cjk(itemsArray[y][x]);
+                    var pad = lengths[x] - Terminal.GetLength(itemsArray[y][x]);
                     writer.Write(itemsArray[y][x]);
                     writer.Write(string.Empty.PadRight(pad));
                     writer.Write(" ");

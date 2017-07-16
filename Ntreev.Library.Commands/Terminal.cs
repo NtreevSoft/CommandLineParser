@@ -13,7 +13,7 @@ namespace Ntreev.Library.Commands
     {
         private static ConsoleKeyInfo cancelKeyInfo = new ConsoleKeyInfo('\u0003', ConsoleKey.C, false, false, true);
         private static object lockobj = new object();
-        private static readonly Dictionary<char, int> charToWidth = new Dictionary<char, int>();
+        private static readonly Dictionary<char, int> charToWidth = new Dictionary<char, int>(char.MaxValue);
         //private static readonly List<string> lines = new List<string>();
 
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
@@ -32,6 +32,25 @@ namespace Ntreev.Library.Commands
         private bool isHidden;
         private bool treatControlCAsInput;
         private bool isCancellationRequested;
+
+        public static void Init()
+        {
+            for (var i = char.MinValue; i < char.MaxValue; i++)
+            {
+                Console.Write($"\r{i}");
+                charToWidth.Add(i, Console.CursorLeft);
+            }
+        }
+
+        public static int GetLength(string text)
+        {
+            var length = 0;
+            foreach(var item in text)
+            {
+                length += charToWidth[item];
+            }
+            return length;
+        }
 
         public Terminal()
         {
