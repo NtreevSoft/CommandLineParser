@@ -173,6 +173,12 @@
       <DependentUpon>VersionCommand.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="bin\Unix.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="bin\Win32NT.dat" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
