@@ -34,7 +34,7 @@ namespace Ntreev.Library.Commands
 
         static Terminal()
         {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            //if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 var name = $"{typeof(Terminal).Namespace}.bin.{PlatformID.Win32NT}.dat";
                 using (var stream = typeof(Terminal).Assembly.GetManifestResourceStream(name))
@@ -48,20 +48,20 @@ namespace Ntreev.Library.Commands
                     }
                 }
             }
-            else if (Environment.OSVersion.Platform == PlatformID.Unix)
-            {
-                var name = $"{typeof(Terminal).Namespace}.bin.{PlatformID.Unix}.dat";
-                using (var stream = typeof(Terminal).Assembly.GetManifestResourceStream(name))
-                {
-                    var buffer = new byte[stream.Length];
-                    stream.Read(buffer, 0, buffer.Length);
+            //else if (Environment.OSVersion.Platform == PlatformID.Unix)
+            //{
+            //    var name = $"{typeof(Terminal).Namespace}.bin.{PlatformID.Unix}.dat";
+            //    using (var stream = typeof(Terminal).Assembly.GetManifestResourceStream(name))
+            //    {
+            //        var buffer = new byte[stream.Length];
+            //        stream.Read(buffer, 0, buffer.Length);
 
-                    for (var i = char.MinValue; i < char.MaxValue; i++)
-                    {
-                        charToWidth.Add(i, buffer[i]);
-                    }
-                }
-            }
+            //        for (var i = char.MinValue; i < char.MaxValue; i++)
+            //        {
+            //            charToWidth.Add(i, buffer[i]);
+            //        }
+            //    }
+            //}
         }
 
         public static int GetLength(string text)
@@ -86,7 +86,7 @@ namespace Ntreev.Library.Commands
             else
             {
                 this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
-                this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.V, false, false, true), this.Paste);
+                //this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.V, false, false, true), this.Paste);
             }
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Delete, false, false, false), this.Delete);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, false), this.Home);
@@ -340,13 +340,13 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public void Paste()
-        {
-            lock (lockobj)
-            {
+        //public void Paste()
+        //{
+        //    lock (lockobj)
+        //    {
 
-            }
-        }
+        //    }
+        //}
 
         public void DeleteToEnd()
         {
@@ -411,23 +411,16 @@ namespace Ntreev.Library.Commands
             set
             {
                 if (value < 0 || value > this.fullText.Length)
-                    return;
-                var x = 0;
-                for (var i = 0; i < value; i++)
-                {
-                    var w = this.isHidden == false ? charToWidth[this.fullText[i]] : 0;
-                    if ((x % Console.BufferWidth) + w >= Console.BufferWidth)
-                    {
-                        x += ((x % Console.BufferWidth) + w) - Console.BufferWidth;
-                        x += w;
-                    }
-                    else
-                    {
-                        x += w;
-                    }
-                }
+                    throw new ArgumentOutOfRangeException(nameof(value));
+
                 this.fullIndex = value;
-                Console.SetCursorPosition(x % Console.BufferWidth, x / Console.BufferWidth + this.Top);
+                if (this.isHidden == false)
+                {
+                    var x = 0;
+                    var y = this.Top;
+                    NextPosition(this.fullText.Substring(0, value), ref x, ref y);
+                    Console.SetCursorPosition(x, Math.Min(y, Console.BufferHeight - 1));
+                }
             }
         }
 
@@ -466,7 +459,7 @@ namespace Ntreev.Library.Commands
         public static string NextCompletion(string[] completions, string text)
         {
             completions = completions.OrderBy(item => item)
-                                     .ToArray();
+                .ToArray();
             if (completions.Contains(text) == true)
             {
                 for (var i = 0; i < completions.Length; i++)
@@ -498,7 +491,7 @@ namespace Ntreev.Library.Commands
         public static string PrevCompletion(string[] completions, string text)
         {
             completions = completions.OrderBy(item => item)
-                                     .ToArray();
+                .ToArray();
             if (completions.Contains(text) == true)
             {
                 for (var i = completions.Length - 1; i >= 0; i--)
@@ -570,119 +563,86 @@ namespace Ntreev.Library.Commands
             return query.ToArray();
         }
 
-        internal void Erase()
+        internal static void NextPosition(string text, ref int x, ref int y)
         {
-            var x1 = Console.CursorLeft;
-            var y1 = Console.CursorTop;
-            var x = 0;
-            for (var i = 0; i < this.fullText.Length; i++)
+            for (var i = 0; i < text.Length; i++)
             {
-                var w = this.isHidden == false ? charToWidth[this.fullText[i]] : 0;
-                if ((x % Console.BufferWidth) + w >= Console.BufferWidth)
+                var ch = text[i];
+                if (ch == '\r')
                 {
-                    x += ((x % Console.BufferWidth) + w) - Console.BufferWidth;
-                    x += w;
+                    x = 0;
+                    continue;
+                }
+                else if (ch == '\n')
+                {
+                    x = 0;
+                    y++;
+                    continue;
+                }
+
+                var w = charToWidth[ch];
+                if (x + w >= Console.BufferWidth)
+                {
+                    x = x + w - Console.BufferWidth;
+                    y++;
                 }
                 else
                 {
                     x += w;
                 }
             }
+        }
 
-            for (var i = 0; i < this.Height; i++)
+        internal void Erase()
+        {
+            var x1 = Console.CursorLeft;
+            var y1 = Console.CursorTop;
+
+            var text = this.isHidden == false ? this.fullText : this.fullText.Substring(0, this.start);
+            var x = 0;
+            var y = this.y;
+            NextPosition(text, ref x, ref y);
+
+            for (var i = this.y; i <= y; i++)
             {
-                if (x == 0)
-                    continue;
-                Console.SetCursorPosition(0, this.Top + i);
+                Console.SetCursorPosition(0, i);
                 if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
-                    Console.MoveBufferArea(Console.BufferWidth - 1, this.Top + i, 1, 1, 0, this.Top + i);
-                    this.writer.Write(new string(' ', Console.BufferWidth - 1));
+                    Console.MoveBufferArea(Console.BufferWidth - 1, i, 1, 1, 0, i);
+                    this.writer.Write($"\r{new string('\0', Console.BufferWidth - 1)}\r");
                 }
                 else
                 {
                     this.writer.Write("\r" + new string(' ', Console.BufferWidth) + "\r");
                 }
-                x -= Console.BufferWidth;
             }
             Console.SetCursorPosition(x1, y1);
         }
 
         internal void Draw()
         {
-            Draw(0);
-        }
-
-            internal void Draw(int index)
-        {
-            //var x1 = Console.CursorLeft;
-            //var y1 = Console.CursorTop;
-            //this.FullIndex = index;
             Console.SetCursorPosition(0, this.y);
-            var sindex = this.FullIndex;
-            var text = this.fullText;
+            var index = this.FullIndex;
             var y = Console.CursorTop;
-            this.writer.Write(this.fullText);
             var x = 0;
-            for (var i = 0; i < this.fullText.Length; i++)
-            {
-                var w = this.isHidden == false ? charToWidth[this.fullText[i]] : 0;
-                if ((x % Console.BufferWidth) + w >= Console.BufferWidth)
-                {
-                    x += ((x % Console.BufferWidth) + w) - Console.BufferWidth;
-                    x += w;
-                }
-                else
-                {
-                    x += w;
-                }
-            }
+            var text = this.isHidden == true ? this.fullText.Substring(0, this.start) : this.fullText;
+            this.writer.Write(text);
+            NextPosition(text, ref x, ref y);
 
-            if (this.y + (x / Console.BufferWidth) >= Console.BufferHeight)
+            if (y >= Console.BufferHeight)
             {
-                if (Environment.OSVersion.Platform == PlatformID.Unix && y == Console.BufferHeight - 1)
+                if (Environment.OSVersion.Platform == PlatformID.Unix && x == 0)
                 {
                     this.writer.WriteLine();
                 }
                 this.y--;
             }
-            this.FullIndex = sindex;
+            this.FullIndex = index;
         }
 
         private int Length
         {
             get { return this.fullText.Length - this.start; }
-        }
-
-        private int Height
-        {
-            get
-            {
-                var x = 0;
-                var y = 0;
-                for (var i = 0; i < this.fullText.Length; i++)
-                {
-                    var w = 0;
-                    if (this.isHidden == false || i < this.start)
-                        w = charToWidth[this.fullText[i]];
-                    if (x + w >= Console.BufferWidth)
-                    {
-                        x = 0;
-                        y++;
-                    }
-                    else
-                    {
-                        x += w;
-                    }
-                }
-                return y + 1;
-                //var length = 0;
-                //for (var i = 0; i < this.text.Length; i++)
-                //{
-                //    length += this.chars[i].Slot;
-                //}
-                //return length / Console.BufferWidth + 1;
-            }
         }
 
         private void ClearText()
@@ -704,34 +664,27 @@ namespace Ntreev.Library.Commands
             {
                 var extraText = this.fullText.Substring(this.fullIndex);
                 this.fullText = this.fullText.Insert(this.fullIndex, text);
-                this.writer.Write(text);
                 this.fullIndex += text.Length;
-                this.writer.Write(extraText);
 
-                var x = 0;
-                for (var i = 0; i < this.fullText.Length; i++)
+                if (this.isHidden == false)
                 {
-                    var w = this.isHidden == false ? charToWidth[this.fullText[i]] : 0;
-                    if ((x % Console.BufferWidth) + w >= Console.BufferWidth)
-                    {
-                        x += ((x % Console.BufferWidth) + w) - Console.BufferWidth;
-                        x += w;
-                    }
-                    else
-                    {
-                        x += w;
-                    }
-                }
+                    this.writer.Write(text);
+                    this.writer.Write(extraText);
 
-                if (this.y + (x / Console.BufferWidth) >= Console.BufferHeight)
-                {
-                    if (Environment.OSVersion.Platform == PlatformID.Unix && y == Console.BufferHeight - 1)
+                    var x = 0;
+                    var y = this.Top;
+                    NextPosition(this.fullText, ref x, ref y);
+
+                    if (y >= Console.BufferHeight)
                     {
-                        this.writer.WriteLine();
+                        if (Environment.OSVersion.Platform == PlatformID.Unix && x == 0)
+                        {
+                            this.writer.WriteLine();
+                        }
+                        this.y--;
                     }
-                    this.y--;
+                    this.FullIndex = this.fullIndex;
                 }
-                this.FullIndex = this.fullIndex;
             }
         }
 
@@ -761,7 +714,10 @@ namespace Ntreev.Library.Commands
             this.Index = inputIndex;
             this.Index--;
             this.fullText = this.fullText.Remove(this.fullIndex, 1);
-            this.writer.Write(extraText);
+            if (this.isHidden == false)
+            {
+                this.writer.Write(extraText);
+            }
             this.Index = this.Index;
         }
 

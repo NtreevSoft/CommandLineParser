@@ -51,13 +51,16 @@ namespace Ntreev.Library.Commands.Shell
             {
                 System.Threading.Thread.Sleep(1000);
 
-                Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
+                //Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
 
+                int i = 0;
                 while (true)
                 {
+                    
                     //if (Console.BufferWidth == 81)
                     {
-                        Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
+                        Console.Write($"\r{i++}");
+                        //Console.WriteLine("44");
                         //break;
                     }
                     System.Threading.Thread.Sleep(1000);

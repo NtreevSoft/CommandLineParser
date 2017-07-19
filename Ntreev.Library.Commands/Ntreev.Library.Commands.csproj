@@ -72,7 +72,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CharWidth.cs" />
     <Compile Include="ClassExtension.cs" />
     <Compile Include="CommandBase.cs" />
     <Compile Include="CommandCompletionContext.cs" />
