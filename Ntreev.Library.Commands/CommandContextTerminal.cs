@@ -204,7 +204,7 @@ namespace Ntreev.Library.Commands
                 }
                 else if (completionContext.Command is CommandMethodBase commandMethodBase)
                 {
-                    return commandMethodBase.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor);
+                    return commandMethodBase.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor, completionContext.Find);
                 }
                 else if (completionContext.Command is CommandProviderBase consoleCommandProvider)
                 {

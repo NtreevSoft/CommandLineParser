@@ -340,14 +340,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        //public void Paste()
-        //{
-        //    lock (lockobj)
-        //    {
-
-        //    }
-        //}
-
         public void DeleteToEnd()
         {
             lock (lockobj)
@@ -563,6 +555,16 @@ namespace Ntreev.Library.Commands
             return query.ToArray();
         }
 
+        protected virtual void OnDrawPrompt(TextWriter writer, string prompt)
+        {
+            writer.Write(prompt);
+        }
+
+        protected virtual void OnDrawText(TextWriter writer, string text)
+        {
+            writer.Write(text);
+        }
+
         internal static void NextPosition(string text, ref int x, ref int y)
         {
             for (var i = 0; i < text.Length; i++)
@@ -598,9 +600,11 @@ namespace Ntreev.Library.Commands
             var x1 = Console.CursorLeft;
             var y1 = Console.CursorTop;
 
-            var text = this.isHidden == false ? this.fullText : this.fullText.Substring(0, this.start);
+            var prompt = this.fullText.Substring(0, this.start);
+            var text = this.isHidden == true ? string.Empty : this.fullText.Substring(this.start);
             var x = 0;
             var y = this.y;
+            NextPosition(prompt, ref x, ref y);
             NextPosition(text, ref x, ref y);
 
             for (var i = this.y; i <= y; i++)
@@ -625,8 +629,11 @@ namespace Ntreev.Library.Commands
             var index = this.FullIndex;
             var y = Console.CursorTop;
             var x = 0;
-            var text = this.isHidden == true ? this.fullText.Substring(0, this.start) : this.fullText;
-            this.writer.Write(text);
+            var prompt = this.fullText.Substring(0, this.start);
+            var text = this.isHidden == true ? string.Empty : this.fullText.Substring(this.start);
+            this.OnDrawPrompt(this.writer, prompt);
+            this.OnDrawText(this.writer, text);
+            NextPosition(prompt, ref x, ref y);
             NextPosition(text, ref x, ref y);
 
             if (y >= Console.BufferHeight)
@@ -668,8 +675,15 @@ namespace Ntreev.Library.Commands
 
                 if (this.isHidden == false)
                 {
-                    this.writer.Write(text);
-                    this.writer.Write(extraText);
+                    var ff = this.FullIndex;
+                    this.FullIndex = this.start;
+                    var text1 = this.fullText.Substring(this.start);
+                    using (TerminalCursorVisible.Set(false))
+                    {
+                        this.OnDrawText(this.writer, text1);
+                    }
+                    //this.writer.Write(text);
+                    //this.writer.Write(extraText);
 
                     var x = 0;
                     var y = this.Top;
@@ -683,7 +697,7 @@ namespace Ntreev.Library.Commands
                         }
                         this.y--;
                     }
-                    this.FullIndex = this.fullIndex;
+                    this.FullIndex = ff;
                 }
             }
         }
@@ -899,11 +913,12 @@ namespace Ntreev.Library.Commands
 
                 this.y = Console.CursorTop;
                 this.width = Console.BufferWidth;
-                this.fullIndex = 0;
                 this.start = 0;
-                this.fullText = string.Empty;
                 this.isHidden = false;
-                this.InsertText(prompt);
+                this.fullText = prompt;
+                this.fullIndex = prompt.Length;
+                this.OnDrawPrompt(this.writer, this.fullText);
+                this.FullIndex = this.fullIndex;
                 this.start = this.fullIndex;
                 this.isHidden = isHidden;
                 this.InsertText(defaultText);

@@ -42,6 +42,7 @@ namespace Ntreev.Library.Commands.Shell
     {
         static void Main(string[] args)
         {
+            Console.CursorSize = 100;
             for (var i = 0; i < Console.BufferHeight - 2; i++)
             {
                 Console.WriteLine(i);
