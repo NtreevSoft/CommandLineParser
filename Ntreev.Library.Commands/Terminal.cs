@@ -686,23 +686,24 @@ namespace Ntreev.Library.Commands
 
         private void InsertText(string text)
         {
+            if (text == string.Empty)
+                return;
             lock (lockobj)
             {
-                var extraText = this.fullText.Substring(this.fullIndex);
                 this.fullText = this.fullText.Insert(this.fullIndex, text);
                 this.fullIndex += text.Length;
+                
+                if (this.isHidden == true)
+                    return;
 
-                if (this.isHidden == false)
+                var index = this.fullIndex;
+                var text1 = this.fullText.Substring(this.start);
+
+                using (TerminalCursorVisible.Set(false))
                 {
-                    var ff = this.FullIndex;
                     this.FullIndex = this.start;
-                    var text1 = this.fullText.Substring(this.start);
-                    using (TerminalCursorVisible.Set(false))
-                    {
-                        this.OnDrawText(this.writer, text1);
-                    }
-                    //this.writer.Write(text);
-                    //this.writer.Write(extraText);
+                    this.OnDrawText(this.writer, text1);
+
 
                     var x = 0;
                     var y = this.Top;
@@ -716,7 +717,7 @@ namespace Ntreev.Library.Commands
                         }
                         this.y--;
                     }
-                    this.FullIndex = ff;
+                    this.FullIndex = index;
                 }
             }
         }
@@ -835,73 +836,90 @@ namespace Ntreev.Library.Commands
         {
             while (true)
             {
-                var keyPtr = this.ReadKey();
-                if (keyPtr == null)
+                var keys = this.ReadKeys();
+                if (this.isCancellationRequested == true)
                     return null;
 
-                var key = keyPtr.Value;
-                if (key == cancelKeyInfo)
+                var keyChars = string.Empty;
+                foreach (var key in keys)
                 {
-                    var args = new TerminalCancelEventArgs(ConsoleSpecialKey.ControlC);
-                    this.OnCancelKeyPress(args);
-                    if (args.Cancel == false)
+                    //var key = keys.Value;
+                    if (key == cancelKeyInfo)
                     {
-                        this.OnCancelled(EventArgs.Empty);
-                        throw new OperationCanceledException($"ReadLine is cancelled.");
-                    }
-                }
-                else if (this.actionMaps.ContainsKey(key) == true)
-                {
-                    this.actionMaps[key]();
-                }
-                else if (key.Key == ConsoleKey.Enter)
-                {
-                    var text = this.Text;
-                    this.Index = this.Length;
-                    var x = Console.CursorLeft;
-                    var y = Console.CursorTop;
-                    this.fullText = string.Empty;
-                    this.start = 0;
-                    this.fullIndex = 0;
-
-                    if (this.isHidden == false && text != string.Empty)
-                    {
-                        if (this.histories.Contains(text) == false)
+                        var args = new TerminalCancelEventArgs(ConsoleSpecialKey.ControlC);
+                        this.OnCancelKeyPress(args);
+                        if (args.Cancel == false)
                         {
-                            this.histories.Add(text);
-                            this.historyIndex = this.histories.Count;
+                            this.OnCancelled(EventArgs.Empty);
+                            throw new OperationCanceledException($"ReadLine is cancelled.");
                         }
-                        else
-                        {
-                            this.historyIndex = this.histories.LastIndexOf(text) + 1;
-                        }
-
                     }
-                    Console.SetCursorPosition(x, y);
-                    return text;
-                }
-                else if (key.KeyChar != '\0')
-                {
-                    if (validation(this.Text + key.KeyChar) == true)
+                    else if (this.actionMaps.ContainsKey(key) == true)
                     {
-                        this.InsertText($"{key.KeyChar}");
-                        this.SetInputText();
+                        this.actionMaps[key]();
                     }
+                    else if (key.Key == ConsoleKey.Enter)
+                    {
+                        var text = this.Text;
+                        //this.Index = this.Length;
+                        //var x = Console.CursorLeft;
+                        //var y = Console.CursorTop;
+                        this.fullText = string.Empty;
+                        this.start = 0;
+                        this.fullIndex = 0;
+
+                        if (this.isHidden == false && text != string.Empty)
+                        {
+                            if (this.histories.Contains(text) == false)
+                            {
+                                this.histories.Add(text);
+                                this.historyIndex = this.histories.Count;
+                            }
+                            else
+                            {
+                                this.historyIndex = this.histories.LastIndexOf(text) + 1;
+                            }
+
+                        }
+                        //Console.SetCursorPosition(x, y);
+                        return text;
+                    }
+                    else if (key.KeyChar != '\0')
+                    {
+                        keyChars += key.KeyChar;
+                    }
+                }
+
+                if (keyChars != string.Empty && validation(this.Text + keyChars) == true)
+                {
+                    this.InsertText(keyChars);
+                    this.SetInputText();
                 }
             }
         }
 
-        private ConsoleKeyInfo? ReadKey()
+        private IEnumerable<ConsoleKeyInfo> ReadKeys()
         {
             while (this.isCancellationRequested == false)
             {
-                if (Console.KeyAvailable == true)
+                var count = 0;
+                while (true)
                 {
-                    return Console.ReadKey(true);
+                    if (Console.KeyAvailable == true)
+                    {
+                        yield return Console.ReadKey(true);
+                    }
+                    else if (count > 1)
+                    {
+                        yield break;
+                    }
+                    else
+                    {
+                        Thread.Sleep(1);
+                        count++;
+                    }
                 }
-                Thread.Sleep(50);
             }
-            return null;
         }
 
         private ConsoleKey ReadKeyImpl(params ConsoleKey[] filters)

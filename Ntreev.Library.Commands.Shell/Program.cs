@@ -60,7 +60,7 @@ namespace Ntreev.Library.Commands.Shell
                     
                     //if (Console.BufferWidth == 81)
                     {
-                        Console.Write($"\r{i++}");
+                        //Console.Write($"\r{i++}");
                         //Console.WriteLine("44");
                         //break;
                     }
