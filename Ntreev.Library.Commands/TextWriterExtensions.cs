@@ -12,7 +12,7 @@ namespace Ntreev.Library.Commands
 {
     public static class TextWriterExtensions
     {
-        public static void WriteItems<T>(this TextWriter writer, IEnumerable<T> items)
+        public static void PrintItems<T>(this TextWriter writer, IEnumerable<T> items)
         {
             var properties = typeof(T).GetProperties();
 
@@ -94,7 +94,7 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public static void Print<T>(this TextWriter writer, T[] items, Action<T, Action> action, Func<T, string> selector)
         {
-            var maxWidth = Console.IsOutputRedirected == false ? Console.BufferWidth : 80;
+            var maxWidth = Terminal.BufferWidth;
             var lineCount = 4;
 
             while (true)
@@ -112,11 +112,11 @@ namespace Ntreev.Library.Commands
                     {
                         lines[y] = new List<string>();
                         objs[y] = new List<T>();
-                        lengths[y] = item.Length + 2;
+                        lengths[y] = Terminal.GetLength(item) + 2;
                     }
                     else
                     {
-                        lengths[y] += item.Length + 2;
+                        lengths[y] += Terminal.GetLength(item) + 2;
                     }
 
                     var c = lines[y].Count;
@@ -126,7 +126,7 @@ namespace Ntreev.Library.Commands
                     if (columns.Count < lines[y].Count)
                         columns.Add(0);
 
-                    columns[c] = Math.Max(columns[c], item.Length + 2);
+                    columns[c] = Math.Max(columns[c], Terminal.GetLength(item) + 2);
                 }
 
                 var canPrint = true;

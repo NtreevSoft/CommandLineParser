@@ -14,6 +14,7 @@ namespace Ntreev.Library.Commands
         private static ConsoleKeyInfo cancelKeyInfo = new ConsoleKeyInfo('\u0003', ConsoleKey.C, false, false, true);
         private static object lockobj = new object();
         private static readonly Dictionary<char, int> charToWidth = new Dictionary<char, int>(char.MaxValue);
+        private static int bufferWidth = 80;
 
         private readonly Dictionary<ConsoleKeyInfo, Action> actionMaps = new Dictionary<ConsoleKeyInfo, Action>();
         private readonly List<string> histories = new List<string>();
@@ -448,6 +449,24 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        public static int BufferWidth
+        {
+            get
+            {
+                if (Console.IsOutputRedirected == false)
+                    return Console.BufferWidth;
+                return bufferWidth;
+            }
+            set
+            {
+                if (Console.IsOutputRedirected == false)
+                    throw new InvalidOperationException("console output is redirected.");
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException();
+                bufferWidth = value;
+            }
+        }
+        
         public static string NextCompletion(string[] completions, string text)
         {
             completions = completions.OrderBy(item => item)
