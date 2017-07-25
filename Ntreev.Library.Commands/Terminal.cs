@@ -87,7 +87,7 @@ namespace Ntreev.Library.Commands
             else
             {
                 this.actionMaps.Add(new ConsoleKeyInfo('\b', ConsoleKey.Backspace, false, false, false), this.Backspace);
-                //this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.V, false, false, true), this.Paste);
+                //this.actionMaps.Add(new ConsoleKeyInfo('\u0016', ConsoleKey.V, false, false, true), this.Paste);
             }
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Delete, false, false, false), this.Delete);
             this.actionMaps.Add(new ConsoleKeyInfo('\0', ConsoleKey.Home, false, false, false), this.Home);
@@ -341,6 +341,14 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        //public void Paste()
+        //{
+        //    lock (lockobj)
+        //    {
+        //        Console.ReadKey();
+        //    }
+        //}
+
         public void DeleteToEnd()
         {
             lock (lockobj)
@@ -466,7 +474,7 @@ namespace Ntreev.Library.Commands
                 bufferWidth = value;
             }
         }
-        
+
         public static string NextCompletion(string[] completions, string text)
         {
             completions = completions.OrderBy(item => item)
@@ -692,7 +700,7 @@ namespace Ntreev.Library.Commands
             {
                 this.fullText = this.fullText.Insert(this.fullIndex, text);
                 this.fullIndex += text.Length;
-                
+
                 if (this.isHidden == true)
                     return;
 
@@ -836,7 +844,7 @@ namespace Ntreev.Library.Commands
         {
             while (true)
             {
-                var keys = this.ReadKeys();
+                var keys = this.ReadKeys().ToArray();
                 if (this.isCancellationRequested == true)
                     return null;
 
