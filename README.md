@@ -74,7 +74,7 @@ IsRequired 가 설정된 속성은 명령구문에서 스위치값을 생략할 수 있으며 그 외에 속�
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.Error.WriteLine(e);
                     Environment.Exit(2);
                 }
             }
