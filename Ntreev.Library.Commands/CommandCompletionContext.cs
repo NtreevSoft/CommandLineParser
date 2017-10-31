@@ -14,7 +14,7 @@ namespace Ntreev.Library.Commands
 
         public CommandCompletionContext(object command, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, string find)
         {
-            var parser = new ParseDescriptor(members, args);
+            var parser = new ParseDescriptor(typeof(CommandPropertyDescriptor), members, args);
             this.Command = command;
             this.MemberDescriptor = parser.UnparsedDescriptors.FirstOrDefault();
             this.Find = find;
@@ -29,10 +29,21 @@ namespace Ntreev.Library.Commands
             this.arguments = args.ToArray();
         }
 
-        public CommandCompletionContext(object command, CommandMethodDescriptor MethodDescriptor, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, string find)
-            : this(command, members, args, find)
+        public CommandCompletionContext(object command, CommandMethodDescriptor methodDescriptor, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, string find)
         {
-            this.MethodDescriptor = MethodDescriptor;
+            var parser = new ParseDescriptor(typeof(CommandParameterDescriptor), members, args);
+            this.Command = command;
+            this.MemberDescriptor = parser.UnparsedDescriptors.FirstOrDefault();
+            this.Find = find;
+            foreach (var item in parser.ParsedDescriptors)
+            {
+                this.properties.Add(item.Key.DescriptorName, item.Value);
+            }
+            if (this.MemberDescriptor == null)
+            {
+                this.MemberDescriptor = members.FirstOrDefault(item => item is CommandMemberArrayDescriptor);
+            }
+            this.arguments = args.ToArray();
         }
 
         public object Command

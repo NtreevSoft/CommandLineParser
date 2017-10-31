@@ -38,27 +38,33 @@ namespace Ntreev.Library.Commands
         private readonly List<CommandMemberDescriptor> unparsedDescriptors = new List<CommandMemberDescriptor>();
         private readonly List<string> unparsedArguments = new List<string>();
 
-        public ParseDescriptor(IEnumerable<CommandMemberDescriptor> members, string commandLine, bool isInitializable)
-            : this(members, CommandLineParser.SplitAll(commandLine), isInitializable)
+        /// <param name="type">
+        /// 스위치를 직접 명시하지 않아도 되는 타입
+        /// </param>
+        /// <param name="members"></param>
+        /// <param name="commandLine"></param>
+        /// <param name="isInitializable"></param>
+        public ParseDescriptor(Type type, IEnumerable<CommandMemberDescriptor> members, string commandLine, bool isInitializable)
+            : this(type, members, CommandLineParser.SplitAll(commandLine), isInitializable)
         {
 
 
         }
 
-        public ParseDescriptor(IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args)
-            : this(members, args, true)
+        public ParseDescriptor(Type type, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args)
+            : this(type, members, args, true)
         {
 
         }
 
-        public ParseDescriptor(IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, bool isInitializable)
+        public ParseDescriptor(Type type, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, bool isInitializable)
         {
-            this.unparsedDescriptors = new List<CommandMemberDescriptor>(members.Where(item => item.IsRequired));
+            this.unparsedDescriptors = new List<CommandMemberDescriptor>(members.Where(item => item.GetType() == type && item.IsRequired == true));
 
             var descriptors = new Dictionary<string, CommandMemberDescriptor>();
             foreach (var item in members)
             {
-                if (item.IsRequired == true || item is CommandMemberArrayDescriptor)
+                if ((item.GetType() == type && item.IsRequired == true) || item is CommandMemberArrayDescriptor)
                     continue;
                 if (item.NamePattern != string.Empty)
                     descriptors.Add(item.NamePattern, item);
@@ -66,8 +72,8 @@ namespace Ntreev.Library.Commands
                     descriptors.Add(item.ShortNamePattern, item);
             }
             var variableList = new List<string>();
-            var requirements = members.Where(item => item.IsRequired == true).ToList();
-            var options = members.Where(item => item.IsRequired == false && item is CommandMemberArrayDescriptor == false).ToList();
+            var requirements = members.Where(item => item.GetType() == type && item.IsRequired == true).ToList();
+            var options = members.Where(item => (item.IsRequired == false || item.GetType() != type) && item is CommandMemberArrayDescriptor == false).ToList();
             var variables = members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
 
             var arguments = new Queue<string>(args);
@@ -100,7 +106,6 @@ namespace Ntreev.Library.Commands
                         return;
                     }
                     options.Remove(descriptor);
-
                 }
                 else if (requirements.Any() == false)
                 {
