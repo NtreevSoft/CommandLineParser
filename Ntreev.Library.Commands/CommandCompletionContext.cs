@@ -33,6 +33,7 @@ namespace Ntreev.Library.Commands
         {
             var parser = new ParseDescriptor(typeof(CommandParameterDescriptor), members, args);
             this.Command = command;
+            this.MethodDescriptor = methodDescriptor;
             this.MemberDescriptor = parser.UnparsedDescriptors.FirstOrDefault();
             this.Find = find;
             foreach (var item in parser.ParsedDescriptors)
