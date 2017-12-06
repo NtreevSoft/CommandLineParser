@@ -273,10 +273,7 @@ namespace Ntreev.Library.Commands
 
         protected virtual void OnExecuted(EventArgs e)
         {
-            if (this.Executed != null)
-            {
-                this.Executed(this, e);
-            }
+            this.Executed?.Invoke(this, e);
         }
 
         private bool Execute(string[] args)
