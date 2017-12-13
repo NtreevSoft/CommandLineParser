@@ -10,6 +10,8 @@ namespace Ntreev.Library.Commands
 {
     public static class CommandSettings
     {
+        public const string SwitchPattern = "[a-zA-Z][_a-zA-Z0-9]*";
+        public const string ShortSwitchPattern = "[a-zA-Z]";
         private static string delimiter = "--";
         private static string shortDelimiter = "-";
         private static char itemSeparator = ';';
@@ -72,7 +74,7 @@ namespace Ntreev.Library.Commands
 
         internal static void ValidateIdentifier(string name)
         {
-            if (Regex.IsMatch(name, "^[_a-zA-Z][_a-zA-Z0-9]*") == false)
+            if (Regex.IsMatch(name, $"^{SwitchPattern}") == false)
                 throw new ArgumentException(string.Format("{0} is a invalid member name"));
         }
 

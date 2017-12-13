@@ -289,7 +289,6 @@ namespace Ntreev.Library.Commands
         {
             if (text.StartsWith("\"") == true && text.Length > 2 && text.EndsWith("\"") == true)
             {
-                //text = text.Replace("\"\"", "\"");
                 text = text.Substring(1);
                 text = text.Remove(text.Length - 1);
             }
@@ -308,7 +307,7 @@ namespace Ntreev.Library.Commands
         {
             if (argument == null)
                 return false;
-            return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}\\S+|^{CommandSettings.ShortDelimiter}\\S+");
+            return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}{CommandSettings.SwitchPattern}|^{CommandSettings.ShortDelimiter}{CommandSettings.ShortSwitchPattern}");
         }
 
         public TextWriter Out
@@ -355,8 +354,7 @@ namespace Ntreev.Library.Commands
 
         protected virtual bool IsMethodEnabled(CommandMethodDescriptor descriptor)
         {
-            var attr = descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) as BrowsableAttribute;
-            if (attr != null && attr.Browsable == false)
+            if (descriptor.Attributes.FirstOrDefault(item => item is BrowsableAttribute) is BrowsableAttribute attr && attr.Browsable == false)
                 return false;
             if (this.CommandContext != null)
                 return this.CommandContext.IsMethodEnabled(this.Instance as ICommand, descriptor);
