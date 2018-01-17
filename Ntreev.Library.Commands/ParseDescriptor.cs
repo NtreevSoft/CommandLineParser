@@ -36,7 +36,7 @@ namespace Ntreev.Library.Commands
     {
         private readonly Dictionary<CommandMemberDescriptor, object> parsedDescriptors = new Dictionary<CommandMemberDescriptor, object>();
         private readonly List<CommandMemberDescriptor> unparsedDescriptors = new List<CommandMemberDescriptor>();
-        private readonly List<string> unparsedArguments = new List<string>();
+        private readonly Dictionary<string, string> unparsedArguments = new Dictionary<string, string>();
 
         /// <param name="type">
         /// 스위치를 직접 명시하지 않아도 되는 타입
@@ -115,8 +115,11 @@ namespace Ntreev.Library.Commands
                     }
                     else
                     {
-                        this.unparsedArguments.Add(arg);
-                        return;
+                        var nextArg = arguments.FirstOrDefault();
+                        if (nextArg != null && CommandLineParser.IsSwitch(nextArg) == false)
+                            this.unparsedArguments.Add(arg, arguments.Dequeue());
+                        else
+                            this.unparsedArguments.Add(arg, null);
                     }
                 }
                 else
@@ -177,7 +180,35 @@ namespace Ntreev.Library.Commands
 
             if (this.unparsedArguments.Any())
             {
-                throw new ArgumentException($"처리되지 않은 인자가 포함되어 있습니다. : {this.unparsedArguments.First()}");
+                var items = new Dictionary<string, string>(this.unparsedArguments);
+                if (instance is IUnknownArgument parser)
+                {
+                    foreach (var item in this.unparsedArguments)
+                    {
+                        if (parser.Parse(item.Key, item.Value) == true)
+                        {
+                            items.Remove(item.Key);
+                        }
+                    }
+                }
+
+                if (items.Any() == true)
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine("처리되지 않은 인자가 포함되어 있습니다.");
+                    foreach (var item in items)
+                    {
+                        if (item.Value != null)
+                        {
+                            sb.AppendLine($"    {item.Key} {item.Value}");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"    {item.Key}");
+                        }
+                    }
+                    throw new ArgumentException(sb.ToString());
+                }
             }
 
             foreach (var item in this.parsedDescriptors)
@@ -198,7 +229,7 @@ namespace Ntreev.Library.Commands
 
         public string[] UnparsedArguments
         {
-            get { return this.unparsedArguments.ToArray(); }
+            get { return this.unparsedArguments.Keys.ToArray(); }
         }
     }
 }
