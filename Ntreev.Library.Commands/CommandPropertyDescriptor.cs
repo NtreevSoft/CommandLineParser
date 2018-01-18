@@ -14,7 +14,7 @@ namespace Ntreev.Library.Commands
         private readonly string summary;
         private readonly string description;
 
-        private readonly Dictionary<CommandPropertyDescriptor, object> dependencies = new Dictionary<CommandPropertyDescriptor, object>();
+        //private readonly Dictionary<CommandPropertyDescriptor, object> dependencies = new Dictionary<CommandPropertyDescriptor, object>();
 
         public CommandPropertyDescriptor(PropertyInfo propertyInfo)
             : base(propertyInfo.GetCommandPropertyAttribute(), propertyInfo.Name)

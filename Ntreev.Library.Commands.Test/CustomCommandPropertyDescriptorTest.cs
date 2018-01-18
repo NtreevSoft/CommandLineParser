@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +23,24 @@ namespace Ntreev.Library.Commands.Test
             parser.Parse("--list -c", CommandParsingTypes.OmitCommandName);
         }
 
+        public int Value
+        {
+            get; set;
+        }
 
-        
+        #region ICustomCommandPropertyDescriptor
+
+        PropertyInfo[] ICustomCommandPropertyDescriptor.Properties
+        {
+            get
+            {
+                return new PropertyInfo[]
+                {
+                    this.GetType().GetProperty(nameof(Value)),
+                };
+            }
+        }
+
+        #endregion
     }
 }
