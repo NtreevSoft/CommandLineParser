@@ -83,6 +83,7 @@
     <Compile Include="CommandMemberArrayDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandParameterTriggerAttribute.cs" />
+    <Compile Include="CommandCustomPropertyDescriptor.cs" />
     <Compile Include="CommandPropertyTriggerAttribute.cs" />
     <Compile Include="CommandProviderBase.cs" />
     <Compile Include="CommandMethodPropertyAttribute.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="CommandStaticMethodAttribute.cs" />
     <Compile Include="CommandMethodStaticPropertyAttribute.cs" />
     <Compile Include="CommandStaticPropertyAttribute.cs" />
+    <Compile Include="CommandStringUtility.cs" />
     <Compile Include="CommandTextWriter.cs" />
     <Compile Include="CommandParsingTypes.cs" />
     <Compile Include="ConsoleModeOnlyAttribute.cs" />

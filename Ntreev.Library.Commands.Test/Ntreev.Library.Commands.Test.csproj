@@ -49,8 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomCommandPropertyDescriptorTest.cs" />
+    <Compile Include="QuoteParseTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CommandPropertyArrayTest.cs" />
+    <Compile Include="UnknownArgumentsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

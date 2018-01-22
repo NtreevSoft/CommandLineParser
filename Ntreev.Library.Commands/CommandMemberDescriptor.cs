@@ -37,26 +37,33 @@ namespace Ntreev.Library.Commands
         private const string keyName = "key";
         private const string valueName = "value";
 
-        private readonly CommandPropertyAttribute attribute;
+        //private readonly CommandPropertyAttribute attribute;
         private readonly string descriptorName;
         private readonly string name;
         private readonly string shortName;
+        private readonly bool isRequired;
+        private readonly bool isImplicit;
+        private readonly bool isToggle;
 
         protected CommandMemberDescriptor(CommandPropertyAttribute attribute, string descriptorName)
         {
-            this.attribute = attribute;
-            this.descriptorName = descriptorName;
-            this.name = this.attribute.Name != string.Empty ? this.attribute.Name : descriptorName;
-            this.shortName = this.attribute.ShortNameInternal;
+            if (attribute == null)
+                throw new ArgumentNullException(nameof(attribute));
+            this.descriptorName = descriptorName ?? throw new ArgumentNullException(nameof(descriptorName));
+            this.name = attribute.Name != string.Empty ? attribute.Name : descriptorName;
+            this.shortName = attribute.ShortNameInternal;
             this.name = CommandSettings.NameGenerator(this.name);
-            if (this.attribute.ShortNameOnly == true)
+            if (attribute.ShortNameOnly == true)
             {
                 if (this.shortName == string.Empty)
                     throw new ArgumentException(Resources.ShortNameDoesNotExist);
                 this.name = string.Empty;
             }
+            this.isRequired = attribute.IsRequired;
+            this.isImplicit = attribute.IsImplicit;
+            this.isToggle = attribute.IsToggle;
         }
-                
+
         public string Name
         {
             get { return this.name; }
@@ -89,17 +96,17 @@ namespace Ntreev.Library.Commands
 
         public virtual bool IsRequired
         {
-            get { return this.attribute.IsRequired; }
+            get { return this.isRequired; }
         }
 
         public virtual bool IsImplicit
         {
-            get { return this.attribute.IsImplicit; }
+            get { return this.isImplicit; }
         }
 
         public virtual bool IsToggle
         {
-            get { return this.attribute.IsToggle; }
+            get { return this.isToggle; }
         }
 
         public abstract Type MemberType

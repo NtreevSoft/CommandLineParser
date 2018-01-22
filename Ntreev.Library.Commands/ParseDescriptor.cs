@@ -45,7 +45,7 @@ namespace Ntreev.Library.Commands
         /// <param name="commandLine"></param>
         /// <param name="isInitializable"></param>
         public ParseDescriptor(Type type, IEnumerable<CommandMemberDescriptor> members, string commandLine, bool isInitializable)
-            : this(type, members, CommandLineParser.SplitAll(commandLine), isInitializable)
+            : this(type, members, CommandStringUtility.SplitAll(commandLine), isInitializable)
         {
 
 
@@ -86,7 +86,7 @@ namespace Ntreev.Library.Commands
                 {
                     var descriptor = descriptors[arg];
                     var nextArg = arguments.FirstOrDefault();
-                    var isValue = CommandLineParser.IsSwitch(nextArg) == false;
+                    var isValue = CommandStringUtility.IsSwitch(nextArg) == false;
 
                     if (nextArg != null && isValue == true && descriptor.IsToggle == false)
                     {
@@ -116,7 +116,7 @@ namespace Ntreev.Library.Commands
                     else
                     {
                         var nextArg = arguments.FirstOrDefault();
-                        if (nextArg != null && CommandLineParser.IsSwitch(nextArg) == false)
+                        if (nextArg != null && CommandStringUtility.IsSwitch(nextArg) == false)
                             this.unparsedArguments.Add(arg, arguments.Dequeue());
                         else
                             this.unparsedArguments.Add(arg, null);

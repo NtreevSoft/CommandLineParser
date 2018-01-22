@@ -765,7 +765,7 @@ namespace Ntreev.Library.Commands
 
         private void CompletionImpl(Func<string[], string, string> func)
         {
-            var matches = new List<Match>(CommandLineParser.MatchCompletion(this.inputText));
+            var matches = new List<Match>(CommandStringUtility.MatchCompletion(this.inputText));
             var find = string.Empty;
             var prefix = false;
             var postfix = false;
@@ -795,7 +795,7 @@ namespace Ntreev.Library.Commands
             var argList = new List<string>();
             for (var i = 0; i < matches.Count; i++)
             {
-                var matchText = CommandLineParser.RemoveQuot(matches[i].Value).Trim();
+                var matchText = CommandStringUtility.TrimQuot(matches[i].Value).Trim();
                 if (matchText != string.Empty)
                     argList.Add(matchText);
             }

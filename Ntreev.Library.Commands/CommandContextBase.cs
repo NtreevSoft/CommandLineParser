@@ -74,7 +74,7 @@ namespace Ntreev.Library.Commands
 
         public void Execute(string commandLine)
         {
-            var segments = CommandLineParser.Split(commandLine);
+            var segments = CommandStringUtility.Split(commandLine);
 
             var name = segments[0];
             var arguments = segments[1];
@@ -88,7 +88,7 @@ namespace Ntreev.Library.Commands
             arguments = this.InitializeRedirection(arguments);
             try
             {
-                this.Execute(CommandLineParser.Split(arguments));
+                this.Execute(CommandStringUtility.Split(arguments));
             }
             finally
             {
@@ -322,7 +322,7 @@ namespace Ntreev.Library.Commands
 
         private string InitializeRedirection(string arguments)
         {
-            var args = CommandLineParser.SplitAll(arguments, false);
+            var args = CommandStringUtility.SplitAll(arguments, false);
             var argList = new List<string>(args.Length);
 
             for (var i = 0; i < args.Length; i++)
@@ -388,7 +388,7 @@ namespace Ntreev.Library.Commands
                 this.Out = new RedirectionTextWriter(this.BaseDirectory, this.Out.Encoding);
             }
 
-            (this.Out as RedirectionTextWriter).Add(CommandLineParser.RemoveQuot(filename), false);
+            (this.Out as RedirectionTextWriter).Add(CommandStringUtility.TrimQuot(filename), false);
         }
 
         #region classes

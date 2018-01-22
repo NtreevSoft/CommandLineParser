@@ -14,11 +14,25 @@ namespace Ntreev.Library.Commands.Test
             var parser = new CommandLineParser(settings);
             parser.Parse("--list -c", CommandParsingTypes.OmitCommandName);
 
-            parser.Parse("--list wer -c", CommandParsingTypes.OmitCommandName);
+            Assert.AreEqual("", settings.List);
+            Assert.AreEqual(true, settings.IsCancel);
+            Assert.AreEqual(5005, settings.Port);
         }
 
         [TestMethod]
         public void TestMethod2()
+        {
+            var settings = new Settings();
+            var parser = new CommandLineParser(settings);
+            parser.Parse("--list wer -c", CommandParsingTypes.OmitCommandName);
+
+            Assert.AreEqual("wer", settings.List);
+            Assert.AreEqual(true, settings.IsCancel);
+            Assert.AreEqual(5005, settings.Port);
+        }
+
+        [TestMethod]
+        public void TestMethod3()
         {
             var commands = new Commands();
             var parser = new CommandLineParser(commands);

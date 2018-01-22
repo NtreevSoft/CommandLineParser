@@ -37,7 +37,9 @@ namespace Ntreev.Library.Commands
 {
     public class CommandLineParser
     {
+        [Obsolete]
         private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+)";
+        [Obsolete]
         private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+|\\s+$)";
         private readonly string name;
         private readonly object instance;
@@ -73,7 +75,7 @@ namespace Ntreev.Library.Commands
                 commandLine = $"{this.Name} {commandLine}";
             }
 
-            var arguments = CommandLineParser.Split(commandLine);
+            var arguments = CommandStringUtility.Split(commandLine);
             var name = arguments[0];
 
             if (File.Exists(name) == true)
@@ -81,7 +83,7 @@ namespace Ntreev.Library.Commands
             if (this.name != name)
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
-            var items = CommandLineParser.Split(arguments[1]);
+            var items = CommandStringUtility.Split(arguments[1]);
 
             if (items[0] == this.HelpName)
             {
@@ -117,7 +119,7 @@ namespace Ntreev.Library.Commands
                 commandLine = $"{this.Name} {commandLine}";
             }
 
-            var arguments = CommandLineParser.Split(commandLine);
+            var arguments = CommandStringUtility.Split(commandLine);
             var name = arguments[0];
 
             if (File.Exists(name) == true)
@@ -125,7 +127,7 @@ namespace Ntreev.Library.Commands
             if (this.name != name)
                 throw new ArgumentException(string.Format(Resources.InvalidCommandName_Format, name));
 
-            var arguments1 = CommandLineParser.Split(arguments[1]);
+            var arguments1 = CommandStringUtility.Split(arguments[1]);
             var method = arguments1[0];
 
             if (string.IsNullOrEmpty(method) == true)
@@ -135,7 +137,7 @@ namespace Ntreev.Library.Commands
             }
             else if (method == this.HelpName)
             {
-                var items = CommandLineParser.Split(arguments1[1]);
+                var items = CommandStringUtility.Split(arguments1[1]);
                 if (arguments1[1] == string.Empty)
                     this.PrintMethodUsage();
                 else if (items[1] == string.Empty)
@@ -229,85 +231,46 @@ namespace Ntreev.Library.Commands
             this.MethodUsagePrinter.Print(this.Out, descriptor, visibleDescriptor);
         }
 
+        [Obsolete("use CommandStringUtility")]
         public static string[] Split(string text)
         {
-            var matches = Regex.Matches(text, pattern);
-            var match = Regex.Match(text, pattern);
-            var name = RemoveQuot(match.Value);
-            var arguments = text.Substring(match.Length).Trim();
-            return new string[] { name, arguments, };
+            return CommandStringUtility.Split(text);
         }
 
+        [Obsolete("use CommandStringUtility")]
         public static string[] SplitAll(string text)
         {
-            return SplitAll(text, true);
+            return CommandStringUtility.SplitAll(text);
         }
 
+        [Obsolete("use CommandStringUtility")]
         public static string[] SplitAll(string text, bool removeQuot)
         {
-            var matches = Regex.Matches(text, pattern);
-            var argList = new List<string>();
-
-            foreach (Match item in matches)
-            {
-                if (removeQuot == true)
-                    argList.Add(RemoveQuot(item.Value));
-                else
-                    argList.Add(item.Value);
-            }
-
-            return argList.ToArray();
+            return CommandStringUtility.SplitAll(text, removeQuot);
         }
 
+        [Obsolete("use CommandStringUtility")]
         public static Match[] MatchAll(string text)
         {
-            var matches = Regex.Matches(text, pattern);
-            var argList = new List<Match>();
-
-            foreach (Match item in matches)
-            {
-                argList.Add(item);
-            }
-
-            return argList.ToArray();
+            return CommandStringUtility.MatchAll(text);
         }
 
+        [Obsolete("use CommandStringUtility")]
         public static Match[] MatchCompletion(string text)
         {
-            var matches = Regex.Matches(text, completionPattern);
-            var argList = new List<Match>();
-
-            foreach (Match item in matches)
-            {
-                argList.Add(item);
-            }
-
-            return argList.ToArray();
+            return CommandStringUtility.MatchCompletion(text);
         }
 
+        [Obsolete("use CommandStringUtility")]
         public static string RemoveQuot(string text)
         {
-            if (text.StartsWith("\"") == true && text.Length > 2 && text.EndsWith("\"") == true)
-            {
-                text = text.Substring(1);
-                text = text.Remove(text.Length - 1);
-            }
-            else if (text == "\"\"")
-            {
-                text = string.Empty;
-            }
-            else
-            {
-                text = text.Replace("\"\"", "\"");
-            }
-            return text;
+            return CommandStringUtility.TrimQuot(text);
         }
 
+        [Obsolete("use CommandStringUtility")]
         public static bool IsSwitch(string argument)
         {
-            if (argument == null)
-                return false;
-            return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}{CommandSettings.SwitchPattern}|^{CommandSettings.ShortDelimiter}{CommandSettings.ShortSwitchPattern}");
+            return CommandStringUtility.IsSwitch(argument);
         }
 
         public TextWriter Out
