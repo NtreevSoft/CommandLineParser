@@ -144,5 +144,40 @@ namespace Ntreev.Library.Commands
                 return false;
             return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}{CommandSettings.SwitchPattern}|^{CommandSettings.ShortDelimiter}{CommandSettings.ShortSwitchPattern}");
         }
+
+        public static IDictionary<string, object> ArgumentsToDictionary(string[] arguments)
+        {
+            if (arguments == null)
+                throw new ArgumentNullException(nameof(arguments));
+
+            var properties = new Dictionary<string, object>(arguments.Length);
+            foreach (var item in arguments)
+            {
+                if (CommandStringUtility.TryGetKeyValue(item, out var key, out var value) == true)
+                {
+                    if (CommandStringUtility.IsWrappedOfQuote(value))
+                    {
+                        properties.Add(key, CommandStringUtility.TrimQuot(value));
+                    }
+                    else if (decimal.TryParse(value, out decimal l) == true)
+                    {
+                        properties.Add(key, l);
+                    }
+                    else if (bool.TryParse(value, out bool b) == true)
+                    {
+                        properties.Add(key, b);
+                    }
+                    else
+                    {
+                        properties.Add(key, value);
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid argument: '{item}'");
+                }
+            }
+            return properties;
+        }
     }
 }

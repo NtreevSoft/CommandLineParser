@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace Ntreev.Library.Commands.Test
 {
     [TestClass]
-    public class QuoteParseTest
+    public class QuotParseTest
     {
         [TestMethod]
-        public void SingleQuoteTest()
+        public void SingleQuotTest()
         {
             var parser = new CommandLineParser(this);
             var text1 = "abc test 123";
@@ -23,7 +23,7 @@ namespace Ntreev.Library.Commands.Test
         }
 
         [TestMethod]
-        public void SingleQuoteInSingleQuoteTest()
+        public void SingleQuotInSingleQuotTest()
         {
             var parser = new CommandLineParser(this);
             var text1 = "abc 'test' 123";
@@ -36,7 +36,7 @@ namespace Ntreev.Library.Commands.Test
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void SingleQuoteInSingleQuoteTest_Fail()
+        public void SingleQuotInSingleQuotTest_Fail()
         {
             var parser = new CommandLineParser(this);
             var text1 = "abc 'test' 123";
@@ -48,7 +48,7 @@ namespace Ntreev.Library.Commands.Test
         }
 
         [TestMethod]
-        public void DoubleQuotesTest()
+        public void DoubleQuotTest()
         {
             var parser = new CommandLineParser(this);
             var text1 = "abc test 123";
@@ -60,7 +60,7 @@ namespace Ntreev.Library.Commands.Test
         }
 
         [TestMethod]
-        public void DoubleQuotesInDoubleQuotesTest()
+        public void DoubleQuotInDoubleQuotTest()
         {
             var parser = new CommandLineParser(this);
             var text1 = "abc \"test\" 123";

@@ -31,46 +31,8 @@ using System.Text.RegularExpressions;
 
 namespace Ntreev.Library.Commands
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class CommandPropertyTriggerAttribute : Attribute
+    public interface ICommandTriggerDescriptor
     {
-        private Type type;
-        private string typeName;
-        private string propertyName;
-        private object value;
-
-        public CommandPropertyTriggerAttribute(string propertyName, object value)
-        {
-            //this.Validate(type, propertyName);
-            //this.type = type;
-            this.propertyName = propertyName;
-            this.value = value;
-        }
-
-        public CommandPropertyTriggerAttribute(Type type, string propertyName, object value)
-        {
-            this.Validate(type, propertyName);
-            this.type = type;
-            this.propertyName = propertyName;
-            this.value = value;
-        }
-
-        public int Group
-        {
-            get; set;
-        }
-
-        private void Validate(Type type, string propertyName)
-        {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-            if (propertyName == null)
-                throw new ArgumentNullException(nameof(propertyName));
-            var prop = type.GetProperty(propertyName);
-            if (prop == null)
-                throw new ArgumentException(propertyName);
-            if (prop.GetCustomAttribute<CommandPropertyAttribute>() == null)
-                throw new ArgumentException(propertyName);
-        }
+        bool Verify();
     }
 }

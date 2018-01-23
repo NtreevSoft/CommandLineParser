@@ -84,6 +84,8 @@
     <Compile Include="CommandMethodAttribute.cs" />
     <Compile Include="CommandParameterTriggerAttribute.cs" />
     <Compile Include="CommandCustomPropertyDescriptor.cs" />
+    <Compile Include="CommandPropertyTriggerDescriptor.cs" />
+    <Compile Include="ICommandTriggerDescriptor.cs" />
     <Compile Include="CommandPropertyTriggerAttribute.cs" />
     <Compile Include="CommandProviderBase.cs" />
     <Compile Include="CommandMethodPropertyAttribute.cs" />
