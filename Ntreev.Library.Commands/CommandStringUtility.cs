@@ -12,14 +12,16 @@ namespace Ntreev.Library.Commands
         private const string doubleQuotesPattern = "(?<![\\\\])[\"](?:.(?!(?<![\\\\])(?:(?<![\\\\])[\"])))*.?(?<![\\\\])[\"]";
         private const string singleQuotePattern = "(?<![\\\\])['](?:.(?!(?<![\\\\])(?:(?<![\\\\])['])))*.?(?<![\\\\])[']";
         private const string textPattern = "\\S+";
-        private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+)";
-        private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+|\\s+$)";
+        //private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+)";
+        //private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+|\\s+$)";
 
         private readonly static string fullPattern;
+        private readonly static string completionPattern;
 
         static CommandStringUtility()
         {
             fullPattern = string.Format("({0}|{1}|{2}={0}|{2}={1}|{2}={2}|{2})", doubleQuotesPattern, singleQuotePattern, textPattern);
+            completionPattern = string.Format("({0}|{1}|{2}|\\s+$)", doubleQuotesPattern, singleQuotePattern, textPattern);
         }
 
         public static string[] Split(string text)
@@ -75,7 +77,7 @@ namespace Ntreev.Library.Commands
 
         public static Match[] MatchAll(string text)
         {
-            var matches = Regex.Matches(text, pattern);
+            var matches = Regex.Matches(text, fullPattern);
             var argList = new List<Match>();
 
             foreach (Match item in matches)

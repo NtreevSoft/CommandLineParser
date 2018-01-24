@@ -37,10 +37,6 @@ namespace Ntreev.Library.Commands
 {
     public class CommandLineParser
     {
-        [Obsolete]
-        private const string pattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+)";
-        [Obsolete]
-        private const string completionPattern = "((?<!\")\"(?:\"(?=\")|(?<=\")\"|[^\"])+\"*(?=\\s*)|\\S+|\\s+$)";
         private readonly string name;
         private readonly object instance;
         private Version version;

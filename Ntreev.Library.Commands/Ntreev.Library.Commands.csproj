@@ -82,11 +82,6 @@
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandMemberArrayDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
-    <Compile Include="CommandParameterTriggerAttribute.cs" />
-    <Compile Include="CommandCustomPropertyDescriptor.cs" />
-    <Compile Include="CommandPropertyTriggerDescriptor.cs" />
-    <Compile Include="ICommandTriggerDescriptor.cs" />
-    <Compile Include="CommandPropertyTriggerAttribute.cs" />
     <Compile Include="CommandProviderBase.cs" />
     <Compile Include="CommandMethodPropertyAttribute.cs" />
     <Compile Include="CommandParameterArrayDescriptor.cs" />
@@ -102,10 +97,10 @@
     <Compile Include="CommandParsingTypes.cs" />
     <Compile Include="ConsoleModeOnlyAttribute.cs" />
     <Compile Include="ExternalCommandMethodDescriptor.cs" />
-    <Compile Include="IUnknownArgument.cs" />
     <Compile Include="ICommandLineParsedNotification.cs" />
     <Compile Include="ICommandProvider.cs" />
     <Compile Include="IExecutable.cs" />
+    <Compile Include="IUnknownArgument.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
