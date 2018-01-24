@@ -16,17 +16,25 @@ namespace Ntreev.Library.Commands.Test
             var parser = new CommandLineParser(this);
             parser.Parse("get database=a port=123 userid=abc password=1234 comment=\"connect database to \\\"a\\\"\"", CommandParsingTypes.OmitCommandName);
 
-            foreach (var item in this.Arguments)
-            {
-                if (CommandStringUtility.TryGetKeyValue(item, out var key, out var value) == true)
-                {
+            CommandStringUtility.ArgumentsToDictionary(this.Arguments);
+        }
 
-                }
-                else
-                {
-                    throw new Exception();
-                }
-            }
+        [TestMethod]
+        public void Test2()
+        {
+            var parser = new CommandLineParser(this);
+            parser.Parse("get \"database=a b c\"", CommandParsingTypes.OmitCommandName);
+
+            CommandStringUtility.ArgumentsToDictionary(this.Arguments);
+        }
+
+        [TestMethod]
+        public void Test3()
+        {
+            var parser = new CommandLineParser(this);
+            parser.Parse("get \"database=\\\"a b c\\\"\"", CommandParsingTypes.OmitCommandName);
+
+            CommandStringUtility.ArgumentsToDictionary(this.Arguments);
         }
 
         [TestMethod]

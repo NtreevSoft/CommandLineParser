@@ -90,7 +90,8 @@ namespace Ntreev.Library.Commands
 
                     if (nextArg != null && isValue == true && descriptor.IsToggle == false)
                     {
-                        this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, arguments.Dequeue()));
+                        var textValue = Regex.Unescape(arguments.Dequeue());
+                        this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, textValue));
                     }
                     else if (descriptor.MemberType == typeof(bool))
                     {

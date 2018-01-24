@@ -1,5 +1,8 @@
 ﻿using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -62,7 +65,7 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public static bool TryGetKeyValue(string text, out string key, out string value)
         {
-            var capturePattern = string.Format("((?<key>{2})=(?<value>{0})|(?<key>{2})=(?<value>{1})|(?<key>{2})=(?<value>{2}))", doubleQuotesPattern, singleQuotePattern, textPattern);
+            var capturePattern = string.Format("((?<key>{2})=(?<value>{0})|(?<key>{2})=(?<value>{1})|(?<key>{2})=(?<value>.+))", doubleQuotesPattern, singleQuotePattern, textPattern);
             var match = Regex.Match(text, capturePattern, RegexOptions.ExplicitCapture);
             if (match.Success)
             {
@@ -147,6 +150,18 @@ namespace Ntreev.Library.Commands
             return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}{CommandSettings.SwitchPattern}|^{CommandSettings.ShortDelimiter}{CommandSettings.ShortSwitchPattern}");
         }
 
+        private static string ToLiteral(string input)
+        {
+            using (var writer = new StringWriter())
+            {
+                using (var provider = CodeDomProvider.CreateProvider("CSharp"))
+                {
+                    provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
+                    return writer.ToString();
+                }
+            }
+        }
+
         public static IDictionary<string, object> ArgumentsToDictionary(string[] arguments)
         {
             if (arguments == null)
@@ -155,7 +170,10 @@ namespace Ntreev.Library.Commands
             var properties = new Dictionary<string, object>(arguments.Length);
             foreach (var item in arguments)
             {
-                if (CommandStringUtility.TryGetKeyValue(item, out var key, out var value) == true)
+                var text = IsWrappedOfQuote(item) ? TrimQuot(item) : item;
+                text = Regex.Unescape(text);
+
+                if (CommandStringUtility.TryGetKeyValue(text, out var key, out var value) == true)
                 {
                     if (CommandStringUtility.IsWrappedOfQuote(value))
                     {

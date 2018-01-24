@@ -34,6 +34,18 @@ namespace Ntreev.Library.Commands.Test
         [TestMethod]
         public void TestMethod3()
         {
+            var settings = new Settings();
+            var parser = new CommandLineParser(settings);
+            parser.Parse("--list \"a \\\"b\\\" c\" -c", CommandParsingTypes.OmitCommandName);
+
+            Assert.AreEqual("a \"b\" c", settings.List);
+            Assert.AreEqual(true, settings.IsCancel);
+            Assert.AreEqual(5005, settings.Port);
+        }
+
+        [TestMethod]
+        public void TestMethod4()
+        {
             var commands = new Commands();
             var parser = new CommandLineParser(commands);
             parser.Invoke("test a -m wow", CommandParsingTypes.OmitCommandName);
