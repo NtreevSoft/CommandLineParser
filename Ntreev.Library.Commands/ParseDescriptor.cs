@@ -90,7 +90,9 @@ namespace Ntreev.Library.Commands
 
                     if (nextArg != null && isValue == true && descriptor.IsToggle == false)
                     {
-                        var textValue = Regex.Unescape(arguments.Dequeue());
+                        var textValue = arguments.Dequeue();
+                        if (CommandStringUtility.IsWrappedOfQuote(textValue) == true)
+                            textValue = Regex.Unescape(textValue);
                         this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, textValue));
                     }
                     else if (descriptor.MemberType == typeof(bool))

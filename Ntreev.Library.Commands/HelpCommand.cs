@@ -66,7 +66,7 @@ namespace Ntreev.Library.Commands
                 else
                 {
                     var command = this.commandContext.Commands[this.CommandName];
-                    if (command == null || this.commandContext.IsCommandEnabled(command) == false)
+                    if (command == null || this.commandContext.IsCommandEnabled(command) == false || this.IsCommandUsageBrowsable(command) == false)
                         throw new CommandNotFoundException(this.CommandName);
 
                     var parser = this.commandContext.Parsers[command];
@@ -105,6 +105,8 @@ namespace Ntreev.Library.Commands
             {
                 if (this.commandContext.IsCommandEnabled(item) == false)
                     continue;
+                if (this.IsCommandUsageBrowsable(item) == false)
+                    continue;
                 var summary = CommandDescriptor.GetUsageDescriptionProvider(item.GetType()).GetSummary(item);
 
                 writer.WriteLine(item.Name);
@@ -140,6 +142,14 @@ namespace Ntreev.Library.Commands
                         orderby item.Name
                         select item.Name;
             return query.ToArray();
+        }
+
+        private bool IsCommandUsageBrowsable(ICommand command)
+        {
+            var attr = command.GetType().GetCustomAttribute<UsageBrowsableAttribute>();
+            if (attr == null)
+                return true;
+            return attr.IsBrowsable;
         }
     }
 }
