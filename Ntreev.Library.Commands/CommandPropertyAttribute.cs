@@ -101,9 +101,10 @@ namespace Ntreev.Library.Commands
         }
 
         /// <summary>
-        /// 일반 형태와 같이 스위치값과 인자값이 필요하지만 때에 따라서 인자값을 생략할 수 있습니다. 
-        /// 인자값이 생략되면 기본값으로 설정됩니다.
-        /// 기본값이 없다면 타입의 초기값으로 설정됩니다.
+        /// 일반적인 형태는 --name value와 같이 스위치와 값의 형식이 필요하지만 때로는 value를 생략할 경우가 필요합니다.
+        /// 이럴때는 IsImplicit 값을 true로 설정하여 스위치만으로도 동작을 할 수 있게 합니다.
+        /// 명령구문에 해당 스위치가 정의된 경우 DefaultValueAttribute의 값으로 설정되며 이 특성이 선언되어 있지 않은 경우에는
+        /// 타입의 초기값으로 설정됩니다.
         /// </summary>
         public virtual bool IsImplicit
         {
@@ -123,19 +124,19 @@ namespace Ntreev.Library.Commands
         /// 토글 형태의 속성을 나타냅니다. 토글로 설정되면 인자값은 필요없이 스위치값만 요구합니다. 스위치가 설정되면 스위치의 기본값으로 설정합니다.
         /// 따라서 토글 형태의 속성은 항상 기본값이 존재해야 합니다. bool 형태의 속성은 기본값이 자동으로 true로 설정됩니다.
         /// </summary>
-        public virtual bool IsToggle
-        {
-            get { return this.type.HasFlag(CommandPropertyTypes.IsToggle); }
-            set
-            {
-                if (this.type != CommandPropertyTypes.None && value == true)
-                    throw new ArgumentException();
-                if (value == true)
-                    this.type = CommandPropertyTypes.IsToggle;
-                else
-                    this.type = CommandPropertyTypes.None;
-            }
-        }
+        //public virtual bool IsToggle
+        //{
+        //    get { return this.type.HasFlag(CommandPropertyTypes.IsToggle); }
+        //    set
+        //    {
+        //        if (this.type != CommandPropertyTypes.None && value == true)
+        //            throw new ArgumentException();
+        //        if (value == true)
+        //            this.type = CommandPropertyTypes.IsToggle;
+        //        else
+        //            this.type = CommandPropertyTypes.None;
+        //    }
+        //}
 
         internal bool ShortNameOnly
         {

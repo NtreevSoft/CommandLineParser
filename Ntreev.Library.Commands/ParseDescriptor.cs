@@ -88,20 +88,31 @@ namespace Ntreev.Library.Commands
                     var nextArg = arguments.FirstOrDefault();
                     var isValue = CommandStringUtility.IsSwitch(nextArg) == false;
 
-                    if (nextArg != null && isValue == true && descriptor.IsToggle == false)
+                    if (nextArg != null && isValue == true)
                     {
                         var textValue = arguments.Dequeue();
                         if (CommandStringUtility.IsWrappedOfQuote(textValue) == true)
                             textValue = Regex.Unescape(textValue);
                         this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, textValue));
                     }
-                    else if (descriptor.MemberType == typeof(bool))
-                    {
-                        this.parsedDescriptors.Add(descriptor, true);
-                    }
+                    //else if (descriptor.MemberType == typeof(bool))
+                    //{
+                    //    this.parsedDescriptors.Add(descriptor, true);
+                    //}
                     else if (descriptor.DefaultValue != DBNull.Value)
                     {
                         this.parsedDescriptors.Add(descriptor, descriptor.DefaultValue);
+                    }
+                    else if (descriptor.IsImplicit == true)
+                    {
+                        if (descriptor.MemberType.IsValueType)
+                        {
+                            this.parsedDescriptors.Add(descriptor, Activator.CreateInstance(descriptor.MemberType));
+                        }
+                        else
+                        {
+                            this.parsedDescriptors.Add(descriptor, null);
+                        }
                     }
                     else
                     {
@@ -146,7 +157,7 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in options.ToArray())
             {
-                if (isInitializable == false)
+                if (isInitializable == false || item.IsImplicit == true)
                     continue;
 
                 if (item.DefaultValue != DBNull.Value)

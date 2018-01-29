@@ -43,7 +43,7 @@ namespace Ntreev.Library.Commands
         private readonly string shortName;
         private readonly bool isRequired;
         private readonly bool isImplicit;
-        private readonly bool isToggle;
+        //private readonly bool isToggle;
 
         protected CommandMemberDescriptor(CommandPropertyAttribute attribute, string descriptorName)
         {
@@ -61,7 +61,7 @@ namespace Ntreev.Library.Commands
             }
             this.isRequired = attribute.IsRequired;
             this.isImplicit = attribute.IsImplicit;
-            this.isToggle = attribute.IsToggle;
+            //this.isToggle = attribute.IsToggle;
         }
 
         public string Name
@@ -104,10 +104,11 @@ namespace Ntreev.Library.Commands
             get { return this.isImplicit; }
         }
 
-        public virtual bool IsToggle
-        {
-            get { return this.isToggle; }
-        }
+        //[Obsolete]
+        //public virtual bool IsToggle
+        //{
+        //    get { return this.isToggle; }
+        //}
 
         public abstract Type MemberType
         {

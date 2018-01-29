@@ -47,18 +47,33 @@ namespace Ntreev.Library.Commands
 
         public override object DefaultValue
         {
-            get { return this.propertyInfo.GetDefaultValue(); }
+            get
+            {
+                if (this.IsRequired == false && this.MemberType == typeof(bool))
+                    return true;
+                return this.propertyInfo.GetDefaultValue();
+            }
         }
 
-        public override bool IsToggle
+        public override bool IsImplicit
         {
             get
             {
                 if (this.IsRequired == false && this.MemberType == typeof(bool))
                     return true;
-                return base.IsToggle;
+                return base.IsImplicit;
             }
         }
+
+        //public override bool IsToggle
+        //{
+        //    get
+        //    {
+        //        if (this.IsRequired == false && this.MemberType == typeof(bool))
+        //            return true;
+        //        return base.IsToggle;
+        //    }
+        //}
 
         public override IEnumerable<Attribute> Attributes
         {
