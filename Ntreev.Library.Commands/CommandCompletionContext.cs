@@ -31,7 +31,7 @@ namespace Ntreev.Library.Commands
 
         public CommandCompletionContext(object command, CommandMethodDescriptor methodDescriptor, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, string find)
         {
-            var parser = new ParseDescriptor(typeof(CommandParameterDescriptor), members, args);
+            var parser = new ParseDescriptor(typeof(CommandParameterDescriptor), members, args, false);
             this.Command = command;
             this.MethodDescriptor = methodDescriptor;
             this.MemberDescriptor = parser.UnparsedDescriptors.FirstOrDefault();

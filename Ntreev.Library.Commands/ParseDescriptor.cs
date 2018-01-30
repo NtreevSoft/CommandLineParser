@@ -147,7 +147,7 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in requirements.ToArray())
             {
-                if (item.DefaultValue != DBNull.Value)
+                if (isInitializable == true && item.DefaultValue != DBNull.Value)
                 {
                     this.parsedDescriptors.Add(item, item.DefaultValue);
                     this.unparsedDescriptors.Remove(item);

@@ -52,9 +52,11 @@ namespace Ntreev.Library.Commands
 
         public CommandPropertyAttribute(string name, char shortName)
         {
-            this.name = name;
+            if (name != null && name.Length <= 1)
+                throw new ArgumentException("name length must be greater than 1", nameof(name));
             if (shortName != char.MinValue && Regex.IsMatch(shortName.ToString(), "[a-z]", RegexOptions.IgnoreCase) == false)
                 throw new ArgumentException("shortName must be a alphabet character");
+            this.name = name;
             this.shortName = shortName;
         }
 

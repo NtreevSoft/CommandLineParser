@@ -170,7 +170,7 @@ namespace Ntreev.Library.Commands
             foreach (var item in segments)
             {
                 if (names.ContainsKey(item) == false)
-                    throw new InvalidOperationException("    ");
+                    throw new InvalidOperationException(string.Format("'{0}' is invalid value", arg));
 
                 nameList.Add(names[item]);
             }
