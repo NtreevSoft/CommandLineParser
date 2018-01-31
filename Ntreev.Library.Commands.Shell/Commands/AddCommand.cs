@@ -29,31 +29,31 @@ namespace Ntreev.Library.Commands.Shell.Commands
             get; set;
         }
 
-        [CommandProperty('n')]
+        [CommandProperty('n', true)]
         public bool DryRun
         {
             get; set;
         }
 
-        [CommandProperty('v')]
+        [CommandProperty('v', true)]
         public bool Verbose
         {
             get; set;
         }
 
-        [CommandProperty('f')]
+        [CommandProperty('f', true)]
         public bool Force
         {
             get; set;
         }
 
-        [CommandProperty('i')]
+        [CommandProperty('i', true)]
         public bool Interactive
         {
             get; set;
         }
 
-        [CommandProperty('P')]
+        [CommandProperty('P', true)]
         public bool Patch
         {
             get;set;

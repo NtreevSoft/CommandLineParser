@@ -53,7 +53,7 @@ namespace Ntreev.Library.Commands.Test
 
         class Settings
         {
-            [CommandProperty(IsImplicit = true)]
+            [CommandProperty(IsExplicit = true)]
             [DefaultValue("")]
             public string List { get; set; }
 

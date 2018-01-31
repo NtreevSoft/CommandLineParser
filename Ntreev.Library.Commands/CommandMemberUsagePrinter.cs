@@ -234,7 +234,17 @@ namespace Ntreev.Library.Commands
 
         private void PrintRequirement(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
-            writer.WriteLine(descriptor.Name);
+            if (descriptor.IsExplicit == true)
+            {
+                writer.WriteLine(descriptor.DisplayPattern);
+            }
+            else
+            {
+                if (descriptor.Name != string.Empty)
+                    writer.WriteLine(descriptor.Name);
+                else
+                    writer.WriteLine(CommandSettings.NameGenerator(descriptor.DescriptorName));
+            }
 
             var description = descriptor.Summary != string.Empty ? descriptor.Summary : descriptor.Description;
             if (description != string.Empty)
@@ -277,10 +287,25 @@ namespace Ntreev.Library.Commands
         {
             if (descriptor.IsRequired == true)
             {
-                var text = descriptor.Name;
+                var descriptorName = descriptor.Name;
+                if (descriptorName == string.Empty)
+                    descriptorName = CommandSettings.NameGenerator(descriptor.DescriptorName);
+                var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
+                var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
                 if (descriptor.DefaultValue == DBNull.Value)
-                    return string.Format("<{0}>", text);
-                return string.Format("<{0}='{1}'>", text, descriptor.DefaultValue ?? "null");
+                {
+                    if (descriptor.IsExplicit == true)
+                        return string.Format("<{0} {1}>", patternText, descriptorName);
+                    else
+                        return string.Format("<{0}>", descriptorName);
+                }
+                else
+                {
+                    if (descriptor.IsExplicit == true)
+                        return string.Format("<{0} {1}='{2}'>", patternText, descriptorName, descriptor.DefaultValue ?? "null");
+                    else
+                        return string.Format("<{0}='{1}'>", descriptorName, descriptor.DefaultValue ?? "null");
+                }
             }
             else if (descriptor is CommandMemberArrayDescriptor)
             {

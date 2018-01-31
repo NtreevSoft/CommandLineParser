@@ -47,7 +47,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public override bool IsImplicit
+        public override bool IsExplicit
         {
             get { return false; }
             set

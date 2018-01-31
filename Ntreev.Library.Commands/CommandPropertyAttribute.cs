@@ -36,8 +36,9 @@ namespace Ntreev.Library.Commands
     {
         private string name;
         private char shortName;
-        private bool shortNameOnly;
-        private CommandPropertyTypes type;
+        private bool useName;
+        private bool isRequired;
+        private bool isExplicit;
 
         public CommandPropertyAttribute()
         {
@@ -52,7 +53,9 @@ namespace Ntreev.Library.Commands
 
         public CommandPropertyAttribute(string name, char shortName)
         {
-            if (name != null && name.Length <= 1)
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+            if (name.Length <= 1)
                 throw new ArgumentException("name length must be greater than 1", nameof(name));
             if (shortName != char.MinValue && Regex.IsMatch(shortName.ToString(), "[a-z]", RegexOptions.IgnoreCase) == false)
                 throw new ArgumentException("shortName must be a alphabet character");
@@ -61,15 +64,18 @@ namespace Ntreev.Library.Commands
         }
 
         public CommandPropertyAttribute(char shortName)
-            : this(null, shortName)
+            : this(shortName, false)
         {
 
         }
 
-        public CommandPropertyAttribute(char shortName, bool shortNameOnly)
+        public CommandPropertyAttribute(char shortName, bool useName)
             : this(null, shortName)
         {
-            this.shortNameOnly = shortNameOnly;
+            if (shortName != char.MinValue && Regex.IsMatch(shortName.ToString(), "[a-z]", RegexOptions.IgnoreCase) == false)
+                throw new ArgumentException("shortName must be a alphabet character");
+            this.shortName = shortName;
+            this.useName = useName;
         }
 
         public string Name
@@ -90,16 +96,8 @@ namespace Ntreev.Library.Commands
         /// </summary>
         public virtual bool IsRequired
         {
-            get { return this.type.HasFlag(CommandPropertyTypes.IsRequired); }
-            set
-            {
-                if (this.type != CommandPropertyTypes.None && value == true)
-                    throw new ArgumentException();
-                if (value == true)
-                    this.type = CommandPropertyTypes.IsRequired;
-                else
-                    this.type = CommandPropertyTypes.None;
-            }
+            get { return this.isRequired; }
+            set { this.isRequired = value; }
         }
 
         /// <summary>
@@ -108,18 +106,10 @@ namespace Ntreev.Library.Commands
         /// 명령구문에 해당 스위치가 정의된 경우 DefaultValueAttribute의 값으로 설정되며 이 특성이 선언되어 있지 않은 경우에는
         /// 타입의 초기값으로 설정됩니다.
         /// </summary>
-        public virtual bool IsImplicit
+        public virtual bool IsExplicit
         {
-            get { return this.type.HasFlag(CommandPropertyTypes.IsImplicit); }
-            set
-            {
-                if (this.type != CommandPropertyTypes.None && value == true)
-                    throw new ArgumentException();
-                if (value == true)
-                    this.type = CommandPropertyTypes.IsImplicit;
-                else
-                    this.type = CommandPropertyTypes.None;
-            }
+            get { return this.isExplicit; }
+            set { this.isExplicit = value; }
         }
 
         /// <summary>
@@ -140,17 +130,34 @@ namespace Ntreev.Library.Commands
         //    }
         //}
 
-        internal bool ShortNameOnly
+        protected virtual void Validate(object target)
         {
-            get
-            {
-                if (this.shortNameOnly == true)
-                    return true;
-                return this.name == null && this.shortName != char.MinValue;
-            }
+
         }
 
-        internal string ShortNameInternal
+        internal void InvokeValidate(object target)
+        {
+            this.Validate(target);
+        }
+
+        internal bool UseName
+        {
+            get { return this.useName; }
+        }
+
+
+        internal string GetName(string descriptorName)
+        {
+            if (this.name == null)
+            {
+                if (this.useName == true)
+                    return CommandSettings.NameGenerator(descriptorName);
+                return string.Empty;
+            }
+            return CommandSettings.NameGenerator(this.name);
+        }
+
+        internal string InternalShortName
         {
             get { return this.shortName == char.MinValue ? string.Empty : this.shortName.ToString(); }
         }

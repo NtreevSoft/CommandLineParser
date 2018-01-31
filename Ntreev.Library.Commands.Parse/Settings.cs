@@ -38,14 +38,14 @@ namespace Ntreev.Library.Commands.Parse
             get; set;
         }
 
-        [CommandProperty('c', true)]
+        [CommandProperty('c')]
         [Description("use cache")]
         public bool UseCache
         {
             get; set;
         }
 
-        [CommandProperty("cache-size", IsImplicit = true)]
+        [CommandProperty("cache-size", IsExplicit = true)]
         [Description("cache size. default is 1024")]
         [DefaultValue("1024")]
         public int CacheSize

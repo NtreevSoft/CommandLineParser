@@ -49,7 +49,7 @@ namespace Ntreev.Library.Commands.Shell.Commands
             get; set;
         }
 
-        [CommandProperty('k')]
+        [CommandProperty('k', true)]
         public bool KeepIndex
         {
             get; set;
@@ -61,13 +61,13 @@ namespace Ntreev.Library.Commands.Shell.Commands
             get; set;
         }
 
-        [CommandProperty('a')]
+        [CommandProperty('a', true)]
         public bool All
         {
             get; set;
         }
 
-        [CommandProperty('q')]
+        [CommandProperty('q', true)]
         public bool Quit
         {
             get; set;

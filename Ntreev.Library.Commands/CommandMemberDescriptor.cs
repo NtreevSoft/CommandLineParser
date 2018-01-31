@@ -37,31 +37,21 @@ namespace Ntreev.Library.Commands
         private const string keyName = "key";
         private const string valueName = "value";
 
-        //private readonly CommandPropertyAttribute attribute;
         private readonly string descriptorName;
         private readonly string name;
         private readonly string shortName;
         private readonly bool isRequired;
-        private readonly bool isImplicit;
-        //private readonly bool isToggle;
+        private readonly bool isExplicit;
 
         protected CommandMemberDescriptor(CommandPropertyAttribute attribute, string descriptorName)
         {
             if (attribute == null)
                 throw new ArgumentNullException(nameof(attribute));
             this.descriptorName = descriptorName ?? throw new ArgumentNullException(nameof(descriptorName));
-            this.name = attribute.Name != string.Empty ? attribute.Name : descriptorName;
-            this.shortName = attribute.ShortNameInternal;
-            this.name = CommandSettings.NameGenerator(this.name);
-            if (attribute.ShortNameOnly == true)
-            {
-                if (this.shortName == string.Empty)
-                    throw new ArgumentException(Resources.ShortNameDoesNotExist);
-                this.name = string.Empty;
-            }
+            this.name = attribute.GetName(descriptorName);
+            this.shortName = attribute.InternalShortName;
             this.isRequired = attribute.IsRequired;
-            this.isImplicit = attribute.IsImplicit;
-            //this.isToggle = attribute.IsToggle;
+            this.isExplicit = attribute.IsExplicit;
         }
 
         public string Name
@@ -99,9 +89,9 @@ namespace Ntreev.Library.Commands
             get { return this.isRequired; }
         }
 
-        public virtual bool IsImplicit
+        public virtual bool IsExplicit
         {
-            get { return this.isImplicit; }
+            get { return this.isExplicit; }
         }
 
         //[Obsolete]
@@ -171,6 +161,16 @@ namespace Ntreev.Library.Commands
                 if (this.shortName == string.Empty)
                     return string.Empty;
                 return CommandSettings.ShortDelimiter + this.shortName;
+            }
+        }
+
+        internal string DisplayPattern
+        {
+            get
+            {
+                var patternItems = new string[] { this.ShortNamePattern, this.NamePattern, };
+                var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
+                return patternText;
             }
         }
 

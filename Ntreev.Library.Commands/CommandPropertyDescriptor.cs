@@ -55,13 +55,13 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public override bool IsImplicit
+        public override bool IsExplicit
         {
             get
             {
                 if (this.IsRequired == false && this.MemberType == typeof(bool))
                     return true;
-                return base.IsImplicit;
+                return base.IsExplicit;
             }
         }
 
