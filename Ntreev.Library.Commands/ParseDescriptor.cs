@@ -34,10 +34,12 @@ namespace Ntreev.Library.Commands
 {
     class ParseDescriptor
     {
-        private readonly Dictionary<CommandMemberDescriptor, object> parsedDescriptors = new Dictionary<CommandMemberDescriptor, object>();
-        private readonly List<CommandMemberDescriptor> unparsedDescriptors = new List<CommandMemberDescriptor>();
+        //private readonly Dictionary<CommandMemberDescriptor, object> parsedDescriptors = new Dictionary<CommandMemberDescriptor, object>();
+        //private readonly List<CommandMemberDescriptor> unparsedDescriptors = new List<CommandMemberDescriptor>();
         private readonly Dictionary<string, string> unparsedArguments = new Dictionary<string, string>();
-        private readonly List<CommandMemberDescriptor> descriptors = new List<CommandMemberDescriptor>();
+        //private readonly List<CommandMemberDescriptor> descriptors = new List<CommandMemberDescriptor>();
+
+        private readonly Dictionary<CommandMemberDescriptor, ParseDescriptorItem> itemList = new Dictionary<CommandMemberDescriptor, ParseDescriptorItem>();
 
         /// <param name="type">
         /// 스위치를 직접 명시하지 않아도 되는 타입
@@ -60,14 +62,21 @@ namespace Ntreev.Library.Commands
 
         public ParseDescriptor(Type type, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, bool isInitializable)
         {
-            this.descriptors = new List<CommandMemberDescriptor>(members);
-            this.unparsedDescriptors = new List<CommandMemberDescriptor>(members.Count());
+            //this.itemList = new List<ParseDescriptorItem>(members.Select(item => new ParseDescriptorItem(item)));
 
             foreach (var item in members)
             {
-                if (item.GetType() == type && item.IsRequired == true)
-                    this.unparsedDescriptors.Add(item);
+                this.itemList.Add(item, new ParseDescriptorItem(item));
             }
+
+            //this.descriptors = new List<CommandMemberDescriptor>(members);
+            //this.unparsedDescriptors = new List<CommandMemberDescriptor>(members.Count());
+
+            //foreach (var item in members)
+            //{
+            //    if (item.GetType() == type && item.IsRequired == true)
+            //        this.unparsedDescriptors.Add(item);
+            //}
 
             var descriptors = new Dictionary<string, CommandMemberDescriptor>();
             foreach (var item in members)
@@ -83,8 +92,8 @@ namespace Ntreev.Library.Commands
             }
 
             var variableList = new List<string>();
-            var requirements = members.Where(item => item.GetType() == type && item.IsRequired == true && item.IsExplicit == false).ToList();
-            var options = members.Where(item => (item.IsRequired == false || item.GetType() != type) && item is CommandMemberArrayDescriptor == false).ToList();
+            //var requirements = members.Where(item => item.GetType() == type && item.IsRequired == true && item.IsExplicit == false).ToList();
+            //var options = members.Where(item => (item.IsRequired == false || item.GetType() != type) && item is CommandMemberArrayDescriptor == false).ToList();
             var variables = members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
 
             var arguments = new Queue<string>(args);
@@ -104,39 +113,67 @@ namespace Ntreev.Library.Commands
                         var textValue = arguments.Dequeue();
                         if (CommandStringUtility.IsWrappedOfQuote(textValue) == true)
                             textValue = Regex.Unescape(textValue);
-                        this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, textValue));
-                        this.unparsedDescriptors.Remove(descriptor);
+                        //this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, textValue));
+                        //this.unparsedDescriptors.Remove(descriptor);
+                        this.itemList[descriptor].Desiredvalue = Parser.Parse(descriptor, textValue);
                     }
                     else if (descriptor.MemberType == typeof(bool))
                     {
-                        this.parsedDescriptors.Add(descriptor, true);
-                        this.unparsedDescriptors.Remove(descriptor);
+                        //this.parsedDescriptors.Add(descriptor, true);
+                        // this.unparsedDescriptors.Remove(descriptor);
+                        this.itemList[descriptor].Desiredvalue = true;
                     }
-                    else if (descriptor.DefaultValue != DBNull.Value)
+                    //else if (descriptor.DefaultValue != DBNull.Value)
+                    //{
+                    //    throw new Exception();
+                    //    //this.parsedDescriptors.Add(descriptor, descriptor.DefaultValue);
+                    //}
+                    else if (descriptor.IsExplicit == true && descriptor.DefaultValue != DBNull.Value)
                     {
-                        this.parsedDescriptors.Add(descriptor, descriptor.DefaultValue);
-                    }
-                    else if (descriptor.IsExplicit == true)
-                    {
-                        if (descriptor.MemberType.IsValueType)
-                        {
-                            this.parsedDescriptors.Add(descriptor, Activator.CreateInstance(descriptor.MemberType));
-                        }
-                        else
-                        {
-                            this.parsedDescriptors.Add(descriptor, null);
-                        }
+                        //throw new Exception();
+                        //if (descriptor.MemberType.IsValueType)
+                        //{
+                        //    this.parsedDescriptors.Add(descriptor, Activator.CreateInstance(descriptor.MemberType));
+                        //}
+                        //else
+                        //{
+                        //    this.parsedDescriptors.Add(descriptor, null);
+                        //}
+                        this.itemList[descriptor].Desiredvalue = descriptor.DefaultValue;
                     }
                     else
                     {
-                        this.unparsedDescriptors.Insert(0, descriptor);
+                        //this.unparsedDescriptors.Insert(0, descriptor);
                         return;
                     }
-                    options.Remove(descriptor);
+                    //options.Remove(descriptor);
                 }
-                else if (requirements.Any() == false)
+                //else if (requirements.Any() == false)
+                //{
+                //    if (variables != null)
+                //    {
+                //        variableList.Add(arg);
+                //    }
+                //    else
+                //    {
+                //        var nextArg = arguments.FirstOrDefault();
+                //        if (nextArg != null && CommandStringUtility.IsSwitch(nextArg) == false)
+                //            this.unparsedArguments.Add(arg, arguments.Dequeue());
+                //        else
+                //            this.unparsedArguments.Add(arg, null);
+                //    }
+                //}
+                else if (CommandStringUtility.IsSwitch(arg) == false)
                 {
-                    if (variables != null)
+                    var requiredDescriptor = this.itemList.Where(item => item.Key.GetType() == type && item.Key.IsRequired == true && item.Value.IsParsed == false)
+                                                          .Select(item => item.Key).FirstOrDefault();
+                    if (requiredDescriptor != null)
+                    {
+                        var parseInfo = this.itemList[requiredDescriptor];
+                        var value = Parser.Parse(requiredDescriptor, arg);
+                        parseInfo.Desiredvalue = value;
+                    }
+                    else if (variables != null)
                     {
                         variableList.Add(arg);
                     }
@@ -148,13 +185,11 @@ namespace Ntreev.Library.Commands
                         else
                             this.unparsedArguments.Add(arg, null);
                     }
-                }
-                else if (CommandStringUtility.IsSwitch(arg) == false)
-                {
-                    var descriptor = requirements.First();
-                    this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, arg));
-                    requirements.Remove(descriptor);
-                    this.unparsedDescriptors.Remove(descriptor);
+                    //var descriptor = requirements.First();
+                    //this.parsedDescriptors.Add(descriptor, Parser.Parse(descriptor, arg));
+                    //requirements.Remove(descriptor);
+                    //this.unparsedDescriptors.Remove(descriptor);
+
                 }
                 else
                 {
@@ -162,58 +197,108 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            foreach (var item in requirements.ToArray())
-            {
-                if (isInitializable == true && item.IsExplicit == false && item.DefaultValue != DBNull.Value)
-                {
-                    this.parsedDescriptors.Add(item, item.DefaultValue);
-                    this.unparsedDescriptors.Remove(item);
-                    requirements.Remove(item);
-                }
-            }
+            //foreach (var item in requirements.ToArray())
+            //{
+            //    if (isInitializable == true && item.IsExplicit == false && item.DefaultValue != DBNull.Value)
+            //    {
+            //        this.parsedDescriptors.Add(item, item.DefaultValue);
+            //        this.unparsedDescriptors.Remove(item);
+            //        requirements.Remove(item);
+            //    }
+            //}
 
-            foreach (var item in options.ToArray())
-            {
-                if (isInitializable == false || item.IsExplicit == true)
-                    continue;
+            //foreach (var item in options.ToArray())
+            //{
+            //    if (isInitializable == false || item.IsExplicit == true)
+            //        continue;
 
-                //if (item.DefaultValue != DBNull.Value)
-                //{
-                //    this.parsedDescriptors.Add(item, item.DefaultValue);
-                //}
-                //else if (item.MemberType.IsValueType == true)
-                //{
-                //    this.parsedDescriptors.Add(item, Activator.CreateInstance(item.MemberType));
-                //}
-                //else
-                //{
-                //    this.parsedDescriptors.Add(item, null);
-                //}
-            }
+            //    //if (item.DefaultValue != DBNull.Value)
+            //    //{
+            //    //    this.parsedDescriptors.Add(item, item.DefaultValue);
+            //    //}
+            //    //else if (item.MemberType.IsValueType == true)
+            //    //{
+            //    //    this.parsedDescriptors.Add(item, Activator.CreateInstance(item.MemberType));
+            //    //}
+            //    //else
+            //    //{
+            //    //    this.parsedDescriptors.Add(item, null);
+            //    //}
+            //}
 
             if (variables != null)
             {
-                this.parsedDescriptors.Add(variables, Parser.ParseArray(variables, variableList));
-                this.unparsedDescriptors.Remove(variables);
+                this.itemList[variables].Desiredvalue = Parser.ParseArray(variables, variableList);
+                //this.parsedDescriptors.Add(variables, Parser.ParseArray(variables, variableList));
+                //this.unparsedDescriptors.Remove(variables);
             }
         }
 
         public void SetValue(object instance)
         {
-            var descriptor = this.unparsedDescriptors.FirstOrDefault();
-            if (descriptor != null)
+            this.ValidateSetValue(instance);
+            //var descriptor = this.unparsedDescriptors.FirstOrDefault();
+            //if (descriptor != null)
+            //{
+            //    if (descriptor.IsRequired == true)
+            //    {
+            //        if (descriptor.IsExplicit == false)
+            //            throw new ArgumentException($"필수 인자 {descriptor.Name}가 빠져있습니다");
+            //        else
+            //            throw new ArgumentException($"필수 인자 {descriptor.DisplayPattern}가 빠져있습니다");
+            //    }
+            //    else
+            //        throw new ArgumentException("처리되지 않은 인자가 포함되어 있습니다.");
+            //}
+
+
+
+            //var keyValues = new Dictionary<CommandMemberDescriptor, object>(this.descriptors.Count);
+            //foreach (var item in this.descriptors)
+            //{
+            //    if (this.parsedDescriptors.ContainsKey(item) == true)
+            //        keyValues.Add(item, this.parsedDescriptors[item]);
+            //    else
+            //        keyValues.Add(item, DBNull.Value);
+            //}
+
+            foreach (var item in this.itemList)
             {
-                if (descriptor.IsRequired == true)
-                {
-                    if (descriptor.IsExplicit == false)
-                        throw new ArgumentException($"필수 인자 {descriptor.Name}가 빠져있습니다");
-                    else
-                        throw new ArgumentException($"필수 인자 {descriptor.DisplayPattern}가 빠져있습니다");
-                }
-                else
-                    throw new ArgumentException("처리되지 않은 인자가 포함되어 있습니다.");
+                var descriptor = item.Key;
+                descriptor.ValidateTrigger(this.itemList);
             }
 
+            foreach (var item in this.itemList)
+            {
+                var descriptor = item.Key;
+                var parseInfo = item.Value;
+
+                if (parseInfo.Desiredvalue != DBNull.Value)
+                {
+                    descriptor.SetValueInternal(instance, parseInfo.Desiredvalue);
+                }
+                else if (parseInfo.DefaultValue != DBNull.Value && descriptor.IsExplicit == false)
+                {
+                    descriptor.SetValueInternal(instance, parseInfo.DefaultValue);
+                }
+                else if (descriptor.MemberType.IsValueType == true)
+                {
+                    descriptor.SetValueInternal(instance, Activator.CreateInstance(descriptor.MemberType));
+                }
+                else
+                {
+                    descriptor.SetValueInternal(instance, null);
+                }
+            }
+        }
+
+        public IReadOnlyDictionary<CommandMemberDescriptor, ParseDescriptorItem> Descriptors
+        {
+            get { return this.itemList; }
+        }
+
+        private void ValidateSetValue(object instance)
+        {
             if (this.unparsedArguments.Any())
             {
                 var items = new Dictionary<string, string>(this.unparsedArguments);
@@ -247,64 +332,21 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            var keyValues = new Dictionary<CommandMemberDescriptor, object>(this.descriptors.Count);
-            foreach (var item in this.descriptors)
+            foreach (var item in this.itemList)
             {
-                if (this.parsedDescriptors.ContainsKey(item) == true)
-                    keyValues.Add(item, this.parsedDescriptors[item]);
-                else 
-                    keyValues.Add(item, DBNull.Value);
-            }
+                var descriptor = item.Key;
+                var parseInfo = item.Value;
+                if (parseInfo.IsParsed == true)
+                    continue;
 
-            foreach(var item in this.descriptors)
-            {
-                item.ValidateTrigger(keyValues);
-            }
-
-            foreach (var item in this.descriptors)
-            {
-                if (this.parsedDescriptors.ContainsKey(item) == true)
+                if (descriptor.IsRequired == true && parseInfo.DefaultValue == DBNull.Value)
                 {
-                    item.SetValueInternal(instance, this.parsedDescriptors[item]);
-                }
-                else if (item.MemberType.IsValueType == true)
-                {
-                    item.SetValueInternal(instance, Activator.CreateInstance(item.MemberType));
-                }
-                else
-                {
-                    item.SetValueInternal(instance, null);
+                    if (descriptor.IsExplicit == false)
+                        throw new ArgumentException($"필수 인자 {descriptor.DisplayName}가 빠져있습니다");
+                    else
+                        throw new ArgumentException($"필수 인자 {descriptor.DisplayPattern}가 빠져있습니다");
                 }
             }
-        }
-
-        public IReadOnlyDictionary<CommandMemberDescriptor, object> ParsedDescriptors
-        {
-            get { return this.parsedDescriptors; }
-        }
-
-        public CommandMemberDescriptor[] UnparsedDescriptors
-        {
-            get { return this.unparsedDescriptors.ToArray(); }
-        }
-
-        public string[] UnparsedArguments
-        {
-            get { return this.unparsedArguments.Keys.ToArray(); }
-        }
-
-        private bool Predicate(CommandMemberDescriptor descriptor, Type type)
-        {
-            if (descriptor is CommandMemberArrayDescriptor)
-                return false;
-
-            if (descriptor.GetType() != type)
-                return false;
-
-            if (descriptor.IsRequired == false)
-                return false;
-
-            return descriptor.IsExplicit == true && descriptor.DefaultValue != DBNull.Value;
         }
     }
 }

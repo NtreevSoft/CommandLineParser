@@ -26,43 +26,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using Ntreev.Library.Commands.Properties;
+using System.Collections;
 using System.Text.RegularExpressions;
+using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-    public class CommandPropertyTriggerAttribute : Attribute
+    public class ParseDescriptorItem
     {
-        private readonly string propertyName;
-        private readonly object value;
-        private int group;
+        private readonly CommandMemberDescriptor descriptor;
+        private object desiredvalue = DBNull.Value;
 
-        public CommandPropertyTriggerAttribute(string propertyName, object value)
+        public ParseDescriptorItem(CommandMemberDescriptor descriptor)
         {
-            this.propertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
-            this.value = value;
+            this.descriptor = descriptor;
         }
 
-        public string PropertyName
+        public CommandMemberDescriptor Descriptor
         {
-            get { return this.propertyName; }
+            get { return this.descriptor; }
         }
 
-        public object Value
+        public bool IsParsed
         {
-            get { return this.value; }
+            get { return this.desiredvalue != DBNull.Value; }
         }
 
-        public int Group
+        public object DefaultValue
         {
-            get { return this.group; }
-            set { this.group = value; }
+            get { return this.descriptor.DefaultValue; }
         }
 
-        public bool IsInequality
+        public object Desiredvalue
         {
-            get; set;
+            get { return this.desiredvalue; }
+            internal set { this.desiredvalue = value; }
         }
     }
 }

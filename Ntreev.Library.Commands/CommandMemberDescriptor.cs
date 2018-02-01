@@ -52,8 +52,6 @@ namespace Ntreev.Library.Commands
             this.shortName = attribute.InternalShortName;
             this.isRequired = attribute.IsRequired;
             this.isExplicit = attribute.IsExplicit;
-
-
         }
 
         public string Name
@@ -68,7 +66,14 @@ namespace Ntreev.Library.Commands
 
         public virtual string DisplayName
         {
-            get { return this.Name; }
+            get
+            {
+                var nameItems = new string[] { this.shortName, this.name, };
+                var displayName = string.Join(" | ", nameItems.Where(item => item != string.Empty));
+                if (displayName == string.Empty)
+                    return CommandSettings.NameGenerator(this.descriptorName);
+                return displayName;
+            }
         }
 
         public virtual string Summary
@@ -126,7 +131,7 @@ namespace Ntreev.Library.Commands
 
         protected abstract object GetValue(object instance);
 
-        protected virtual void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, object> descriptors)
+        protected virtual void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, ParseDescriptorItem> descriptors)
         {
 
         }
@@ -151,7 +156,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        internal string NamePattern
+        public string NamePattern
         {
             get
             {
@@ -161,7 +166,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        internal string ShortNamePattern
+        public string ShortNamePattern
         {
             get
             {
@@ -171,7 +176,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        internal string DisplayPattern
+        public string DisplayPattern
         {
             get
             {
@@ -191,7 +196,7 @@ namespace Ntreev.Library.Commands
             return this.GetValue(instance);
         }
 
-        internal void ValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, object> descriptors)
+        internal void ValidateTrigger(Dictionary<CommandMemberDescriptor, ParseDescriptorItem> descriptors)
         {
             this.OnValidateTrigger(descriptors);
         }

@@ -66,15 +66,16 @@ namespace Ntreev.Library.Commands.Test
             get; set;
         }
 
-        [CommandProperty('m', IsRequired = true, IsExplicit = true)]
+        [CommandProperty('m')]
         [CommandPropertyTrigger(nameof(Information), false)]
+        [DefaultValue("")]
         public string Comment
         {
             get; set;
         }
 
         [CommandProperty('i')]
-        [CommandPropertyTrigger(nameof(Comment), null)]
+        [CommandPropertyTrigger(nameof(Comment), "")]
         public bool Information
         {
             get; set;

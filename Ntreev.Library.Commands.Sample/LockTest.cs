@@ -15,7 +15,7 @@ namespace Ntreev.Library.Commands.Test
 
         public void TestMethod6()
         {
-            this.parser.Parse("lock current_path -i --format");
+            this.parser.Parse("lock -i -m wow");
         }
 
         [CommandProperty(IsRequired = true)]

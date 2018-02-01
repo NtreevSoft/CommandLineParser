@@ -16,6 +16,11 @@ namespace Ntreev.Library.Commands
             this.name = name;
         }
 
+        public virtual string[] GetCompletions(CommandCompletionContext completionContext)
+        {
+            return null;
+        }
+
         public string Name
         {
             get { return this.name; }
@@ -28,9 +33,14 @@ namespace Ntreev.Library.Commands
 
         protected abstract void OnExecute();
 
-        public virtual string[] GetCompletions(CommandCompletionContext completionContext)
+        protected CommandMemberDescriptor GetDescriptor(string propertyName)
         {
-            return null;
+            return CommandDescriptor.GetMemberDescriptors(this)[propertyName];
+        }
+
+        protected CommandMemberDescriptor GetStaticDescriptor(Type type, string propertyName)
+        {
+            return CommandDescriptor.GetStaticMemberDescriptors(type)[propertyName];
         }
 
         #region ICommand

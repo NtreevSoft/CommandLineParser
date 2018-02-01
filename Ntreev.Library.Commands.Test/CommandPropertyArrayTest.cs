@@ -38,12 +38,19 @@ namespace Ntreev.Library.Commands.Test
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
         public void ValueIncludedEqualsTest()
         {
             var parser = new CommandLineParser(this);
             parser.Parse("--value=0", CommandParsingTypes.OmitCommandName);
         }
 
+        [TestMethod]
+        public void ValueIncludedEqualsTest2()
+        {
+            var parser = new CommandLineParser(this);
+            parser.Parse("value=0", CommandParsingTypes.OmitCommandName);
+        }
 
         [CommandProperty(IsRequired = true)]
         public string Command

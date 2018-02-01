@@ -43,7 +43,7 @@ namespace Ntreev.Library.Commands
 
         public CommandPropertyAttribute()
         {
-
+            this.useName = true;
         }
 
         public CommandPropertyAttribute(string name)
@@ -63,6 +63,7 @@ namespace Ntreev.Library.Commands
                 throw new ArgumentException("shortName must be a alphabet character");
             this.name = name;
             this.shortName = shortName;
+            this.useName = true;
         }
 
         public CommandPropertyAttribute(char shortName)

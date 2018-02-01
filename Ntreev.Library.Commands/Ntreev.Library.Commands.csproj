@@ -88,7 +88,6 @@
     <Compile Include="CommandParameterArrayDescriptor.cs" />
     <Compile Include="CommandPropertyArrayAttribute.cs" />
     <Compile Include="CommandPropertyArrayDescriptor.cs" />
-    <Compile Include="CommandPropertyTypes.cs" />
     <Compile Include="CommandSettings.cs" />
     <Compile Include="CommandStaticMethodAttribute.cs" />
     <Compile Include="CommandMethodStaticPropertyAttribute.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="ICommandProvider.cs" />
     <Compile Include="IExecutable.cs" />
     <Compile Include="IUnknownArgument.cs" />
+    <Compile Include="ParseDescriptorItem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

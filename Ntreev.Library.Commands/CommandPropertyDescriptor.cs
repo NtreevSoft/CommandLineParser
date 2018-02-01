@@ -15,8 +15,6 @@ namespace Ntreev.Library.Commands
         private readonly string description;
         private readonly List<CommandPropertyTriggerAttribute> triggerList = new List<CommandPropertyTriggerAttribute>();
 
-        //private readonly Dictionary<CommandPropertyDescriptor, object> dependencies = new Dictionary<CommandPropertyDescriptor, object>();
-
         public CommandPropertyDescriptor(PropertyInfo propertyInfo)
             : base(propertyInfo.GetCommandPropertyAttribute(), propertyInfo.Name)
         {
@@ -29,7 +27,13 @@ namespace Ntreev.Library.Commands
 
         public override string DisplayName
         {
-            get { return this.propertyInfo.GetDisplayName(); }
+            get
+            {
+                var displayName = this.propertyInfo.GetDisplayName();
+                if (displayName != string.Empty)
+                    return displayName;
+                return base.DisplayName;
+            }
         }
 
         public override Type MemberType
@@ -67,16 +71,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        //public override bool IsToggle
-        //{
-        //    get
-        //    {
-        //        if (this.IsRequired == false && this.MemberType == typeof(bool))
-        //            return true;
-        //        return base.IsToggle;
-        //    }
-        //}
-
         public override IEnumerable<Attribute> Attributes
         {
             get
@@ -103,11 +97,9 @@ namespace Ntreev.Library.Commands
             return this.propertyInfo.GetValue(instance, null);
         }
 
-        protected override void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, object> descriptors)
+        protected override void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, ParseDescriptorItem> descriptors)
         {
-            if (this.triggerList.Any() == false)
-                return;
-            if (descriptors[this] == DBNull.Value)
+            if (this.triggerList.Any() == false || descriptors[this].IsParsed == false)
                 return;
 
             var query = from item in this.triggerList
@@ -126,14 +118,22 @@ namespace Ntreev.Library.Commands
                     if (triggerDescriptor is CommandPropertyDescriptor == false)
                         throw new Exception(string.Format("'{0}' is not property", item.PropertyName));
 
-                    var value1 = descriptors[triggerDescriptor];
-                    if (value1 == DBNull.Value)
+                    var parseInfo = descriptors[triggerDescriptor];
+                    if (parseInfo.IsParsed == false)
                         continue;
-
+                    var value1 = parseInfo.Desiredvalue;
                     var value2 = ClassExtension.GetDefaultValue(triggerDescriptor.MemberType, item.Value);
 
-                    if (object.Equals(value1, value2) == false)
-                        throw new Exception(string.Format("'{0}' can not use. '{1}' property value must be '{2}'", this.DisplayPattern, triggerDescriptor.DisplayPattern, value2));
+                    if (item.IsInequality == false)
+                    {
+                        if (object.Equals(value1, value2) == false)
+                            throw new Exception(string.Format("'{0}' can not use. '{1}' property value must be '{2}'", this.DisplayPattern, triggerDescriptor.DisplayPattern, value2));
+                    }
+                    else
+                    {
+                        if (object.Equals(value1, value2) == true)
+                            throw new Exception(string.Format("'{0}' can not use. '{1}' property value must be not '{2}'", this.DisplayPattern, triggerDescriptor.DisplayPattern, value2));
+                    }
                 }
             }
         }
