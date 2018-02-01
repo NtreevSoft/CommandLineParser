@@ -82,6 +82,7 @@
     <Compile Include="CommandDescriptor.cs" />
     <Compile Include="CommandMemberArrayDescriptor.cs" />
     <Compile Include="CommandMethodAttribute.cs" />
+    <Compile Include="CommandPropertyTriggerAttribute.cs" />
     <Compile Include="CommandProviderBase.cs" />
     <Compile Include="CommandMethodPropertyAttribute.cs" />
     <Compile Include="CommandParameterArrayDescriptor.cs" />

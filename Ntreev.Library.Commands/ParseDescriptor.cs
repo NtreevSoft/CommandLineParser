@@ -37,6 +37,7 @@ namespace Ntreev.Library.Commands
         private readonly Dictionary<CommandMemberDescriptor, object> parsedDescriptors = new Dictionary<CommandMemberDescriptor, object>();
         private readonly List<CommandMemberDescriptor> unparsedDescriptors = new List<CommandMemberDescriptor>();
         private readonly Dictionary<string, string> unparsedArguments = new Dictionary<string, string>();
+        private readonly List<CommandMemberDescriptor> descriptors = new List<CommandMemberDescriptor>();
 
         /// <param name="type">
         /// 스위치를 직접 명시하지 않아도 되는 타입
@@ -59,6 +60,7 @@ namespace Ntreev.Library.Commands
 
         public ParseDescriptor(Type type, IEnumerable<CommandMemberDescriptor> members, IEnumerable<string> args, bool isInitializable)
         {
+            this.descriptors = new List<CommandMemberDescriptor>(members);
             this.unparsedDescriptors = new List<CommandMemberDescriptor>(members.Count());
 
             foreach (var item in members)
@@ -79,6 +81,7 @@ namespace Ntreev.Library.Commands
                 if (item.ShortNamePattern != string.Empty)
                     descriptors.Add(item.ShortNamePattern, item);
             }
+
             var variableList = new List<string>();
             var requirements = members.Where(item => item.GetType() == type && item.IsRequired == true && item.IsExplicit == false).ToList();
             var options = members.Where(item => (item.IsRequired == false || item.GetType() != type) && item is CommandMemberArrayDescriptor == false).ToList();
@@ -174,18 +177,18 @@ namespace Ntreev.Library.Commands
                 if (isInitializable == false || item.IsExplicit == true)
                     continue;
 
-                if (item.DefaultValue != DBNull.Value)
-                {
-                    this.parsedDescriptors.Add(item, item.DefaultValue);
-                }
-                else if (item.MemberType.IsValueType == true)
-                {
-                    this.parsedDescriptors.Add(item, Activator.CreateInstance(item.MemberType));
-                }
-                else
-                {
-                    this.parsedDescriptors.Add(item, null);
-                }
+                //if (item.DefaultValue != DBNull.Value)
+                //{
+                //    this.parsedDescriptors.Add(item, item.DefaultValue);
+                //}
+                //else if (item.MemberType.IsValueType == true)
+                //{
+                //    this.parsedDescriptors.Add(item, Activator.CreateInstance(item.MemberType));
+                //}
+                //else
+                //{
+                //    this.parsedDescriptors.Add(item, null);
+                //}
             }
 
             if (variables != null)
@@ -244,9 +247,34 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            foreach (var item in this.parsedDescriptors)
+            var keyValues = new Dictionary<CommandMemberDescriptor, object>(this.descriptors.Count);
+            foreach (var item in this.descriptors)
             {
-                item.Key.SetValueInternal(instance, item.Value);
+                if (this.parsedDescriptors.ContainsKey(item) == true)
+                    keyValues.Add(item, this.parsedDescriptors[item]);
+                else 
+                    keyValues.Add(item, DBNull.Value);
+            }
+
+            foreach(var item in this.descriptors)
+            {
+                item.ValidateTrigger(keyValues);
+            }
+
+            foreach (var item in this.descriptors)
+            {
+                if (this.parsedDescriptors.ContainsKey(item) == true)
+                {
+                    item.SetValueInternal(instance, this.parsedDescriptors[item]);
+                }
+                else if (item.MemberType.IsValueType == true)
+                {
+                    item.SetValueInternal(instance, Activator.CreateInstance(item.MemberType));
+                }
+                else
+                {
+                    item.SetValueInternal(instance, null);
+                }
             }
         }
 

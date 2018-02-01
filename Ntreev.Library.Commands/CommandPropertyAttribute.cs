@@ -39,6 +39,7 @@ namespace Ntreev.Library.Commands
         private bool useName;
         private bool isRequired;
         private bool isExplicit;
+        private int group;
 
         public CommandPropertyAttribute()
         {
@@ -57,6 +58,7 @@ namespace Ntreev.Library.Commands
                 throw new ArgumentNullException(nameof(name));
             if (name.Length <= 1)
                 throw new ArgumentException("name length must be greater than 1", nameof(name));
+            CommandSettings.ValidateIdentifier(name);
             if (shortName != char.MinValue && Regex.IsMatch(shortName.ToString(), "[a-z]", RegexOptions.IgnoreCase) == false)
                 throw new ArgumentException("shortName must be a alphabet character");
             this.name = name;
@@ -70,7 +72,6 @@ namespace Ntreev.Library.Commands
         }
 
         public CommandPropertyAttribute(char shortName, bool useName)
-            : this(null, shortName)
         {
             if (shortName != char.MinValue && Regex.IsMatch(shortName.ToString(), "[a-z]", RegexOptions.IgnoreCase) == false)
                 throw new ArgumentException("shortName must be a alphabet character");
@@ -112,23 +113,11 @@ namespace Ntreev.Library.Commands
             set { this.isExplicit = value; }
         }
 
-        /// <summary>
-        /// 토글 형태의 속성을 나타냅니다. 토글로 설정되면 인자값은 필요없이 스위치값만 요구합니다. 스위치가 설정되면 스위치의 기본값으로 설정합니다.
-        /// 따라서 토글 형태의 속성은 항상 기본값이 존재해야 합니다. bool 형태의 속성은 기본값이 자동으로 true로 설정됩니다.
-        /// </summary>
-        //public virtual bool IsToggle
-        //{
-        //    get { return this.type.HasFlag(CommandPropertyTypes.IsToggle); }
-        //    set
-        //    {
-        //        if (this.type != CommandPropertyTypes.None && value == true)
-        //            throw new ArgumentException();
-        //        if (value == true)
-        //            this.type = CommandPropertyTypes.IsToggle;
-        //        else
-        //            this.type = CommandPropertyTypes.None;
-        //    }
-        //}
+        public int Group
+        {
+            get { return this.group; }
+            set { this.group = value; }
+        }
 
         protected virtual void Validate(object target)
         {
@@ -139,12 +128,6 @@ namespace Ntreev.Library.Commands
         {
             this.Validate(target);
         }
-
-        internal bool UseName
-        {
-            get { return this.useName; }
-        }
-
 
         internal string GetName(string descriptorName)
         {

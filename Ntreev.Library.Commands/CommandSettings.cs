@@ -75,7 +75,7 @@ namespace Ntreev.Library.Commands
         internal static void ValidateIdentifier(string name)
         {
             if (Regex.IsMatch(name, $"^{SwitchPattern}") == false)
-                throw new ArgumentException(string.Format("{0} is a invalid member name"));
+                throw new ArgumentException(string.Format("{0} is a invalid member name", name));
         }
 
         internal static bool VerifyName(string argument)

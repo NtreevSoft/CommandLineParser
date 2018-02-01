@@ -13,6 +13,7 @@ namespace Ntreev.Library.Commands
         private readonly PropertyInfo propertyInfo;
         private readonly string summary;
         private readonly string description;
+        private readonly List<CommandPropertyTriggerAttribute> triggerList = new List<CommandPropertyTriggerAttribute>();
 
         //private readonly Dictionary<CommandPropertyDescriptor, object> dependencies = new Dictionary<CommandPropertyDescriptor, object>();
 
@@ -23,6 +24,7 @@ namespace Ntreev.Library.Commands
             this.propertyInfo = propertyInfo;
             this.summary = provider.GetSummary(propertyInfo);
             this.description = provider.GetDescription(propertyInfo);
+            this.triggerList.AddRange(propertyInfo.GetCustomAttributes<CommandPropertyTriggerAttribute>());
         }
 
         public override string DisplayName
@@ -99,6 +101,41 @@ namespace Ntreev.Library.Commands
         protected override object GetValue(object instance)
         {
             return this.propertyInfo.GetValue(instance, null);
+        }
+
+        protected override void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, object> descriptors)
+        {
+            if (this.triggerList.Any() == false)
+                return;
+            if (descriptors[this] == DBNull.Value)
+                return;
+
+            var query = from item in this.triggerList
+                        group item by item.Group into groups
+                        select groups;
+
+            var nameToDescriptor = descriptors.Keys.ToDictionary(item => item.DescriptorName);
+
+            foreach (var items in query)
+            {
+                foreach (var item in items)
+                {
+                    if (nameToDescriptor.ContainsKey(item.PropertyName) == false)
+                        throw new Exception(string.Format("'{0}' property does not exists.", item.PropertyName));
+                    var triggerDescriptor = nameToDescriptor[item.PropertyName];
+                    if (triggerDescriptor is CommandPropertyDescriptor == false)
+                        throw new Exception(string.Format("'{0}' is not property", item.PropertyName));
+
+                    var value1 = descriptors[triggerDescriptor];
+                    if (value1 == DBNull.Value)
+                        continue;
+
+                    var value2 = ClassExtension.GetDefaultValue(triggerDescriptor.MemberType, item.Value);
+
+                    if (object.Equals(value1, value2) == false)
+                        throw new Exception(string.Format("'{0}' can not use. '{1}' property value must be '{2}'", this.DisplayPattern, triggerDescriptor.DisplayPattern, value2));
+                }
+            }
         }
     }
 }

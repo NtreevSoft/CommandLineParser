@@ -52,6 +52,8 @@ namespace Ntreev.Library.Commands
             this.shortName = attribute.InternalShortName;
             this.isRequired = attribute.IsRequired;
             this.isExplicit = attribute.IsExplicit;
+
+
         }
 
         public string Name
@@ -124,6 +126,11 @@ namespace Ntreev.Library.Commands
 
         protected abstract object GetValue(object instance);
 
+        protected virtual void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, object> descriptors)
+        {
+
+        }
+
         internal object Parse(object instance, string arg)
         {
             return Parser.Parse(this, arg);
@@ -182,6 +189,11 @@ namespace Ntreev.Library.Commands
         internal object GetValueInternal(object instance)
         {
             return this.GetValue(instance);
+        }
+
+        internal void ValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, object> descriptors)
+        {
+            this.OnValidateTrigger(descriptors);
         }
     }
 }

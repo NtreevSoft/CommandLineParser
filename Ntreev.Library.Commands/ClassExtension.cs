@@ -44,6 +44,25 @@ namespace Ntreev.Library.Commands
             return propertyInfo.GetConverter().ConvertFrom(value);
         }
 
+        public static object GetDefaultValue(Type propertyType, object value)
+        {
+            if (value == DBNull.Value)
+                return value;
+            if (value == null)
+            {
+                if (propertyType.IsClass == false)
+                    return DBNull.Value;
+                return null;
+            }
+
+            if (value.GetType() == propertyType)
+                return value;
+
+            if (propertyType.IsArray == true)
+                return Parser.ParseArray(propertyType, value.ToString());
+            return TypeDescriptor.GetConverter(propertyType).ConvertFrom(value);
+        }
+
         public static T GetCustomAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
             where T : Attribute
         {

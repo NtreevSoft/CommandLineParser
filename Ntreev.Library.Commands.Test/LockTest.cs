@@ -52,6 +52,13 @@ namespace Ntreev.Library.Commands.Test
             Assert.AreEqual("123", this.Comment);
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestMethod6()
+        {
+            this.parser.Parse("lock current_path -m 123 -i");
+        }
+
         [CommandProperty(IsRequired = true)]
         [DefaultValue("")]
         public string Path
@@ -60,7 +67,23 @@ namespace Ntreev.Library.Commands.Test
         }
 
         [CommandProperty('m', IsRequired = true, IsExplicit = true)]
+        [CommandPropertyTrigger(nameof(Information), false)]
         public string Comment
+        {
+            get; set;
+        }
+
+        [CommandProperty('i')]
+        [CommandPropertyTrigger(nameof(Comment), null)]
+        public bool Information
+        {
+            get; set;
+        }
+
+        [CommandProperty("format")]
+        [CommandPropertyTrigger(nameof(Information), true)]
+        [DefaultValue("xml")]
+        public string FormatType
         {
             get; set;
         }
