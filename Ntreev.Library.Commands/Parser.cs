@@ -60,7 +60,7 @@ namespace Ntreev.Library.Commands
 
         public static object ParseArray(Type propertyType, string arg)
         {
-            var args = arg.Split(new char[] { CommandSettings.ItemSperator, });
+            var args = arg.Split(new char[] { CommandSettings.ItemSperator });
             return ParseArray(propertyType, args);
         }
 
@@ -121,7 +121,7 @@ namespace Ntreev.Library.Commands
             if (itemType == null)
                 throw new NotSupportedException();
 
-            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
+            var segments = arg.Split(new char[] { CommandSettings.ItemSperator });
 
             try
             {
@@ -164,7 +164,7 @@ namespace Ntreev.Library.Commands
 
         private static object ParseEnum(CommandMemberDescriptor descriptor, string arg)
         {
-            var segments = arg.Split(new char[] { CommandSettings.ItemSperator, });
+            var segments = arg.Split(new char[] { CommandSettings.ItemSperator });
             var names = Enum.GetNames(descriptor.MemberType).ToDictionary(item => CommandSettings.NameGenerator(item), item => item);
             var nameList = new List<string>(segments.Length);
             foreach (var item in segments)

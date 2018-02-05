@@ -32,7 +32,7 @@ namespace Ntreev.Library.Commands
             var match = Regex.Match(text, fullPattern);
             var name = TrimQuot(match.Value);
             var arguments = text.Substring(match.Length).Trim();
-            return new string[] { name, arguments, };
+            return new string[] { name, arguments };
         }
 
         public static string[] SplitAll(string text)

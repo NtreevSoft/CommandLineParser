@@ -15,7 +15,7 @@ namespace Ntreev.Library.Commands
         private object value;
 
         public CommandParameterDescriptor(ParameterInfo parameterInfo)
-            : base(new CommandPropertyAttribute() { IsRequired = true, }, parameterInfo.Name)
+            : base(new CommandPropertyAttribute() { IsRequired = true }, parameterInfo.Name)
         {
             var provider = CommandDescriptor.GetUsageDescriptionProvider(parameterInfo.Member.DeclaringType);
             var paramAttr = parameterInfo.GetCustomAttribute<ParamArrayAttribute>();

@@ -245,7 +245,7 @@ namespace Ntreev.Library.Commands
 
         protected virtual CommandLineParser CreateInstance(ICommand command)
         {
-            return new CommandLineParser(command.Name, command) { Out = this.Out, };
+            return new CommandLineParser(command.Name, command) { Out = this.Out };
         }
 
         protected virtual bool OnExecute(ICommand command, string arguments)

@@ -68,7 +68,7 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                var nameItems = new string[] { this.shortName, this.name, };
+                var nameItems = new string[] { this.shortName, this.name };
                 var displayName = string.Join(" | ", nameItems.Where(item => item != string.Empty));
                 if (displayName == string.Empty)
                     return CommandSettings.NameGenerator(this.descriptorName);
@@ -180,7 +180,7 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                var patternItems = new string[] { this.ShortNamePattern, this.NamePattern, };
+                var patternItems = new string[] { this.ShortNamePattern, this.NamePattern };
                 var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
                 return patternText;
             }

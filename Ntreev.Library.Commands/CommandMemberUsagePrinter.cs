@@ -290,7 +290,7 @@ namespace Ntreev.Library.Commands
                 var descriptorName = descriptor.Name;
                 if (descriptorName == string.Empty)
                     descriptorName = CommandSettings.NameGenerator(descriptor.DescriptorName);
-                var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
+                var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern };
                 var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
                 if (descriptor.DefaultValue == DBNull.Value)
                 {
@@ -313,7 +313,7 @@ namespace Ntreev.Library.Commands
             }
             else
             {
-                var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern, };
+                var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern };
                 var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
                 return string.Format("[{0}]", patternText);
             }
