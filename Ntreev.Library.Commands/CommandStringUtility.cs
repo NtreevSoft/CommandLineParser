@@ -147,7 +147,7 @@ namespace Ntreev.Library.Commands
         {
             if (argument == null)
                 return false;
-            return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}{CommandSettings.SwitchPattern}|^{CommandSettings.ShortDelimiter}{CommandSettings.ShortSwitchPattern}");
+            return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}{CommandSettings.SwitchPattern}$|^{CommandSettings.ShortDelimiter}{CommandSettings.ShortSwitchPattern}$");
         }
 
         private static string ToLiteral(string input)
