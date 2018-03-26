@@ -95,12 +95,6 @@ namespace Ntreev.Library.Commands
             get { return this.isExplicit; }
         }
 
-        //[Obsolete]
-        //public virtual bool IsToggle
-        //{
-        //    get { return this.isToggle; }
-        //}
-
         public abstract Type MemberType
         {
             get;

@@ -33,19 +33,7 @@ namespace Ntreev.Library.Commands
         {
             var parser = new ParseDescriptor(typeof(CommandPropertyDescriptor), members, args);
             this.Command = command;
-            //this.MemberDescriptor = parser.UnparsedDescriptors.FirstOrDefault();
             this.Find = find;
-            //foreach (var item in parser.ParsedDescriptors)
-            //{
-            //    this.properties.Add(item.Key.DescriptorName, item.Value);
-            //}
-            //if (this.MemberDescriptor == null)
-            //{
-            //    this.MemberDescriptor = members.FirstOrDefault(item => item is CommandMemberArrayDescriptor);
-            //}
-
-
-
             this.arguments = args.ToArray();
 
             foreach (var item in parser.Descriptors)
@@ -69,16 +57,7 @@ namespace Ntreev.Library.Commands
             var parser = new ParseDescriptor(typeof(CommandParameterDescriptor), members, args, false);
             this.Command = command;
             this.MethodDescriptor = methodDescriptor;
-            //this.MemberDescriptor = parser.UnparsedDescriptors.FirstOrDefault();
             this.Find = find;
-            //foreach (var item in parser.ParsedDescriptors)
-            //{
-            //    this.properties.Add(item.Key.DescriptorName, item.Value);
-            //}
-            //if (this.MemberDescriptor == null)
-            //{
-            //    this.MemberDescriptor = members.FirstOrDefault(item => item is CommandMemberArrayDescriptor);
-            //}
             this.arguments = args.ToArray();
 
             foreach (var item in parser.Descriptors)

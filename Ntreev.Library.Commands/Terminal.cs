@@ -52,7 +52,6 @@ namespace Ntreev.Library.Commands
 
         static Terminal()
         {
-            //if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 var name = $"{typeof(Terminal).Namespace}.bin.{PlatformID.Win32NT}.dat";
                 using (var stream = typeof(Terminal).Assembly.GetManifestResourceStream(name))
@@ -66,20 +65,6 @@ namespace Ntreev.Library.Commands
                     }
                 }
             }
-            //else if (Environment.OSVersion.Platform == PlatformID.Unix)
-            //{
-            //    var name = $"{typeof(Terminal).Namespace}.bin.{PlatformID.Unix}.dat";
-            //    using (var stream = typeof(Terminal).Assembly.GetManifestResourceStream(name))
-            //    {
-            //        var buffer = new byte[stream.Length];
-            //        stream.Read(buffer, 0, buffer.Length);
-
-            //        for (var i = char.MinValue; i < char.MaxValue; i++)
-            //        {
-            //            charToWidth.Add(i, buffer[i]);
-            //        }
-            //    }
-            //}
         }
 
         public static int GetLength(string text)
@@ -357,14 +342,6 @@ namespace Ntreev.Library.Commands
                 }
             }
         }
-
-        //public void Paste()
-        //{
-        //    lock (lockobj)
-        //    {
-        //        Console.ReadKey();
-        //    }
-        //}
 
         public void DeleteToEnd()
         {
@@ -868,7 +845,6 @@ namespace Ntreev.Library.Commands
                 var keyChars = string.Empty;
                 foreach (var key in keys)
                 {
-                    //var key = keys.Value;
                     if (key == cancelKeyInfo)
                     {
                         var args = new TerminalCancelEventArgs(ConsoleSpecialKey.ControlC);
@@ -886,9 +862,6 @@ namespace Ntreev.Library.Commands
                     else if (key.Key == ConsoleKey.Enter)
                     {
                         var text = this.Text;
-                        //this.Index = this.Length;
-                        //var x = Console.CursorLeft;
-                        //var y = Console.CursorTop;
                         this.fullText = string.Empty;
                         this.start = 0;
                         this.fullIndex = 0;
@@ -906,7 +879,6 @@ namespace Ntreev.Library.Commands
                             }
 
                         }
-                        //Console.SetCursorPosition(x, y);
                         return text;
                     }
                     else if (key.KeyChar != '\0')
