@@ -54,5 +54,6 @@
       <Name>Ntreev.Library.Commands</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

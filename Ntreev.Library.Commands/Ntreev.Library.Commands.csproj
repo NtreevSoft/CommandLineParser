@@ -183,6 +183,7 @@
   <ItemGroup>
     <EmbeddedResource Include="bin\Win32NT.dat" />
   </ItemGroup>
+  <Import Project="..\Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

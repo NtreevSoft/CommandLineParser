@@ -42,21 +42,13 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("CommandLineParser")]
+[assembly: AssemblyTitle("Ntreev.Library.Commands")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("NtreevSoft")]
-[assembly: AssemblyProduct("CommandLineParser")]
-[assembly: AssemblyCopyright("Copyright © NtreevSoft 2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyProduct("Ntreev.Library.Commands")]
 
 [assembly: ComVisible(false)]
 
 [assembly: Guid("f5997259-909e-4747-a011-b47c30522bfd")]
 
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.17201.1526")]
-[assembly: AssemblyInformationalVersion("3.0.17201.1526")]
 [assembly: NeutralResourcesLanguage("")]
 

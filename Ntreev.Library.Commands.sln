@@ -19,7 +19,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntreev.Library.Commands.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntreev.Library.Commands.Sample", "Ntreev.Library.Commands.Sample\Ntreev.Library.Commands.Sample.csproj", "{D710DB6C-E632-437B-AA19-0A931E10C27D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B558C28C-A1C8-4E9B-A02D-795A9F2601D3}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Ntreev.Library.Commands.Sharing.AssemblyInfo", "Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.shproj", "{6C4A0D35-CF83-41AA-ADE6-22DCBC3F92B7}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{2ba6d207-b745-4f34-8819-5ba84af90c83}*SharedItemsImports = 4
+		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{6c4a0d35-cf83-41aa-ade6-22dcbc3f92b7}*SharedItemsImports = 13
+		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{accca729-c11d-4484-afa5-e1a4316c238c}*SharedItemsImports = 4
+		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{b28150a9-b0e4-4b84-a6bb-120117c06fa9}*SharedItemsImports = 4
+		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{ceb280c0-463f-4e09-a00c-ce3a8326f6ff}*SharedItemsImports = 4
+		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{d710db6c-e632-437b-aa19-0a931e10c27d}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -59,6 +71,7 @@ Global
 		{ACCCA729-C11D-4484-AFA5-E1A4316C238C} = {009A3638-5A06-426A-8BC5-4593E6590ACA}
 		{2BA6D207-B745-4F34-8819-5BA84AF90C83} = {009A3638-5A06-426A-8BC5-4593E6590ACA}
 		{D710DB6C-E632-437B-AA19-0A931E10C27D} = {009A3638-5A06-426A-8BC5-4593E6590ACA}
+		{6C4A0D35-CF83-41AA-ADE6-22DCBC3F92B7} = {B558C28C-A1C8-4E9B-A02D-795A9F2601D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED97A8D1-7DE5-4AE4-A2A6-303384BB1EFE}

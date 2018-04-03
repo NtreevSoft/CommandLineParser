@@ -28,6 +28,8 @@ namespace Ntreev.Library.Commands
     public class TerminalColor : IDisposable
     {
         private readonly Stack<ColorItem> stack = new Stack<ColorItem>();
+        private ConsoleColor? foregroundColor;
+        private ConsoleColor? backgroundColor;
 
         private TerminalColor()
         {
@@ -39,11 +41,15 @@ namespace Ntreev.Library.Commands
             Pop();
         }
 
-        public static TerminalColor Set(ConsoleColor foreground, ConsoleColor background)
+        public static TerminalColor Set(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
             Push(Console.ForegroundColor, Console.BackgroundColor);
-            Console.ForegroundColor = foreground;
-            Console.BackgroundColor = background;
+            Console.ForegroundColor = foregroundColor;
+            Console.BackgroundColor = backgroundColor;
+            Default.foregroundColor = foregroundColor;
+            Default.backgroundColor = backgroundColor;
+            ForegroundColorChanged?.Invoke(null, EventArgs.Empty);
+            BackgroundColorChanged?.Invoke(null, EventArgs.Empty);
             return Default;
         }
 
@@ -51,6 +57,8 @@ namespace Ntreev.Library.Commands
         {
             Push(Console.ForegroundColor, null);
             Console.ForegroundColor = color;
+            Default.foregroundColor = color;
+            ForegroundColorChanged?.Invoke(null, EventArgs.Empty);
             return Default;
         }
 
@@ -58,8 +66,42 @@ namespace Ntreev.Library.Commands
         {
             Push(null, Console.BackgroundColor);
             Console.BackgroundColor = color;
+            Default.backgroundColor = color;
+            BackgroundColorChanged?.Invoke(null, EventArgs.Empty);
             return Default;
         }
+
+        public static ConsoleColor? ForegroundColor
+        {
+            get
+            {
+                if (Default.foregroundColor.HasValue == true)
+                    return Default.foregroundColor.Value;
+                return null;
+            }
+            private set
+            {
+
+            }
+        }
+
+        public static ConsoleColor? BackgroundColor
+        {
+            get
+            {
+                if (Default.backgroundColor.HasValue == true)
+                    return Default.backgroundColor.Value;
+                return null;
+            }
+            private set
+            {
+
+            }
+        }
+
+        public static event EventHandler ForegroundColorChanged;
+
+        public static event EventHandler BackgroundColorChanged;
 
         private static void Push(ConsoleColor? foreground, ConsoleColor? background)
         {
@@ -82,6 +124,10 @@ namespace Ntreev.Library.Commands
                 Console.ForegroundColor = item.foreground.Value;
             if (item.background != null)
                 Console.BackgroundColor = item.background.Value;
+            Default.foregroundColor = item.foreground;
+            Default.backgroundColor = item.background;
+            ForegroundColorChanged?.Invoke(null, EventArgs.Empty);
+            BackgroundColorChanged?.Invoke(null, EventArgs.Empty);
         }
 
         private static TerminalColor Default = new TerminalColor();
