@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{8853
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntreev.Library.Commands.Test", "Ntreev.Library.Commands.Test\Ntreev.Library.Commands.Test.csproj", "{751F3308-517D-4645-806C-033ACA01102E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ntreev.Library.Commands.Sample", "Ntreev.Library.Commands.Sample\Ntreev.Library.Commands.Sample.csproj", "{D710DB6C-E632-437B-AA19-0A931E10C27D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B558C28C-A1C8-4E9B-A02D-795A9F2601D3}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Ntreev.Library.Commands.Sharing.AssemblyInfo", "Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.shproj", "{6C4A0D35-CF83-41AA-ADE6-22DCBC3F92B7}"
@@ -30,7 +28,6 @@ Global
 		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{accca729-c11d-4484-afa5-e1a4316c238c}*SharedItemsImports = 4
 		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{b28150a9-b0e4-4b84-a6bb-120117c06fa9}*SharedItemsImports = 4
 		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{ceb280c0-463f-4e09-a00c-ce3a8326f6ff}*SharedItemsImports = 4
-		Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems*{d710db6c-e632-437b-aa19-0a931e10c27d}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,10 +54,6 @@ Global
 		{751F3308-517D-4645-806C-033ACA01102E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{751F3308-517D-4645-806C-033ACA01102E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{751F3308-517D-4645-806C-033ACA01102E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D710DB6C-E632-437B-AA19-0A931E10C27D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D710DB6C-E632-437B-AA19-0A931E10C27D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D710DB6C-E632-437B-AA19-0A931E10C27D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D710DB6C-E632-437B-AA19-0A931E10C27D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,7 +63,6 @@ Global
 		{B28150A9-B0E4-4B84-A6BB-120117C06FA9} = {009A3638-5A06-426A-8BC5-4593E6590ACA}
 		{ACCCA729-C11D-4484-AFA5-E1A4316C238C} = {009A3638-5A06-426A-8BC5-4593E6590ACA}
 		{2BA6D207-B745-4F34-8819-5BA84AF90C83} = {009A3638-5A06-426A-8BC5-4593E6590ACA}
-		{D710DB6C-E632-437B-AA19-0A931E10C27D} = {009A3638-5A06-426A-8BC5-4593E6590ACA}
 		{6C4A0D35-CF83-41AA-ADE6-22DCBC3F92B7} = {B558C28C-A1C8-4E9B-A02D-795A9F2601D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

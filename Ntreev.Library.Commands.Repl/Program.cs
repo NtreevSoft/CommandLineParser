@@ -36,38 +36,7 @@ namespace Ntreev.Library.Commands.Repl
     {
         static void Main(string[] args)
         {
-            Console.CursorSize = 100;
-            for (var i = 0; i < Console.BufferHeight - 2; i++)
-            {
-                Console.WriteLine(i);
-            }
             var shell = Container.GetService<IShell>();
-            System.Threading.Tasks.Task.Run(() =>
-            {
-                System.Threading.Thread.Sleep(1000);
-
-                //Console.Write(string.Empty.PadRight(Console.BufferWidth + 2, 'c'));
-
-                int i = 0;
-                while (true)
-                {
-                    
-                    //if (Console.BufferWidth == 81)
-                    {
-                        //Console.Write($"\r{i++}");
-                        //Console.WriteLine("44");
-                        //break;
-                    }
-                    System.Threading.Thread.Sleep(1000);
-                    //break;
-                }
-                //    //Console.WriteLine(DateTime.Now);
-                //    System.Threading.Thread.Sleep(1000);
-                //}
-                //System.Threading.Thread.Sleep(10000);
-                //Console.Write(DateTime.Now);
-            });
-
             shell.Prompt = Directory.GetCurrentDirectory();
             shell.Start();
         }

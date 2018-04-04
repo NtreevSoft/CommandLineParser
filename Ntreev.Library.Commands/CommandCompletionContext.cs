@@ -45,7 +45,7 @@ namespace Ntreev.Library.Commands
                 {
                     this.properties.Add(descriptor.DescriptorName, parseInfo.Desiredvalue);
                 }
-                else if(this.MemberDescriptor == null && descriptor is CommandMemberArrayDescriptor == false)
+                else if (this.MemberDescriptor == null && descriptor is CommandMemberArrayDescriptor == false)
                 {
                     this.MemberDescriptor = descriptor;
                 }

@@ -97,7 +97,6 @@
     <Compile Include="CommandParsingTypes.cs" />
     <Compile Include="ConsoleModeOnlyAttribute.cs" />
     <Compile Include="ExternalCommandMethodDescriptor.cs" />
-    <Compile Include="ICommandLineParsedNotification.cs" />
     <Compile Include="ICommandProvider.cs" />
     <Compile Include="IExecutable.cs" />
     <Compile Include="IUnknownArgument.cs" />
