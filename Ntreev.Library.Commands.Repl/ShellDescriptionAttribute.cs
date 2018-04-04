@@ -15,7 +15,7 @@
 //COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
 //OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Ntreev.Library.Commands.Shell.Properties;
+using Ntreev.Library.Commands.Repl.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,7 +24,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Shell
+namespace Ntreev.Library.Commands.Repl
 {
     [AttributeUsage(AttributeTargets.All)]
     class ShellDescriptionAttribute : DescriptionAttribute

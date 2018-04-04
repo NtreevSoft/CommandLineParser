@@ -23,7 +23,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Shell
+namespace Ntreev.Library.Commands.Repl
 {
     [Export(typeof(IShell))]
     class Shell : CommandContextTerminal, IShell

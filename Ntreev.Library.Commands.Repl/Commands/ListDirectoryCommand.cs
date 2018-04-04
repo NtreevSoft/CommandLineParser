@@ -24,7 +24,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Shell.Commands
+namespace Ntreev.Library.Commands.Repl.Commands
 {
     [Export(typeof(ICommand))]
     [UsageDescriptionProvider(typeof(ResourceUsageDescriptionProvider))]

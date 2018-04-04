@@ -23,7 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Shell.Commands
+namespace Ntreev.Library.Commands.Repl.Commands
 {
     [Export(typeof(ICommand))]
     class ExitCommand : CommandBase

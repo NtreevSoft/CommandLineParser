@@ -24,13 +24,13 @@ using System.IO;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Ntreev.Library.Commands.Shell.Properties;
+using Ntreev.Library.Commands.Repl.Properties;
 using System.Resources;
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Ntreev.Library.Commands.Shell
+namespace Ntreev.Library.Commands.Repl
 {
     class Program
     {

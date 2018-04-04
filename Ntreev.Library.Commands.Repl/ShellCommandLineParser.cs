@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ntreev.Library.Commands.Shell
+namespace Ntreev.Library.Commands.Repl
 {
     class ShellCommandLineParser : CommandLineParser
     {
