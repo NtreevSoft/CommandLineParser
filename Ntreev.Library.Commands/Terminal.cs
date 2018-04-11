@@ -49,6 +49,7 @@ namespace Ntreev.Library.Commands
         private bool isHidden;
         private bool treatControlCAsInput;
         private bool isCancellationRequested;
+        private bool isEnabled = true;
 
         static Terminal()
         {
@@ -400,25 +401,6 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        internal int FullIndex
-        {
-            get { return this.fullIndex; }
-            set
-            {
-                if (value < 0 || value > this.fullText.Length)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-
-                this.fullIndex = value;
-                if (this.isHidden == false)
-                {
-                    var x = 0;
-                    var y = this.Top;
-                    NextPosition(this.fullText.Substring(0, value), ref x, ref y);
-                    Console.SetCursorPosition(x, Math.Min(y, Console.BufferHeight - 1));
-                }
-            }
-        }
-
         public string Text
         {
             get { return this.fullText.Substring(this.start); }
@@ -448,6 +430,15 @@ namespace Ntreev.Library.Commands
             internal set
             {
                 this.y = value;
+            }
+        }
+
+        public bool IsEnabled
+        {
+            get { return this.isEnabled; }
+            set
+            {
+                this.isEnabled = value;
             }
         }
 
@@ -584,88 +575,6 @@ namespace Ntreev.Library.Commands
         protected virtual void OnDrawText(TextWriter writer, string text)
         {
             writer.Write(text);
-        }
-
-        internal static void NextPosition(string text, ref int x, ref int y)
-        {
-            for (var i = 0; i < text.Length; i++)
-            {
-                var ch = text[i];
-                if (ch == '\r')
-                {
-                    x = 0;
-                    continue;
-                }
-                else if (ch == '\n')
-                {
-                    x = 0;
-                    y++;
-                    continue;
-                }
-
-                var w = charToWidth[ch];
-                if (x + w >= Console.BufferWidth)
-                {
-                    x = x + w - Console.BufferWidth;
-                    y++;
-                }
-                else
-                {
-                    x += w;
-                }
-            }
-        }
-
-        internal void Erase()
-        {
-            var x1 = Console.CursorLeft;
-            var y1 = Console.CursorTop;
-
-            var prompt = this.fullText.Substring(0, this.start);
-            var text = this.isHidden == true ? string.Empty : this.fullText.Substring(this.start);
-            var x = 0;
-            var y = this.y;
-            NextPosition(prompt, ref x, ref y);
-            NextPosition(text, ref x, ref y);
-
-            for (var i = this.y; i <= y; i++)
-            {
-                Console.SetCursorPosition(0, i);
-                if (Environment.OSVersion.Platform != PlatformID.Unix)
-                {
-                    Console.MoveBufferArea(Console.BufferWidth - 1, i, 1, 1, 0, i);
-                    this.writer.Write($"\r{new string('\0', Console.BufferWidth - 1)}\r");
-                }
-                else
-                {
-                    this.writer.Write("\r" + new string(' ', Console.BufferWidth) + "\r");
-                }
-            }
-            Console.SetCursorPosition(x1, y1);
-        }
-
-        internal void Draw()
-        {
-            Console.SetCursorPosition(0, this.y);
-            var index = this.FullIndex;
-            var y = Console.CursorTop;
-            var x = 0;
-            var prompt = this.fullText.Substring(0, this.start);
-            var text = this.isHidden == true ? string.Empty : this.fullText.Substring(this.start);
-            this.OnDrawPrompt(this.writer, prompt);
-            this.OnDrawText(this.writer, text);
-            NextPosition(prompt, ref x, ref y);
-            NextPosition(text, ref x, ref y);
-
-            if (y >= Console.BufferHeight)
-            {
-                if (Environment.OSVersion.Platform == PlatformID.Unix && x == 0)
-                {
-                    this.writer.WriteLine();
-                }
-                this.y--;
-            }
-            this.FullIndex = index;
         }
 
         private int Length
@@ -838,6 +747,9 @@ namespace Ntreev.Library.Commands
         {
             while (true)
             {
+                Thread.Sleep(1);
+                if (this.isEnabled == false)
+                    continue;
                 var keys = this.ReadKeys().ToArray();
                 if (this.isCancellationRequested == true)
                     return null;
@@ -972,9 +884,110 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        internal static void NextPosition(string text, ref int x, ref int y)
+        {
+            for (var i = 0; i < text.Length; i++)
+            {
+                var ch = text[i];
+                if (ch == '\r')
+                {
+                    x = 0;
+                    continue;
+                }
+                else if (ch == '\n')
+                {
+                    x = 0;
+                    y++;
+                    continue;
+                }
+
+                var w = charToWidth[ch];
+                if (x + w >= Console.BufferWidth)
+                {
+                    x = x + w - Console.BufferWidth;
+                    y++;
+                }
+                else
+                {
+                    x += w;
+                }
+            }
+        }
+
+        internal void Erase()
+        {
+            var x1 = Console.CursorLeft;
+            var y1 = Console.CursorTop;
+
+            var prompt = this.fullText.Substring(0, this.start);
+            var text = this.isHidden == true ? string.Empty : this.fullText.Substring(this.start);
+            var x = 0;
+            var y = this.y;
+            NextPosition(prompt, ref x, ref y);
+            NextPosition(text, ref x, ref y);
+
+            for (var i = this.y; i <= y; i++)
+            {
+                Console.SetCursorPosition(0, i);
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
+                {
+                    Console.MoveBufferArea(Console.BufferWidth - 1, i, 1, 1, 0, i);
+                    this.writer.Write($"\r{new string('\0', Console.BufferWidth - 1)}\r");
+                }
+                else
+                {
+                    this.writer.Write("\r" + new string(' ', Console.BufferWidth) + "\r");
+                }
+            }
+            Console.SetCursorPosition(x1, y1);
+        }
+
+        internal void Draw()
+        {
+            Console.SetCursorPosition(0, this.y);
+            var index = this.FullIndex;
+            var y = Console.CursorTop;
+            var x = 0;
+            var prompt = this.fullText.Substring(0, this.start);
+            var text = this.isHidden == true ? string.Empty : this.fullText.Substring(this.start);
+            this.OnDrawPrompt(this.writer, prompt);
+            this.OnDrawText(this.writer, text);
+            NextPosition(prompt, ref x, ref y);
+            NextPosition(text, ref x, ref y);
+
+            if (y >= Console.BufferHeight)
+            {
+                if (Environment.OSVersion.Platform == PlatformID.Unix && x == 0)
+                {
+                    this.writer.WriteLine();
+                }
+                this.y--;
+            }
+            this.FullIndex = index;
+        }
+
         internal static object LockedObject
         {
             get { return lockobj; }
+        }
+
+        internal int FullIndex
+        {
+            get { return this.fullIndex; }
+            set
+            {
+                if (value < 0 || value > this.fullText.Length)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+
+                this.fullIndex = value;
+                if (this.isHidden == false)
+                {
+                    var x = 0;
+                    var y = this.Top;
+                    NextPosition(this.fullText.Substring(0, value), ref x, ref y);
+                    Console.SetCursorPosition(x, Math.Min(y, Console.BufferHeight - 1));
+                }
+            }
         }
     }
 }
