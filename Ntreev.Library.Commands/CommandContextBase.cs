@@ -474,6 +474,8 @@ namespace Ntreev.Library.Commands
                 finally
                 {
                     Directory.SetCurrentDirectory(directory);
+                    this.writeList.Clear();
+                    this.appendList.Clear();
                 }
 
                 base.Dispose(disposing);
