@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ParseTest.cs" />
+    <Compile Include="RunScriptTest.cs" />
     <Compile Include="RunTest.cs" />
     <Compile Include="UnlockTest.cs" />
     <Compile Include="QuotParseTest.cs" />

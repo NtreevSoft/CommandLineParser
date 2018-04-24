@@ -73,7 +73,6 @@ namespace Ntreev.Library.Commands
 
             var variableList = new List<string>();
             var variables = members.Where(item => item is CommandMemberArrayDescriptor).FirstOrDefault();
-
             var arguments = new Queue<string>(args);
 
             while (arguments.Any())
@@ -105,6 +104,24 @@ namespace Ntreev.Library.Commands
                     {
                         return;
                     }
+                }
+                else if (arg == "--")
+                {
+                    if (variables != null)
+                    {
+                        foreach (var item in arguments)
+                        {
+                            variableList.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in arguments)
+                        {
+                            this.unparsedArguments.Add(item, null);
+                        }
+                    }
+                    arguments.Clear();
                 }
                 else if (CommandStringUtility.IsSwitch(arg) == false)
                 {
