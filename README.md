@@ -1,6 +1,6 @@
 ===========================================
 
-[![NuGet version (Ntreev.Library.Commands)](https://img.shields.io/nuget/v/Ntreev.Library.Commands.svg?style=flat-square)](https://www.nuget.org/packages/Ntreev.Library.Commands/)
+[![NuGet version (Ntreev.Library.Commands)](https://img.shields.io/nuget/v/Ntreev.Library.Commands.svg)](https://www.nuget.org/packages/Ntreev.Library.Commands/)
 
 Example
 =======
