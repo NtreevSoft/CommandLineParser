@@ -1,22 +1,24 @@
 ===========================================
 
+[![NuGet version (Ntreev.Library.Commands)](https://img.shields.io/nuget/v/Ntreev.Library.Commands.svg)](https://www.nuget.org/packages/Ntreev.Library.Commands/)
+
 Example
 =======
 
 Parse
 --------------
 
-¸í·É±¸¹®À» ºĞ¼®ÇØ ¹Ì¸® Á¤ÀÇµÈ ¼Ó¼º¿¡ °ªÀ» ¼³Á¤ÇÏ´Â ±â´ÉÀÔ´Ï´Ù.
+ëª…ë ¹êµ¬ë¬¸ì„ ë¶„ì„í•´ ë¯¸ë¦¬ ì •ì˜ëœ ì†ì„±ì— ê°’ì„ ì„¤ì •í•˜ëŠ” ê¸°ëŠ¥ì…ë‹ˆë‹¤.
 
-¸í·É±¸¹®¿¡ Æ÷ÇÔ½ÃÅ³ ¼Ó¼ºÀº CommandPropertyAttribute·Î ¼³Á¤ÇÕ´Ï´Ù. 
+ëª…ë ¹êµ¬ë¬¸ì— í¬í•¨ì‹œí‚¬ ì†ì„±ì€ CommandPropertyAttributeë¡œ ì„¤ì •í•©ë‹ˆë‹¤. 
 
-ÀÌ¸§Àº [kebab-case (spinal-case, Train-Case, Lisp-case)](https://en.wikipedia.org/wiki/Letter_case) ÇüÅÂ·Î ¼³Á¤µÇ¸ç CommandPropertyAttribute »ı¼ºÀÚ¿¡ ÀÌ¸§À» ¸í½ÃÀûÀ¸·Î ¼³Á¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+ì´ë¦„ì€ [kebab-case (spinal-case, Train-Case, Lisp-case)](https://en.wikipedia.org/wiki/Letter_case) í˜•íƒœë¡œ ì„¤ì •ë˜ë©° CommandPropertyAttribute ìƒì„±ìì— ì´ë¦„ì„ ëª…ì‹œì ìœ¼ë¡œ ì„¤ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 
-ÇØ´ç ¼Ó¼º¿¡ ´ëÇÑ ¿ä¾àÀº SummaryAttribute¸¦ ÀÛ¼ºÇÒ ¼ö ÀÖ°í Á»´õ ÀÚ¼¼ÇÑ ¼³¸íÀÌ ÇÊ¿äÇÒ¶§´Â DescriptionAttribute¸¦ ÅëÇØ¼­ ÀÛ¼ºÇÒ ¼ö ÀÖ½À´Ï´Ù.
+í•´ë‹¹ ì†ì„±ì— ëŒ€í•œ ìš”ì•½ì€ SummaryAttributeë¥¼ ì‘ì„±í•  ìˆ˜ ìˆê³  ì¢€ë” ìì„¸í•œ ì„¤ëª…ì´ í•„ìš”í• ë•ŒëŠ” DescriptionAttributeë¥¼ í†µí•´ì„œ ì‘ì„±í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 
-¸í·É ±¸¹®¿¡ Æ¯Á¤ ¼Ó¼ºÀÌ ¹İµå½Ã ÇÊ¿äÇÒ¶§´Â IsRequired¸¦ true·Î ¼³Á¤ÇÏ¸é µË´Ï´Ù.
+ëª…ë ¹ êµ¬ë¬¸ì— íŠ¹ì • ì†ì„±ì´ ë°˜ë“œì‹œ í•„ìš”í• ë•ŒëŠ” IsRequiredë¥¼ trueë¡œ ì„¤ì •í•˜ë©´ ë©ë‹ˆë‹¤.
 
-IsRequired °¡ ¼³Á¤µÈ ¼Ó¼ºÀº ¸í·É±¸¹®¿¡¼­ ½ºÀ§Ä¡°ªÀ» »ı·«ÇÒ ¼ö ÀÖÀ¸¸ç ±× ¿Ü¿¡ ¼Ó¼ºÀº --[ÀÌ¸§] [º¯¼ö] ¶Ç´Â -[ÂªÀºÀÌ¸§] [º¯¼ö] ÇüÅÂ¿©¾ß ÇÕ´Ï´Ù.
+IsRequired ê°€ ì„¤ì •ëœ ì†ì„±ì€ ëª…ë ¹êµ¬ë¬¸ì—ì„œ ìŠ¤ìœ„ì¹˜ê°’ì„ ìƒëµí•  ìˆ˜ ìˆìœ¼ë©° ê·¸ ì™¸ì— ì†ì„±ì€ --[ì´ë¦„] [ë³€ìˆ˜] ë˜ëŠ” -[ì§§ì€ì´ë¦„] [ë³€ìˆ˜] í˜•íƒœì—¬ì•¼ í•©ë‹ˆë‹¤.
 
     using System;
     using Ntreev.Library.Commands;
@@ -95,13 +97,13 @@ You can call like this in console:
 Invoke
 --------------
 
-¸í·É±¸¹®À» ºĞ¼®ÇØ ¹Ì¸® Á¤ÀÇµÈ ¸Ş¼Òµå¸¦ È£ÃâÇÏ´Â ±â´ÉÀÔ´Ï´Ù.
+ëª…ë ¹êµ¬ë¬¸ì„ ë¶„ì„í•´ ë¯¸ë¦¬ ì •ì˜ëœ ë©”ì†Œë“œë¥¼ í˜¸ì¶œí•˜ëŠ” ê¸°ëŠ¥ì…ë‹ˆë‹¤.
 
-¸í·É±¸¹®¿¡ Æ÷ÇÔ½ÃÅ³ ¸Ş¼Òµå´Â CommandMethodAttribute·Î ¼³Á¤ÇÕ´Ï´Ù. 
+ëª…ë ¹êµ¬ë¬¸ì— í¬í•¨ì‹œí‚¬ ë©”ì†Œë“œëŠ” CommandMethodAttributeë¡œ ì„¤ì •í•©ë‹ˆë‹¤. 
 
-¼³¸í ÀÛ¼º¿¡ ´ëÇÑ ºÎºĞÀº Parsing ºÎºĞ¿¡¼­ ´Ù·é°Í°ú µ¿ÀÏÇÕ´Ï´Ù.
+ì„¤ëª… ì‘ì„±ì— ëŒ€í•œ ë¶€ë¶„ì€ Parsing ë¶€ë¶„ì—ì„œ ë‹¤ë£¬ê²ƒê³¼ ë™ì¼í•©ë‹ˆë‹¤.
 
-±âº»ÀûÀ¸·Î ¸Ş¼ÒµåÀÇ ÀÎÀÚ´Â IsRequierd°¡ ÀÚµ¿À¸·Î ¼³Á¤µÇ¸ç Ãß°¡ÀûÀ¸·Î ¼±ÅÃ ÀÎÀÚ¸¦ »ç¿ëÇÒ¶§´Â CommandMethodPropertyAttribute¸¦ »ç¿ëÇØ ¼Ó¼ºÀÇ ÀÌ¸§À» ¼³Á¤ÇÏ¸é µË´Ï´Ù.
+ê¸°ë³¸ì ìœ¼ë¡œ ë©”ì†Œë“œì˜ ì¸ìëŠ” IsRequierdê°€ ìë™ìœ¼ë¡œ ì„¤ì •ë˜ë©° ì¶”ê°€ì ìœ¼ë¡œ ì„ íƒ ì¸ìë¥¼ ì‚¬ìš©í• ë•ŒëŠ” CommandMethodPropertyAttributeë¥¼ ì‚¬ìš©í•´ ì†ì„±ì˜ ì´ë¦„ì„ ì„¤ì •í•˜ë©´ ë©ë‹ˆë‹¤.
 
     using System;
     using Ntreev.Library.Commands;
@@ -186,13 +188,13 @@ You can call like this in console:
     Example.exe method3 1 2 -m "message"
 
 
-±× ¹ÛÀÇ ±â´É
+ê·¸ ë°–ì˜ ê¸°ëŠ¥
 --------------
 
-- °øÅëÀ¸·Î »ç¿ëÇÒ ¼ö ÀÖ´Â static property
-- °øÅëÀ¸·Î »ç¿ëÇÒ ¼ö ÀÖ´Â static method
-- parse °ú invoke ±â´ÉÀ» ÇÕÃÄ Á¾ÇÕ ÀûÀÎ ¸í·É Ã¼°è¸¦ ³ªÅ¸³»´Â CommandContext
-- ·±Å¸ÀÓ»ó¿¡¼­ »ç¿ëÇÒ ¼ö ÀÖ´Â ÅÍ¹Ì³Î
+- ê³µí†µìœ¼ë¡œ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” static property
+- ê³µí†µìœ¼ë¡œ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” static method
+- parse ê³¼ invoke ê¸°ëŠ¥ì„ í•©ì³ ì¢…í•© ì ì¸ ëª…ë ¹ ì²´ê³„ë¥¼ ë‚˜íƒ€ë‚´ëŠ” CommandContext
+- ëŸ°íƒ€ì„ìƒì—ì„œ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” í„°ë¯¸ë„
         
 
 License
