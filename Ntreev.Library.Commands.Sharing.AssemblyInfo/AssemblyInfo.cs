@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 #else
@@ -8,6 +8,6 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright © Ntreev Soft 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("3.6.0.0")]
-[assembly: AssemblyFileVersion("3.6.18124.1704")]
-[assembly: AssemblyInformationalVersion("3.6.18124.1704")]
+[assembly: AssemblyVersion("3.6")]
+[assembly: AssemblyFileVersion("3.6.18130.1520")]
+[assembly: AssemblyInformationalVersion("3.6.18130.1520")]
