@@ -20,7 +20,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -105,7 +104,7 @@ namespace Ntreev.Library.Commands
             get { return this.arguments; }
         }
 
-        public IReadOnlyDictionary<string, object> Properties
+        public IDictionary<string, object> Properties
         {
             get { return this.properties; }
         }

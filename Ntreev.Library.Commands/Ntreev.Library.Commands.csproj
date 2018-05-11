@@ -1,198 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ntreev.Library.Commands</RootNamespace>
-    <AssemblyName>Ntreev.Library.Commands</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworks>netstandard2.0;net45;net35</TargetFrameworks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>3.6.1580.1235</Version>
+    <AssemblyVersion>3.6.0.0</AssemblyVersion>
+    <FileVersion>3.6.1580.1235</FileVersion>
+    <RepositoryType></RepositoryType>
+    <PackageProjectUrl>https://github.com/NtreevSoft/CommandLineParser</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/NtreevSoft/CommandLineParser/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Copyright>Copyright © Ntreev Soft 2018</Copyright>
+    <Description>comman line parser</Description>
+    <Company>NtreevSoft</Company>
+    <Authors>s2quake</Authors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <DocumentationFile>
-    </DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
-    <UpdateAssemblyVersion>False</UpdateAssemblyVersion>
-    <UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
-    <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
-    <AssemblyFileVersionSettings>None.None.DateStamp.TimeStamp</AssemblyFileVersionSettings>
-  </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net35'">
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="ClassExtension.cs" />
-    <Compile Include="CommandBase.cs" />
-    <Compile Include="CommandCompletionContext.cs" />
-    <Compile Include="CommandContextTerminal.cs" />
-    <Compile Include="CommandLineParserCollection.cs" />
-    <Compile Include="CommandCollection.cs" />
-    <Compile Include="CommandContextBase.cs" />
-    <Compile Include="CommandDescriptor.cs" />
-    <Compile Include="CommandMemberArrayDescriptor.cs" />
-    <Compile Include="CommandMethodAttribute.cs" />
-    <Compile Include="CommandPropertyTriggerAttribute.cs" />
-    <Compile Include="CommandProviderBase.cs" />
-    <Compile Include="CommandMethodPropertyAttribute.cs" />
-    <Compile Include="CommandParameterArrayDescriptor.cs" />
-    <Compile Include="CommandPropertyArrayAttribute.cs" />
-    <Compile Include="CommandPropertyArrayDescriptor.cs" />
-    <Compile Include="CommandSettings.cs" />
-    <Compile Include="CommandStaticMethodAttribute.cs" />
-    <Compile Include="CommandMethodStaticPropertyAttribute.cs" />
-    <Compile Include="CommandStaticPropertyAttribute.cs" />
-    <Compile Include="CommandStringUtility.cs" />
-    <Compile Include="CommandTextWriter.cs" />
-    <Compile Include="CommandParsingTypes.cs" />
-    <Compile Include="ConsoleModeOnlyAttribute.cs" />
-    <Compile Include="ExternalCommandMethodDescriptor.cs" />
-    <Compile Include="ICommandProvider.cs" />
-    <Compile Include="IExecutable.cs" />
-    <Compile Include="IUnknownArgument.cs" />
-    <Compile Include="ParseDescriptorItem.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ResourceDescriptionAttribute.cs" />
-    <Compile Include="ResourceUsageDescriptionProvider.cs" />
-    <Compile Include="CommandMethodBase.cs" />
-    <Compile Include="CommandParameterDescriptor.cs" />
-    <Compile Include="CommandPropertyDescriptor.cs" />
-    <Compile Include="StandardCommandMethodDescriptor.cs" />
-    <Compile Include="TableDataBuilder.cs" />
-    <Compile Include="TerminalCancelEventHandler.cs" />
-    <Compile Include="TerminalCancelEventArgs.cs" />
-    <Compile Include="TerminalCursorVisible.cs" />
-    <Compile Include="TerminalColor.cs" />
-    <Compile Include="Terminal.cs" />
-    <Compile Include="TerminalTextWriter.cs" />
-    <Compile Include="UsageBrowsableAttribute.cs" />
-    <Compile Include="UsageDescriptionProvider.cs" />
-    <Compile Include="IUsageDescriptionProvider.cs" />
-    <Compile Include="UsageDescriptionProviderAttribute.cs" />
-    <Compile Include="VersionCommand.cs" />
-    <Compile Include="HelpCommand.cs" />
-    <Compile Include="SummaryAttribute.cs" />
-    <Compile Include="ICommand.cs" />
-    <Compile Include="TextWriterExtensions.cs" />
-    <Compile Include="CommandMethodDescriptor.cs" />
-    <Compile Include="CommandMethodDescriptorCollection.cs" />
-    <Compile Include="CommandMethodUsagePrinter.cs" />
-    <Compile Include="CommandNotFoundException.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="CommandLineParser.cs" />
-    <Compile Include="CommandMemberDescriptorCollection.cs" />
-    <Compile Include="CommandMemberUsagePrinter.cs" />
-    <Compile Include="CommandPropertyAttribute.cs" />
-    <Compile Include="CommandMemberDescriptor.cs" />
-    <Compile Include="ParseDescriptor.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Remove="Unix.dat" />
+    <None Remove="Win32NT.dat" />
   </ItemGroup>
+
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <EmbeddedResource Include="Unix.dat" />
+    <EmbeddedResource Include="Win32NT.dat" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="HelpCommand.ko-KR.resx">
-      <DependentUpon>HelpCommand.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HelpCommand.resx">
-      <DependentUpon>HelpCommand.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.ko-KR.resx" />
-    <EmbeddedResource Include="VersionCommand.resx">
-      <DependentUpon>VersionCommand.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="bin\Unix.dat" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="bin\Win32NT.dat" />
-  </ItemGroup>
-  <Import Project="..\Ntreev.Library.Commands.Sharing.AssemblyInfo\Ntreev.Library.Commands.Sharing.AssemblyInfo.projitems" Label="Shared" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

@@ -23,7 +23,7 @@ using System.Text;
 
 namespace Ntreev.Library.Commands
 {
-    public class CommandMethodDescriptorCollection : IReadOnlyList<CommandMethodDescriptor>
+    public class CommandMethodDescriptorCollection : IEnumerable<CommandMethodDescriptor>
     {
         private readonly List<CommandMethodDescriptor> descriptors = new List<CommandMethodDescriptor>();
 
@@ -78,7 +78,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        #region IEnumerable
+#region IEnumerable
 
         IEnumerator<CommandMethodDescriptor> IEnumerable<CommandMethodDescriptor>.GetEnumerator()
         {
@@ -90,6 +90,6 @@ namespace Ntreev.Library.Commands
             return this.descriptors.GetEnumerator();
         }
 
-        #endregion
+#endregion
     }
 }

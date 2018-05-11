@@ -23,7 +23,6 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -68,7 +67,8 @@ namespace Ntreev.Library.Commands
 
         public string GetDescription(ParameterInfo parameterInfo)
         {
-            var description = this.GetResourceDescription(parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
+            var items = new string[] { parameterInfo.Member.Name, parameterInfo.Name };
+            var description = this.GetResourceDescription(parameterInfo.Member.DeclaringType, string.Join(".", items));
             if (description != null)
                 return description;
             return UsageDescriptionProvider.Default.GetDescription(parameterInfo);
@@ -103,7 +103,8 @@ namespace Ntreev.Library.Commands
 
         public string GetSummary(ParameterInfo parameterInfo)
         {
-            var summary = this.GetResourceSummary(parameterInfo.Member.DeclaringType, string.Join(".", parameterInfo.Member.Name, parameterInfo.Name));
+            var items = new string[] { parameterInfo.Member.Name, parameterInfo.Name };
+            var summary = this.GetResourceSummary(parameterInfo.Member.DeclaringType, string.Join(".", items));
             if (summary != null)
                 return summary;
             return UsageDescriptionProvider.Default.GetSummary(parameterInfo);

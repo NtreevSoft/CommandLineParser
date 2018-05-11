@@ -23,7 +23,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -165,17 +164,18 @@ namespace Ntreev.Library.Commands
             return Regex.IsMatch(argument, $"^{CommandSettings.Delimiter}{CommandSettings.SwitchPattern}$|^{CommandSettings.ShortDelimiter}{CommandSettings.ShortSwitchPattern}$");
         }
 
-        private static string ToLiteral(string input)
-        {
-            using (var writer = new StringWriter())
-            {
-                using (var provider = CodeDomProvider.CreateProvider("CSharp"))
-                {
-                    provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
-                    return writer.ToString();
-                }
-            }
-        }
+        //private static string ToLiteral(string input)
+        //{
+        //    throw new NotImplementedException();
+        //    //using (var writer = new StringWriter())
+        //    //{
+        //    //    using (var provider = CodeDomProvider.CreateProvider("CSharp"))
+        //    //    {
+        //    //        provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
+        //    //        return writer.ToString();
+        //    //    }
+        //    //}
+        //}
 
         public static IDictionary<string, object> ArgumentsToDictionary(string[] arguments)
         {

@@ -21,7 +21,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -39,7 +38,14 @@ namespace Ntreev.Library.Commands
             this.propertyInfo = propertyInfo;
             this.summary = provider.GetSummary(propertyInfo);
             this.description = provider.GetDescription(propertyInfo);
-            this.triggerList.AddRange(propertyInfo.GetCustomAttributes<CommandPropertyTriggerAttribute>());
+            var attrs = propertyInfo.GetCustomAttributes(typeof(CommandPropertyTriggerAttribute), true);
+            foreach (var item in attrs)
+            {
+                if (item is CommandPropertyTriggerAttribute attr)
+                {
+                    this.triggerList.Add(attr);
+                }
+            }
         }
 
         public override string DisplayName
@@ -114,7 +120,7 @@ namespace Ntreev.Library.Commands
             return this.propertyInfo.GetValue(instance, null);
         }
 
-        protected override void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, ParseDescriptorItem> descriptors)
+        protected override void OnValidateTrigger(IDictionary<CommandMemberDescriptor, ParseDescriptorItem> descriptors)
         {
             if (this.triggerList.Any() == false || descriptors[this].IsParsed == false)
                 return;

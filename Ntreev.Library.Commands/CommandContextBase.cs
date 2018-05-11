@@ -20,7 +20,6 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,7 +27,6 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -300,8 +298,8 @@ namespace Ntreev.Library.Commands
 
             if (commandName == string.Empty)
             {
-                this.Out.WriteLine(Resources.HelpMessage_Format, string.Join(" ", new string[] { this.HelpCommand.Name }.Where(i => i != string.Empty)));
-                this.Out.WriteLine(Resources.VersionMessage_Format, string.Join(" ", new string[] { this.VersionCommand.Name }.Where(i => i != string.Empty)));
+                this.Out.WriteLine(Resources.HelpMessage_Format, string.Join(" ", new string[] { this.HelpCommand.Name }.Where(i => i != string.Empty).ToArray()));
+                this.Out.WriteLine(Resources.VersionMessage_Format, string.Join(" ", new string[] { this.VersionCommand.Name }.Where(i => i != string.Empty).ToArray()));
                 return false;
             }
             else if (commandName == this.HelpCommand.Name)
@@ -370,7 +368,7 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            return string.Join(" ", argList);
+            return string.Join(" ", argList.ToArray());
         }
 
         private string InitializeRedirectionFromArgument(string input)

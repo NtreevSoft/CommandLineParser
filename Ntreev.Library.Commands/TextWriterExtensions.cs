@@ -23,7 +23,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -45,7 +44,7 @@ namespace Ntreev.Library.Commands
 
             foreach (var item in items)
             {
-                dataBuilder.Add(query.Select(i => i.GetValue(item)).ToArray());
+                dataBuilder.Add(query.Select(i => i.GetValue(item, null)).ToArray());
             }
 
             writer.PrintTableData(dataBuilder.Data, true);

@@ -20,12 +20,10 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -53,7 +51,8 @@ namespace Ntreev.Library.Commands
             {
                 if (this.IsQuiet == false)
                 {
-                    writer.WriteLine(string.Join(" ", this.commandContext.Name, this.commandContext.Version).Trim());
+                    var items = new string[] { this.commandContext.Name, $"{this.commandContext.Version}" };
+                    writer.WriteLine(string.Join(" ", items).Trim());
                     writer.WriteLine(info.LegalCopyright);
                 }
                 else

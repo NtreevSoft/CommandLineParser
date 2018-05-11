@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -30,9 +29,8 @@ namespace Ntreev.Library.Commands
         private readonly int width;
 
         public CommandTextWriter(TextWriter writer)
-            : this(writer, Console.IsOutputRedirected == true ? int.MaxValue : Console.BufferWidth)
+            : this(writer, Terminal.IsOutputRedirected == true ? int.MaxValue : Console.BufferWidth)
         {
-
         }
 
         public CommandTextWriter(TextWriter writer, int width)
@@ -47,7 +45,7 @@ namespace Ntreev.Library.Commands
             {
                 if (item == string.Empty)
                     this.WriteLine();
-                else if (Console.IsOutputRedirected == true)
+                else if (Terminal.IsOutputRedirected == true)
                     this.WriteLine(item);
                 else
                     this.WriteMultilineCore(item);

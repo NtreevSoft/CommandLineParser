@@ -60,7 +60,7 @@ namespace Ntreev.Library.Commands
 
         public bool Parse(string commandLine, CommandParsingTypes types)
         {
-            if (types.HasFlag(CommandParsingTypes.OmitCommandName) == true)
+            if ((types & CommandParsingTypes.OmitCommandName) == CommandParsingTypes.OmitCommandName)
             {
                 commandLine = $"{this.Name} {commandLine}";
             }
@@ -91,7 +91,8 @@ namespace Ntreev.Library.Commands
             else
             {
                 var descriptors = CommandDescriptor.GetMemberDescriptors(this.instance).Where(item => this.IsMemberEnabled(item));
-                var parser = new ParseDescriptor(typeof(CommandPropertyDescriptor), descriptors, arguments[1], types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
+                var omitInitialize = (types & CommandParsingTypes.OmitInitialize) == CommandParsingTypes.OmitInitialize;
+                var parser = new ParseDescriptor(typeof(CommandPropertyDescriptor), descriptors, arguments[1], omitInitialize == false);
                 parser.SetValue(this.instance);
                 return true;
             }
@@ -104,7 +105,7 @@ namespace Ntreev.Library.Commands
 
         public bool Invoke(string commandLine, CommandParsingTypes types)
         {
-            if (types.HasFlag(CommandParsingTypes.OmitCommandName) == true)
+            if ((types & CommandParsingTypes.OmitCommandName) == CommandParsingTypes.OmitCommandName)
             {
                 commandLine = $"{this.Name} {commandLine}";
             }
@@ -147,7 +148,8 @@ namespace Ntreev.Library.Commands
                 if (descriptor == null || this.IsMethodEnabled(descriptor) == false)
                     throw new CommandNotFoundException(method);
                 var enabledDescriptors = descriptor.Members.Where(item => this.IsMemberEnabled(item));
-                descriptor.Invoke(this.instance, arguments1[1], enabledDescriptors, types.HasFlag(CommandParsingTypes.OmitInitialize) == false);
+                var omitInitialize = (types & CommandParsingTypes.OmitInitialize) == CommandParsingTypes.OmitInitialize;
+                descriptor.Invoke(this.instance, arguments1[1], enabledDescriptors, omitInitialize == false);
                 return true;
             }
         }

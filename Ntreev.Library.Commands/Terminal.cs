@@ -54,7 +54,7 @@ namespace Ntreev.Library.Commands
         static Terminal()
         {
             {
-                var name = $"{typeof(Terminal).Namespace}.bin.{PlatformID.Win32NT}.dat";
+                var name = $"{typeof(Terminal).Namespace}.{PlatformID.Win32NT}.dat";
                 using (var stream = typeof(Terminal).Assembly.GetManifestResourceStream(name))
                 {
                     var buffer = new byte[stream.Length];
@@ -65,6 +65,30 @@ namespace Ntreev.Library.Commands
                         charToWidth.Add(i, buffer[i]);
                     }
                 }
+            }
+        }
+
+        public static bool IsOutputRedirected
+        {
+            get
+            {
+#if !NET35
+                return Console.IsOutputRedirected;
+#else
+                return true;
+#endif
+
+            }
+        }
+        public static bool IsInputRedirected
+        {
+            get
+            {
+#if !NET35
+                return Console.IsInputRedirected;
+#else
+                return true;
+#endif
             }
         }
 
@@ -80,7 +104,7 @@ namespace Ntreev.Library.Commands
 
         public Terminal()
         {
-            if (Console.IsInputRedirected == true)
+            if (Terminal.IsInputRedirected == true)
                 throw new Exception("Terminal cannot use. Console.IsInputRedirected must be false");
             this.actionMaps.Add(new ConsoleKeyInfo('\u001b', ConsoleKey.Escape, false, false, false), this.Clear);
             if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -446,13 +470,13 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                if (Console.IsOutputRedirected == false)
+                if (Terminal.IsOutputRedirected == false)
                     return Console.BufferWidth;
                 return bufferWidth;
             }
             set
             {
-                if (Console.IsOutputRedirected == false)
+                if (Terminal.IsOutputRedirected == false)
                     throw new InvalidOperationException("console output is redirected.");
                 if (value <= 0)
                     throw new ArgumentOutOfRangeException();

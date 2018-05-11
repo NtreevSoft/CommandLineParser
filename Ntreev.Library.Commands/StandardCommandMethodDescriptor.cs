@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ntreev.Library.Commands
 {
@@ -70,11 +69,14 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            var staticAttrs = this.methodInfo.GetCustomAttributes<CommandMethodStaticPropertyAttribute>();
+            var staticAttrs = this.methodInfo.GetCustomAttributes(typeof(CommandMethodStaticPropertyAttribute), true);
             foreach (var item in staticAttrs)
             {
-                var memberDescriptors = CommandDescriptor.GetMemberDescriptors(item.StaticType);
-                memberList.AddRange(memberDescriptors);
+                if (item is CommandMethodStaticPropertyAttribute attr)
+                {
+                    var memberDescriptors = CommandDescriptor.GetMemberDescriptors(attr.StaticType);
+                    memberList.AddRange(memberDescriptors);
+                }
             }
 
             this.members = memberList.OrderBy(item => item is CommandMemberArrayDescriptor).ToArray();

@@ -169,7 +169,7 @@ namespace Ntreev.Library.Commands
                 nameList.Add(names[item]);
             }
 
-            return Enum.Parse(descriptor.MemberType, string.Join(", ", nameList));
+            return Enum.Parse(descriptor.MemberType, string.Join(", ", nameList.ToArray()));
         }
 
         private static object ParseDefault(CommandMemberDescriptor descriptor, string arg)

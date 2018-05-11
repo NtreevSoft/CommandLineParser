@@ -24,7 +24,7 @@ using Ntreev.Library.Commands.Properties;
 
 namespace Ntreev.Library.Commands
 {
-    public class CommandMemberDescriptorCollection : IReadOnlyList<CommandMemberDescriptor>
+    public class CommandMemberDescriptorCollection : IEnumerable<CommandMemberDescriptor>
     {
         private readonly List<CommandMemberDescriptor> descriptors = new List<CommandMemberDescriptor>();
 

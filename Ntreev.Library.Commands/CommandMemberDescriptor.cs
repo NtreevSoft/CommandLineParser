@@ -63,7 +63,7 @@ namespace Ntreev.Library.Commands
             get
             {
                 var nameItems = new string[] { this.shortName, this.name };
-                var displayName = string.Join(" | ", nameItems.Where(item => item != string.Empty));
+                var displayName = string.Join(" | ", nameItems.Where(item => item != string.Empty).ToArray());
                 if (displayName == string.Empty)
                     return CommandSettings.NameGenerator(this.descriptorName);
                 return displayName;
@@ -119,7 +119,7 @@ namespace Ntreev.Library.Commands
 
         protected abstract object GetValue(object instance);
 
-        protected virtual void OnValidateTrigger(IReadOnlyDictionary<CommandMemberDescriptor, ParseDescriptorItem> descriptors)
+        protected virtual void OnValidateTrigger(IDictionary<CommandMemberDescriptor, ParseDescriptorItem> descriptors)
         {
 
         }
@@ -169,7 +169,7 @@ namespace Ntreev.Library.Commands
             get
             {
                 var patternItems = new string[] { this.ShortNamePattern, this.NamePattern };
-                var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
+                var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty).ToArray());
                 return patternText;
             }
         }

@@ -374,7 +374,7 @@ namespace Ntreev.Library.Commands
                 else
                 {
                     var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern };
-                    text = string.Join(" | ", patternItems.Where(item => item != string.Empty));
+                    text = string.Join(" | ", patternItems.Where(item => item != string.Empty).ToArray());
                 }
                 if (descriptor.DefaultValue == DBNull.Value)
                     return string.Format("<{0}>", text);
@@ -383,7 +383,7 @@ namespace Ntreev.Library.Commands
             else
             {
                 var patternItems = new string[] { descriptor.ShortNamePattern, descriptor.NamePattern };
-                var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty));
+                var patternText = string.Join(" | ", patternItems.Where(item => item != string.Empty).ToArray());
                 if (descriptor is CommandParameterArrayDescriptor == true)
                 {
                     patternText += " ...";

@@ -192,7 +192,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        public IReadOnlyDictionary<CommandMemberDescriptor, ParseDescriptorItem> Descriptors
+        public IDictionary<CommandMemberDescriptor, ParseDescriptorItem> Descriptors
         {
             get { return this.itemList; }
         }
