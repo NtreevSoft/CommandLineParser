@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45;net35</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.6.18131.1737</Version>
-    <AssemblyVersion>3.6.0.0</AssemblyVersion>
-    <FileVersion>3.6.18131.1737</FileVersion>
+    <Version>3.6.18137.1452</Version>
+    <AssemblyVersion>3.6</AssemblyVersion>
+    <FileVersion>3.6.18137.1452</FileVersion>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/NtreevSoft/CommandLineParser</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/NtreevSoft/CommandLineParser/blob/master/LICENSE.md</PackageLicenseUrl>
