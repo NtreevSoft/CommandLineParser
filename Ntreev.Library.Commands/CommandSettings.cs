@@ -26,7 +26,7 @@ namespace Ntreev.Library.Commands
 {
     public static class CommandSettings
     {
-        public const string SwitchPattern = "[a-zA-Z][_a-zA-Z0-9]*";
+        public const string SwitchPattern = "[a-zA-Z][-_a-zA-Z0-9]*";
         public const string ShortSwitchPattern = "[a-zA-Z]";
         private static string delimiter = "--";
         private static string shortDelimiter = "-";
