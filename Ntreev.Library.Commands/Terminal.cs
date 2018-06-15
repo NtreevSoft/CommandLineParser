@@ -194,7 +194,7 @@ namespace Ntreev.Library.Commands
 
             try
             {
-                return ReadLineImpl(i => true);
+                return ReadLineImpl(i => true, false);
             }
             finally
             {
@@ -759,7 +759,7 @@ namespace Ntreev.Library.Commands
             this.Initialize(prompt, $"{defaultValue}", false);
             try
             {
-                return ReadLineImpl(validation);
+                return ReadLineImpl(validation, false);
             }
             finally
             {
@@ -767,7 +767,7 @@ namespace Ntreev.Library.Commands
             }
         }
 
-        private string ReadLineImpl(Func<string, bool> validation)
+        private string ReadLineImpl(Func<string, bool> validation, bool recordHistory)
         {
             while (true)
             {
@@ -802,18 +802,20 @@ namespace Ntreev.Library.Commands
                         this.start = 0;
                         this.fullIndex = 0;
 
-                        if (this.isHidden == false && text != string.Empty)
+                        if (recordHistory == true)
                         {
-                            if (this.histories.Contains(text) == false)
+                            if (this.isHidden == false && text != string.Empty)
                             {
-                                this.histories.Add(text);
-                                this.historyIndex = this.histories.Count;
+                                if (this.histories.Contains(text) == false)
+                                {
+                                    this.histories.Add(text);
+                                    this.historyIndex = this.histories.Count;
+                                }
+                                else
+                                {
+                                    this.historyIndex = this.histories.LastIndexOf(text) + 1;
+                                }
                             }
-                            else
-                            {
-                                this.historyIndex = this.histories.LastIndexOf(text) + 1;
-                            }
-
                         }
                         return text;
                     }
@@ -935,6 +937,20 @@ namespace Ntreev.Library.Commands
                 {
                     x += w;
                 }
+            }
+        }
+
+        internal string ReadStringInternal(string prompt)
+        {
+            this.Initialize(prompt, string.Empty, false);
+
+            try
+            {
+                return ReadLineImpl(i => true, true);
+            }
+            finally
+            {
+                this.Release();
             }
         }
 

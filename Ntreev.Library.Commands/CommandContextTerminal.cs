@@ -87,7 +87,7 @@ namespace Ntreev.Library.Commands
         public void Start()
         {
             string line;
-            while ((line = this.ReadString(this.Prefix + this.Prompt + this.Postfix)) != null)
+            while ((line = this.ReadStringInternal(this.Prefix + this.Prompt + this.Postfix)) != null)
             {
                 try
                 {
