@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0D96CC61-6D74-49B4-A558-33AC0DCF8529}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ntreev.Library.Commands</RootNamespace>
+    <AssemblyName>Ntreev.Library.Commands</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Ntreev.Library.Commands\ClassExtension.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandBase.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandCollection.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandCompletionContext.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandContextBase.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandContextTerminal.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandLineParser.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandLineParserCollection.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMemberArrayDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMemberDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMemberDescriptorCollection.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMemberUsagePrinter.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMethodAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMethodBase.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMethodDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMethodDescriptorCollection.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMethodPropertyAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMethodStaticPropertyAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandMethodUsagePrinter.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandNotFoundException.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandParameterArrayDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandParameterDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandParsingTypes.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandPropertyArrayAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandPropertyArrayDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandPropertyAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandPropertyDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandPropertyTriggerAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandProviderBase.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandSettings.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandStaticMethodAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandStaticPropertyAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandStringUtility.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandTextWriter.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ConsoleModeOnlyAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ExternalCommandMethodDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\HelpCommand.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ICommand.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ICommandProvider.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\IExecutable.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\IUnknownArgument.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\IUsageDescriptionProvider.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ParseDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ParseDescriptorItem.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\Parser.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\Properties\AssemblyInfo.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\Properties\Resources.Designer.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ResourceDescriptionAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\ResourceUsageDescriptionProvider.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\StandardCommandMethodDescriptor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\SummaryAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TableDataBuilder.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\Terminal.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TerminalCancelEventArgs.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TerminalCancelEventHandler.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TerminalColor.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TerminalCursorVisible.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TerminalTextWriter.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TextWriterExtensions.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\UsageBrowsableAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\UsageDescriptionProvider.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\UsageDescriptionProviderAttribute.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\VersionCommand.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\Unix.dat" />
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\Win32NT.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\HelpCommand.ko-KR.resx">
+      <DependentUpon>HelpCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\HelpCommand.resx">
+      <DependentUpon>HelpCommand.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\Properties\Resources.ko-KR.resx" />
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\Properties\Resources.resx" />
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\VersionCommand.resx">
+      <DependentUpon>VersionCommand.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

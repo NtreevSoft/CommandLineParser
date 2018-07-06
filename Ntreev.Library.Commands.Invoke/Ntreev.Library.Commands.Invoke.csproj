@@ -57,8 +57,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj">
-      <Project>{ceb280c0-463f-4e09-a00c-ce3a8326f6ff}</Project>
+    <ProjectReference Include="..\Ntreev.Library.Commands.Net45\Ntreev.Library.Commands.csproj">
+      <Project>{0d96cc61-6d74-49b4-a558-33ac0dcf8529}</Project>
       <Name>Ntreev.Library.Commands</Name>
     </ProjectReference>
   </ItemGroup>

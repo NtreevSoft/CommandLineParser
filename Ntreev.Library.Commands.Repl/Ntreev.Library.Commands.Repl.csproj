@@ -72,12 +72,6 @@
     <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj">
-      <Project>{CEB280C0-463F-4E09-A00C-CE3A8326F6FF}</Project>
-      <Name>Ntreev.Library.Commands</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +97,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ntreev.Library.Commands.Net45\Ntreev.Library.Commands.csproj">
+      <Project>{0d96cc61-6d74-49b4-a558-33ac0dcf8529}</Project>
+      <Name>Ntreev.Library.Commands</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Ntreev.Library.Commands.AssemblyInfo\Ntreev.Library.Commands.AssemblyInfo.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
