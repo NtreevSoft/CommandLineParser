@@ -144,6 +144,28 @@ namespace Ntreev.Library.Commands
             }
         }
 
+        internal string[] GetCompletion(object target)
+        {
+            if (this.MemberType.IsEnum == true)
+            {
+                return Enum.GetNames(this.MemberType);
+            }
+            else if (this.Attributes.FirstOrDefault(item => item is CommandCompletionAttribute) is CommandCompletionAttribute attr)
+            {
+                if (attr.Type == null)
+                {
+                    var methodInfo = target.GetType().GetMethod(attr.MethodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                    return methodInfo.Invoke(target, null) as string[];
+                }
+                else
+                {
+                    var methodInfo = attr.Type.GetMethod(attr.MethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                    return methodInfo.Invoke(null, null) as string[];
+                }
+            }
+            return null;
+        }
+
         public string NamePattern
         {
             get

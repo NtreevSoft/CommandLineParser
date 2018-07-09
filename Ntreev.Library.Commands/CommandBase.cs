@@ -20,12 +20,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Ntreev.Library.Commands
 {
     public abstract class CommandBase : ICommand, IExecutable
     {
         private readonly string name;
+
+        protected CommandBase()
+        {
+            this.name = CommandStringUtility.ToSpinalCase(this.GetType());
+        }
 
         protected CommandBase(string name)
         {

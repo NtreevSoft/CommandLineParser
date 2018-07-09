@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="..\Ntreev.Library.Commands\ClassExtension.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandBase.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\CommandCompletionAttribute.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandCollection.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandCompletionContext.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandContextBase.cs" />

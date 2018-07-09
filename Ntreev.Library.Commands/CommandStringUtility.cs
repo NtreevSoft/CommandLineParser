@@ -177,6 +177,17 @@ namespace Ntreev.Library.Commands
         //    //}
         //}
 
+        public static string ToSpinalCase(string text)
+        {
+            return Regex.Replace(text, @"([a-z])([A-Z])", "$1-$2").ToLower();
+        }
+
+        public static string ToSpinalCase(Type type)
+        {
+            var name = Regex.Replace(type.Name, @"(Command)$", string.Empty);
+            return Regex.Replace(name, @"([a-z])([A-Z])", "$1-$2").ToLower();
+        }
+
         public static IDictionary<string, object> ArgumentsToDictionary(string[] arguments)
         {
             if (arguments == null)

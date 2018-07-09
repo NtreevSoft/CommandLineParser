@@ -216,10 +216,18 @@ namespace Ntreev.Library.Commands
             {
                 if (completionContext.Command is CommandBase commandBase)
                 {
+                    if (completionContext.MemberDescriptor.GetCompletion(completionContext.Command) is string[] completions)
+                    {
+                        return completions;
+                    }
                     return commandBase.GetCompletions(completionContext);
                 }
                 else if (completionContext.Command is CommandMethodBase commandMethodBase)
                 {
+                    if (completionContext.MemberDescriptor.GetCompletion(completionContext.Command) is string[] completions)
+                    {
+                        return completions;
+                    }
                     return commandMethodBase.GetCompletions(completionContext.MethodDescriptor, completionContext.MemberDescriptor, completionContext.Find);
                 }
                 else if (completionContext.Command is CommandProviderBase consoleCommandProvider)

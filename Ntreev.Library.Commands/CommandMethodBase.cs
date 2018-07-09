@@ -21,12 +21,18 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Ntreev.Library.Commands
 {
     public abstract class CommandMethodBase : ICommand
     {
         private readonly string name;
+
+        protected CommandMethodBase()
+        {
+            this.name = CommandStringUtility.ToSpinalCase(this.GetType());
+        }
 
         protected CommandMethodBase(string name)
         {
