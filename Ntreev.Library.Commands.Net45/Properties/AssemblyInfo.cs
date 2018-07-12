@@ -20,14 +20,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-//#if NET45
-////[assembly: AssemblyTitle("Ntreev.Library.Commands")]
-//[assembly: AssemblyDescription("")]
-////[assembly: AssemblyProduct("Ntreev.Library.Commands")]
+[assembly: AssemblyTitle("Ntreev.Library.Commands")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyProduct("Ntreev.Library.Commands")]
 
-//[assembly: ComVisible(false)]
+[assembly: ComVisible(false)]
 
-//[assembly: Guid("f5997259-909e-4747-a011-b47c30522bfd")]
-
-//[assembly: NeutralResourcesLanguage("")]
-//#endif
+[assembly: Guid("f5997259-909e-4747-a011-b47c30522bfd")]

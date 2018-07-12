@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\Ntreev.Library.Commands\ClassExtension.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandBase.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandCompletionAttribute.cs" />
@@ -87,8 +90,9 @@
     <Compile Include="..\Ntreev.Library.Commands\ParseDescriptor.cs" />
     <Compile Include="..\Ntreev.Library.Commands\ParseDescriptorItem.cs" />
     <Compile Include="..\Ntreev.Library.Commands\Parser.cs" />
-    <Compile Include="..\Ntreev.Library.Commands\Properties\AssemblyInfo.cs" />
-    <Compile Include="..\Ntreev.Library.Commands\Properties\Resources.Designer.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\Properties\Resources.Designer.cs">
+      <Link>Properties\Resources.Designer.cs</Link>
+    </Compile>
     <Compile Include="..\Ntreev.Library.Commands\ResourceDescriptionAttribute.cs" />
     <Compile Include="..\Ntreev.Library.Commands\ResourceUsageDescriptionProvider.cs" />
     <Compile Include="..\Ntreev.Library.Commands\StandardCommandMethodDescriptor.cs" />
@@ -117,11 +121,16 @@
     <EmbeddedResource Include="..\Ntreev.Library.Commands\HelpCommand.resx">
       <DependentUpon>HelpCommand.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Ntreev.Library.Commands\Properties\Resources.ko-KR.resx" />
-    <EmbeddedResource Include="..\Ntreev.Library.Commands\Properties\Resources.resx" />
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\Properties\Resources.ko-KR.resx">
+      <Link>Properties\Resources.ko-KR.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Ntreev.Library.Commands\Properties\Resources.resx">
+      <Link>Properties\Resources.resx</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\Ntreev.Library.Commands\VersionCommand.resx">
       <DependentUpon>VersionCommand.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <Import Project="..\Ntreev.Library.Commands.AssemblyInfo\Ntreev.Library.Commands.AssemblyInfo.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

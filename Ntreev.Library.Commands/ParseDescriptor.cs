@@ -123,6 +123,10 @@ namespace Ntreev.Library.Commands
                     }
                     arguments.Clear();
                 }
+                else if (arg.StartsWith(CommandSettings.Delimiter) == true || arg.StartsWith(CommandSettings.ShortDelimiter) == true)
+                {
+                    this.unparsedArguments.Add(arg, null);
+                }
                 else if (CommandStringUtility.IsSwitch(arg) == false)
                 {
                     var requiredDescriptor = this.itemList.Where(item => item.Key.GetType() == type && item.Key.IsRequired == true && item.Value.IsParsed == false)
