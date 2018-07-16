@@ -216,7 +216,7 @@ namespace Ntreev.Library.Commands
             {
                 if (completionContext.Command is CommandBase commandBase)
                 {
-                    if (completionContext.MemberDescriptor.GetCompletion(completionContext.Command) is string[] completions)
+                    if (completionContext.MemberDescriptor?.GetCompletion(completionContext.Command) is string[] completions)
                     {
                         return completions;
                     }
@@ -224,7 +224,7 @@ namespace Ntreev.Library.Commands
                 }
                 else if (completionContext.Command is CommandMethodBase commandMethodBase)
                 {
-                    if (completionContext.MemberDescriptor.GetCompletion(completionContext.Command) is string[] completions)
+                    if (completionContext.MemberDescriptor?.GetCompletion(completionContext.Command) is string[] completions)
                     {
                         return completions;
                     }
