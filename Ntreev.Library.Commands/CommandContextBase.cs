@@ -459,6 +459,8 @@ namespace Ntreev.Library.Commands
                 var directory = Directory.GetCurrentDirectory();
                 try
                 {
+                    if (Directory.Exists(baseDirectory) == false)
+                        Directory.CreateDirectory(baseDirectory);
                     Directory.SetCurrentDirectory(baseDirectory);
                     foreach (var item in this.writeList)
                     {
