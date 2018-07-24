@@ -1,5 +1,5 @@
-$majorVersion=3
-$minorVersion=6
+$majorVersion=4
+$minorVersion=0
 $sourcePath = Join-Path (Split-Path $myInvocation.MyCommand.Definition) ".\Ntreev.Library.Commands.AssemblyInfo\AssemblyInfo.cs" -Resolve
 $projectPath = Join-Path (Split-Path $myInvocation.MyCommand.Definition) ".\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj"
 $version="$majorVersion.$minorVersion"
@@ -12,18 +12,30 @@ if (Test-Path $sourcePath) {
     if ($content -match $pattern1) {
         $content = $content -replace $pattern1, "`${1}$version`$2"
     }
+    else {
+        throw "AssemblyVersion not found."
+    }
 
     $pattern2 = "(AssemblyFileVersion[(]`").+(`"[)]])"
     if ($content -match $pattern2) {
         $content = $content -replace $pattern2, "`${1}$fileVersion`$2"
+    }
+    else {
+        throw "AssemblyFileVersion not found."
     }
 
     $pattern3 = "(AssemblyInformationalVersion[(]`").+(`"[)]])"
     if ($content -match $pattern3) {
         $content = $content -replace $pattern3, "`${1}$fileVersion`$2"
     }
+    else {
+        throw "AssemblyFileVersion not found."
+    }
 
     Set-Content $sourcePath $content -Encoding UTF8
+}
+else {
+    throw "path not found: $sourcePath"
 }
 
 if (Test-Path $projectPath) {
@@ -33,18 +45,30 @@ if (Test-Path $projectPath) {
     if ($content -match $pattern1) {
         $content = $content -replace $pattern1, "`${1}$fileVersion`$3"
     }
+    else {
+        throw "Version tag not found."
+    }
 
     $pattern2 = "(<FileVersion>)(.*)(</FileVersion>)"
     if ($content -match $pattern2) {
         $content = $content -replace $pattern2, "`${1}$fileVersion`$3"
+    }
+    else {
+        throw "FileVersion tag not found."
     }
 
     $pattern3 = "(<AssemblyVersion>)(.*)(</AssemblyVersion>)"
     if ($content -match $pattern3) {
         $content = $content -replace $pattern3, "`${1}$version`$3"
     }
+    else {
+        throw "AssemblyVersion tag not found."
+    }
 
     Set-Content $projectPath $content -Encoding UTF8
+}
+else {
+    throw "path not found: $projectPath"
 }
 
 Set-Content version.txt $fileVersion
