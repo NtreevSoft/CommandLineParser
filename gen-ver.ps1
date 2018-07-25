@@ -1,12 +1,15 @@
-$majorVersion=4
-$minorVersion=0
-$sourcePath = Join-Path (Split-Path $myInvocation.MyCommand.Definition) ".\Ntreev.Library.Commands.AssemblyInfo\AssemblyInfo.cs" -Resolve
-$projectPath = Join-Path (Split-Path $myInvocation.MyCommand.Definition) ".\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj"
-$version="$majorVersion.$minorVersion"
-$fileVersion="$majorVersion.$minorVersion"+"."+(Get-Date -Format yy)+(Get-Date).DayOfYear+"."+(Get-Date -Format HHmm)
+$majorVersion = 4
+$minorVersion = 0
+$assemblyFilePath = ".\Ntreev.Library.Commands.AssemblyInfo\AssemblyInfo.cs"
+$projectFilePath = ".\Ntreev.Library.Commands\Ntreev.Library.Commands.csproj"
 
-if (Test-Path $sourcePath) {
-    $content = Get-Content $sourcePath -Encoding UTF8
+$assemblyPath = Join-Path (Split-Path $myInvocation.MyCommand.Definition) $assemblyFilePath -Resolve
+$projectPath = Join-Path (Split-Path $myInvocation.MyCommand.Definition) $projectFilePath
+$version = "$majorVersion.$minorVersion"
+$fileVersion = "$majorVersion.$minorVersion" + "." + (Get-Date -Format yy) + (Get-Date).DayOfYear + "." + (Get-Date -Format HHmm)
+
+if (Test-Path $assemblyPath) {
+    $content = Get-Content $assemblyPath -Encoding UTF8
 
     $pattern1 = "(AssemblyVersion[(]`").+(`"[)]])"
     if ($content -match $pattern1) {
@@ -23,14 +26,22 @@ if (Test-Path $sourcePath) {
         $content = $content -replace $pattern3, "`${1}$fileVersion`$2"
     }
 
-    if ($content -eq "") {
-        throw "replace version failed: $sourcePath"
-    }
+    $backupPath = $assemblyPath + ".bak"
+    Copy-Item $assemblyPath $backupPath
+    Set-Content $assemblyPath $content -Encoding UTF8
 
-    Set-Content $sourcePath $content -Encoding UTF8
+    if ($null -eq (Get-Content $assemblyPath)) {
+        Remove-Item $assemblyPath
+        Copy-Item $backupPath $assemblyPath
+        Remove-Item $backupPath
+        throw "replace version failed: $assemblyPath"
+    }
+    else {
+        Remove-Item $backupPath
+    }
 }
 else {
-    throw "path not found: $sourcePath"
+    throw "assembly path not found: $assemblyPath"
 }
 
 if (Test-Path $projectPath) {
@@ -51,14 +62,22 @@ if (Test-Path $projectPath) {
         $content = $content -replace $pattern3, "`${1}$version`$3"
     }
 
-    if ($content -eq "") {
+    $backupPath = $projectPath + ".bak"
+    Copy-Item $projectPath $backupPath
+    Set-Content $projectPath $content -Encoding UTF8
+
+    if ($null -eq (Get-Content $projectPath)) {
+        Remove-Item $projectPath
+        Copy-Item $backupPath $projectPath
+        Remove-Item $backupPath
         throw "replace version failed: $projectPath"
     }
-
-    Set-Content $projectPath $content -Encoding UTF8
+    else {
+        Remove-Item $backupPath
+    }
 }
 else {
-    throw "path not found: $projectPath"
+    throw "project path not found: $projectPath"
 }
 
 Set-Content version.txt $fileVersion
