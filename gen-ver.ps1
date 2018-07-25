@@ -23,6 +23,10 @@ if (Test-Path $sourcePath) {
         $content = $content -replace $pattern3, "`${1}$fileVersion`$2"
     }
 
+    if ($content -eq "") {
+        throw "replace version failed: $sourcePath"
+    }
+
     Set-Content $sourcePath $content -Encoding UTF8
 }
 
@@ -42,6 +46,10 @@ if (Test-Path $projectPath) {
     $pattern3 = "(<AssemblyVersion>)(.*)(</AssemblyVersion>)"
     if ($content -match $pattern3) {
         $content = $content -replace $pattern3, "`${1}$version`$3"
+    }
+
+    if ($content -eq "") {
+        throw "replace version failed: $projectPath"
     }
 
     Set-Content $projectPath $content -Encoding UTF8
