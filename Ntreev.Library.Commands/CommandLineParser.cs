@@ -297,7 +297,7 @@ namespace Ntreev.Library.Commands
             {
                 if (this.version == null)
                 {
-                    return new Version(FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion);
+                    return new Version(FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductVersion);
                 }
                 return this.version;
             }
