@@ -154,12 +154,12 @@ namespace Ntreev.Library.Commands
             {
                 if (attr.Type == null)
                 {
-                    var methodInfo = target.GetType().GetMethod(attr.MethodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                    var methodInfo = target.GetType().GetMethod(attr.MethodName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, null, new Type[] { }, null);
                     return methodInfo.Invoke(target, null) as string[];
                 }
                 else
                 {
-                    var methodInfo = attr.Type.GetMethod(attr.MethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                    var methodInfo = attr.Type.GetMethod(attr.MethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static, null, new Type[] { }, null);
                     return methodInfo.Invoke(null, null) as string[];
                 }
             }
