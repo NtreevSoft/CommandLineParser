@@ -103,6 +103,7 @@
     <Compile Include="..\Ntreev.Library.Commands\TerminalCancelEventHandler.cs" />
     <Compile Include="..\Ntreev.Library.Commands\TerminalColor.cs" />
     <Compile Include="..\Ntreev.Library.Commands\TerminalCursorVisible.cs" />
+    <Compile Include="..\Ntreev.Library.Commands\TerminalTextItem.cs" />
     <Compile Include="..\Ntreev.Library.Commands\TerminalTextWriter.cs" />
     <Compile Include="..\Ntreev.Library.Commands\TextWriterExtensions.cs" />
     <Compile Include="..\Ntreev.Library.Commands\UsageBrowsableAttribute.cs" />

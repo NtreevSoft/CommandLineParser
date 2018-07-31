@@ -155,6 +155,45 @@ namespace Ntreev.Library.Commands
             return terminal.ReadSecureString(title);
         }
 
+        public void WriteList<T>(T[] items)
+        {
+            if (this.Out is RedirectionTextWriter)
+            {
+                this.Out.WriteLine(string.Join(Environment.NewLine, items));
+            }
+            else
+            {
+                this.Out.Print(items);
+            }
+        }
+
+        public void WriteList(TerminalTextItem[] items)
+        {
+            if (this.Out is RedirectionTextWriter)
+            {
+                this.Out.WriteLine(string.Join(Environment.NewLine, items.Select(item => item.ToString())));
+            }
+            else
+            {
+                this.Out.Print(items, (i, w, s) => i.Draw(w, s), (i) => i.ToString());
+            }
+        }
+
+        public void WriteLine(string value)
+        {
+            this.Out.WriteLine(value);
+        }
+
+        public void WriteLine()
+        {
+            this.Out.WriteLine();
+        }
+
+        public void Write(string value)
+        {
+            this.Out.Write(value);
+        }
+
         public TextWriter Out
         {
             get { return this.writer ?? Console.Out; }

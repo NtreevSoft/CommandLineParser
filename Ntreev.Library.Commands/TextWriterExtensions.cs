@@ -97,10 +97,10 @@ namespace Ntreev.Library.Commands
 
         public static void Print<T>(this TextWriter writer, T[] items)
         {
-            Print<T>(writer, items, (o, a) => a(), item => item.ToString());
+            Print<T>(writer, items, (i, w, s) => w.Write(s), item => item.ToString());
         }
 
-        public static void Print<T>(this TextWriter writer, T[] items, Action<T, Action> action)
+        public static void Print<T>(this TextWriter writer, T[] items, Action<T, TextWriter, string> action)
         {
             Print<T>(writer, items, action, item => item.ToString());
         }
@@ -108,7 +108,7 @@ namespace Ntreev.Library.Commands
         /// <summary>
         /// linux에 ls 명령처럼 단순 문자열을 위에서 아래로 좌에서 우로 정렬해서 출력하는 기능
         /// </summary>
-        public static void Print<T>(this TextWriter writer, T[] items, Action<T, Action> action, Func<T, string> selector)
+        public static void Print<T>(this TextWriter writer, T[] items, Action<T, TextWriter, string> action, Func<T, string> selector)
         {
             var maxWidth = Terminal.BufferWidth;
             var lineCount = 4;
@@ -173,7 +173,7 @@ namespace Ntreev.Library.Commands
                     {
                         var obj = objs[i][j];
                         var text = lines[i][j].PadRight(columns[j]);
-                        action(obj, () => writer.Write(text));
+                        action(obj, writer, text);
                     }
                     writer.WriteLine();
                 }
