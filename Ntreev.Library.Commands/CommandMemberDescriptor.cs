@@ -41,6 +41,7 @@ namespace Ntreev.Library.Commands
         {
             if (attribute == null)
                 throw new ArgumentNullException(nameof(attribute));
+            attribute.InvokeValidate(this);
             this.descriptorName = descriptorName ?? throw new ArgumentNullException(nameof(descriptorName));
             this.name = attribute.GetName(descriptorName);
             this.shortName = attribute.InternalShortName;

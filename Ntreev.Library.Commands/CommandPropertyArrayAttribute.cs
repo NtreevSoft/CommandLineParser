@@ -32,22 +32,30 @@ namespace Ntreev.Library.Commands
 
         }
 
-        public override bool IsRequired
-        {
-            get { return false; }
-            set
-            {
-                throw new InvalidOperationException("cannot be set");
-            }
-        }
+        //public override bool IsRequired
+        //{
+        //    get { return false; }
+        //    set
+        //    {
+        //        throw new InvalidOperationException("cannot be set");
+        //    }
+        //}
 
-        public override bool IsExplicit
+        //public override bool IsExplicit
+        //{
+        //    get { return false; }
+        //    set
+        //    {
+        //        throw new InvalidOperationException("cannot be set");
+        //    }
+        //}
+        protected override void Validate(object target)
         {
-            get { return false; }
-            set
-            {
-                throw new InvalidOperationException("cannot be set");
-            }
+            base.Validate(target);
+            if (this.IsRequired == true)
+                throw new InvalidOperationException();
+            if (this.IsExplicit == true)
+                throw new InvalidOperationException();
         }
     }
 }
