@@ -39,8 +39,9 @@ namespace Ntreev.Library.Commands.Parse
             get; set;
         }
 
-        [CommandProperty("path", IsRequired = true)]
+        [CommandProperty("path", IsRequired = true, IsExplicit = true)]
         [Description("path to work")]
+        [DefaultValue("")]
         public string WorkingPath
         {
             get; set;

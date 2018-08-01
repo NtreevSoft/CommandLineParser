@@ -155,7 +155,7 @@ namespace Ntreev.Library.Commands
             return terminal.ReadSecureString(title);
         }
 
-        public void WriteList<T>(T[] items)
+        public void WriteList(string[] items)
         {
             if (this.Out is RedirectionTextWriter)
             {
@@ -171,7 +171,8 @@ namespace Ntreev.Library.Commands
         {
             if (this.Out is RedirectionTextWriter)
             {
-                this.Out.WriteLine(string.Join(Environment.NewLine, items.Select(item => item.ToString())));
+                var texts = items.Select(item => item.ToString()).ToArray();
+                this.Out.WriteLine(string.Join(Environment.NewLine, texts));
             }
             else
             {

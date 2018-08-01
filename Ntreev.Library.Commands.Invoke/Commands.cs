@@ -48,7 +48,7 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandMethod]
-        [CommandMethodProperty("Message")]
+        [CommandMethodProperty(nameof(Message))]
         [Browsable(false)]
         public void Delete(string path)
         {
@@ -56,8 +56,8 @@ namespace Ntreev.Library.Commands.Invoke
         }
 
         [CommandMethod]
-        [CommandMethodProperty("Message")]
-        public void Commit(string path)
+        [CommandMethodProperty(nameof(Message))]
+        public void Commit(string path, string wow=null)
         {
             if (this.Message == string.Empty)
                 Console.WriteLine("{0} committed.", path);
@@ -69,10 +69,10 @@ namespace Ntreev.Library.Commands.Invoke
         [CommandMethodProperty("Message")]
         public void Add(params string[] items)
         {
-            
+
         }
 
-        [CommandProperty('m')]
+        [CommandProperty('m', true, IsRequired = true)]
         [ConsoleModeOnly]
         public string Message
         {

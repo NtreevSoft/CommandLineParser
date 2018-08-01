@@ -144,12 +144,15 @@ namespace Ntreev.Library.Commands
             }
             else
             {
+                var instance = this.instance;
                 var descriptor = CommandDescriptor.GetMethodDescriptor(this.instance, method);
                 if (descriptor == null || this.IsMethodEnabled(descriptor) == false)
                     throw new CommandNotFoundException(method);
+                if (descriptor is ExternalCommandMethodDescriptor externalDescriptor)
+                    instance = externalDescriptor.Instance;
                 var enabledDescriptors = descriptor.Members.Where(item => this.IsMemberEnabled(item));
                 var omitInitialize = (types & CommandParsingTypes.OmitInitialize) == CommandParsingTypes.OmitInitialize;
-                descriptor.Invoke(this.instance, arguments1[1], enabledDescriptors, omitInitialize == false);
+                descriptor.Invoke(instance, arguments1[1], enabledDescriptors, omitInitialize == false);
                 return true;
             }
         }

@@ -69,6 +69,11 @@ namespace Ntreev.Library.Commands
             get { return this.methodDescriptor.Attributes; }
         }
 
+        public object Instance
+        {
+            get { return this.instance; }
+        }
+
         protected override void OnInvoke(object instance, object[] parameters)
         {
             this.MethodInfo.Invoke(this.instance, parameters);

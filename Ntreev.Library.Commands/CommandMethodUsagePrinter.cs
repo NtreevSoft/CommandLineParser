@@ -315,7 +315,7 @@ namespace Ntreev.Library.Commands
 
         private void PrintRequirement(CommandTextWriter writer, CommandMemberDescriptor descriptor)
         {
-            if (descriptor is CommandParameterDescriptor == true)
+            if (descriptor.IsRequired == true)
             {
                 writer.WriteLine(descriptor.DisplayName);
             }
@@ -367,7 +367,7 @@ namespace Ntreev.Library.Commands
             if (descriptor.IsRequired == true)
             {
                 var text = string.Empty;
-                if (descriptor is CommandParameterDescriptor == true)
+                if (descriptor.IsRequired == true)
                 {
                     text = descriptor.DisplayName;
                 }

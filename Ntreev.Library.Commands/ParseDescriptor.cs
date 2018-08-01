@@ -63,7 +63,7 @@ namespace Ntreev.Library.Commands
             {
                 if (item is CommandMemberArrayDescriptor)
                     continue;
-                if (item.GetType() == type && item.IsRequired == true && item.IsExplicit == false)
+                if (item.IsRequired == true && item.IsExplicit == false)
                     continue;
                 if (item.NamePattern != string.Empty)
                     descriptors.Add(item.NamePattern, item);
@@ -129,7 +129,7 @@ namespace Ntreev.Library.Commands
                 }
                 else if (CommandStringUtility.IsSwitch(arg) == false)
                 {
-                    var requiredDescriptor = this.itemList.Where(item => item.Key.GetType() == type && item.Key.IsRequired == true && item.Value.IsParsed == false)
+                    var requiredDescriptor = this.itemList.Where(item => item.Key.IsRequired == true && item.Key.IsExplicit == false && item.Value.IsParsed == false)
                                                           .Select(item => item.Key).FirstOrDefault();
                     if (requiredDescriptor != null)
                     {

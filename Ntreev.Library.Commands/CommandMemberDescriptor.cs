@@ -63,7 +63,9 @@ namespace Ntreev.Library.Commands
         {
             get
             {
-                var nameItems = new string[] { this.shortName, this.name };
+                if (this.IsRequired == true && this.isExplicit == false)
+                    return this.descriptorName;
+                var nameItems = this.isExplicit == true ? new string[] { this.ShortNamePattern, this.NamePattern } : new string[] { this.shortName, this.name };
                 var displayName = string.Join(" | ", nameItems.Where(item => item != string.Empty).ToArray());
                 if (displayName == string.Empty)
                     return CommandSettings.NameGenerator(this.descriptorName);

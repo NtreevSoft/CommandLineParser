@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>net45;net35;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.0.18206.1123</Version>
+    <Version>4.0.18213.1825</Version>
     <AssemblyVersion>4.0</AssemblyVersion>
-    <FileVersion>4.0.18206.1123</FileVersion>
+    <FileVersion>4.0.18213.1825</FileVersion>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/NtreevSoft/CommandLineParser</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/NtreevSoft/CommandLineParser/blob/master/LICENSE.md</PackageLicenseUrl>

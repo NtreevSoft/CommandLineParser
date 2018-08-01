@@ -63,6 +63,7 @@ namespace Ntreev.Library.Commands
             var query = from item in this.descriptors
                         orderby item.DefaultValue == DBNull.Value descending
                         orderby item.IsRequired descending
+                        orderby item.IsExplicit
                         orderby item is CommandMemberArrayDescriptor
                         select item;
 

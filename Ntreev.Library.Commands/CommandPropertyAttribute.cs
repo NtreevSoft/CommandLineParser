@@ -120,6 +120,8 @@ namespace Ntreev.Library.Commands
         internal void InvokeValidate(object target)
         {
             this.Validate(target);
+
+            
         }
 
         internal string GetName(string descriptorName)

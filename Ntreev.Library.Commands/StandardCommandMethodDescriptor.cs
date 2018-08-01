@@ -79,7 +79,7 @@ namespace Ntreev.Library.Commands
                 }
             }
 
-            this.members = memberList.OrderBy(item => item is CommandMemberArrayDescriptor).ToArray();
+            this.members = memberList.OrderBy(item => !item.IsRequired).OrderBy(item => item.DefaultValue != DBNull.Value).OrderBy(item => item is CommandMemberArrayDescriptor).ToArray();
             this.summary = provider.GetSummary(methodInfo);
             this.description = provider.GetDescription(methodInfo);
         }

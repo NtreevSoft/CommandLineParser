@@ -71,7 +71,6 @@
     <Compile Include="..\Ntreev.Library.Commands\CommandPropertyArrayAttribute.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandPropertyArrayDescriptor.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandPropertyAttribute.cs" />
-    <Compile Include="..\Ntreev.Library.Commands\CommandPropertyType.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandPropertyDescriptor.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandPropertyTriggerAttribute.cs" />
     <Compile Include="..\Ntreev.Library.Commands\CommandProviderBase.cs" />
