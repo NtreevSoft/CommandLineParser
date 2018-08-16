@@ -123,7 +123,7 @@ namespace Ntreev.Library.Commands
                     }
                     arguments.Clear();
                 }
-                else if (arg.StartsWith(CommandSettings.Delimiter) == true || arg.StartsWith(CommandSettings.ShortDelimiter) == true)
+                else if (CommandStringUtility.IsSwitch(arg) == true)
                 {
                     this.unparsedArguments.Add(arg, null);
                 }
